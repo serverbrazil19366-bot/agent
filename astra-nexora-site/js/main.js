@@ -455,11 +455,11 @@ updateActiveNav();
         }
 
         const lines = [
-            "Hi Astra Nexora, I'd like a free website audit.",
+            "Hi Astra Nexora, I'd like to talk about a project.",
             "",
             "Name: " + name,
-            "Business: " + (value("business") || "-"),
             "Phone: " + phone,
+            "Email: " + (value("email") || "-"),
             "Website: " + (value("website") || "-"),
             "Interested in: " + (value("service") || "-")
         ];
@@ -472,6 +472,39 @@ updateActiveNav();
             "_blank",
             "noopener"
         );
+
+    });
+
+})();
+
+
+/* =====================================================
+   PROJECT FILTER
+===================================================== */
+
+(function () {
+
+    const buttons = document.querySelectorAll(".project-filters [data-filter]");
+    const items = document.querySelectorAll(".project-item");
+
+    if (!buttons.length) return;
+
+    buttons.forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            const filter = button.dataset.filter;
+
+            buttons.forEach(b => b.setAttribute("aria-pressed", String(b === button)));
+
+            items.forEach(item => {
+                item.hidden = filter !== "all" && item.dataset.category !== filter;
+                item.classList.add("visible");
+            });
+
+            document.querySelector(".project-grid").classList.toggle("is-filtered", filter !== "all");
+
+        });
 
     });
 

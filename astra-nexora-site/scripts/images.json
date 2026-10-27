@@ -41,17 +41,7 @@
       "alt": "Laptop showing a website analytics dashboard"
     },
     {
-      "slot": "service-seo",
-      "status": "selected",
-      "source": "pexels",
-      "id": "34804005",
-      "page": "https://www.pexels.com/photo/laptop-displaying-coding-and-data-analysis-interface-34804005/",
-      "title": "Laptop displaying coding and data analysis interface",
-      "photographer": "Daniil Komov",
-      "alt": "Laptop showing website performance data"
-    },
-    {
-      "slot": "service-web",
+      "slot": "service-website-signature",
       "status": "selected",
       "source": "pexels",
       "id": "36706460",
@@ -61,17 +51,27 @@
       "alt": "Developer building a website on two monitors"
     },
     {
-      "slot": "service-social",
+      "slot": "service-wordpress",
       "status": "selected",
       "source": "pexels",
-      "id": "7598011",
-      "page": "https://www.pexels.com/photo/branding-company-documents-on-desk-7598011/",
-      "title": "Branding Company Documents on Desk",
-      "photographer": "",
-      "alt": "Brand strategy board with colour and mood references"
+      "id": "34804005",
+      "page": "https://www.pexels.com/photo/laptop-displaying-coding-and-data-analysis-interface-34804005/",
+      "title": "Laptop displaying coding and data analysis interface",
+      "photographer": "Daniil Komov",
+      "alt": "Laptop showing website performance data"
     },
     {
-      "slot": "service-automation",
+      "slot": "service-seo",
+      "status": "selected",
+      "source": "pexels",
+      "id": "577210",
+      "page": "https://www.pexels.com/photo/close-up-photo-of-gray-laptop-577210/",
+      "title": "Close-up Photo of Gray Laptop",
+      "photographer": "",
+      "alt": "Laptop showing website report charts"
+    },
+    {
+      "slot": "service-social",
       "status": "selected",
       "source": "pexels",
       "id": "4467737",
@@ -81,7 +81,17 @@
       "alt": "Person working on a laptop with a smartphone beside it"
     },
     {
-      "slot": "service-healthcare",
+      "slot": "service-brand",
+      "status": "selected",
+      "source": "pexels",
+      "id": "7598011",
+      "page": "https://www.pexels.com/photo/branding-company-documents-on-desk-7598011/",
+      "title": "Branding Company Documents on Desk",
+      "photographer": "",
+      "alt": "Brand strategy board with colour and mood references"
+    },
+    {
+      "slot": "project-healthcare",
       "status": "selected",
       "source": "pexels",
       "id": "4270093",
@@ -91,7 +101,7 @@
       "alt": "Dentist showing a patient an X-ray on a tablet"
     },
     {
-      "slot": "service-gbp",
+      "slot": "project-seo",
       "status": "selected",
       "source": "pexels",
       "id": "8824105",
@@ -99,16 +109,6 @@
       "title": "Person Holding Smartphone",
       "photographer": "",
       "alt": "Hand holding a phone with a map open"
-    },
-    {
-      "slot": "service-audit",
-      "status": "selected",
-      "source": "pexels",
-      "id": "577210",
-      "page": "https://www.pexels.com/photo/close-up-photo-of-gray-laptop-577210/",
-      "title": "Close-up Photo of Gray Laptop",
-      "photographer": "",
-      "alt": "Laptop showing website report charts"
     },
     {
       "slot": "video-poster",
@@ -119,6 +119,58 @@
       "title": "Man Working With His Laptop (video) — still frame used as the brand-video poster",
       "photographer": "",
       "alt": "Late evening at a desk with a laptop in a dark office"
+    },
+    {
+      "slot": "service-wix",
+      "status": "selected",
+      "source": "pexels",
+      "id": "196644",
+      "page": "https://www.pexels.com/photo/notebook-beside-the-iphone-on-table-196644/",
+      "title": "Notebook Beside the Iphone on Table",
+      "photographer": "",
+      "alt": "Website wireframe sketches in a notebook beside a phone"
+    },
+    {
+      "slot": "project-revamp",
+      "status": "selected",
+      "source": "pexels",
+      "id": "196645",
+      "page": "https://www.pexels.com/photo/white-printer-paper-196645/",
+      "title": "White Printer Paper",
+      "photographer": "",
+      "alt": "Close-up of hand-drawn website wireframes"
+    },
+    {
+      "slot": "project-personal-branding",
+      "status": "selected",
+      "source": "pexels",
+      "id": "35184837",
+      "page": "https://www.pexels.com/photo/professional-web-developer-at-work-in-office-35184837/",
+      "title": "Professional Web Developer at Work in Office",
+      "photographer": "Masud Gaanwala",
+      "alt": "Professional at a laptop with a phone gimbal set up for recording"
+    },
+    {
+      "slot": "service-revamp",
+      "status": "selected",
+      "source": "unsplash",
+      "id": "1432888498266-38ffec3eaf0a",
+      "url": "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=2600&q=85&fm=jpg",
+      "page": "https://unsplash.com/photos/1432888498266-38ffec3eaf0a",
+      "title": "Desk with website wireframes and a phone (Unsplash)",
+      "photographer": "",
+      "alt": "Designer sketching website wireframes at a desk"
+    },
+    {
+      "slot": "project-business-website",
+      "status": "selected",
+      "source": "unsplash",
+      "id": "1460925895917-afdab827c52f",
+      "url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=2600&q=85&fm=jpg",
+      "page": "https://unsplash.com/photos/1460925895917-afdab827c52f",
+      "title": "Laptop with analytics dashboard (Unsplash)",
+      "photographer": "Carlos Muza (confirm on the source page)",
+      "alt": "Laptop on a desk showing a website analytics dashboard"
     }
   ]
 }

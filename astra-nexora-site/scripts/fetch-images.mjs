@@ -73,6 +73,9 @@ async function ogImageFromPage(pageUrl) {
 }
 
 function candidateUrls(image) {
+    if (image.url) {
+        return [image.url];
+    }
     if (image.source === "pexels") {
         return [
             `https://images.pexels.com/photos/${image.id}/pexels-photo-${image.id}.jpeg?auto=compress&cs=tinysrgb&w=2600`
