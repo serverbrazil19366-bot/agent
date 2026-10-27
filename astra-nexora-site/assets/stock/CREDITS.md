@@ -6,6 +6,4 @@ Grade applied to every photo (keeps the set consistent): saturation 0.95, WebP q
 
 | Slot | Status | Files | Source | Photographer | Licence | Downloaded |
 |------|--------|-------|--------|--------------|---------|------------|
-| hero | selected | _not processed_ | [Professional Web Developer at Work in Office](https://www.pexels.com/photo/professional-web-developer-at-work-in-office-35184837/) | Masud Gaanwala | [Pexels License](https://www.pexels.com/license/) |  |
-| hero | candidate | _not processed_ | [Coworkers Looking at a Laptop in a Meeting](https://www.pexels.com/photo/coworkers-looking-at-a-laptop-in-a-meeting-7698802/) | TODO — check source page | [Pexels License](https://www.pexels.com/license/) |  |
-| hero | candidate | _not processed_ | [Developer working on code in a modern office](https://www.pexels.com/photo/developer-working-on-code-in-a-modern-office-36706460/) | TODO — check source page | [Pexels License](https://www.pexels.com/license/) |  |
+| hero | selected | `pexels-7147921-poster-w800.webp` (800×450, 25 KB)<br>`pexels-7147921-poster-w1200.webp` (1200×675, 40 KB)<br>`pexels-7147921-poster-w2000.webp` (1920×1080, 67 KB) | [Team Meeting (video) — first frame used as the hero poster](https://www.pexels.com/video/team-meeting-7147921/) | Tiger Lily (per the Pexels listing — confirm on the source page) | [Pexels License](https://www.pexels.com/license/) | 2026-10-27 |

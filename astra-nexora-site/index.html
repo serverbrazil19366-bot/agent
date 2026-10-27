@@ -30,12 +30,8 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Sora:wght@600;700&amp;display=swap" rel="stylesheet"/>
 
-<!-- Hero image (LCP)
-     TEMPORARY: loads from Pexels so the page works straight after pasting.
-     After `npm run images`, switch both the preload and the <img> below to
-     assets/stock/pexels-35184837-w800/w1200/w2000.webp (self-hosted). -->
-<link href="https://images.pexels.com" rel="preconnect"/>
-<link as="image" fetchpriority="high" href="https://images.pexels.com/photos/35184837/pexels-photo-35184837.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=2000" imagesizes="100vw" imagesrcset="https://images.pexels.com/photos/35184837/pexels-photo-35184837.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800 800w, https://images.pexels.com/photos/35184837/pexels-photo-35184837.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1200 1200w, https://images.pexels.com/photos/35184837/pexels-photo-35184837.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=2000 2000w" rel="preload"/>
+<!-- Hero poster (LCP) — first frame of the hero video, self-hosted -->
+<link as="image" fetchpriority="high" href="assets/stock/pexels-7147921-poster-w2000.webp" imagesizes="100vw" imagesrcset="assets/stock/pexels-7147921-poster-w800.webp 800w, assets/stock/pexels-7147921-poster-w1200.webp 1200w, assets/stock/pexels-7147921-poster-w2000.webp 1920w" rel="preload" type="image/webp"/>
 
 <link href="css/style.css" rel="stylesheet"/>
 <script>document.documentElement.classList.add("js");</script>
@@ -154,11 +150,11 @@
 ===================================================== -->
 <section class="hero" id="home">
 <div class="hero-background">
-<img alt="Web developer working on a laptop in a modern office" decoding="async" fetchpriority="high" height="1333" sizes="100vw" src="https://images.pexels.com/photos/35184837/pexels-photo-35184837.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=2000" srcset="https://images.pexels.com/photos/35184837/pexels-photo-35184837.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800 800w, https://images.pexels.com/photos/35184837/pexels-photo-35184837.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1200 1200w, https://images.pexels.com/photos/35184837/pexels-photo-35184837.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=2000 2000w" width="2000"/>
-<!-- HERO VIDEO (optional, desktop only)
-     Drop a compressed clip at assets/video/hero.mp4 (1080p, under ~6 MB, no sound).
-     The photo above stays as the first paint and as the fallback on mobile,
-     data-saver and reduced-motion. Remove this block to use the photo only. -->
+<img alt="Team reviewing marketing analytics on a laptop during a meeting" fetchpriority="high" height="1080" sizes="100vw" src="assets/stock/pexels-7147921-poster-w2000.webp" srcset="assets/stock/pexels-7147921-poster-w800.webp 800w, assets/stock/pexels-7147921-poster-w1200.webp 1200w, assets/stock/pexels-7147921-poster-w2000.webp 1920w" width="1920"/>
+<!-- HERO VIDEO (desktop only) — Pexels 7147921, see assets/video/CREDITS.md.
+     The poster above is its first frame: it paints first and stays on mobile,
+     data-saver and reduced-motion. To change the video, replace hero.mp4 and
+     regenerate the poster (steps in assets/video/CREDITS.md). -->
 <video aria-hidden="true" class="hero-video" data-src="assets/video/hero.mp4" loop muted playsinline preload="none"></video>
 </div>
 <div class="hero-overlay"></div>
