@@ -149,7 +149,28 @@ async function convert(image, buffer) {
    CREDITS
 ===================================================== */
 
+async function existingOutputs(image) {
+    const outputs = [];
+    for (const width of config.widths) {
+        const file = `${baseName(image)}-w${width}.webp`;
+        const full = path.join(stockDir, file);
+        if (!(await exists(full))) return null;
+        const meta = await sharp(full).metadata();
+        const { size } = await import("node:fs/promises").then(fs => fs.stat(full));
+        outputs.push({ file, width: meta.width, height: meta.height, kb: Math.round(size / 1024) });
+    }
+    return { outputs };
+}
+
 async function writeCredits(results) {
+    // Keep entries from earlier runs (e.g. when only one --slot was processed)
+    for (const image of config.images) {
+        if (!results.has(baseName(image))) {
+            const previous = await existingOutputs(image);
+            if (previous) results.set(baseName(image), previous);
+        }
+    }
+
     const today = new Date().toISOString().slice(0, 10);
     const licence = {
         pexels: "[Pexels License](https://www.pexels.com/license/)",

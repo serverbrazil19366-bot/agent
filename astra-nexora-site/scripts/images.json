@@ -19,6 +19,106 @@
       "photographer": "Tiger Lily (per the Pexels listing — confirm on the source page)",
       "alt": "Team reviewing marketing analytics on a laptop during a meeting",
       "og": true
+    },
+    {
+      "slot": "about",
+      "status": "selected",
+      "source": "pexels",
+      "id": "39205089",
+      "page": "https://www.pexels.com/photo/team-brainstorming-session-during-strategy-meeting-39205089/",
+      "title": "Team brainstorming session during strategy meeting",
+      "photographer": "",
+      "alt": "Team planning a marketing strategy around a table"
+    },
+    {
+      "slot": "seo-feature",
+      "status": "selected",
+      "source": "pexels",
+      "id": "12969403",
+      "page": "https://www.pexels.com/photo/close-up-shot-of-a-laptop-computer-12969403/",
+      "title": "Close-Up Shot of a Laptop Computer",
+      "photographer": "",
+      "alt": "Laptop showing a website analytics dashboard"
+    },
+    {
+      "slot": "service-seo",
+      "status": "selected",
+      "source": "pexels",
+      "id": "34804005",
+      "page": "https://www.pexels.com/photo/laptop-displaying-coding-and-data-analysis-interface-34804005/",
+      "title": "Laptop displaying coding and data analysis interface",
+      "photographer": "Daniil Komov",
+      "alt": "Laptop showing website performance data"
+    },
+    {
+      "slot": "service-web",
+      "status": "selected",
+      "source": "pexels",
+      "id": "36706460",
+      "page": "https://www.pexels.com/photo/developer-working-on-code-in-a-modern-office-36706460/",
+      "title": "Developer working on code in a modern office",
+      "photographer": "",
+      "alt": "Developer building a website on two monitors"
+    },
+    {
+      "slot": "service-social",
+      "status": "selected",
+      "source": "pexels",
+      "id": "7598011",
+      "page": "https://www.pexels.com/photo/branding-company-documents-on-desk-7598011/",
+      "title": "Branding Company Documents on Desk",
+      "photographer": "",
+      "alt": "Brand strategy board with colour and mood references"
+    },
+    {
+      "slot": "service-automation",
+      "status": "selected",
+      "source": "pexels",
+      "id": "4467737",
+      "page": "https://www.pexels.com/photo/crop-woman-using-smartphone-and-laptop-during-work-in-office-4467737/",
+      "title": "Crop woman using smartphone and laptop during work in office",
+      "photographer": "",
+      "alt": "Person working on a laptop with a smartphone beside it"
+    },
+    {
+      "slot": "service-healthcare",
+      "status": "selected",
+      "source": "pexels",
+      "id": "4270093",
+      "page": "https://www.pexels.com/photo/man-in-gray-scrub-suit-holding-white-tablet-computer-4270093/",
+      "title": "Man in Gray Scrub Suit Holding White Tablet Computer",
+      "photographer": "Cedric Fauntleroy",
+      "alt": "Dentist showing a patient an X-ray on a tablet"
+    },
+    {
+      "slot": "service-gbp",
+      "status": "selected",
+      "source": "pexels",
+      "id": "8824105",
+      "page": "https://www.pexels.com/photo/person-holding-smartphone-8824105/",
+      "title": "Person Holding Smartphone",
+      "photographer": "",
+      "alt": "Hand holding a phone with a map open"
+    },
+    {
+      "slot": "service-audit",
+      "status": "selected",
+      "source": "pexels",
+      "id": "577210",
+      "page": "https://www.pexels.com/photo/close-up-photo-of-gray-laptop-577210/",
+      "title": "Close-up Photo of Gray Laptop",
+      "photographer": "",
+      "alt": "Laptop showing website report charts"
+    },
+    {
+      "slot": "video-poster",
+      "status": "selected",
+      "source": "pexels",
+      "id": "3126361-poster",
+      "page": "https://www.pexels.com/video/man-working-with-his-laptop-3126361/",
+      "title": "Man Working With His Laptop (video) — still frame used as the brand-video poster",
+      "photographer": "",
+      "alt": "Late evening at a desk with a laptop in a dark office"
     }
   ]
 }
