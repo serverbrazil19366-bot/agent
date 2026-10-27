@@ -1330,55 +1330,6 @@ body.site::after {
 
 
 /* =====================================================
-   MARQUEE
-===================================================== */
-
-.marquee {
-    position: relative;
-    z-index: 1;
-    padding: 44px 0;
-    overflow: hidden;
-    background: var(--ink);
-}
-
-.marquee-row {
-    display: flex;
-    width: max-content;
-    will-change: transform;
-}
-
-.marquee-row + .marquee-row {
-    margin-top: 6px;
-}
-
-.marquee-row span {
-    display: inline-flex;
-    align-items: center;
-    gap: 34px;
-    padding-right: 34px;
-    font-family: var(--font-heading);
-    font-size: clamp(40px, 7vw, 96px);
-    font-weight: 700;
-    letter-spacing: -.04em;
-    line-height: 1.05;
-    white-space: nowrap;
-    color: var(--white);
-}
-
-.marquee-row.outline span {
-    color: transparent;
-    -webkit-text-stroke: 1px rgba(255, 255, 255, .35);
-}
-
-.marquee-row span i {
-    font-style: normal;
-    font-size: .4em;
-    color: var(--blue-light);
-    -webkit-text-stroke: 0;
-}
-
-
-/* =====================================================
    STATEMENT (scroll-lit words)
 ===================================================== */
 
@@ -1710,7 +1661,7 @@ body.site::after {
 ===================================================== */
 
 .work {
-    overflow: hidden;
+    overflow: clip;
 }
 
 .work-track-wrap {
@@ -1988,7 +1939,9 @@ body.site::after {
     overflow: hidden;
     border: 1px solid var(--on-dark-line);
     border-radius: 26px;
-    background: linear-gradient(160deg, rgba(255, 255, 255, .06), rgba(255, 255, 255, .015));
+    background: linear-gradient(160deg, rgba(14, 22, 74, .82), rgba(5, 9, 36, .78));
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     color: var(--white);
 }
 
@@ -2095,7 +2048,10 @@ body.site::after {
 
 
 /* =====================================================
-   SPACE BACKDROPS — photo + drifting stars behind dark sections
+   SPACE BACKDROPS
+   The layer spans the whole section; its sticky child is one
+   screen tall and stays put while the section's content scrolls
+   over it. overflow: clip (not hidden) keeps sticky working.
 ===================================================== */
 
 .has-space {
@@ -2103,68 +2059,64 @@ body.site::after {
     isolation: isolate;
 }
 
-.space-bg {
+.space-layer {
     position: absolute;
     inset: 0;
     z-index: -1;
-    overflow: hidden;
+    overflow: clip;
     pointer-events: none;
 }
 
-.space-bg img {
-    position: absolute;
-    inset: -8% 0;
-    width: 100%;
-    height: 116%;
-    object-fit: cover;
-    opacity: .55;
+.space-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100lvh;
+    overflow: hidden;
+    background-color: var(--ink);
+    background-size: cover;
+    background-position: center;
 }
 
-.space-bg::after {
+.space-sticky img,
+.space-sticky video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.space-sticky video {
+    opacity: 0;
+    transition: opacity 1.2s ease;
+}
+
+.space-sticky video.is-playing {
+    opacity: 1;
+}
+
+/* Soft shade so copy stays readable; edges melt into the ink canvas */
+.space-sticky::after {
     content: "";
     position: absolute;
     inset: 0;
     background:
-        linear-gradient(180deg, var(--ink) 0%, rgba(var(--ink-rgb), .35) 22%, rgba(var(--ink-rgb), .35) 78%, var(--ink) 100%),
-        radial-gradient(ellipse at 50% 50%, transparent 30%, rgba(var(--ink-rgb), .55) 100%);
+        linear-gradient(180deg, rgba(var(--ink-rgb), .55) 0%, rgba(var(--ink-rgb), .12) 30%, rgba(var(--ink-rgb), .12) 70%, rgba(var(--ink-rgb), .55) 100%);
 }
 
-.space-bg.strong img {
-    opacity: .8;
+.page-hero .space-sticky::after {
+    background:
+        linear-gradient(90deg, rgba(var(--ink-rgb), .7) 0%, rgba(var(--ink-rgb), .2) 60%),
+        linear-gradient(180deg, rgba(var(--ink-rgb), .4), rgba(var(--ink-rgb), .1) 40%, rgba(var(--ink-rgb), .6));
 }
 
-.stars,
-.stars::before {
+.star-canvas {
     position: absolute;
     inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background-image:
-        radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, .9), transparent 60%),
-        radial-gradient(1px 1px at 28% 72%, rgba(255, 255, 255, .7), transparent 60%),
-        radial-gradient(1.5px 1.5px at 44% 34%, rgba(196, 208, 255, .9), transparent 60%),
-        radial-gradient(1px 1px at 61% 86%, rgba(255, 255, 255, .6), transparent 60%),
-        radial-gradient(1px 1px at 73% 12%, rgba(255, 255, 255, .8), transparent 60%),
-        radial-gradient(1.5px 1.5px at 86% 58%, rgba(196, 208, 255, .8), transparent 60%),
-        radial-gradient(1px 1px at 93% 28%, rgba(255, 255, 255, .6), transparent 60%),
-        radial-gradient(1px 1px at 6% 52%, rgba(255, 255, 255, .7), transparent 60%);
-    background-size: 520px 520px;
-}
-
-.stars {
-    animation: twinkle 6s ease-in-out infinite alternate;
-}
-
-.stars::before {
-    content: "";
-    background-size: 340px 340px;
-    background-position: 120px 80px;
-    animation: twinkle 9s ease-in-out infinite alternate-reverse;
-}
-
-@keyframes twinkle {
-    from { opacity: .35; }
-    to { opacity: 1; }
+    z-index: 1;
+    width: 100%;
+    height: 100%;
 }
 
 
@@ -2173,7 +2125,7 @@ body.site::after {
 ===================================================== */
 
 .audit {
-    overflow: hidden;
+    overflow: clip;
 }
 
 .audit-head {
@@ -2964,7 +2916,7 @@ body.site::after {
 .page-hero {
     position: relative;
     padding: calc(var(--header-h) + 60px) 0 70px;
-    overflow: hidden;
+    overflow: clip;
     background: var(--ink);
     color: var(--white);
 }
@@ -3196,7 +3148,9 @@ body.site::after {
     overflow: hidden;
     border: 1px solid var(--on-dark-line);
     border-radius: 24px;
-    background: linear-gradient(160deg, rgba(255, 255, 255, .06), rgba(255, 255, 255, .015));
+    background: linear-gradient(160deg, rgba(14, 22, 74, .82), rgba(5, 9, 36, .78));
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     color: var(--white);
     transition: transform .5s var(--ease-out), border-color .3s;
 }

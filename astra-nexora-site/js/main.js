@@ -452,27 +452,6 @@ if (animate) {
         });
     }
 
-    // Marquee: drifts on its own, speeds up with scroll velocity
-    const rows = Array.from(document.querySelectorAll("[data-marquee]")).map(row => ({
-        el: row, dir: parseFloat(row.dataset.marquee) || 1, x: 0
-    }));
-
-    if (rows.length) {
-        let boost = 0;
-        if (lenis) lenis.on("scroll", e => { boost = Math.min(Math.abs(e.velocity) * 0.6, 14); });
-        gsap.ticker.add((time, delta) => {
-            const step = (0.045 * delta) + boost;
-            boost *= 0.92;
-            rows.forEach(row => {
-                const half = row.el.scrollWidth / 2;
-                if (!half) return;
-                row.x = (row.x - step * row.dir) % half;
-                if (row.x > 0) row.x -= half;
-                row.el.style.transform = "translate3d(" + row.x + "px,0,0)";
-            });
-        });
-    }
-
     // Statement: words light up as you read down
     document.querySelectorAll("[data-statement]").forEach(text => {
         const words = text.textContent.trim().split(/\s+/);
@@ -513,15 +492,6 @@ if (animate) {
         });
     });
 
-    // Space backdrops drift slower than the page
-    document.querySelectorAll("[data-space-parallax]").forEach(img => {
-        const section = img.closest(".has-space");
-        gsap.fromTo(img, { yPercent: -6 }, {
-            yPercent: 6, ease: "none",
-            scrollTrigger: { trigger: section, start: "top bottom", end: "bottom top", scrub: true }
-        });
-    });
-
     // Image frames open up as they arrive
     gsap.utils.toArray(".stack-media, .work-card-media, .related-card .work-card-media").forEach(frame => {
         const image = frame.querySelector("img");
@@ -552,7 +522,7 @@ if (animate) {
             const next = cards[i + 1];
             if (!next) return;
             gsap.to(card, {
-                scale: 0.95, opacity: 0.6, ease: "none",
+                scale: 0.94, ease: "none",
                 scrollTrigger: { trigger: next, start: "top bottom", end: "top 120px", scrub: true }
             });
         });
@@ -607,6 +577,150 @@ if (finePointer && !reduceMotion) {
     });
 
 }
+
+
+/* =====================================================
+   SPACE BACKDROPS — twinkling star canvas + Milky Way film
+   Stars are drawn at the screen's pixel density so they stay
+   sharp; each canvas only animates while it is on screen.
+===================================================== */
+
+(function () {
+
+    const layers = Array.from(document.querySelectorAll(".space-sticky"));
+    if (!layers.length) return;
+
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    // One soft glow sprite, reused for every bright star
+    const sprite = document.createElement("canvas");
+    sprite.width = sprite.height = 64;
+    const sctx = sprite.getContext("2d");
+    const glow = sctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    glow.addColorStop(0, "rgba(255,255,255,1)");
+    glow.addColorStop(0.18, "rgba(214,224,255,.85)");
+    glow.addColorStop(0.45, "rgba(142,162,255,.18)");
+    glow.addColorStop(1, "rgba(142,162,255,0)");
+    sctx.fillStyle = glow;
+    sctx.fillRect(0, 0, 64, 64);
+
+    function makeField(canvas) {
+
+        const ctx = canvas.getContext("2d");
+        let stars = [];
+        let w = 0;
+        let h = 0;
+
+        function resize() {
+            w = canvas.clientWidth;
+            h = canvas.clientHeight;
+            if (!w || !h) return;
+            canvas.width = Math.round(w * dpr);
+            canvas.height = Math.round(h * dpr);
+            const count = Math.min(Math.round(w * h / 5200), 420);
+            stars = Array.from({ length: count }, () => {
+                const bright = Math.random() < 0.09;
+                return {
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    r: bright ? 1.1 + Math.random() * 1.2 : 0.35 + Math.random() * 0.75,
+                    base: bright ? 0.55 : 0.25 + Math.random() * 0.45,
+                    amp: 0.25 + Math.random() * 0.5,
+                    speed: 0.6 + Math.random() * 2.2,
+                    phase: Math.random() * Math.PI * 2,
+                    bright,
+                    tint: Math.random() < 0.3
+                };
+            });
+        }
+
+        function draw(t) {
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.clearRect(0, 0, w, h);
+            for (const s of stars) {
+                const a = Math.max(0, Math.min(1, s.base + s.amp * Math.sin(t * s.speed + s.phase)));
+                if (s.bright) {
+                    const size = s.r * 9 * (0.75 + a * 0.4);
+                    ctx.globalAlpha = a;
+                    ctx.drawImage(sprite, s.x - size / 2, s.y - size / 2, size, size);
+                    // thin cross flare on the brightest moments
+                    if (a > 0.8) {
+                        ctx.globalAlpha = (a - 0.8) * 2.5;
+                        ctx.fillStyle = "#fff";
+                        ctx.fillRect(s.x - size * 0.9, s.y - 0.35, size * 1.8, 0.7);
+                        ctx.fillRect(s.x - 0.35, s.y - size * 0.9, 0.7, size * 1.8);
+                    }
+                } else {
+                    ctx.globalAlpha = a;
+                    ctx.fillStyle = s.tint ? "#C9D4FF" : "#FFFFFF";
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            ctx.globalAlpha = 1;
+        }
+
+        return { resize, draw };
+    }
+
+    const fields = new Map();
+    const visible = new Set();
+
+    layers.forEach(layer => {
+        const canvas = layer.querySelector(".star-canvas");
+        if (!canvas) return;
+        const field = makeField(canvas);
+        field.resize();
+        field.draw(0);
+        fields.set(layer, field);
+    });
+
+    let resizeTimer = null;
+    window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => fields.forEach(f => { f.resize(); f.draw(performance.now() / 1000); }), 150);
+    });
+
+    if (reduceMotion || !("IntersectionObserver" in window)) return;
+
+    const io = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            const layer = entry.target.firstElementChild;
+            entry.isIntersecting ? visible.add(layer) : visible.delete(layer);
+        });
+    });
+
+    layers.forEach(layer => io.observe(layer.parentElement));
+
+    (function loop(now) {
+        const t = now / 1000;
+        visible.forEach(layer => { const f = fields.get(layer); if (f) f.draw(t); });
+        requestAnimationFrame(loop);
+    })(performance.now());
+
+    // Milky Way film: desktop, motion allowed, not on data saver; loads when near
+    const video = document.querySelector("[data-space-video]");
+    const connection = navigator.connection || {};
+
+    if (video && !connection.saveData && window.matchMedia("(min-width: 769px)").matches) {
+        const vio = new IntersectionObserver(entries => {
+            if (!entries[0].isIntersecting) return;
+            vio.disconnect();
+            video.querySelectorAll("source").forEach(source => { source.src = source.dataset.src; });
+            video.load();
+            video.play().then(() => video.classList.add("is-playing")).catch(() => {});
+        }, { rootMargin: "600px 0px" });
+        vio.observe(video.closest(".space-layer"));
+
+        // Pause it while off screen
+        new IntersectionObserver(entries => {
+            if (!video.classList.contains("is-playing")) return;
+            entries[0].isIntersecting ? video.play().catch(() => {}) : video.pause();
+        }).observe(video.closest(".space-layer"));
+    }
+
+})();
 
 
 /* =====================================================

@@ -88,24 +88,35 @@ def img(base, alt, sizes, prefix, eager=False, extra_cls=""):
 
 
 SPACE = {
-    "earth": "unsplash-1451187580459-43490279c0fa",
-    "milkyway": "unsplash-1502134249126-9f3755a50d78",
-    "stars": "unsplash-1534796636912-3b95b3ab5986",
-    "andromeda": "unsplash-1543722530-d2c3201371e7",
+    "band": "unsplash-1538370965046-79c0d6907d47",
+    "blue": "unsplash-1464802686167-b939a6910659",
+    "violet": "unsplash-1465101162946-4377e57745c3",
+    "orion": "unsplash-1516339901601-2e1b62dc0c45",
 }
 
 
-def space(name, prefix, strong=False, eager=False):
-    """Decorative space photo + twinkling star layer behind a dark section."""
-    w, h, lqip = DIMS[SPACE[name]]
-    base = SPACE[name]
-    srcset = (f"{prefix}assets/stock/{base}-w480.webp 480w, {prefix}assets/stock/{base}-w800.webp 800w, "
-              f"{prefix}assets/stock/{base}-w1200.webp 1200w, {prefix}assets/stock/{base}-w2000.webp {w}w")
-    load = 'fetchpriority="high"' if eager else 'loading="lazy"'
-    return (f'<div aria-hidden="true" class="space-bg{" strong" if strong else ""}" style="background:url({lqip}) center/cover">'
-            f'<img alt="" data-space-parallax="" decoding="async" height="{h}" {load} sizes="100vw" '
-            f'src="{prefix}assets/stock/{base}-w1200.webp" srcset="{srcset}" width="{w}"/></div>'
-            f'<div aria-hidden="true" class="stars"></div>')
+def space(name, prefix, video=False):
+    """Fixed space backdrop for a dark section: the photo (or the Milky Way
+    film) stays put while the content scrolls over it, with a canvas of
+    twinkling stars on top. Purely decorative."""
+    if video:
+        art = (f'<img alt="" decoding="async" height="1080" loading="lazy" sizes="100vw" '
+               f'src="{prefix}assets/video/space-poster-w1920.webp" srcset="{prefix}assets/video/space-poster-w800.webp 800w, '
+               f'{prefix}assets/video/space-poster-w1920.webp 1920w" width="1920"/>'
+               f'<video data-space-video="" loop="" muted="" playsinline="" preload="none">'
+               f'<source data-src="{prefix}assets/video/space.webm" type="video/webm"/>'
+               f'<source data-src="{prefix}assets/video/space.mp4" type="video/mp4"/></video>')
+        style = ""
+    else:
+        base = SPACE[name]
+        w, h, lqip = DIMS[base]
+        srcset = (f"{prefix}assets/stock/{base}-w480.webp 480w, {prefix}assets/stock/{base}-w800.webp 800w, "
+                  f"{prefix}assets/stock/{base}-w1200.webp 1200w, {prefix}assets/stock/{base}-w2000.webp 2000w")
+        art = (f'<img alt="" decoding="async" height="{h}" loading="lazy" sizes="100vw" '
+               f'src="{prefix}assets/stock/{base}-w1200.webp" srcset="{srcset}" width="{w}"/>')
+        style = f' style="background-image:url({lqip})"'
+    return (f'<div aria-hidden="true" class="space-layer"><div class="space-sticky"{style}>'
+            f'{art}<canvas class="star-canvas"></canvas></div></div>')
 
 
 def btn(label, href, kind="btn-primary", extra="", target=False):
@@ -327,7 +338,7 @@ def cta_contact(prefix, home, with_form=True):
 </div>
 </div>'''
     return f'''<section aria-labelledby="contactTitle" class="section dark has-space" id="contact">
-{space("earth", prefix)}
+{space("blue", prefix)}
 <div class="container contact-grid">
 <div class="contact-info">
 {eyebrow("Let's build your next era", True)}
@@ -420,7 +431,6 @@ def home_page():
     hero_lines = "\n".join(f'<span class="line"><span>{l}</span></span>' for l in HOME["hero_h1"])
     stats = "\n".join(f"<li><strong>{esc(a)}</strong><span>{esc(b)}</span></li>" for a, b in HOME["stats"])
 
-    marquee_items = "".join(f'{esc(s["nav"])} <i>✦</i> ' for s in SERVICES)
 
     stack = ""
     for i, s in enumerate(SERVICES, 1):
@@ -548,11 +558,6 @@ def home_page():
 </div>
 </section>
 
-<div aria-hidden="true" class="marquee">
-<div class="marquee-row" data-marquee="1"><span>{marquee_items}</span><span>{marquee_items}</span></div>
-<div class="marquee-row outline" data-marquee="-1"><span>{marquee_items}</span><span>{marquee_items}</span></div>
-</div>
-
 <section aria-labelledby="aboutTitle" class="section sheet" id="about">
 <div class="container">
 {eyebrow("About Astra Nexora")}
@@ -574,7 +579,7 @@ def home_page():
 </section>
 
 <section aria-labelledby="servicesTitle" class="section dark has-space" id="services">
-{space("earth", p)}
+{space("", p, video=True)}
 <div class="container">
 <div class="section-head split-head">
 <div>
@@ -605,7 +610,7 @@ def home_page():
 </section>
 
 <section aria-labelledby="workTitle" class="section dark work has-space" id="work">
-{space("milkyway", p)}
+{space("band", p)}
 <div class="container work-intro">
 {eyebrow("Our work", True)}
 <h2 class="title" data-split="" id="workTitle">Projects built to <em>deliver.</em></h2>
@@ -643,7 +648,7 @@ def home_page():
 </section>
 
 <section aria-labelledby="whyTitle" class="section dark has-space">
-{space("stars", p)}
+{space("violet", p)}
 <div class="container">
 <div class="section-head split-head">
 <div>
@@ -658,7 +663,7 @@ def home_page():
 </section>
 
 <section aria-labelledby="auditTitle" class="section dark audit has-space" id="audit">
-{space("andromeda", p, strong=True)}
+{space("orion", p)}
 <div class="container">
 <div class="audit-head">
 {eyebrow("Free website audit", True)}
@@ -781,7 +786,7 @@ def service_page(s, index):
 <main id="main">
 
 <section class="page-hero has-space" id="home">
-{space("stars", p)}
+{space("band", p)}
 <span aria-hidden="true" class="page-number">{num}</span>
 <div class="container">
 <div class="page-hero-grid">
@@ -818,7 +823,7 @@ def service_page(s, index):
 </section>
 
 <section aria-labelledby="includesTitle" class="section dark has-space">
-{space("earth", p)}
+{space("violet", p)}
 <div class="container">
 <div class="section-head split-head">
 <div>
@@ -877,7 +882,7 @@ def service_page(s, index):
 </section>
 
 <section aria-labelledby="relatedTitle" class="section dark has-space">
-{space("milkyway", p)}
+{space("blue", p)}
 <div class="container">
 <div class="section-head">
 {eyebrow("Works well with", True)}
@@ -933,7 +938,7 @@ def project_page(pr, index):
 <main id="main">
 
 <section class="page-hero has-space" id="home">
-{space("stars", p)}
+{space("band", p)}
 <div class="container">
 <div class="page-hero-grid">
 <div>
