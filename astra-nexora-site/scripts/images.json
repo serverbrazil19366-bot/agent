@@ -171,6 +171,36 @@
       "title": "Laptop with analytics dashboard (Unsplash)",
       "photographer": "Carlos Muza (confirm on the source page)",
       "alt": "Laptop on a desk showing a website analytics dashboard"
+    },
+    {
+      "slot": "service-paid-ads",
+      "status": "selected",
+      "source": "pexels",
+      "id": "6476246",
+      "page": "https://www.pexels.com/photo/a-person-holding-a-tablet-with-digital-marketing-pie-chart-on-screen-6476246/",
+      "title": "A Person Holding a Tablet with Digital Marketing Pie Chart on Screen",
+      "photographer": "",
+      "alt": "Team reviewing a campaign chart on a tablet"
+    },
+    {
+      "slot": "service-email-leads",
+      "status": "selected",
+      "source": "pexels",
+      "id": "5721014",
+      "page": "https://www.pexels.com/photo/crop-businessman-text-messaging-on-smartphone-at-table-with-laptop-5721014/",
+      "title": "Crop businessman text messaging on smartphone at table with laptop",
+      "photographer": "",
+      "alt": "Person replying to messages on a phone beside a laptop"
+    },
+    {
+      "slot": "service-ai-automation",
+      "status": "selected",
+      "source": "pexels",
+      "id": "16094042",
+      "page": "https://www.pexels.com/photo/man-working-with-chatgpt-16094042/",
+      "title": "Man Working with ChatGPT",
+      "photographer": "Matheus Bertelli",
+      "alt": "Hands typing on a laptop with an AI assistant open"
     }
   ]
 }

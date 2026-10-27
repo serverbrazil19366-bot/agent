@@ -3409,13 +3409,14 @@ button {
     max-width: 980px;
     margin-top: 22px;
     font-family: var(--font-heading);
-    font-size: clamp(38px, 8vw, 92px);
-    line-height: 1;
+    font-size: clamp(34px, 6.4vw, 78px);
+    line-height: 1.02;
     letter-spacing: -.05em;
     text-wrap: balance;
 }
 
 .cta-band h2 em {
+    display: block;
     font-style: normal;
     color: #AFC0FF;
 }
