@@ -16,6 +16,7 @@ const mobileMenu = document.getElementById("mobileMenu");
 
 function setMenu(open) {
     mobileMenu.classList.toggle("open", open);
+    document.getElementById("header").classList.toggle("menu-open", open);
     menuToggle.setAttribute("aria-expanded", String(open));
     menuToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
 }
@@ -46,8 +47,15 @@ if (menuToggle && mobileMenu) {
 
 const header = document.getElementById("header");
 
+const progressBar = document.querySelector(".scroll-progress span");
+
 function updateHeader() {
     header.classList.toggle("scrolled", window.scrollY > 40);
+
+    if (progressBar) {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        progressBar.style.transform = "scaleX(" + (max > 0 ? window.scrollY / max : 0) + ")";
+    }
 }
 
 if (header) {
@@ -140,7 +148,7 @@ if (canUseHeroVideo()) {
 ===================================================== */
 
 const revealElements =
-    document.querySelectorAll(".reveal, .reveal-left, .reveal-right");
+    document.querySelectorAll(".reveal, .reveal-left, .reveal-right, .reveal-clip");
 
 if (prefersReducedMotion || !("IntersectionObserver" in window)) {
 
