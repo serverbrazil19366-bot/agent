@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="noindex" name="robots"/>
+<title>Hero photo options — review only</title>
+<link href="../css/style.css" rel="stylesheet"/>
+<style>
+    /* Review page only — not part of the site */
+    body { background: var(--paper); padding: 40px 0 80px; }
+    .review-head { width: var(--container); margin: 0 auto 40px; }
+    .review-head h1 { font-family: var(--font-heading); color: var(--navy); font-size: 32px; letter-spacing: -.03em; }
+    .review-head p { color: var(--muted); margin-top: 10px; line-height: 1.7; max-width: 760px; }
+    .option { width: var(--container); margin: 0 auto 50px; }
+    .option-meta { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: baseline; margin-bottom: 14px; color: var(--navy); }
+    .option-meta strong { font-family: var(--font-heading); font-size: 20px; }
+    .option-meta a { color: var(--blue); text-decoration: underline; font-size: 14px; }
+    .option-meta small { color: var(--muted); font-size: 14px; }
+    .mini-hero { position: relative; aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; background: var(--navy); }
+    .mini-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 65% center; }
+    .mini-hero .hero-overlay { background: linear-gradient(90deg, rgba(5,10,48,.96) 0%, rgba(5,10,48,.90) 22%, rgba(5,10,48,.72) 40%, rgba(5,10,48,.38) 58%, rgba(5,10,48,.12) 78%, rgba(5,10,48,.04) 100%); }
+    .mini-copy { position: absolute; z-index: 2; left: 6%; top: 50%; transform: translateY(-50%); color: #fff; max-width: 55%; }
+    .mini-copy h2 { font-family: var(--font-heading); font-size: clamp(20px, 3.6vw, 48px); line-height: 1.04; letter-spacing: -.04em; }
+    .mini-copy h2 em { font-style: normal; color: var(--blue-light); }
+    .missing { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; color: #fff; text-align: center; padding: 20px; z-index: 3; }
+    .mini-hero.failed .missing { display: flex; }
+</style>
+</head>
+<body>
+<div class="review-head">
+<h1>Hero photo options</h1>
+<p>Each option is shown with the real hero overlay and headline so you can judge text contrast and mood. Images load from <code>assets/stock/</code> after <code>npm run images</code>; before that they load straight from Pexels (review only — the site itself never hotlinks).</p>
+</div>
+
+<div class="option">
+<div class="option-meta"><strong>A — recommended</strong><a href="https://www.pexels.com/photo/professional-web-developer-at-work-in-office-35184837/" rel="noopener" target="_blank">Pexels 35184837</a><small>Masud Gaanwala · South Asian developer at work</small></div>
+<div class="mini-hero" data-id="35184837">
+<img alt="Option A"/><div class="hero-overlay"></div>
+<div class="mini-copy"><h2>Transforming brands into <em>digital powerhouses.</em></h2></div>
+<div class="missing">Couldn't load — open the Pexels link above</div>
+</div>
+</div>
+
+<div class="option">
+<div class="option-meta"><strong>B</strong><a href="https://www.pexels.com/photo/coworkers-looking-at-a-laptop-in-a-meeting-7698802/" rel="noopener" target="_blank">Pexels 7698802</a><small>Coworkers reviewing work on a laptop</small></div>
+<div class="mini-hero" data-id="7698802">
+<img alt="Option B"/><div class="hero-overlay"></div>
+<div class="mini-copy"><h2>Transforming brands into <em>digital powerhouses.</em></h2></div>
+<div class="missing">Couldn't load — open the Pexels link above</div>
+</div>
+</div>
+
+<div class="option">
+<div class="option-meta"><strong>C</strong><a href="https://www.pexels.com/photo/developer-working-on-code-in-a-modern-office-36706460/" rel="noopener" target="_blank">Pexels 36706460</a><small>Developer in a modern office</small></div>
+<div class="mini-hero" data-id="36706460">
+<img alt="Option C"/><div class="hero-overlay"></div>
+<div class="mini-copy"><h2>Transforming brands into <em>digital powerhouses.</em></h2></div>
+<div class="missing">Couldn't load — open the Pexels link above</div>
+</div>
+</div>
+
+<script>
+document.querySelectorAll(".mini-hero").forEach(function (box) {
+    var id = box.dataset.id;
+    var img = box.querySelector("img");
+    var sources = [
+        "../assets/stock/pexels-" + id + "-w1200.webp",
+        "https://images.pexels.com/photos/" + id + "/pexels-photo-" + id + ".jpeg?auto=compress&cs=tinysrgb&w=1600"
+    ];
+    var i = 0;
+    img.onerror = function () {
+        i++;
+        if (i < sources.length) img.src = sources[i];
+        else box.classList.add("failed");
+    };
+    img.src = sources[0];
+});
+</script>
+</body>
+</html>

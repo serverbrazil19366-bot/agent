@@ -1,0 +1,38 @@
+{
+  "widths": [800, 1200, 2000],
+  "quality": 76,
+  "grade": { "saturation": 0.95 },
+  "images": [
+    {
+      "slot": "hero",
+      "status": "selected",
+      "source": "pexels",
+      "id": "35184837",
+      "page": "https://www.pexels.com/photo/professional-web-developer-at-work-in-office-35184837/",
+      "title": "Professional Web Developer at Work in Office",
+      "photographer": "Masud Gaanwala",
+      "alt": "Web developer working on a laptop in a modern office",
+      "og": true
+    },
+    {
+      "slot": "hero",
+      "status": "candidate",
+      "source": "pexels",
+      "id": "7698802",
+      "page": "https://www.pexels.com/photo/coworkers-looking-at-a-laptop-in-a-meeting-7698802/",
+      "title": "Coworkers Looking at a Laptop in a Meeting",
+      "photographer": "",
+      "alt": "Colleagues reviewing work together on a laptop in a meeting"
+    },
+    {
+      "slot": "hero",
+      "status": "candidate",
+      "source": "pexels",
+      "id": "36706460",
+      "page": "https://www.pexels.com/photo/developer-working-on-code-in-a-modern-office-36706460/",
+      "title": "Developer working on code in a modern office",
+      "photographer": "",
+      "alt": "Developer working on code in a modern office"
+    }
+  ]
+}
