@@ -436,8 +436,9 @@ PROJECTS = [
 # ---------------------------------------------------------------- homepage
 
 HOME = {
-    "hero_h1": ["Transforming brands", "into <em>digital</em>", "<em>powerhouses.</em>"],
-    "hero_lead": "A digital marketing agency in Chennai helping businesses build powerful digital identities through creativity, strategy and measurable growth.",
+    # Previous hero line (from the bolt.host site): "Transforming brands into digital powerhouses."
+    "hero_h1": ["Marketing that", "gets your business", "<em>chosen.</em>"],
+    "hero_lead": "Astra Nexora is a Chennai studio for SEO, websites, branding and performance marketing, planned as one system and measured on the enquiries it brings in.",
     "stats": [("2025", "Founded in Chennai"), ("8", "Service areas"), ("Chennai", "Serving all of India")],
     "statement": "We build marketing as one connected system. Strategy, websites, search, content, ads and automation, planned together by one team and measured on the enquiries they bring in.",
     "about": [

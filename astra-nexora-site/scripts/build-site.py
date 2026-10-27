@@ -6,6 +6,10 @@ Writes index.html, services/<slug>.html and projects/<slug>.html.
 projects/seo-report.html (the dashboard demo) is hand-written and left alone.
 Image sizes and blur-up placeholders come from scripts/image-dims.json,
 which `npm run images` keeps up to date.
+
+Design: editorial. White page, near-black type, one brand blue, numbered
+sections divided by hairlines. Headings in Inter Tight with Instrument
+Serif italic for the accent word (<em> in content.py).
 """
 
 import html
@@ -20,6 +24,7 @@ from content import HOME, PROJECTS, SERVICES  # noqa: E402
 
 SITE = "https://astranexora.com/"
 WA = "https://wa.me/918838417707"
+PHONE = "+91 88384 17707"
 EMAIL = "info.astranexora@gmail.com"
 SOCIAL = [
     ("Instagram", "https://www.instagram.com/astranexora2025/"),
@@ -38,20 +43,15 @@ SERVICE_TAGLINES = {
 }
 SERVICE_BY_SLUG = {s["slug"]: s for s in SERVICES}
 
+# Real client quotes go here once approved: (quote, name, business · city).
+# The section stays off the page while this list is empty.
+TESTIMONIALS = []
+
 with open(os.path.join(ROOT, "scripts", "image-dims.json")) as f:
     DIMS = json.load(f)
 
 WA_ICON = ('<svg aria-hidden="true" viewbox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.2-.2-.5-.3z" fill="currentColor"></path></svg>')
-CHAT_ICON = ('<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 20.5l1.6-5.4A8.4 8.4 0 1 1 21 11.5z"></path></svg>')
-
-ICONS = {
-    "compass": '<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',
-    "target": '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>',
-    "spark": '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6.3 6.3l2.8 2.8M14.9 14.9l2.8 2.8M6.3 17.7l2.8-2.8M14.9 9.1l2.8-2.8"/>',
-    "gem": '<path d="M6 3h12l3 6-9 12L3 9z"/><path d="M3 9h18M12 21 8 9l4-6 4 6z"/>',
-    "handshake": '<path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.9-3.9a2 2 0 0 0-2.8 0l-.9.9a1 1 0 1 1-3-3l2.8-2.8a5 5 0 0 1 6 .8L21 7"/><path d="M3 7l3.6-1.6a5 5 0 0 1 5.4 1.1"/><path d="M3 15l3 3 3-3"/>',
-    "bolt": '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
-}
+ARROW = '<svg aria-hidden="true" class="arrow" viewbox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"/></svg>'
 
 
 def esc(text):
@@ -66,8 +66,8 @@ def strip_tags(text):
     return re.sub(r"<[^>]+>", "", text)
 
 
-def img(base, alt, sizes, prefix, eager=False, extra_cls=""):
-    """Responsive WebP with a blur-up placeholder (applied to its wrapper by main.js)."""
+def img(base, alt, sizes, prefix, eager=False, cls=""):
+    """Responsive WebP with a blur-up placeholder (painted on the frame by main.js)."""
     w, h, lqip = DIMS[base]
     srcset = ", ".join([
         f"{prefix}assets/stock/{base}-w480.webp 480w",
@@ -76,41 +76,33 @@ def img(base, alt, sizes, prefix, eager=False, extra_cls=""):
         f"{prefix}assets/stock/{base}-w2000.webp {w}w",
     ])
     if eager:
-        load = 'fetchpriority="high"'
-        cls = extra_cls
+        load, classes, lq = 'fetchpriority="high"', cls, ""
     else:
-        load = 'loading="lazy"'
-        cls = ("lqip " + extra_cls).strip()
-    c = f' class="{cls}"' if cls else ""
-    lq = "" if eager else f' data-lqip="{lqip}"'
+        load, classes, lq = 'loading="lazy"', ("lqip " + cls).strip(), f' data-lqip="{lqip}"'
+    c = f' class="{classes}"' if classes else ""
     return (f'<img alt="{attr(alt)}"{c}{lq} decoding="async" height="{h}" {load} sizes="{sizes}" '
             f'src="{prefix}assets/stock/{base}-w1200.webp" srcset="{srcset}" width="{w}"/>')
 
 
-def logo(cls=""):
-    """Inline wordmark: four-point star + ASTRA NEXORA. Uses currentColor so it
-    works on light and dark. Swap for the real logo SVG when it arrives."""
-    return (f'<svg aria-hidden="true" class="logo{(" " + cls) if cls else ""}" viewbox="0 0 236 36">'
+def logo():
+    """Inline wordmark: four-point star + ASTRA NEXORA in currentColor.
+    Swap for the real logo SVG when it arrives."""
+    return ('<svg aria-hidden="true" class="logo" viewbox="0 0 236 36">'
             '<path class="logo-star" d="M18 2c1.2 8.6 4.8 12.6 14 14-9.2 1.4-12.8 5.4-14 14-1.2-8.6-4.8-12.6-14-14 9.2-1.4 12.8-5.4 14-14z"/>'
-            '<text font-family="Sora, system-ui, sans-serif" font-size="17" font-weight="700" letter-spacing="2.4" x="42" y="23.5">'
-            'ASTRA <tspan class="logo-accent">NEXORA</tspan></text></svg>')
+            '<text font-family="Inter Tight, Inter, system-ui, sans-serif" font-size="17" font-weight="600" letter-spacing="2.6" x="42" y="23.5">'
+            'ASTRA NEXORA</text></svg>')
 
 
-def space_light(rings=True):
-    """Light-theme space accent: a field of tiny twinkling blue stars and
-    slowly turning orbit rings, drawn over a white or paper section."""
-    orbit = ('<span class="orbit orbit-a"><i></i></span><span class="orbit orbit-b"><i></i></span>' if rings else "")
-    return (f'<div aria-hidden="true" class="cosmos"><canvas class="star-canvas" data-tone="light"></canvas>{orbit}</div>')
-
-
-def btn(label, href, kind="btn-primary", extra="", target=False):
+def btn(label, href, kind="btn-dark", target=False):
     t = ' rel="noopener" target="_blank"' if target else ""
-    return (f'<a class="btn {kind} magnetic{(" " + extra) if extra else ""}" href="{href}"{t}>'
-            f'<span>{label}</span><span aria-hidden="true" class="btn-icon"><span>↗</span><span>↗</span></span></a>')
+    return f'<a class="btn {kind}" href="{href}"{t}><span>{label}</span>{ARROW}</a>'
 
 
-def eyebrow(text, light=False):
-    return f'<span class="eyebrow{" light" if light else ""}">{text}</span>'
+def label(num, text):
+    """Section label: hairline, (number) and name, the editorial way of marking a section."""
+    return f'<div class="label"><span>({num})</span><span>{text}</span></div>'
+
+
 
 
 # =================================================================== shared
@@ -119,7 +111,7 @@ def head(title, description, path, prefix, schemas, preload=None, body_class="si
     pre = ""
     if preload:
         w = DIMS[preload][0]
-        pre = (f'<link as="image" fetchpriority="high" href="{prefix}assets/stock/{preload}-w1200.webp" imagesizes="(min-width: 1001px) 50vw, 100vw" '
+        pre = (f'<link as="image" fetchpriority="high" href="{prefix}assets/stock/{preload}-w1200.webp" imagesizes="100vw" '
                f'imagesrcset="{prefix}assets/stock/{preload}-w480.webp 480w, {prefix}assets/stock/{preload}-w800.webp 800w, '
                f'{prefix}assets/stock/{preload}-w1200.webp 1200w, {prefix}assets/stock/{preload}-w2000.webp {w}w" rel="preload" type="image/webp"/>\n')
     ld = "".join(
@@ -147,9 +139,9 @@ def head(title, description, path, prefix, schemas, preload=None, body_class="si
 <link href="{prefix}assets/favicon.png" rel="apple-touch-icon"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Sora:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&amp;family=Inter:wght@400;500;600&amp;family=Instrument+Serif:ital@0;1&amp;display=swap" rel="stylesheet"/>
 {pre}<link href="{prefix}css/style.css" rel="stylesheet"/>
-<script>(function(d){{d.classList.add("js");if("scrollRestoration"in history)history.scrollRestoration="manual";try{{if(location.hash||sessionStorage.getItem("an-intro")||matchMedia("(prefers-reduced-motion: reduce)").matches)d.classList.add("no-preload")}}catch(e){{}}}})(document.documentElement);</script>
+<script>(function(d){{d.classList.add("js");if("scrollRestoration"in history)history.scrollRestoration="manual";}})(document.documentElement);</script>
 {ld}</head>
 <body class="{body_class}">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -159,36 +151,32 @@ def head(title, description, path, prefix, schemas, preload=None, body_class="si
 
 def header(prefix, home):
     menu = "\n".join(
-        f'<a href="{prefix}services/{s["slug"]}.html"><b>{i:02d}</b><strong>{esc(s["nav"])}</strong>'
+        f'<a href="{prefix}services/{s["slug"]}.html"><span>{i:02d}</span><strong>{esc(s["nav"])}</strong>'
         f'<small>{esc(SERVICE_TAGLINES[s["slug"]])}</small></a>'
         for i, s in enumerate(SERVICES, 1))
     mobile = "\n".join(f'<a href="{prefix}services/{s["slug"]}.html">{esc(s["nav"])}</a>' for s in SERVICES)
     return f'''<header class="site-header" id="header">
 <div class="header-inner">
-<a aria-label="Astra Nexora — home" class="brand" href="{home}#home">
-{logo()}<span class="visually-hidden">Astra Nexora</span>
-</a>
+<a aria-label="Astra Nexora — home" class="brand" href="{home}#home">{logo()}</a>
 <nav aria-label="Main" class="desktop-nav">
 <a href="{home}#about">About</a>
 <div class="nav-dropdown">
-<a aria-haspopup="true" class="nav-dropdown-toggle" href="{home}#services">Services <i aria-hidden="true">▾</i></a>
+<a aria-haspopup="true" class="nav-dropdown-toggle" href="{home}#services">Services</a>
 <div class="nav-dropdown-panel">
 <div class="nav-dropdown-grid">
 {menu}
 </div>
-<div class="nav-dropdown-foot"><span>Not sure where to start?</span><a href="{home}#contact">Get a free website audit ↗</a></div>
 </div>
 </div>
 <a href="{home}#work">Work</a>
 <a href="{home}#founder">Founder</a>
 <a href="{home}#faq">FAQ</a>
-<a href="{home}#contact">Contact</a>
 </nav>
 <div class="header-actions">
-<a aria-label="Chat on WhatsApp: +91 88384 17707" class="header-call" href="{WA}" rel="noopener" target="_blank">{WA_ICON}</a>
-{btn("Free audit", f"{home}#contact", "btn-primary", "header-cta")}
+<a class="header-link" href="{WA}" rel="noopener" target="_blank">{PHONE}</a>
+{btn("Let's talk", f"{home}#contact")}
 </div>
-<button aria-controls="mobileMenu" aria-expanded="false" aria-label="Open menu" class="menu-toggle" id="menuToggle" type="button"><span></span><span></span><span></span></button>
+<button aria-controls="mobileMenu" aria-expanded="false" aria-label="Open menu" class="menu-toggle" id="menuToggle" type="button"><span></span><span></span></button>
 <div aria-hidden="true" class="scroll-progress"><span></span></div>
 </div>
 <nav aria-label="Mobile" class="mobile-menu" id="mobileMenu">
@@ -201,9 +189,8 @@ def header(prefix, home):
 <a href="{home}#faq">FAQ</a>
 <a href="{home}#contact">Contact</a>
 <div class="mobile-contact">
-<a href="{WA}" rel="noopener" target="_blank">WhatsApp +91 88384 17707</a>
+<a href="{WA}" rel="noopener" target="_blank">WhatsApp {PHONE}</a>
 <a href="mailto:{EMAIL}">{EMAIL}</a>
-{btn("Get a free website audit", f"{home}#contact")}
 </div>
 </nav>
 </header>'''
@@ -211,46 +198,45 @@ def header(prefix, home):
 
 def footer(prefix, home):
     services = "\n".join(f'<a href="{prefix}services/{s["slug"]}.html">{esc(s["nav"])}</a>' for s in SERVICES)
-    social = "\n".join(f'<li><a href="{u}" rel="noopener" target="_blank">{n}</a></li>' for n, u in SOCIAL)
+    social = "\n".join(f'<a href="{u}" rel="noopener" target="_blank">{n}</a>' for n, u in SOCIAL)
     return f'''<footer class="footer">
 <div class="container">
-<div class="footer-main">
-<div class="footer-brand">
-<a aria-label="Astra Nexora — home" class="footer-logo" href="{home}#home">{logo()}</a>
-<p>A digital marketing agency in Chennai helping businesses build powerful digital identities through creativity, strategy and measurable growth.</p>
-<ul aria-label="Social media" class="footer-social">
-{social}
-</ul>
-</div>
-<div class="footer-links">
+<div class="footer-top">
+<p class="footer-cta">Have a project in mind?<br/><a href="{home}#contact">Let's talk <em>today.</em></a></p>
+<div class="footer-cols">
+<div class="footer-col">
 <h2>Services</h2>
 {services}
 </div>
-<div class="footer-links">
-<h2>Explore</h2>
+<div class="footer-col">
+<h2>Studio</h2>
 <a href="{home}#about">About</a>
 <a href="{home}#work">Work</a>
 <a href="{prefix}projects/seo-report.html">Sample SEO report</a>
 <a href="{home}#founder">Founder</a>
 <a href="{home}#faq">FAQ</a>
 </div>
-<div class="footer-links">
+<div class="footer-col">
 <h2>Contact</h2>
-<a href="{WA}" rel="noopener" target="_blank">WhatsApp +91 88384 17707</a>
+<a href="{WA}" rel="noopener" target="_blank">WhatsApp {PHONE}</a>
 <a href="mailto:{EMAIL}">{EMAIL}</a>
-<p>Chennai · Serving all of India</p>
+<p>Chennai, Tamil Nadu<br/>Serving all of India</p>
+</div>
+<div class="footer-col">
+<h2>Follow</h2>
+{social}
 </div>
 </div>
-<div aria-hidden="true" class="footer-wordmark">ASTRA NEXORA</div>
+</div>
+<a aria-label="Astra Nexora — back to top" class="footer-wordmark" href="{home}#home">ASTRA NEXORA</a>
 <div class="footer-bottom">
-<span>© 2026 Astra Nexora. All rights reserved.</span>
-<span>Creative. Strategic. Growth Driven.</span>
+<span>© 2026 Astra Nexora</span>
+<span>Creative. Strategic. Growth driven.</span>
 </div>
 </div>
 </footer>
 
-<a aria-label="Chat with Astra Nexora on WhatsApp" class="float-whatsapp" href="{WA}" rel="noopener" target="_blank">{WA_ICON}<span>Chat with us</span></a>
-<button aria-label="Back to top" class="to-top" type="button"><svg aria-hidden="true" viewbox="0 0 44 44"><circle class="to-top-track" cx="22" cy="22" r="20"></circle><circle class="to-top-ring" cx="22" cy="22" r="20"></circle></svg><span aria-hidden="true">↑</span></button>'''
+<a aria-label="Chat with Astra Nexora on WhatsApp" class="float-whatsapp" href="{WA}" rel="noopener" target="_blank">{WA_ICON}</a>'''
 
 
 def scripts(prefix):
@@ -264,15 +250,10 @@ def scripts(prefix):
 '''
 
 
-def cta_contact(prefix, home, with_form=True):
-    """Closing section: big headline, contact lines and (on home) the audit form."""
-    social = "".join(f'<a href="{u}" rel="noopener" target="_blank">{n}</a> · ' for n, u in SOCIAL).rstrip(" · ")
-    if with_form:
-        opts = ["Free website audit"] + [s["title"] for s in SERVICES] + ["Something else"]
-        options = "\n".join(f'<option value="{attr(o)}">{esc(o)}</option>' for o in opts)
-        form = f'''<div class="form-card" data-reveal="">
-<div class="form-head"><strong>Get your free website audit</strong><span>Fill this in and it opens WhatsApp with your details ready to send.</span></div>
-<form class="audit-form" id="auditForm" novalidate="">
+def audit_form():
+    opts = ["Free website audit"] + [s["title"] for s in SERVICES] + ["Something else"]
+    options = "\n".join(f'<option value="{attr(o)}">{esc(o)}</option>' for o in opts)
+    return f'''<form class="audit-form" id="auditForm" novalidate="">
 <div class="form-field">
 <label for="name">Your name</label>
 <input aria-describedby="nameError" autocomplete="name" id="name" name="name" required="" type="text"/>
@@ -308,34 +289,41 @@ def cta_contact(prefix, home, with_form=True):
 <textarea id="message" name="message" rows="2"></textarea>
 </div>
 <div class="form-actions">
-<button class="btn btn-primary" type="submit"><span>Send on WhatsApp</span><span aria-hidden="true" class="btn-icon"><span>↗</span><span>↗</span></span></button>
-<p class="form-note">No website yet? Type "none". Nothing is stored on this site.</p>
+<button class="btn btn-blue" type="submit"><span>Send on WhatsApp</span>{ARROW}</button>
+<p class="form-note">No website yet? Type "none". Opens WhatsApp with your details, nothing is stored here.</p>
 </div>
-</form>
-</div>'''
+</form>'''
+
+
+def contact_section(prefix, home, with_form=True):
+    social = " · ".join(f'<a href="{u}" rel="noopener" target="_blank">{n}</a>' for n, u in SOCIAL)
+    lines = f'''<dl class="contact-lines">
+<div><dt>WhatsApp</dt><dd><a href="{WA}" rel="noopener" target="_blank">{PHONE}</a></dd></div>
+<div><dt>Email</dt><dd><a href="mailto:{EMAIL}">{EMAIL}</a></dd></div>
+<div><dt>Studio</dt><dd>Chennai, Tamil Nadu · Serving all of India</dd></div>
+<div><dt>Follow</dt><dd>{social}</dd></div>
+</dl>'''
+    if with_form:
+        right = f'<div class="contact-form" data-reveal="">{audit_form()}</div>'
     else:
-        form = f'''<div class="form-card" data-reveal="">
-<p class="lead">Tell us about your business on WhatsApp or email. We'll reply with a clear next step, usually within 24 hours.</p>
-<div class="hero-actions" style="margin-top:24px">
-{btn("Chat on WhatsApp", WA, "btn-primary", target=True)}
-{btn("Fill in the audit form", f"{home}#contact", "btn-outline-dark")}
+        right = f'''<div class="contact-form" data-reveal="">
+<p class="lead">Tell us about your business on WhatsApp or email. You'll get a clear next step, usually within 24 hours.</p>
+<div class="actions">
+{btn("Chat on WhatsApp", WA, "btn-blue", target=True)}
+{btn("Fill in the audit form", f"{home}#contact", "btn-line")}
 </div>
 </div>'''
-    return f'''<section aria-labelledby="contactTitle" class="section contact-section" id="contact">
-{space_light()}
-<div class="container contact-grid">
+    return f'''<section aria-labelledby="contactTitle" class="section contact" id="contact">
+<div class="container">
+{label("✦", "Contact")}
+<h2 class="contact-title" data-split="" id="contactTitle">Let's build your <em>next era.</em></h2>
+<div class="contact-grid">
 <div class="contact-info">
-{eyebrow("Let's build your next era")}
-<h2 class="contact-title" data-split="" id="contactTitle">Ready to build something <em>remarkable?</em></h2>
-<span class="contact-status"><i aria-hidden="true" class="live-dot"></i>Currently accepting projects · replies within 24 hours</span>
-<div class="contact-lines">
-<div><span>WhatsApp</span><a href="{WA}" rel="noopener" target="_blank">+91 88384 17707</a></div>
-<div><span>Email</span><a href="mailto:{EMAIL}">{EMAIL}</a></div>
-<div><span>Studio</span><p>Chennai, Tamil Nadu · Serving all of India</p></div>
-<div><span>Follow</span><p>{social}</p></div>
+<p class="status"><i aria-hidden="true" class="live-dot"></i>Taking on new projects · replies within 24 hours</p>
+{lines}
 </div>
+{right}
 </div>
-{form}
 </div>
 </section>'''
 
@@ -352,10 +340,10 @@ def breadcrumb_schema(items):
 
 def faq_html(faqs):
     return "\n".join(
-        f'''<details class="faq-item"{' open=""' if i == 0 else ''}>
-<summary><span>{esc(q)}</span><i aria-hidden="true"></i></summary>
+        f'''<details class="faq-item">
+<summary><span class="faq-num">{i:02d}</span><span>{esc(q)}</span><i aria-hidden="true"></i></summary>
 <p>{esc(a)}</p>
-</details>''' for i, (q, a) in enumerate(faqs))
+</details>''' for i, (q, a) in enumerate(faqs, 1))
 
 
 def faq_schema(faqs):
@@ -365,11 +353,21 @@ def faq_schema(faqs):
     }
 
 
+def steps_html(items):
+    """Process / approach steps: numbered columns with a top rule that fills on scroll."""
+    return "\n".join(
+        f'''<li class="step" data-reveal="">
+<span class="step-num">{i:02d}</span>
+<h3>{esc(it[0])}</h3>
+<p>{esc(it[1])}</p>
+{f'<span class="step-tag">{esc(it[2])}</span>' if len(it) > 2 else ''}
+</li>''' for i, it in enumerate(items, 1))
+
+
 # =================================================================== home
 
 def home_page():
     p, home = "", ""
-    s_count = len(SERVICES)
 
     org = {
         "@context": "https://schema.org",
@@ -413,116 +411,103 @@ def home_page():
             "content, websites, branding, lead generation and AI marketing automation.")
 
     hero_lines = "\n".join(f'<span class="line"><span>{l}</span></span>' for l in HOME["hero_h1"])
-    stats = "\n".join(f"<li><strong>{esc(a)}</strong><span>{esc(b)}</span></li>" for a, b in HOME["stats"])
 
-
-    stack = ""
+    # Services: an index list; the photo follows the pointer on desktop
+    services = ""
     for i, s in enumerate(SERVICES, 1):
-        chips = "".join(f"<li>{esc(n)}</li>" for n, _ in s["includes"])
-        stack += f'''<article class="stack-card spotlight">
-<div class="stack-card-body">
-<div class="stack-top"><span class="stack-num">{i:02d}</span><span class="stack-count">{i:02d} / {s_count:02d}</span></div>
-<h3>{esc(s["title"])}</h3>
-<p>{esc(s["lead"])}</p>
-<ul aria-label="Includes" class="chips">{chips}</ul>
-{btn("Explore service", f"services/{s['slug']}.html", "btn-white")}
-</div>
-<div class="stack-media img-wrap">{img(s["hero"], s["hero_alt"], "(min-width: 1001px) 45vw, 92vw", p)}</div>
-</article>
+        subs = " · ".join(n for n, _ in s["includes"][:4])
+        services += f'''<li class="svc-row" data-reveal="">
+<a href="services/{s["slug"]}.html" data-preview="assets/stock/{s["hero"]}-w800.webp">
+<span class="svc-num">{i:02d}</span>
+<span class="svc-name">{esc(s["title"])}</span>
+<span class="svc-subs">{esc(subs)}</span>
+<span class="svc-go">{ARROW}</span>
+</a>
+</li>
 '''
 
-    process = "\n".join(
-        f'''<li class="process-item" data-reveal="">
-<span class="process-num">{i:02d}</span>
-<h3>{esc(t)}</h3>
-<div><p>{esc(d)}</p><span class="process-tag">{esc(tag)}</span></div>
-</li>''' for i, (t, d, tag) in enumerate(HOME["process"], 1))
-
-    work = f'''<article class="work-card feature">
-<div class="work-card-media img-wrap">
-<img alt="Astra Nexora SEO report dashboard showing organic clicks, enquiries and rankings" class="lqip" decoding="async" height="1125" loading="lazy" sizes="(min-width: 1001px) 640px, 82vw" src="assets/projects/seo-report-dashboard-w1200.webp" srcset="assets/projects/seo-report-dashboard-w800.webp 800w, assets/projects/seo-report-dashboard-w1200.webp 1200w, assets/projects/seo-report-dashboard-w1800.webp 1800w" width="1800"/>
-<span class="work-badge live"><i aria-hidden="true" class="live-dot"></i>LIVE DEMO</span>
+    # Work: featured live demo, then concept projects in a two-column grid
+    work = f'''<article class="case case-feature" data-reveal="">
+<a class="case-link" href="projects/seo-report.html">
+<div class="case-media img-wrap">
+<img alt="Astra Nexora SEO report dashboard showing organic clicks, enquiries and rankings" class="lqip" decoding="async" height="1125" loading="lazy" sizes="(min-width: 1320px) 1280px, 94vw" src="assets/projects/seo-report-dashboard-w1200.webp" srcset="assets/projects/seo-report-dashboard-w800.webp 800w, assets/projects/seo-report-dashboard-w1200.webp 1200w, assets/projects/seo-report-dashboard-w1800.webp 1800w" width="1800"/>
+<span class="case-view" aria-hidden="true">Open demo</span>
 </div>
-<div class="work-card-body">
-<small>Analytics &amp; Reporting</small>
+<div class="case-meta">
 <h3>SEO Report Dashboard</h3>
-<p>The monthly dashboard every SEO client gets: clicks, enquiries, rankings, Business Profile and site health. Shown with sample data.</p>
-<a class="link-arrow work-card-link" href="projects/seo-report.html">Open the dashboard <span aria-hidden="true">→</span></a>
+<span>Analytics &amp; reporting</span>
+<span>Live demo · sample data</span>
 </div>
+</a>
 </article>
 '''
     for pr in PROJECTS:
-        work += f'''<article class="work-card">
-<div class="work-card-media img-wrap">{img(pr["hero"], pr["hero_alt"], "(min-width: 1001px) 460px, 82vw", p)}<span class="work-badge">CONCEPT</span></div>
-<div class="work-card-body">
-<small>{esc(pr["category"])}</small>
+        work += f'''<article class="case" data-reveal="">
+<a class="case-link" href="projects/{pr["slug"]}.html">
+<div class="case-media img-wrap">{img(pr["hero"], pr["hero_alt"], "(min-width: 901px) 46vw, 94vw", p)}<span class="case-view" aria-hidden="true">View</span></div>
+<div class="case-meta">
 <h3>{esc(pr["title"])}</h3>
-<p>{esc(pr["summary"])}</p>
-<a class="link-arrow work-card-link" href="projects/{pr["slug"]}.html">View project <span aria-hidden="true">→</span></a>
+<span>{esc(pr["category"])}</span>
+<span>Concept</span>
 </div>
+</a>
 </article>
 '''
 
-    bento = ""
-    for i, (icon, t, d) in enumerate(HOME["principles"]):
-        accent = " accent" if i == 0 else ""
-        bento += f'''<article class="bento-card spotlight{accent}" data-reveal="">
-<span class="bento-icon"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24">{ICONS[icon]}</svg></span>
-<h3>{esc(t)}</h3>
-<p>{esc(d)}</p>
-</article>
-'''
+    principles = "\n".join(
+        f'''<li data-reveal=""><span>{i:02d}</span><h3>{esc(t)}</h3><p>{esc(d)}</p></li>'''
+        for i, (_, t, d) in enumerate(HOME["principles"], 1))
 
     checks = [
-        ('<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>', "Speed & Core Web Vitals", "How fast your pages load on a real phone, and what's slowing them down."),
-        ('<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>', "Mobile experience", "Whether your site is easy to read, tap and navigate on a small screen."),
-        ('<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>', "SEO & indexing", "Titles, headings, content and technical issues that affect your Google rankings."),
-        ('<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>', "Google Business Profile", "How you appear on Google Maps and in local search for your area."),
-        ('<path d="M4 12h12M12 6l6 6-6 6"/>', "Enquiry paths", "Forms, WhatsApp and call buttons: how easily a visitor can reach you."),
-        ('<path d="M4 19V5M4 19h16M8 15l3-4 3 2 5-6"/>', "Tracking & analytics", "Whether Analytics and Search Console are set up to measure what matters."),
+        ("Speed & Core Web Vitals", "How fast your pages load on a real phone, and what's slowing them down."),
+        ("Mobile experience", "Whether your site is easy to read, tap and navigate on a small screen."),
+        ("SEO & indexing", "Titles, headings, content and technical issues that affect your rankings."),
+        ("Google Business Profile", "How you appear on Google Maps and in local search for your area."),
+        ("Enquiry paths", "Forms, WhatsApp and call buttons: how easily a visitor can reach you."),
+        ("Tracking & analytics", "Whether Analytics and Search Console measure what matters."),
     ]
-    audit = "".join(
-        f'''<article class="audit-item" data-reveal="">
-<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24">{icon}</svg>
-<h3>{esc(t)}</h3>
-<p>{esc(d)}</p>
-</article>
-''' for icon, t, d in checks)
+    audit = "\n".join(
+        f'<li data-reveal=""><span>{i:02d}</span><div><h3>{esc(t)}</h3><p>{esc(d)}</p></div></li>'
+        for i, (t, d) in enumerate(checks, 1))
 
     f = HOME["founder"]
     timeline = "\n".join(f"<li><strong>{y}</strong><span>{esc(t)}</span></li>" for y, t in f["timeline"])
     bio = "\n".join(f"<p>{esc(b)}</p>" for b in f["bio"])
 
-    body = f'''<div aria-hidden="true" class="preloader" id="preloader">
-<div class="preloader-inner">
-<span class="preloader-star">✦</span>
-<div class="preloader-word">{"".join(f'<span style="animation-delay:{i * 0.04:.2f}s">{c if c != " " else "&nbsp;"}</span>' for i, c in enumerate("ASTRA NEXORA"))}</div>
-<div class="preloader-bar"><span></span></div>
-</div>
-</div>
+    stats = "\n".join(f"<div><dt>{esc(b)}</dt><dd>{esc(a)}</dd></div>" for a, b in HOME["stats"])
 
-{header(p, home)}
+    testimonials = ""
+    if TESTIMONIALS:
+        quotes = "\n".join(
+            f'<figure class="quote" data-reveal=""><blockquote>{esc(q)}</blockquote><figcaption><strong>{esc(n)}</strong>{esc(b)}</figcaption></figure>'
+            for q, n, b in TESTIMONIALS)
+        testimonials = f'''<section aria-labelledby="feedbackTitle" class="section" id="feedback">
+<div class="container">
+{label("✦", "Client voices")}
+<h2 class="title" data-split="" id="feedbackTitle">In their <em>words.</em></h2>
+<div class="quotes">{quotes}</div>
+</div>
+</section>
+'''
+
+    body = f'''{header(p, home)}
 
 <main id="main">
 
 <section aria-labelledby="heroTitle" class="hero" id="home">
-{space_light()}
-<div class="container hero-content" data-hero-content="">
-<div class="hero-head">
-{eyebrow("Digital marketing agency · Chennai")}
+<div class="container">
+<dl class="hero-meta">
+{stats}
+</dl>
 <h1 class="hero-title" id="heroTitle">
 {hero_lines}
 </h1>
-</div>
-<div class="hero-side">
+<div class="hero-foot">
 <p class="hero-lead">{esc(HOME["hero_lead"])}</p>
-<div class="hero-actions">
-{btn("Get a free website audit", "#contact")}
-{btn("Explore services", "#services", "btn-outline-dark")}
+<div class="actions">
+{btn("Get a free website audit", "#contact", "btn-blue")}
+{btn("See our work", "#work", "btn-line")}
 </div>
-<ul aria-label="Astra Nexora at a glance" class="hero-stats">
-{stats}
-</ul>
 </div>
 </div>
 <div class="container hero-stage">
@@ -530,181 +515,134 @@ def home_page():
 <img alt="Team reviewing marketing analytics on a laptop during a meeting" decoding="async" fetchpriority="high" height="1080" sizes="(min-width: 1320px) 1280px, 94vw" src="assets/stock/pexels-7147921-poster-w1200.webp" srcset="assets/stock/pexels-7147921-poster-w480.webp 480w, assets/stock/pexels-7147921-poster-w800.webp 800w, assets/stock/pexels-7147921-poster-w1200.webp 1200w, assets/stock/pexels-7147921-poster-w2000.webp 1920w" width="1920"/>
 <!-- Desktop-only video (Pexels 7147921, see assets/video/CREDITS.md). The poster above is its first frame. -->
 <video aria-hidden="true" class="hero-video" data-src="assets/video/hero.mp4" loop="" muted="" playsinline="" preload="none"></video>
-<div aria-hidden="true" class="hero-shade"></div>
-<button aria-pressed="false" class="hero-video-toggle" hidden="" type="button"><span aria-hidden="true" class="hero-video-toggle-icon"></span><span class="hero-video-toggle-label">Pause video</span></button>
-<aside aria-label="Free website audit" class="hero-card">
-<span class="hero-card-status"><i aria-hidden="true" class="live-dot"></i>Accepting projects</span>
-<strong>Free website audit</strong>
-<p>Send us your website and get a clear list of what to fix first.</p>
-<a class="link-arrow" href="#contact">Get my audit <span aria-hidden="true">→</span></a>
-</aside>
+<button aria-pressed="false" class="hero-video-toggle" hidden="" type="button"><span aria-hidden="true" class="hero-video-toggle-icon"></span><span class="hero-video-toggle-label">Pause</span></button>
 </div>
 </div>
 </section>
 
-<section aria-labelledby="aboutTitle" class="section sheet" id="about">
+<section aria-labelledby="aboutTitle" class="section" id="about">
 <div class="container">
-{eyebrow("About Astra Nexora")}
+{label("01", "About")}
 <h2 class="visually-hidden" id="aboutTitle">About Astra Nexora</h2>
-<p class="statement-text" data-statement="" style="margin-top:30px">{esc(HOME["statement"])}</p>
-<div class="statement-grid">
-<div class="statement-media">
-<div class="frame frame-tall img-wrap" data-parallax="-0.06">{img("pexels-39205089", "Team planning a marketing strategy around a table", "(min-width: 1001px) 22vw, 46vw", p)}</div>
-<div class="frame frame-tall img-wrap" data-parallax="0.06">{img("pexels-6476246", "Team reviewing a campaign chart on a tablet", "(min-width: 1001px) 22vw, 46vw", p)}</div>
-<div class="badge-float"><strong>2025</strong><span>Founded<br/>in Chennai</span></div>
+<p class="statement" data-statement="">{esc(HOME["statement"])}</p>
+<div class="about-grid">
+<div class="about-media">
+<div class="frame img-wrap" data-parallax="-0.05">{img("pexels-39205089", "Team planning a marketing strategy around a table", "(min-width: 1001px) 30vw, 92vw", p)}</div>
+<div class="frame img-wrap" data-parallax="0.05">{img("pexels-6476246", "Team reviewing a campaign chart on a tablet", "(min-width: 1001px) 22vw, 60vw", p)}</div>
 </div>
-<div class="statement-copy" data-reveal="">
+<div class="about-copy" data-reveal="">
 {"".join(f"<p>{esc(t)}</p>" for t in HOME["about"])}
-<p>Founded in 2025, we work with businesses across India from our base in Chennai.</p>
-<a class="link-arrow" href="#process">See how we work <span aria-hidden="true">→</span></a>
+<a class="text-link" href="#process">How we work {ARROW}</a>
 </div>
 </div>
 </div>
 </section>
 
-<section aria-labelledby="servicesTitle" class="section sheet paper svc-section" id="services">
-{space_light()}
+<section aria-labelledby="servicesTitle" class="section services" id="services">
 <div class="container">
-<div class="section-head split-head">
-<div>
-{eyebrow("Our services")}
-<h2 class="title" data-split="" id="servicesTitle" style="margin-top:22px">Digital growth. <em>Powered by strategy.</em></h2>
+{label("02", "Services")}
+<div class="head">
+<h2 class="title" data-split="" id="servicesTitle">Digital growth, <em>powered by strategy.</em></h2>
+<p class="lead">Eight services, planned together. Pick one, or let us run the whole system.</p>
 </div>
-<p class="lead">We combine creativity, data and technology to help businesses strengthen their digital presence, reach the right audience and generate meaningful growth.</p>
+<ul class="svc-list">
+{services}</ul>
 </div>
-<div class="stack">
-{stack}</div>
-</div>
+<div aria-hidden="true" class="svc-preview"><img alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" /></div>
 </section>
 
-<section aria-labelledby="processTitle" class="section sheet paper" id="process">
+<section aria-labelledby="processTitle" class="section paper" id="process">
 <div class="container">
-<div class="section-head split-head">
-<div>
-{eyebrow("The process")}
-<h2 class="title" data-split="" id="processTitle" style="margin-top:22px">From audit to <em>growth,</em> in four steps.</h2>
+{label("03", "Process")}
+<div class="head">
+<h2 class="title" data-split="" id="processTitle">From audit to growth, <em>in four steps.</em></h2>
+<p class="lead">Every project starts with your business goals and ends with numbers you can check.</p>
 </div>
-<p class="lead">Every project begins with understanding your business goals and ends with results you can measure.</p>
-</div>
-<ol class="process">
-<span aria-hidden="true" class="process-fill"><span></span></span>
-{process}
+<ol class="steps" data-steps="">
+{steps_html(HOME["process"])}
 </ol>
 </div>
 </section>
 
-<section aria-labelledby="workTitle" class="section work work-section" id="work">
-{space_light(rings=False)}
-<div class="container work-intro">
-{eyebrow("Our work")}
-<h2 class="title" data-split="" id="workTitle">Projects built to <em>deliver.</em></h2>
-<p class="lead" style="max-width:620px">A live reporting demo and concept projects that show how we approach websites, brands and search. Client case studies will be added as clients approve them.</p>
-<span class="work-hint">Scroll to explore →</span>
+<section aria-labelledby="workTitle" class="section" id="work">
+<div class="container">
+{label("04", "Work")}
+<div class="head">
+<h2 class="title" data-split="" id="workTitle">Selected <em>work.</em></h2>
+<p class="lead">A live reporting demo and concept projects that show how we think. Client case studies are added as clients approve them.</p>
 </div>
-<div class="work-track-wrap">
-<div class="work-track">
+<div class="cases">
 {work}</div>
 </div>
 </section>
 
-<section aria-labelledby="founderTitle" class="section founder-section" id="founder">
-{space_light()}
-<div class="container founder-grid">
+<section aria-labelledby="founderTitle" class="section paper founder" id="founder">
+<div class="container">
+{label("05", "Founder")}
+<div class="founder-grid">
 <div class="founder-media" data-founder-media="">
-<span aria-hidden="true" class="founder-orbit"><i></i></span>
-<span aria-hidden="true" class="founder-glow"></span>
 <div class="founder-photo img-wrap">
 <img alt="S. Saktheeswaran, Founder and Managing Director of Astra Nexora, at his desk" class="lqip" data-parallax-img="" decoding="async" height="900" loading="lazy" sizes="(min-width: 1001px) 40vw, 92vw" src="assets/founder/sakthi-desk-w720.webp" srcset="assets/founder/sakthi-desk-w480.webp 480w, assets/founder/sakthi-desk-w720.webp 720w" width="720"/>
-<div class="badge-float founder-badge"><strong>2019</strong><span>Started in<br/>digital marketing</span></div>
 </div>
 <div class="founder-photo-alt img-wrap">
 <img alt="S. Saktheeswaran sitting in a leather armchair" class="lqip" decoding="async" height="900" loading="lazy" sizes="(min-width: 1001px) 16vw, 38vw" src="assets/founder/sakthi-chair-w480.webp" srcset="assets/founder/sakthi-chair-w480.webp 480w, assets/founder/sakthi-chair-w720.webp 720w" width="720"/>
 </div>
 </div>
 <div class="founder-copy">
-{eyebrow("Meet the founder")}
 <h2 class="title" data-split="" id="founderTitle">The vision behind <em>Astra Nexora.</em></h2>
 <p class="founder-role"><span class="founder-name">{esc(f["name"])}<svg aria-hidden="true" class="founder-underline" preserveaspectratio="none" viewbox="0 0 200 12"><path d="M2 8 C 50 2, 110 2, 198 6"></path></svg></span><small>{esc(f["role"])}</small></p>
 {bio}
 <ol class="timeline" data-timeline="">
 {timeline}
 </ol>
-<div>{btn("Connect on LinkedIn", f["linkedin"], "btn-outline-dark", target=True)}</div>
+{btn("Connect on LinkedIn", f["linkedin"], "btn-line", target=True)}
+</div>
 </div>
 </div>
 </section>
 
-<section aria-labelledby="whyTitle" class="section why-section">
-{space_light()}
+<section aria-labelledby="whyTitle" class="section" id="why">
 <div class="container">
-<div class="section-head split-head">
-<div>
-{eyebrow("Why Astra Nexora")}
-<h2 class="title" data-split="" id="whyTitle" style="margin-top:22px">What sets <em>us apart.</em></h2>
-</div>
+{label("06", "Why us")}
+<div class="head">
+<h2 class="title" data-split="" id="whyTitle">What sets <em>us apart.</em></h2>
 <p class="lead">Six principles behind every project we take on.</p>
 </div>
-<div class="bento">
-{bento}</div>
+<ol class="principles">
+{principles}
+</ol>
 </div>
 </section>
 
-<section aria-labelledby="auditTitle" class="section sheet paper audit" id="audit">
-{space_light(rings=False)}
+<section aria-labelledby="auditTitle" class="section ink" id="audit">
 <div class="container">
-<div class="audit-head">
-{eyebrow("Free website audit")}
+{label("07", "Free audit")}
+<div class="audit-grid">
+<div class="audit-copy">
 <h2 class="title" data-split="" id="auditTitle">Find out what's holding your <em>website back.</em></h2>
 <p class="lead">Send us your website and we'll check the six things that decide whether visitors find you, trust you and get in touch. Free, with no obligation.</p>
+{btn("Get my free audit", "#contact", "btn-blue")}
 </div>
-<div class="audit-grid">
-{audit}</div>
-<div class="audit-cta">
-{btn("Get my free audit", "#contact")}
-<p>You get a clear list of what to fix first, in plain language.</p>
-</div>
-</div>
-</section>
-
-<!-- TODO: replace each placeholder slide with a real, approved quote (name, business, city). -->
-<section aria-labelledby="feedbackTitle" class="section sheet testimonials-section" id="feedback" style="margin-top:8px">
-<div class="container t-grid">
-<div>
-{eyebrow("Client voices")}
-<h2 class="title" data-split="" id="feedbackTitle" style="margin-top:22px">Real clients. <em>Real words.</em></h2>
-<p class="lead" style="margin-top:20px">We only publish feedback our clients have read and approved.</p>
-<div class="testimonial-nav">
-<button aria-label="Previous feedback" data-testimonial-prev="" type="button">←</button>
-<button aria-label="Next feedback" data-testimonial-next="" type="button">→</button>
-</div>
-</div>
-<div>
-<div aria-live="polite" class="testimonial-card">
-<div aria-hidden="true" class="testimonial-quote-mark">“</div>
-<ul class="testimonial-slides">
-{"".join(f'<li class="testimonial-slide"{"" if i == 1 else " hidden"}><blockquote class="testimonial-text">TODO: Client quote {i} — waiting for an approved quote.</blockquote><div class="testimonial-person"><div aria-hidden="true" class="testimonial-avatar">C{i}</div><div class="testimonial-details"><strong>Client name</strong><span>Business · City</span></div></div></li>' for i in (1, 2, 3))}
-</ul>
-<div aria-hidden="true" class="testimonial-count">01</div>
-</div>
-<div aria-hidden="true" class="testimonial-progress"><span></span></div>
+<ol class="checks">
+{audit}
+</ol>
 </div>
 </div>
 </section>
 
-<section aria-labelledby="faqTitle" class="section sheet paper" id="faq">
-<div class="container faq-grid">
-<div>
-{eyebrow("FAQ")}
-<h2 class="title" data-split="" id="faqTitle" style="margin-top:22px">Questions, <em>answered.</em></h2>
-<p class="lead" style="margin-top:20px">Everything you need to know before we start building together.</p>
-</div>
-<div>
+{testimonials}<section aria-labelledby="faqTitle" class="section" id="faq">
+<div class="container">
+{label("08", "FAQ")}
+<div class="faq-grid">
+<h2 class="title" data-split="" id="faqTitle">Questions, <em>answered.</em></h2>
+<div class="faq-list">
 {faq_html(HOME["faqs"])}
 </div>
 </div>
+</div>
 </section>
 
-{cta_contact(p, home)}
+{contact_section(p, home)}
 
 </main>
 
@@ -741,29 +679,22 @@ def service_page(s, index):
         ],
     }
 
-    facts = "\n".join(f"<li><span>{esc(k)}</span><strong>{esc(v)}</strong></li>" for k, v in s["facts"])
-    ideal = "".join(f"<li>{esc(t)}</li>" for t in s["ideal"])
+    facts = "\n".join(f"<div><dt>{esc(k)}</dt><dd>{esc(v)}</dd></div>" for k, v in s["facts"])
+    ideal = ", ".join(s["ideal"])
     includes = "\n".join(
-        f'''<article class="include-card spotlight" data-reveal="">
-<span class="include-num">{i:02d}</span>
-<h3>{esc(n)}</h3>
-<p>{esc(d)}</p>
-</article>''' for i, (n, d) in enumerate(s["includes"], 1))
-    process = "\n".join(
-        f'''<li class="process-item" data-reveal="">
-<span class="process-num">{i:02d}</span>
-<h3>{esc(t)}</h3>
-<div><p>{esc(d)}</p></div>
-</li>''' for i, (t, d) in enumerate(s["process"], 1))
-    deliver = "\n".join(f'<li><span aria-hidden="true">✓</span>{esc(d)}</li>' for d in s["deliverables"])
+        f'<li data-reveal=""><span>{i:02d}</span><h3>{esc(n)}</h3><p>{esc(d)}</p></li>'
+        for i, (n, d) in enumerate(s["includes"], 1))
+    deliver = "\n".join(f'<li>{esc(d)}</li>' for d in s["deliverables"])
 
     related = ""
     for slug in s["related"]:
         r = SERVICE_BY_SLUG[slug]
-        related += f'''<a class="related-card" data-reveal="" href="{r["slug"]}.html">
-<div class="work-card-media img-wrap">{img(r["hero"], r["hero_alt"], "(min-width: 901px) 30vw, 92vw", p)}</div>
-<div class="related-body"><div><small>{SERVICES.index(r) + 1:02d}</small><h3>{esc(r["title"])}</h3></div><span aria-hidden="true" class="round-arrow">↗</span></div>
+        related += f'''<article class="case" data-reveal="">
+<a class="case-link" href="{r["slug"]}.html">
+<div class="case-media img-wrap">{img(r["hero"], r["hero_alt"], "(min-width: 901px) 30vw, 94vw", p)}<span class="case-view" aria-hidden="true">View</span></div>
+<div class="case-meta"><h3>{esc(r["title"])}</h3><span>{SERVICES.index(r) + 1:02d}</span></div>
 </a>
+</article>
 '''
     prev_s = SERVICES[(index - 2) % len(SERVICES)]
     next_s = SERVICES[index % len(SERVICES)]
@@ -773,118 +704,108 @@ def service_page(s, index):
 <main id="main">
 
 <section class="page-hero" id="home">
-{space_light()}
-<span aria-hidden="true" class="page-number">{num}</span>
 <div class="container">
-<div class="page-hero-grid">
-<div>
 <nav aria-label="Breadcrumb" class="breadcrumb"><a href="{home}">Home</a><span aria-hidden="true">/</span><a href="{home}#services">Services</a><span aria-hidden="true">/</span><span aria-current="page">{esc(s["nav"])}</span></nav>
-{eyebrow(f"Service {num} · {esc(s['nav'])}")}
-<h1 data-split="">{s["h1"]}</h1>
-<p class="page-hero-lead">{esc(s["lead"])}</p>
-<div class="page-hero-actions">
-{btn("Get a free consultation", f"{home}#contact")}
-{btn("Chat on WhatsApp", WA, "btn-outline-dark", target=True)}
+{label(num, "Service")}
+<h1 class="page-title" data-split="">{s["h1"]}</h1>
+<div class="page-foot">
+<p class="hero-lead">{esc(s["lead"])}</p>
+<div class="actions">
+{btn("Get a free consultation", f"{home}#contact", "btn-blue")}
+{btn("Chat on WhatsApp", WA, "btn-line", target=True)}
 </div>
 </div>
-<div class="page-hero-media img-wrap" data-hero-media="">{img(s["hero"], s["hero_alt"], "(min-width: 1001px) 40vw, 92vw", p, eager=True)}</div>
-</div>
-<ul class="facts">
+<dl class="facts">
 {facts}
-</ul>
+</dl>
+</div>
+<div class="container">
+<div class="page-media img-wrap" data-hero-media="">{img(s["hero"], s["hero_alt"], "(min-width: 1320px) 1280px, 94vw", p, eager=True)}</div>
 </div>
 </section>
 
-<section aria-labelledby="overviewTitle" class="section sheet">
-<div class="container overview-grid">
-<div class="overview-copy">
-{eyebrow("Why it matters")}
+<section aria-labelledby="overviewTitle" class="section">
+<div class="container">
+{label("01", "Overview")}
+<div class="split">
 <h2 class="title" data-split="" id="overviewTitle">Built for <em>real growth.</em></h2>
+<div class="split-copy" data-reveal="">
 <p class="big">{esc(s["overview"][0])}</p>
 <p>{esc(s["overview"][1])}</p>
-<h3 class="visually-hidden">Ideal for</h3>
-<ul aria-label="Ideal for" class="tags">{ideal}</ul>
+<p class="ideal"><strong>Ideal for</strong> {esc(ideal)}</p>
 </div>
-<div class="frame frame-tall img-wrap" data-reveal="">{img(s["side"], s["side_alt"], "(min-width: 1001px) 42vw, 92vw", p, extra_cls="parallax-img")}</div>
+</div>
+<div class="wide-media img-wrap" data-reveal="">{img(s["side"], s["side_alt"], "(min-width: 1320px) 1280px, 94vw", p, cls="parallax-img")}</div>
 </div>
 </section>
 
-<section aria-labelledby="includesTitle" class="section sheet paper">
-{space_light(rings=False)}
+<section aria-labelledby="includesTitle" class="section paper">
 <div class="container">
-<div class="section-head split-head">
-<div>
-{eyebrow("What's included")}
-<h2 class="title" data-split="" id="includesTitle" style="margin-top:22px">Everything in <em>{esc(s["nav"])}.</em></h2>
-</div>
+{label("02", "What's included")}
+<div class="head">
+<h2 class="title" data-split="" id="includesTitle">Everything in <em>{esc(s["nav"])}.</em></h2>
 <p class="lead">Choose the pieces you need, or let us run the whole service for you.</p>
 </div>
-<div class="include-grid">
+<ol class="principles">
 {includes}
-</div>
-</div>
-</section>
-
-<section aria-labelledby="processTitle" class="section sheet paper">
-<div class="container">
-<div class="section-head split-head">
-<div>
-{eyebrow("How we work")}
-<h2 class="title" data-split="" id="processTitle" style="margin-top:22px">A clear process, <em>start to finish.</em></h2>
-</div>
-<p class="lead">You always know what's happening, what's next and what it's achieving.</p>
-</div>
-<ol class="process">
-<span aria-hidden="true" class="process-fill"><span></span></span>
-{process}
 </ol>
 </div>
 </section>
 
-<section aria-labelledby="deliverTitle" class="section sheet" style="margin-top:8px">
-<div class="container deliver-grid">
-<div>
-{eyebrow("What you get")}
-<h2 class="title" data-split="" id="deliverTitle" style="margin-top:22px">Deliverables you can <em>hold us to.</em></h2>
-<p class="lead" style="margin:20px 0 30px">Every engagement comes with clear deliverables and regular reporting.</p>
-{btn("Start a project", f"{home}#contact")}
+<section aria-labelledby="processTitle" class="section">
+<div class="container">
+{label("03", "Process")}
+<div class="head">
+<h2 class="title" data-split="" id="processTitle">A clear process, <em>start to finish.</em></h2>
+<p class="lead">You always know what's happening, what's next and what it's achieving.</p>
 </div>
+<ol class="steps" data-steps="">
+{steps_html(s["process"])}
+</ol>
+</div>
+</section>
+
+<section aria-labelledby="deliverTitle" class="section ink">
+<div class="container">
+{label("04", "Deliverables")}
+<div class="split">
+<h2 class="title" data-split="" id="deliverTitle">What you <em>get.</em></h2>
+<div>
 <ul class="deliver-list" data-reveal="">
 {deliver}
 </ul>
+{btn("Start a project", f"{home}#contact", "btn-blue")}
+</div>
+</div>
 </div>
 </section>
 
-<section aria-labelledby="faqTitle" class="section sheet paper" style="margin-top:8px">
-<div class="container faq-grid">
-<div>
-{eyebrow("FAQ")}
-<h2 class="title" data-split="" id="faqTitle" style="margin-top:22px">Questions about <em>{esc(s["nav"])}.</em></h2>
-<p class="lead" style="margin-top:20px">Something else on your mind? Message us on WhatsApp and we'll answer.</p>
-</div>
-<div>
+<section aria-labelledby="faqTitle" class="section">
+<div class="container">
+{label("05", "FAQ")}
+<div class="faq-grid">
+<h2 class="title" data-split="" id="faqTitle">Questions about <em>{esc(s["nav"])}.</em></h2>
+<div class="faq-list">
 {faq_html(s["faqs"])}
 </div>
 </div>
+</div>
 </section>
 
-<section aria-labelledby="relatedTitle" class="section sheet paper related-section">
-{space_light(rings=False)}
+<section aria-labelledby="relatedTitle" class="section paper">
 <div class="container">
-<div class="section-head">
-{eyebrow("Works well with")}
-<h2 class="title" data-split="" id="relatedTitle">Related <em>services.</em></h2>
-</div>
-<div class="related-grid">
+{label("06", "Related")}
+<h2 class="title" data-split="" id="relatedTitle">Works well <em>with.</em></h2>
+<div class="cases three">
 {related}</div>
 <nav aria-label="More services" class="pager">
-<a href="{prev_s["slug"]}.html"><span>← Previous service</span><strong>{esc(prev_s["nav"])}</strong></a>
-<a href="{next_s["slug"]}.html"><span>Next service →</span><strong>{esc(next_s["nav"])}</strong></a>
+<a href="{prev_s["slug"]}.html"><span>Previous</span><strong>{esc(prev_s["nav"])}</strong></a>
+<a href="{next_s["slug"]}.html"><span>Next</span><strong>{esc(next_s["nav"])}</strong></a>
 </nav>
 </div>
 </section>
 
-{cta_contact(p, home, with_form=False)}
+{contact_section(p, home, with_form=False)}
 
 </main>
 
@@ -909,15 +830,9 @@ def project_page(pr, index):
             breadcrumb_schema([("Home", ""), ("Work", "#work"), (pr["title"], path)]),
         ],
     }
-    meta = "\n".join(f"<li><span>{esc(k)}</span><strong>{esc(v)}</strong></li>" for k, v in pr["meta"])
-    approach = "\n".join(
-        f'''<li class="process-item" data-reveal="">
-<span class="process-num">{i:02d}</span>
-<h3>{esc(t)}</h3>
-<div><p>{esc(d)}</p></div>
-</li>''' for i, (t, d) in enumerate(pr["approach"], 1))
-    deliver = "\n".join(f'<li><span aria-hidden="true">✓</span>{esc(d)}</li>' for d in pr["deliverables"])
-    goals = "\n".join(f'<li class="goal-card" data-reveal=""><span>{i:02d}</span><p>{esc(g)}</p></li>' for i, g in enumerate(pr["goals"], 1))
+    meta = "\n".join(f"<div><dt>{esc(k)}</dt><dd>{esc(v)}</dd></div>" for k, v in pr["meta"])
+    deliver = "\n".join(f'<li>{esc(d)}</li>' for d in pr["deliverables"])
+    goals = "\n".join(f'<li data-reveal=""><span>{i:02d}</span><p>{esc(g)}</p></li>' for i, g in enumerate(pr["goals"], 1))
     nxt = PROJECTS[index % len(PROJECTS)]
 
     body = f'''{header(p, home)}
@@ -925,86 +840,81 @@ def project_page(pr, index):
 <main id="main">
 
 <section class="page-hero" id="home">
-{space_light()}
 <div class="container">
-<div class="page-hero-grid">
-<div>
 <nav aria-label="Breadcrumb" class="breadcrumb"><a href="{home}">Home</a><span aria-hidden="true">/</span><a href="{home}#work">Work</a><span aria-hidden="true">/</span><span aria-current="page">{esc(pr["title"])}</span></nav>
-{eyebrow(f"Concept project · {esc(pr['category'])}")}
-<h1 data-split="">{esc(pr["title"])}</h1>
-<p class="page-hero-lead">{esc(pr["summary"])}</p>
+{label("✦", "Concept project · " + esc(pr["category"]))}
+<h1 class="page-title" data-split="">{esc(pr["title"])}</h1>
+<div class="page-foot">
+<p class="hero-lead">{esc(pr["summary"])}</p>
+<p class="concept-note"><strong>Concept project.</strong> It shows how we would approach this kind of brief. It is not a client case study and has no client results.</p>
 </div>
-<div class="page-hero-media img-wrap" data-hero-media="">{img(pr["hero"], pr["hero_alt"], "(min-width: 1001px) 40vw, 92vw", p, eager=True)}<span class="work-badge">CONCEPT PROJECT</span></div>
-</div>
-<ul class="facts four">
+<dl class="facts four">
 {meta}
-</ul>
-<p class="concept-note" style="margin-top:24px"><span aria-hidden="true">✦</span><span><b>This is a concept project.</b> It shows how we would approach this type of brief. It is not a client case study and contains no client results.</span></p>
+</dl>
 </div>
-</section>
-
-<section aria-labelledby="challengeTitle" class="section sheet">
-<div class="container overview-grid">
-<div class="overview-copy">
-{eyebrow("The brief")}
-<h2 class="title" data-split="" id="challengeTitle">The <em>challenge.</em></h2>
-<p class="big">{esc(pr["challenge"])}</p>
-</div>
-<div class="frame frame-tall img-wrap" data-reveal="">{img(pr["second"], pr["second_alt"], "(min-width: 1001px) 42vw, 92vw", p, extra_cls="parallax-img")}</div>
-</div>
-</section>
-
-<section aria-labelledby="approachTitle" class="section sheet paper" style="margin-top:8px">
 <div class="container">
-<div class="section-head split-head">
-<div>
-{eyebrow("Our approach")}
-<h2 class="title" data-split="" id="approachTitle" style="margin-top:22px">How we'd <em>solve it.</em></h2>
+<div class="page-media img-wrap" data-hero-media="">{img(pr["hero"], pr["hero_alt"], "(min-width: 1320px) 1280px, 94vw", p, eager=True)}</div>
 </div>
+</section>
+
+<section aria-labelledby="challengeTitle" class="section">
+<div class="container">
+{label("01", "The brief")}
+<div class="split">
+<h2 class="title" data-split="" id="challengeTitle">The <em>challenge.</em></h2>
+<div class="split-copy" data-reveal=""><p class="big">{esc(pr["challenge"])}</p></div>
+</div>
+<div class="wide-media img-wrap" data-reveal="">{img(pr["second"], pr["second_alt"], "(min-width: 1320px) 1280px, 94vw", p, cls="parallax-img")}</div>
+</div>
+</section>
+
+<section aria-labelledby="approachTitle" class="section paper">
+<div class="container">
+{label("02", "Approach")}
+<div class="head">
+<h2 class="title" data-split="" id="approachTitle">How we'd <em>solve it.</em></h2>
 <p class="lead">Four steps, each with a clear outcome before the next one starts.</p>
 </div>
-<ol class="process">
-<span aria-hidden="true" class="process-fill"><span></span></span>
-{approach}
+<ol class="steps" data-steps="">
+{steps_html(pr["approach"])}
 </ol>
 </div>
 </section>
 
-<section aria-labelledby="deliverTitle" class="section sheet" style="margin-top:8px">
-<div class="container deliver-grid">
+<section aria-labelledby="deliverTitle" class="section ink">
+<div class="container">
+{label("03", "Scope")}
+<div class="split">
+<h2 class="title" data-split="" id="deliverTitle">What we'd <em>deliver.</em></h2>
 <div>
-{eyebrow("Scope")}
-<h2 class="title" data-split="" id="deliverTitle" style="margin-top:22px">What we'd <em>deliver.</em></h2>
-<p class="lead" style="margin-top:20px">Part of our <a class="link-arrow" href="../services/{svc["slug"]}.html">{esc(svc["title"])} <span aria-hidden="true">→</span></a></p>
-</div>
 <ul class="deliver-list" data-reveal="">
 {deliver}
 </ul>
+<a class="text-link" href="../services/{svc["slug"]}.html">Part of {esc(svc["title"])} {ARROW}</a>
+</div>
+</div>
 </div>
 </section>
 
-<section aria-labelledby="goalsTitle" class="section sheet paper" style="margin-top:8px">
+<section aria-labelledby="goalsTitle" class="section">
 <div class="container">
-<div class="section-head split-head">
-<div>
-{eyebrow("Success measures")}
-<h2 class="title" data-split="" id="goalsTitle" style="margin-top:22px">What success <em>looks like.</em></h2>
-</div>
+{label("04", "Success measures")}
+<div class="head">
+<h2 class="title" data-split="" id="goalsTitle">What success <em>looks like.</em></h2>
 <p class="lead">The goals we'd set and report against for a project like this.</p>
 </div>
-<ul class="goal-grid">
+<ol class="principles goals">
 {goals}
-</ul>
+</ol>
 </div>
 </section>
 
-<div style="height:8px"></div>
 <a aria-label="Next project: {attr(nxt["title"])}" class="next-project" href="{nxt["slug"]}.html">
-<div class="bg" data-parallax="0.1">{img(nxt["hero"], "", "100vw", p)}</div>
-<div class="next-project-content"><small>Next project</small><strong>{esc(nxt["title"])}</strong><i aria-hidden="true">→</i></div>
+<div class="next-bg" data-parallax="0.08">{img(nxt["hero"], "", "100vw", p)}</div>
+<div class="container next-inner"><span>Next project</span><strong>{esc(nxt["title"])}</strong>{ARROW}</div>
 </a>
 
-{cta_contact(p, home, with_form=False)}
+{contact_section(p, home, with_form=False)}
 
 </main>
 
