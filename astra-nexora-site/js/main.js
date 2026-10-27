@@ -517,6 +517,44 @@ if (animate) {
         card.classList.add("is-in");
     });
 
+    // Founder: photo wipes up, second photo and badge drop in,
+    // name gets underlined, timeline steps in one by one
+    const founder = document.querySelector("[data-founder-media]");
+    if (founder) {
+        const photo = founder.querySelector(".founder-photo");
+        const tl = gsap.timeline({
+            defaults: { ease: "expo.out" },
+            scrollTrigger: { trigger: founder, start: "top 78%", once: true }
+        });
+        tl.fromTo(photo, { clipPath: "inset(100% 0% 0% 0% round 28px)" }, { clipPath: "inset(0% 0% 0% 0% round 28px)", duration: 1.5 })
+            .from(photo, { scale: 1.08, duration: 1.8 }, 0)
+            .from(".founder-orbit", { scale: 0.6, autoAlpha: 0, duration: 1.6 }, 0.2)
+            .from(".founder-photo-alt", { x: 80, y: 60, rotate: 10, autoAlpha: 0, duration: 1.4 }, 0.55)
+            .from(".founder-badge", { scale: 0.6, autoAlpha: 0, duration: 1, ease: "back.out(1.8)" }, 0.9);
+
+        // Gentle 3D tilt that follows the pointer
+        if (finePointer) {
+            const rx = gsap.quickTo(photo, "rotationX", { duration: 0.6, ease: "power3" });
+            const ry = gsap.quickTo(photo, "rotationY", { duration: 0.6, ease: "power3" });
+            founder.addEventListener("pointermove", e => {
+                const r = founder.getBoundingClientRect();
+                ry(((e.clientX - r.left) / r.width - 0.5) * 10);
+                rx(-((e.clientY - r.top) / r.height - 0.5) * 8);
+            });
+            founder.addEventListener("pointerleave", () => { rx(0); ry(0); });
+        }
+
+        gsap.to(".founder-underline path", {
+            strokeDashoffset: 0, duration: 1.4, ease: "power2.inOut",
+            scrollTrigger: { trigger: ".founder-role", start: "top 85%", once: true }
+        });
+
+        gsap.from("[data-timeline] li", {
+            x: -30, autoAlpha: 0, duration: 0.9, ease: "power3.out", stagger: 0.15,
+            scrollTrigger: { trigger: "[data-timeline]", start: "top 85%", once: true }
+        });
+    }
+
     mm.add("(min-width: 1001px)", () => {
 
         // Service cards stack: each one sinks back as the next slides over it
@@ -553,6 +591,12 @@ if (animate) {
 }
 
 
+// Without GSAP the signature line is simply shown
+if (!animate) {
+    document.querySelectorAll(".founder-underline path").forEach(path => { path.style.strokeDashoffset = "0"; });
+}
+
+
 /* =====================================================
    POINTER EFFECTS — magnetic buttons, spotlight
 ===================================================== */
@@ -583,14 +627,14 @@ if (finePointer && !reduceMotion) {
 
 
 /* =====================================================
-   SPACE BACKDROPS — twinkling star canvas + Milky Way film
+   STAR FIELDS — twinkling star canvas
    Stars are drawn at the screen's pixel density so they stay
    sharp; each canvas only animates while it is on screen.
 ===================================================== */
 
 (function () {
 
-    const layers = Array.from(document.querySelectorAll(".space-sticky, .cosmos"));
+    const layers = Array.from(document.querySelectorAll(".cosmos"));
     if (!layers.length) return;
 
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -705,39 +749,18 @@ if (finePointer && !reduceMotion) {
 
     const io = new IntersectionObserver(entries => {
         entries.forEach(entry => {
-            const layer = entry.target.classList.contains("cosmos") ? entry.target : entry.target.firstElementChild;
+            const layer = entry.target;
             entry.isIntersecting ? visible.add(layer) : visible.delete(layer);
         });
     });
 
-    layers.forEach(layer => io.observe(layer.classList.contains("cosmos") ? layer : layer.parentElement));
+    layers.forEach(layer => io.observe(layer));
 
     (function loop(now) {
         const t = now / 1000;
         visible.forEach(layer => { const f = fields.get(layer); if (f) f.draw(t); });
         requestAnimationFrame(loop);
     })(performance.now());
-
-    // Milky Way film: desktop, motion allowed, not on data saver; loads when near
-    const video = document.querySelector("[data-space-video]");
-    const connection = navigator.connection || {};
-
-    if (video && !connection.saveData && window.matchMedia("(min-width: 769px)").matches) {
-        const vio = new IntersectionObserver(entries => {
-            if (!entries[0].isIntersecting) return;
-            vio.disconnect();
-            video.querySelectorAll("source").forEach(source => { source.src = source.dataset.src; });
-            video.load();
-            video.play().then(() => video.classList.add("is-playing")).catch(() => {});
-        }, { rootMargin: "600px 0px" });
-        vio.observe(video.closest(".space-layer"));
-
-        // Pause it while off screen
-        new IntersectionObserver(entries => {
-            if (!video.classList.contains("is-playing")) return;
-            entries[0].isIntersecting ? video.play().catch(() => {}) : video.pause();
-        }).observe(video.closest(".space-layer"));
-    }
 
 })();
 

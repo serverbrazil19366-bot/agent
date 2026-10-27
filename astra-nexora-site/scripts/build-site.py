@@ -87,38 +87,6 @@ def img(base, alt, sizes, prefix, eager=False, extra_cls=""):
             f'src="{prefix}assets/stock/{base}-w1200.webp" srcset="{srcset}" width="{w}"/>')
 
 
-SPACE = {
-    "band": "unsplash-1538370965046-79c0d6907d47",
-    "blue": "unsplash-1464802686167-b939a6910659",
-    "violet": "unsplash-1465101162946-4377e57745c3",
-    "orion": "unsplash-1516339901601-2e1b62dc0c45",
-}
-
-
-def space(name, prefix, video=False):
-    """Fixed space backdrop for a dark section: the photo (or the Milky Way
-    film) stays put while the content scrolls over it, with a canvas of
-    twinkling stars on top. Purely decorative."""
-    if video:
-        art = (f'<img alt="" decoding="async" height="1080" loading="lazy" sizes="100vw" '
-               f'src="{prefix}assets/video/space-poster-w1920.webp" srcset="{prefix}assets/video/space-poster-w800.webp 800w, '
-               f'{prefix}assets/video/space-poster-w1920.webp 1920w" width="1920"/>'
-               f'<video data-space-video="" loop="" muted="" playsinline="" preload="none">'
-               f'<source data-src="{prefix}assets/video/space.webm" type="video/webm"/>'
-               f'<source data-src="{prefix}assets/video/space.mp4" type="video/mp4"/></video>')
-        style = ""
-    else:
-        base = SPACE[name]
-        w, h, lqip = DIMS[base]
-        srcset = (f"{prefix}assets/stock/{base}-w480.webp 480w, {prefix}assets/stock/{base}-w800.webp 800w, "
-                  f"{prefix}assets/stock/{base}-w1200.webp 1200w, {prefix}assets/stock/{base}-w2000.webp 2000w")
-        art = (f'<img alt="" decoding="async" height="{h}" loading="lazy" sizes="100vw" '
-               f'src="{prefix}assets/stock/{base}-w1200.webp" srcset="{srcset}" width="{w}"/>')
-        style = f' style="background-image:url({lqip})"'
-    return (f'<div aria-hidden="true" class="space-layer"><div class="space-sticky"{style}>'
-            f'{art}<canvas class="star-canvas"></canvas></div></div>')
-
-
 def logo(cls=""):
     """Inline wordmark: four-point star + ASTRA NEXORA. Uses currentColor so it
     works on light and dark. Swap for the real logo SVG when it arrives."""
@@ -594,12 +562,12 @@ def home_page():
 </div>
 </section>
 
-<section aria-labelledby="servicesTitle" class="section dark panel has-space" id="services">
-{space("", p, video=True)}
+<section aria-labelledby="servicesTitle" class="section sheet paper svc-section" id="services">
+{space_light()}
 <div class="container">
 <div class="section-head split-head">
 <div>
-{eyebrow("Our services", True)}
+{eyebrow("Our services")}
 <h2 class="title" data-split="" id="servicesTitle" style="margin-top:22px">Digital growth. <em>Powered by strategy.</em></h2>
 </div>
 <p class="lead">We combine creativity, data and technology to help businesses strengthen their digital presence, reach the right audience and generate meaningful growth.</p>
@@ -625,10 +593,10 @@ def home_page():
 </div>
 </section>
 
-<section aria-labelledby="workTitle" class="section dark panel work has-space" id="work">
-{space("band", p)}
+<section aria-labelledby="workTitle" class="section work work-section" id="work">
+{space_light(rings=False)}
 <div class="container work-intro">
-{eyebrow("Our work", True)}
+{eyebrow("Our work")}
 <h2 class="title" data-split="" id="workTitle">Projects built to <em>deliver.</em></h2>
 <p class="lead" style="max-width:620px">A live reporting demo and concept projects that show how we approach websites, brands and search. Client case studies will be added as clients approve them.</p>
 <span class="work-hint">Scroll to explore →</span>
@@ -639,12 +607,15 @@ def home_page():
 </div>
 </section>
 
-<section aria-labelledby="founderTitle" class="section sheet" id="founder">
+<section aria-labelledby="founderTitle" class="section founder-section" id="founder">
+{space_light()}
 <div class="container founder-grid">
-<div class="founder-media" data-reveal="">
+<div class="founder-media" data-founder-media="">
+<span aria-hidden="true" class="founder-orbit"><i></i></span>
+<span aria-hidden="true" class="founder-glow"></span>
 <div class="founder-photo img-wrap">
 <img alt="S. Saktheeswaran, Founder and Managing Director of Astra Nexora, at his desk" class="lqip" data-parallax-img="" decoding="async" height="900" loading="lazy" sizes="(min-width: 1001px) 40vw, 92vw" src="assets/founder/sakthi-desk-w720.webp" srcset="assets/founder/sakthi-desk-w480.webp 480w, assets/founder/sakthi-desk-w720.webp 720w" width="720"/>
-<div class="badge-float"><strong>2019</strong><span>Started in<br/>digital marketing</span></div>
+<div class="badge-float founder-badge"><strong>2019</strong><span>Started in<br/>digital marketing</span></div>
 </div>
 <div class="founder-photo-alt img-wrap">
 <img alt="S. Saktheeswaran sitting in a leather armchair" class="lqip" decoding="async" height="900" loading="lazy" sizes="(min-width: 1001px) 16vw, 38vw" src="assets/founder/sakthi-chair-w480.webp" srcset="assets/founder/sakthi-chair-w480.webp 480w, assets/founder/sakthi-chair-w720.webp 720w" width="720"/>
@@ -653,9 +624,9 @@ def home_page():
 <div class="founder-copy">
 {eyebrow("Meet the founder")}
 <h2 class="title" data-split="" id="founderTitle">The vision behind <em>Astra Nexora.</em></h2>
-<p class="founder-role">{esc(f["name"])}<small>{esc(f["role"])}</small></p>
+<p class="founder-role"><span class="founder-name">{esc(f["name"])}<svg aria-hidden="true" class="founder-underline" preserveaspectratio="none" viewbox="0 0 200 12"><path d="M2 8 C 50 2, 110 2, 198 6"></path></svg></span><small>{esc(f["role"])}</small></p>
 {bio}
-<ol class="timeline">
+<ol class="timeline" data-timeline="">
 {timeline}
 </ol>
 <div>{btn("Connect on LinkedIn", f["linkedin"], "btn-outline-dark", target=True)}</div>
@@ -897,11 +868,11 @@ def service_page(s, index):
 </div>
 </section>
 
-<section aria-labelledby="relatedTitle" class="section dark panel has-space">
-{space("blue", p)}
+<section aria-labelledby="relatedTitle" class="section sheet paper related-section">
+{space_light(rings=False)}
 <div class="container">
 <div class="section-head">
-{eyebrow("Works well with", True)}
+{eyebrow("Works well with")}
 <h2 class="title" data-split="" id="relatedTitle">Related <em>services.</em></h2>
 </div>
 <div class="related-grid">

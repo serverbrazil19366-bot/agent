@@ -19,9 +19,3 @@ ffmpeg -i assets/video/hero.mp4 -frames:v 1 -q:v 2 scripts/originals/pexels-<ID>
 npm run images
 ```
 
-## Services backdrop — `space.webm` / `space.mp4`
-
-- Source: Pexels video 9341381, "A Starry Night Sky" — https://www.pexels.com/video/a-starry-night-sky-9341381/
-- Licence: Pexels licence (free to use, no attribution required)
-- Edit: scaled to 1920px, slowed to 0.625×, played forward then reversed so the loop has no jump (18.6 s); audio removed
-- Poster: first frame, `space-poster-w800.webp` / `space-poster-w1920.webp`

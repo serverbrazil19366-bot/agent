@@ -232,50 +232,6 @@
       "title": "Man Using Laptop wit Chat GPT",
       "photographer": "Matheus Bertelli",
       "alt": "Close-up of hands typing on a laptop running an AI assistant"
-    },
-    {
-      "slot": "space-band",
-      "status": "selected",
-      "source": "unsplash",
-      "id": "1538370965046-79c0d6907d47",
-      "url": "https://images.unsplash.com/photo-1538370965046-79c0d6907d47?w=2600&q=88&fm=jpg",
-      "page": "https://unsplash.com/photos/1538370965046-79c0d6907d47",
-      "title": "Milky Way band in a blue night sky (Unsplash)",
-      "photographer": "",
-      "alt": ""
-    },
-    {
-      "slot": "space-blue",
-      "status": "selected",
-      "source": "unsplash",
-      "id": "1464802686167-b939a6910659",
-      "url": "https://images.unsplash.com/photo-1464802686167-b939a6910659?w=2600&q=88&fm=jpg",
-      "page": "https://unsplash.com/photos/1464802686167-b939a6910659",
-      "title": "Milky Way core, deep blue (Unsplash)",
-      "photographer": "",
-      "alt": ""
-    },
-    {
-      "slot": "space-violet",
-      "status": "selected",
-      "source": "unsplash",
-      "id": "1465101162946-4377e57745c3",
-      "url": "https://images.unsplash.com/photo-1465101162946-4377e57745c3?w=2600&q=88&fm=jpg",
-      "page": "https://unsplash.com/photos/1465101162946-4377e57745c3",
-      "title": "Milky Way in violet and blue (Unsplash)",
-      "photographer": "",
-      "alt": ""
-    },
-    {
-      "slot": "space-orion",
-      "status": "selected",
-      "source": "unsplash",
-      "id": "1516339901601-2e1b62dc0c45",
-      "url": "https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?w=2600&q=88&fm=jpg",
-      "page": "https://unsplash.com/photos/1516339901601-2e1b62dc0c45",
-      "title": "Orion Nebula (Unsplash)",
-      "photographer": "",
-      "alt": ""
     }
   ]
 }

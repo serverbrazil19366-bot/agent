@@ -2028,73 +2028,12 @@ body.site::after {
 
 
 /* =====================================================
-   SPACE BACKDROPS
-   The layer spans the whole section; its sticky child is one
-   screen tall and stays put while the section's content scrolls
-   over it. overflow: clip (not hidden) keeps sticky working.
+   STAR CANVAS (drawn by main.js inside .cosmos)
 ===================================================== */
-
-.has-space {
-    position: relative;
-    isolation: isolate;
-}
-
-.space-layer {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    overflow: clip;
-    pointer-events: none;
-}
-
-.space-sticky {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    height: 100lvh;
-    overflow: hidden;
-    background-color: var(--ink);
-    background-size: cover;
-    background-position: center;
-}
-
-.space-sticky img,
-.space-sticky video {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.space-sticky video {
-    opacity: 0;
-    transition: opacity 1.2s ease;
-}
-
-.space-sticky video.is-playing {
-    opacity: 1;
-}
-
-/* Soft shade so copy stays readable; edges melt into the ink canvas */
-.space-sticky::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background:
-        linear-gradient(180deg, rgba(var(--ink-rgb), .55) 0%, rgba(var(--ink-rgb), .12) 30%, rgba(var(--ink-rgb), .12) 70%, rgba(var(--ink-rgb), .55) 100%);
-}
-
-.page-hero .space-sticky::after {
-    background:
-        linear-gradient(90deg, rgba(var(--ink-rgb), .7) 0%, rgba(var(--ink-rgb), .2) 60%),
-        linear-gradient(180deg, rgba(var(--ink-rgb), .4), rgba(var(--ink-rgb), .1) 40%, rgba(var(--ink-rgb), .6));
-}
 
 .star-canvas {
     position: absolute;
     inset: 0;
-    z-index: 1;
     width: 100%;
     height: 100%;
 }
@@ -4097,4 +4036,212 @@ body.site::after {
 
 .include-card p {
     color: var(--muted);
+}
+
+
+/* ---------- Services / work / related on light ---------- */
+
+.svc-section,
+.related-section {
+    background:
+        radial-gradient(60% 40% at 0% 0%, rgba(46, 75, 224, .08), transparent 70%),
+        radial-gradient(50% 40% at 100% 100%, rgba(86, 118, 255, .08), transparent 70%),
+        var(--paper);
+}
+
+.work-section {
+    background: var(--white);
+}
+
+.work-hint {
+    color: var(--muted);
+}
+
+.stack-card,
+.work-card,
+.related-card {
+    box-shadow: 0 40px 80px -40px rgba(5, 10, 48, .45);
+}
+
+.pager a {
+    border-color: var(--border);
+    background: var(--white);
+    color: var(--navy);
+}
+
+.pager a:hover {
+    border-color: var(--blue-bright);
+    background: var(--white);
+}
+
+.pager span {
+    color: var(--muted);
+}
+
+
+/* =====================================================
+   FOUNDER — orbit, glow, layered photos, drawn signature line
+===================================================== */
+
+.founder-section {
+    background: var(--white);
+}
+
+.founder-media {
+    position: relative;
+    isolation: isolate;
+    perspective: 1200px;
+}
+
+.founder-photo {
+    z-index: 1;
+    box-shadow: 0 50px 100px -40px rgba(23, 41, 160, .5);
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+.founder-photo-alt {
+    z-index: 2;
+    animation: floaty 7s ease-in-out infinite;
+}
+
+@keyframes floaty {
+    50% {
+        transform: translateY(-12px) rotate(-1.5deg);
+    }
+}
+
+.founder-badge {
+    z-index: 3;
+}
+
+.founder-orbit {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 0;
+    width: 120%;
+    aspect-ratio: 1;
+    border: 1px dashed rgba(46, 75, 224, .3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: founderOrbit 40s linear infinite;
+    pointer-events: none;
+}
+
+.founder-orbit i {
+    position: absolute;
+    top: 50%;
+    left: -7px;
+    width: 14px;
+    height: 14px;
+    margin-top: -7px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #B8C6FF, var(--blue-bright) 60%, var(--blue) 100%);
+    box-shadow: 0 0 22px rgba(46, 75, 224, .6);
+}
+
+@keyframes founderOrbit {
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+.founder-glow {
+    position: absolute;
+    inset: 10% -10%;
+    z-index: -1;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(46, 75, 224, .28), transparent 65%);
+    filter: blur(30px);
+    animation: glowPulse 6s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+    50% {
+        opacity: .55;
+        transform: scale(.92);
+    }
+}
+
+.founder-name {
+    position: relative;
+    display: inline-block;
+}
+
+.founder-underline {
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+    width: 100%;
+    height: 10px;
+    overflow: visible;
+}
+
+.founder-underline path {
+    fill: none;
+    stroke: var(--blue-bright);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 210;
+    stroke-dashoffset: 0;
+}
+
+.js .founder-underline path {
+    stroke-dashoffset: 210;
+}
+
+.timeline {
+    position: relative;
+}
+
+.timeline li {
+    position: relative;
+    padding-left: 22px;
+}
+
+.timeline li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 21px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 2px solid var(--blue-bright);
+    box-shadow: 0 0 0 4px rgba(46, 75, 224, .1);
+}
+
+.timeline li:last-child::before {
+    background: var(--blue-bright);
+    animation: pulseBlue 2s infinite;
+}
+
+@keyframes pulseBlue {
+    70% {
+        box-shadow: 0 0 0 10px rgba(46, 75, 224, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(46, 75, 224, 0);
+    }
+}
+
+@media (max-width: 1000px) {
+    .founder-orbit {
+        width: 110%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .founder-photo-alt,
+    .founder-orbit,
+    .founder-glow {
+        animation: none;
+    }
+
+    .js .founder-underline path {
+        stroke-dashoffset: 0;
+    }
 }
