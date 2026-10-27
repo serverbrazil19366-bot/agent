@@ -5,24 +5,11 @@
 ===================================================== */
 
 /* =====================================================
-   FONTS (self-hosted, variable)
+   FONTS
+   Loaded from Google Fonts in index.html (Sora + Inter).
+   Before launch: self-host the files in assets/fonts/
+   (already downloaded) for a faster first paint.
 ===================================================== */
-
-@font-face {
-    font-family: "Sora";
-    src: url("../assets/fonts/sora-latin-wght-normal.woff2") format("woff2");
-    font-weight: 100 800;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "Inter";
-    src: url("../assets/fonts/inter-latin-wght-normal.woff2") format("woff2");
-    font-weight: 100 900;
-    font-style: normal;
-    font-display: swap;
-}
 
 
 /* =====================================================

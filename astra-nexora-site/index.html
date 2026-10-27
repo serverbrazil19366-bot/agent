@@ -25,12 +25,17 @@
 <link href="assets/favicon.png" rel="icon" type="image/png"/>
 <link href="assets/favicon.png" rel="apple-touch-icon"/>
 
-<!-- Fonts (self-hosted) -->
-<link as="font" crossorigin="" href="assets/fonts/sora-latin-wght-normal.woff2" rel="preload" type="font/woff2"/>
-<link as="font" crossorigin="" href="assets/fonts/inter-latin-wght-normal.woff2" rel="preload" type="font/woff2"/>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Sora:wght@600;700&amp;display=swap" rel="stylesheet"/>
 
-<!-- Hero image (LCP) -->
-<link as="image" fetchpriority="high" href="assets/stock/pexels-35184837-w2000.webp" imagesizes="100vw" imagesrcset="assets/stock/pexels-35184837-w800.webp 800w, assets/stock/pexels-35184837-w1200.webp 1200w, assets/stock/pexels-35184837-w2000.webp 2000w" rel="preload" type="image/webp"/>
+<!-- Hero image (LCP)
+     TEMPORARY: loads from Pexels so the page works straight after pasting.
+     After `npm run images`, switch both the preload and the <img> below to
+     assets/stock/pexels-35184837-w800/w1200/w2000.webp (self-hosted). -->
+<link href="https://images.pexels.com" rel="preconnect"/>
+<link as="image" fetchpriority="high" href="https://images.pexels.com/photos/35184837/pexels-photo-35184837.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=2000" imagesizes="100vw" imagesrcset="https://images.pexels.com/photos/35184837/pexels-photo-35184837.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800 800w, https://images.pexels.com/photos/35184837/pexels-photo-35184837.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1200 1200w, https://images.pexels.com/photos/35184837/pexels-photo-35184837.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=2000 2000w" rel="preload"/>
 
 <link href="css/style.css" rel="stylesheet"/>
 <script>document.documentElement.classList.add("js");</script>
@@ -149,7 +154,7 @@
 ===================================================== -->
 <section class="hero" id="home">
 <div class="hero-background">
-<img alt="Web developer working on a laptop in a modern office" decoding="async" fetchpriority="high" height="1333" sizes="100vw" src="assets/stock/pexels-35184837-w2000.webp" srcset="assets/stock/pexels-35184837-w800.webp 800w, assets/stock/pexels-35184837-w1200.webp 1200w, assets/stock/pexels-35184837-w2000.webp 2000w" width="2000"/>
+<img alt="Web developer working on a laptop in a modern office" decoding="async" fetchpriority="high" height="1333" sizes="100vw" src="https://images.pexels.com/photos/35184837/pexels-photo-35184837.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=2000" srcset="https://images.pexels.com/photos/35184837/pexels-photo-35184837.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800 800w, https://images.pexels.com/photos/35184837/pexels-photo-35184837.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1200 1200w, https://images.pexels.com/photos/35184837/pexels-photo-35184837.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=2000 2000w" width="2000"/>
 </div>
 <div class="hero-overlay"></div>
 <div class="hero-content">
