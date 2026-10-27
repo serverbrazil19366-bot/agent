@@ -155,6 +155,11 @@
 <section class="hero" id="home">
 <div class="hero-background">
 <img alt="Web developer working on a laptop in a modern office" decoding="async" fetchpriority="high" height="1333" sizes="100vw" src="https://images.pexels.com/photos/35184837/pexels-photo-35184837.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=2000" srcset="https://images.pexels.com/photos/35184837/pexels-photo-35184837.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800 800w, https://images.pexels.com/photos/35184837/pexels-photo-35184837.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1200 1200w, https://images.pexels.com/photos/35184837/pexels-photo-35184837.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=2000 2000w" width="2000"/>
+<!-- HERO VIDEO (optional, desktop only)
+     Drop a compressed clip at assets/video/hero.mp4 (1080p, under ~6 MB, no sound).
+     The photo above stays as the first paint and as the fallback on mobile,
+     data-saver and reduced-motion. Remove this block to use the photo only. -->
+<video aria-hidden="true" class="hero-video" data-src="assets/video/hero.mp4" loop muted playsinline preload="none"></video>
 </div>
 <div class="hero-overlay"></div>
 <div class="hero-content">
@@ -204,6 +209,10 @@
         IN DIGITAL<br/>
         MARKETING
     </div>
+<button aria-pressed="false" class="hero-video-toggle" hidden type="button">
+<span class="hero-video-toggle-icon" aria-hidden="true"></span>
+<span class="hero-video-toggle-label">Pause video</span>
+</button>
 <div aria-hidden="true" class="scroll-indicator">
 <span>SCROLL TO EXPLORE</span>
 <i></i>

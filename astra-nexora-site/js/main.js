@@ -79,6 +79,63 @@ if (hero && heroImage) {
 
 
 /* =====================================================
+   HERO VIDEO (desktop only, after the photo has painted)
+===================================================== */
+
+const heroVideo = document.querySelector(".hero-video");
+const heroVideoToggle = document.querySelector(".hero-video-toggle");
+
+function canUseHeroVideo() {
+    const connection = navigator.connection || {};
+    return heroVideo &&
+        heroVideo.dataset.src &&
+        !prefersReducedMotion &&
+        !connection.saveData &&
+        window.matchMedia("(min-width: 769px)").matches;
+}
+
+function setVideoPaused(paused) {
+    if (paused) {
+        heroVideo.pause();
+    } else {
+        heroVideo.play().catch(() => {});
+    }
+    heroVideoToggle.setAttribute("aria-pressed", String(paused));
+    heroVideoToggle.querySelector(".hero-video-toggle-label").textContent =
+        paused ? "Play video" : "Pause video";
+}
+
+if (canUseHeroVideo()) {
+
+    window.addEventListener("load", () => {
+
+        heroVideo.preload = "auto";
+
+        heroVideo.src = heroVideo.dataset.src;
+
+        heroVideo.play().then(() => {
+
+            heroVideo.classList.add("is-playing");
+
+            if (heroVideoToggle) heroVideoToggle.hidden = false;
+
+        }).catch(() => {});
+
+        // No file yet, or it failed: keep the photo, show nothing extra
+        heroVideo.addEventListener("error", () => heroVideo.remove(), { once: true });
+
+    }, { once: true });
+
+    if (heroVideoToggle) {
+        heroVideoToggle.addEventListener("click", () => {
+            setVideoPaused(!heroVideo.paused);
+        });
+    }
+
+}
+
+
+/* =====================================================
    SCROLL REVEAL
 ===================================================== */
 
