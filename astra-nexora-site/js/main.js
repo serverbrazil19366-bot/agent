@@ -47,7 +47,7 @@ let lenis = null;
 
 if (animate && window.Lenis) {
 
-    lenis = new Lenis({ duration: 1.15, smoothWheel: true, anchors: false });
+    lenis = new Lenis({ lerp: 0.11, smoothWheel: true, anchors: false });
 
     lenis.on("scroll", ScrollTrigger.update);
 
@@ -404,8 +404,8 @@ if (preloader && !root.classList.contains("no-preload")) {
     setTimeout(() => {
         finishIntro();
         if (lenis) lenis.start();
-        setTimeout(heroIntro, 250);
-    }, 1500);
+        setTimeout(heroIntro, 200);
+    }, 1150);
 
 } else {
 
@@ -513,6 +513,15 @@ if (animate) {
         });
     });
 
+    // Space backdrops drift slower than the page
+    document.querySelectorAll("[data-space-parallax]").forEach(img => {
+        const section = img.closest(".has-space");
+        gsap.fromTo(img, { yPercent: -6 }, {
+            yPercent: 6, ease: "none",
+            scrollTrigger: { trigger: section, start: "top bottom", end: "bottom top", scrub: true }
+        });
+    });
+
     // Image frames open up as they arrive
     gsap.utils.toArray(".stack-media, .work-card-media, .related-card .work-card-media").forEach(frame => {
         const image = frame.querySelector("img");
@@ -524,11 +533,11 @@ if (animate) {
     });
 
     // Bento / include cards: soft 3D tilt-in
-    gsap.utils.toArray(".bento-card, .include-card, .goal-card").forEach((card, i) => {
+    gsap.utils.toArray(".bento-card, .include-card, .goal-card, .audit-item").forEach((card, i) => {
         gsap.fromTo(card,
-            { rotateX: 14, y: 60, autoAlpha: 0, transformPerspective: 900 },
+            { y: 40, autoAlpha: 0 },
             {
-                rotateX: 0, y: 0, autoAlpha: 1, duration: 1.1, ease: "expo.out", delay: (i % 3) * 0.08,
+                y: 0, autoAlpha: 1, duration: 1, ease: "power3.out", delay: (i % 3) * 0.08,
                 scrollTrigger: { trigger: card, start: "top 92%", once: true }
             });
         card.removeAttribute("data-reveal");
@@ -543,7 +552,7 @@ if (animate) {
             const next = cards[i + 1];
             if (!next) return;
             gsap.to(card, {
-                scale: 0.9, filter: "brightness(0.55)", ease: "none",
+                scale: 0.95, opacity: 0.6, ease: "none",
                 scrollTrigger: { trigger: next, start: "top bottom", end: "top 120px", scrub: true }
             });
         });
@@ -572,54 +581,17 @@ if (animate) {
 
 
 /* =====================================================
-   POINTER EFFECTS — cursor, magnetic buttons, spotlight
+   POINTER EFFECTS — magnetic buttons, spotlight
 ===================================================== */
 
 if (finePointer && !reduceMotion) {
-
-    // Custom cursor
-    if (hasGsap) {
-
-        const cursor = document.createElement("div");
-        const dot = document.createElement("div");
-        cursor.className = "cursor is-hidden";
-        dot.className = "cursor-dot is-hidden";
-        cursor.setAttribute("aria-hidden", "true");
-        dot.setAttribute("aria-hidden", "true");
-        document.body.append(cursor, dot);
-
-        const cx = gsap.quickTo(cursor, "x", { duration: 0.45, ease: "power3" });
-        const cy = gsap.quickTo(cursor, "y", { duration: 0.45, ease: "power3" });
-
-        window.addEventListener("pointermove", e => {
-            cx(e.clientX);
-            cy(e.clientY);
-            gsap.set(dot, { x: e.clientX, y: e.clientY });
-            cursor.classList.remove("is-hidden");
-            dot.classList.remove("is-hidden");
-        }, { passive: true });
-
-        document.documentElement.addEventListener("mouseleave", () => {
-            cursor.classList.add("is-hidden");
-            dot.classList.add("is-hidden");
-        });
-
-        document.addEventListener("pointerover", e => {
-            const view = e.target.closest("[data-cursor='view']");
-            const link = e.target.closest("a, button, summary, select, input, textarea, label");
-            cursor.classList.toggle("is-view", !!view);
-            cursor.classList.toggle("is-link", !view && !!link);
-            cursor.textContent = view ? "VIEW" : "";
-        });
-
-    }
 
     // Magnetic buttons
     document.querySelectorAll(".magnetic").forEach(el => {
         el.addEventListener("pointermove", e => {
             const r = el.getBoundingClientRect();
-            const x = (e.clientX - r.left - r.width / 2) * 0.22;
-            const y = (e.clientY - r.top - r.height / 2) * 0.32;
+            const x = (e.clientX - r.left - r.width / 2) * 0.12;
+            const y = (e.clientY - r.top - r.height / 2) * 0.18;
             el.style.transform = "translate(" + x + "px," + y + "px)";
         });
         el.addEventListener("pointerleave", () => { el.style.transform = ""; });
@@ -736,45 +708,6 @@ if (finePointer && !reduceMotion) {
 
 
 /* =====================================================
-   BRAND VIDEO MODAL
-===================================================== */
-
-(function () {
-
-    const openButton = document.querySelector("[data-video-open]");
-    const modal = document.getElementById("videoModal");
-
-    if (!openButton || !modal || typeof modal.showModal !== "function") return;
-
-    const video = modal.querySelector("video");
-    const closeButton = modal.querySelector(".video-modal-close");
-
-    video.addEventListener("error", () => modal.classList.add("is-missing"));
-
-    openButton.addEventListener("click", () => {
-        if (!video.getAttribute("src")) video.src = video.dataset.src;
-        modal.showModal();
-        if (lenis) lenis.stop();
-        video.play().catch(() => {});
-    });
-
-    function close() {
-        video.pause();
-        modal.close();
-    }
-
-    closeButton.addEventListener("click", close);
-    modal.addEventListener("click", e => { if (e.target === modal) close(); });
-    modal.addEventListener("close", () => {
-        video.pause();
-        if (lenis) lenis.start();
-        openButton.focus();
-    });
-
-})();
-
-
-/* =====================================================
    FREE AUDIT FORM → WHATSAPP
    Nothing is stored; the form opens WhatsApp with the
    details filled in.
@@ -803,28 +736,34 @@ if (finePointer && !reduceMotion) {
 
         const name = value("name");
         const phone = value("phone");
+        const company = value("company");
+        const website = value("website");
         const digits = phone.replace(/\D/g, "");
 
         setError("name", name ? "" : "Please enter your name.");
-        setError("phone", digits.length >= 10 ? "" : "Please enter a phone number with at least 10 digits.");
+        setError("phone", digits.length >= 10 ? "" : "Please enter a mobile number with at least 10 digits.");
+        setError("company", company ? "" : "Please enter your company name.");
+        setError("website", website ? "" : "Please enter your website (or type \"none\").");
 
-        if (!name || digits.length < 10) {
-            form.querySelector('[aria-invalid="true"]').focus();
+        const firstInvalid = form.querySelector('[aria-invalid="true"]');
+        if (firstInvalid) {
+            firstInvalid.focus();
             return;
         }
 
         const lines = [
-            "Hi Astra Nexora, I'd like to talk about a project.",
+            "Hi Astra Nexora, I'd like a free website audit.",
             "",
             "Name: " + name,
-            "Phone: " + phone,
+            "Mobile: " + phone,
+            "Company: " + company,
+            "Website: " + website,
             "Email: " + (value("email") || "-"),
-            "Website: " + (value("website") || "-"),
-            "Interested in: " + (value("service") || "-")
+            "Service: " + (value("service") || "-")
         ];
 
         const message = value("message");
-        if (message) lines.push("", message);
+        if (message) lines.push("", "Message: " + message);
 
         window.open("https://wa.me/918838417707?text=" + encodeURIComponent(lines.join("\n")), "_blank", "noopener");
 

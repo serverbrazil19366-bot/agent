@@ -112,16 +112,6 @@
       "alt": "Hand holding a phone with a map open"
     },
     {
-      "slot": "video-poster",
-      "status": "selected",
-      "source": "pexels",
-      "id": "3126361-poster",
-      "page": "https://www.pexels.com/video/man-working-with-his-laptop-3126361/",
-      "title": "Man Working With His Laptop (video) — still frame used as the brand-video poster",
-      "photographer": "",
-      "alt": "Late evening at a desk with a laptop in a dark office"
-    },
-    {
       "slot": "service-wix",
       "status": "selected",
       "source": "pexels",
@@ -242,6 +232,50 @@
       "title": "Man Using Laptop wit Chat GPT",
       "photographer": "Matheus Bertelli",
       "alt": "Close-up of hands typing on a laptop running an AI assistant"
+    },
+    {
+      "slot": "space-earth",
+      "status": "selected",
+      "source": "unsplash",
+      "id": "1451187580459-43490279c0fa",
+      "url": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=2600&q=85&fm=jpg",
+      "page": "https://unsplash.com/photos/1451187580459-43490279c0fa",
+      "title": "Earth at night from orbit, city lights (NASA, via Unsplash)",
+      "photographer": "",
+      "alt": "Night view of Earth from space with glowing city lights"
+    },
+    {
+      "slot": "space-milkyway",
+      "status": "selected",
+      "source": "unsplash",
+      "id": "1502134249126-9f3755a50d78",
+      "url": "https://images.unsplash.com/photo-1502134249126-9f3755a50d78?w=2600&q=85&fm=jpg",
+      "page": "https://unsplash.com/photos/1502134249126-9f3755a50d78",
+      "title": "Milky Way core (Unsplash)",
+      "photographer": "",
+      "alt": "Milky Way galaxy core with coloured nebula"
+    },
+    {
+      "slot": "space-stars",
+      "status": "selected",
+      "source": "unsplash",
+      "id": "1534796636912-3b95b3ab5986",
+      "url": "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=2600&q=85&fm=jpg",
+      "page": "https://unsplash.com/photos/1534796636912-3b95b3ab5986",
+      "title": "Deep starfield (Unsplash)",
+      "photographer": "",
+      "alt": "Deep starfield"
+    },
+    {
+      "slot": "space-andromeda",
+      "status": "selected",
+      "source": "unsplash",
+      "id": "1543722530-d2c3201371e7",
+      "url": "https://images.unsplash.com/photo-1543722530-d2c3201371e7?w=2600&q=85&fm=jpg",
+      "page": "https://unsplash.com/photos/1543722530-d2c3201371e7",
+      "title": "Andromeda galaxy (Unsplash)",
+      "photographer": "",
+      "alt": "Andromeda galaxy in a dense starfield"
     }
   ]
 }
