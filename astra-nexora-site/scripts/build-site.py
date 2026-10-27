@@ -119,6 +119,22 @@ def space(name, prefix, video=False):
             f'{art}<canvas class="star-canvas"></canvas></div></div>')
 
 
+def logo(cls=""):
+    """Inline wordmark: four-point star + ASTRA NEXORA. Uses currentColor so it
+    works on light and dark. Swap for the real logo SVG when it arrives."""
+    return (f'<svg aria-hidden="true" class="logo{(" " + cls) if cls else ""}" viewbox="0 0 236 36">'
+            '<path class="logo-star" d="M18 2c1.2 8.6 4.8 12.6 14 14-9.2 1.4-12.8 5.4-14 14-1.2-8.6-4.8-12.6-14-14 9.2-1.4 12.8-5.4 14-14z"/>'
+            '<text font-family="Sora, system-ui, sans-serif" font-size="17" font-weight="700" letter-spacing="2.4" x="42" y="23.5">'
+            'ASTRA <tspan class="logo-accent">NEXORA</tspan></text></svg>')
+
+
+def space_light(rings=True):
+    """Light-theme space accent: a field of tiny twinkling blue stars and
+    slowly turning orbit rings, drawn over a white or paper section."""
+    orbit = ('<span class="orbit orbit-a"><i></i></span><span class="orbit orbit-b"><i></i></span>' if rings else "")
+    return (f'<div aria-hidden="true" class="cosmos"><canvas class="star-canvas" data-tone="light"></canvas>{orbit}</div>')
+
+
 def btn(label, href, kind="btn-primary", extra="", target=False):
     t = ' rel="noopener" target="_blank"' if target else ""
     return (f'<a class="btn {kind} magnetic{(" " + extra) if extra else ""}" href="{href}"{t}>'
@@ -147,7 +163,7 @@ def head(title, description, path, prefix, schemas, preload=None, body_class="si
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <title>{esc(title)}</title>
 <meta content="{attr(description)}" name="description"/>
-<meta content="#03061C" name="theme-color"/>
+<meta content="#FFFFFF" name="theme-color"/>
 <link href="{SITE}{path}" rel="canonical"/>
 <meta content="website" property="og:type"/>
 <meta content="Astra Nexora" property="og:site_name"/>
@@ -182,7 +198,7 @@ def header(prefix, home):
     return f'''<header class="site-header" id="header">
 <div class="header-inner">
 <a aria-label="Astra Nexora — home" class="brand" href="{home}#home">
-<img alt="Astra Nexora" class="logo-light" height="34" src="{prefix}assets/logo-horizontal-white.png"/>
+{logo()}<span class="visually-hidden">Astra Nexora</span>
 </a>
 <nav aria-label="Main" class="desktop-nav">
 <a href="{home}#about">About</a>
@@ -232,7 +248,7 @@ def footer(prefix, home):
 <div class="container">
 <div class="footer-main">
 <div class="footer-brand">
-<a aria-label="Astra Nexora — home" href="{home}#home"><img alt="Astra Nexora" height="34" loading="lazy" src="{prefix}assets/logo-horizontal-white.png"/></a>
+<a aria-label="Astra Nexora — home" class="footer-logo" href="{home}#home">{logo()}</a>
 <p>A digital marketing agency in Chennai helping businesses build powerful digital identities through creativity, strategy and measurable growth.</p>
 <ul aria-label="Social media" class="footer-social">
 {social}
@@ -334,14 +350,14 @@ def cta_contact(prefix, home, with_form=True):
 <p class="lead">Tell us about your business on WhatsApp or email. We'll reply with a clear next step, usually within 24 hours.</p>
 <div class="hero-actions" style="margin-top:24px">
 {btn("Chat on WhatsApp", WA, "btn-primary", target=True)}
-{btn("Fill in the audit form", f"{home}#contact", "btn-ghost")}
+{btn("Fill in the audit form", f"{home}#contact", "btn-outline-dark")}
 </div>
 </div>'''
-    return f'''<section aria-labelledby="contactTitle" class="section dark has-space" id="contact">
-{space("blue", prefix)}
+    return f'''<section aria-labelledby="contactTitle" class="section contact-section" id="contact">
+{space_light()}
 <div class="container contact-grid">
 <div class="contact-info">
-{eyebrow("Let's build your next era", True)}
+{eyebrow("Let's build your next era")}
 <h2 class="contact-title" data-split="" id="contactTitle">Ready to build something <em>remarkable?</em></h2>
 <span class="contact-status"><i aria-hidden="true" class="live-dot"></i>Currently accepting projects · replies within 24 hours</span>
 <div class="contact-lines">
@@ -396,7 +412,7 @@ def home_page():
                 "name": "Astra Nexora",
                 "slogan": "Creative. Strategic. Growth Driven.",
                 "url": SITE,
-                "logo": SITE + "assets/logo-horizontal.png",
+                "logo": SITE + "assets/og-image.jpg",
                 "email": EMAIL,
                 "telephone": "+91-88384-17707",
                 "foundingDate": "2025",
@@ -522,38 +538,38 @@ def home_page():
 <main id="main">
 
 <section aria-labelledby="heroTitle" class="hero" id="home">
-<div class="hero-media" data-hero-media="">
-<img alt="Team reviewing marketing analytics on a laptop during a meeting" decoding="async" fetchpriority="high" height="1080" sizes="100vw" src="assets/stock/pexels-7147921-poster-w1200.webp" srcset="assets/stock/pexels-7147921-poster-w480.webp 480w, assets/stock/pexels-7147921-poster-w800.webp 800w, assets/stock/pexels-7147921-poster-w1200.webp 1200w, assets/stock/pexels-7147921-poster-w2000.webp 1920w" width="1920"/>
-<!-- Desktop-only background video (Pexels 7147921, see assets/video/CREDITS.md). The poster above is its first frame. -->
-<video aria-hidden="true" class="hero-video" data-src="assets/video/hero.mp4" loop="" muted="" playsinline="" preload="none"></video>
-</div>
-<div aria-hidden="true" class="hero-shade"></div>
-<button aria-pressed="false" class="hero-video-toggle" hidden="" type="button"><span aria-hidden="true" class="hero-video-toggle-icon"></span><span class="hero-video-toggle-label">Pause video</span></button>
-<div class="hero-content" data-hero-content="">
-{eyebrow("Digital marketing agency · Chennai", True)}
+{space_light()}
+<div class="container hero-content" data-hero-content="">
+<div class="hero-head">
+{eyebrow("Digital marketing agency · Chennai")}
 <h1 class="hero-title" id="heroTitle">
 {hero_lines}
 </h1>
-<div class="hero-bottom">
-<div>
-<p class="hero-lead">{esc(HOME["hero_lead"])}</p>
-<div class="hero-actions" style="margin-top:26px">
-{btn("Get a free website audit", "#contact")}
-{btn("Explore services", "#services", "btn-ghost")}
 </div>
-<ul aria-label="Astra Nexora at a glance" class="hero-stats" style="margin-top:34px">
+<div class="hero-side">
+<p class="hero-lead">{esc(HOME["hero_lead"])}</p>
+<div class="hero-actions">
+{btn("Get a free website audit", "#contact")}
+{btn("Explore services", "#services", "btn-outline-dark")}
+</div>
+<ul aria-label="Astra Nexora at a glance" class="hero-stats">
 {stats}
 </ul>
 </div>
-<div style="display:grid;gap:22px;justify-items:end">
+</div>
+<div class="container hero-stage">
+<div class="hero-media" data-hero-media="">
+<img alt="Team reviewing marketing analytics on a laptop during a meeting" decoding="async" fetchpriority="high" height="1080" sizes="(min-width: 1320px) 1280px, 94vw" src="assets/stock/pexels-7147921-poster-w1200.webp" srcset="assets/stock/pexels-7147921-poster-w480.webp 480w, assets/stock/pexels-7147921-poster-w800.webp 800w, assets/stock/pexels-7147921-poster-w1200.webp 1200w, assets/stock/pexels-7147921-poster-w2000.webp 1920w" width="1920"/>
+<!-- Desktop-only video (Pexels 7147921, see assets/video/CREDITS.md). The poster above is its first frame. -->
+<video aria-hidden="true" class="hero-video" data-src="assets/video/hero.mp4" loop="" muted="" playsinline="" preload="none"></video>
+<div aria-hidden="true" class="hero-shade"></div>
+<button aria-pressed="false" class="hero-video-toggle" hidden="" type="button"><span aria-hidden="true" class="hero-video-toggle-icon"></span><span class="hero-video-toggle-label">Pause video</span></button>
 <aside aria-label="Free website audit" class="hero-card">
 <span class="hero-card-status"><i aria-hidden="true" class="live-dot"></i>Accepting projects</span>
 <strong>Free website audit</strong>
 <p>Send us your website and get a clear list of what to fix first.</p>
 <a class="link-arrow" href="#contact">Get my audit <span aria-hidden="true">→</span></a>
 </aside>
-<span aria-hidden="true" class="scroll-cue"><i></i>Scroll</span>
-</div>
 </div>
 </div>
 </section>
@@ -578,7 +594,7 @@ def home_page():
 </div>
 </section>
 
-<section aria-labelledby="servicesTitle" class="section dark has-space" id="services">
+<section aria-labelledby="servicesTitle" class="section dark panel has-space" id="services">
 {space("", p, video=True)}
 <div class="container">
 <div class="section-head split-head">
@@ -609,7 +625,7 @@ def home_page():
 </div>
 </section>
 
-<section aria-labelledby="workTitle" class="section dark work has-space" id="work">
+<section aria-labelledby="workTitle" class="section dark panel work has-space" id="work">
 {space("band", p)}
 <div class="container work-intro">
 {eyebrow("Our work", True)}
@@ -647,12 +663,12 @@ def home_page():
 </div>
 </section>
 
-<section aria-labelledby="whyTitle" class="section dark has-space">
-{space("violet", p)}
+<section aria-labelledby="whyTitle" class="section why-section">
+{space_light()}
 <div class="container">
 <div class="section-head split-head">
 <div>
-{eyebrow("Why Astra Nexora", True)}
+{eyebrow("Why Astra Nexora")}
 <h2 class="title" data-split="" id="whyTitle" style="margin-top:22px">What sets <em>us apart.</em></h2>
 </div>
 <p class="lead">Six principles behind every project we take on.</p>
@@ -662,11 +678,11 @@ def home_page():
 </div>
 </section>
 
-<section aria-labelledby="auditTitle" class="section dark audit has-space" id="audit">
-{space("orion", p)}
+<section aria-labelledby="auditTitle" class="section sheet paper audit" id="audit">
+{space_light(rings=False)}
 <div class="container">
 <div class="audit-head">
-{eyebrow("Free website audit", True)}
+{eyebrow("Free website audit")}
 <h2 class="title" data-split="" id="auditTitle">Find out what's holding your <em>website back.</em></h2>
 <p class="lead">Send us your website and we'll check the six things that decide whether visitors find you, trust you and get in touch. Free, with no obligation.</p>
 </div>
@@ -785,19 +801,19 @@ def service_page(s, index):
 
 <main id="main">
 
-<section class="page-hero has-space" id="home">
-{space("band", p)}
+<section class="page-hero" id="home">
+{space_light()}
 <span aria-hidden="true" class="page-number">{num}</span>
 <div class="container">
 <div class="page-hero-grid">
 <div>
 <nav aria-label="Breadcrumb" class="breadcrumb"><a href="{home}">Home</a><span aria-hidden="true">/</span><a href="{home}#services">Services</a><span aria-hidden="true">/</span><span aria-current="page">{esc(s["nav"])}</span></nav>
-{eyebrow(f"Service {num} · {esc(s['nav'])}", True)}
+{eyebrow(f"Service {num} · {esc(s['nav'])}")}
 <h1 data-split="">{s["h1"]}</h1>
 <p class="page-hero-lead">{esc(s["lead"])}</p>
 <div class="page-hero-actions">
 {btn("Get a free consultation", f"{home}#contact")}
-{btn("Chat on WhatsApp", WA, "btn-ghost", target=True)}
+{btn("Chat on WhatsApp", WA, "btn-outline-dark", target=True)}
 </div>
 </div>
 <div class="page-hero-media img-wrap" data-hero-media="">{img(s["hero"], s["hero_alt"], "(min-width: 1001px) 40vw, 92vw", p, eager=True)}</div>
@@ -822,12 +838,12 @@ def service_page(s, index):
 </div>
 </section>
 
-<section aria-labelledby="includesTitle" class="section dark has-space">
-{space("violet", p)}
+<section aria-labelledby="includesTitle" class="section sheet paper">
+{space_light(rings=False)}
 <div class="container">
 <div class="section-head split-head">
 <div>
-{eyebrow("What's included", True)}
+{eyebrow("What's included")}
 <h2 class="title" data-split="" id="includesTitle" style="margin-top:22px">Everything in <em>{esc(s["nav"])}.</em></h2>
 </div>
 <p class="lead">Choose the pieces you need, or let us run the whole service for you.</p>
@@ -881,7 +897,7 @@ def service_page(s, index):
 </div>
 </section>
 
-<section aria-labelledby="relatedTitle" class="section dark has-space">
+<section aria-labelledby="relatedTitle" class="section dark panel has-space">
 {space("blue", p)}
 <div class="container">
 <div class="section-head">
@@ -937,13 +953,13 @@ def project_page(pr, index):
 
 <main id="main">
 
-<section class="page-hero has-space" id="home">
-{space("band", p)}
+<section class="page-hero" id="home">
+{space_light()}
 <div class="container">
 <div class="page-hero-grid">
 <div>
 <nav aria-label="Breadcrumb" class="breadcrumb"><a href="{home}">Home</a><span aria-hidden="true">/</span><a href="{home}#work">Work</a><span aria-hidden="true">/</span><span aria-current="page">{esc(pr["title"])}</span></nav>
-{eyebrow(f"Concept project · {esc(pr['category'])}", True)}
+{eyebrow(f"Concept project · {esc(pr['category'])}")}
 <h1 data-split="">{esc(pr["title"])}</h1>
 <p class="page-hero-lead">{esc(pr["summary"])}</p>
 </div>

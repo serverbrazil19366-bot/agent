@@ -154,9 +154,6 @@ function onScroll() {
 
     if (header) {
         header.classList.toggle("scrolled", y > 40);
-        const menuOpen = header.classList.contains("menu-open");
-        header.classList.toggle("is-hidden", !menuOpen && y > 400 && y > lastY + 2);
-        if (y < lastY - 2) header.classList.remove("is-hidden");
     }
 
     if (progressBar) progressBar.style.transform = "scaleX(" + progress + ")";
@@ -381,11 +378,11 @@ function heroIntro() {
     const timeline = gsap.timeline({ defaults: { ease: "expo.out" } });
 
     timeline
-        .fromTo("[data-hero-media]", { scale: 1.18 }, { scale: 1, duration: 2.2, ease: "power3.out" }, 0)
-        .fromTo(lines, { yPercent: 105, y: 0 }, { yPercent: 0, y: 0, duration: 1.3, stagger: 0.12 }, 0.15)
-        .from(".hero-content > .eyebrow", { y: 20, autoAlpha: 0, duration: 1 }, 0.1)
-        .from(".hero-lead, .hero-actions, .hero-stats li", { y: 30, autoAlpha: 0, duration: 1.1, stagger: 0.07 }, 0.5)
-        .from(".hero-card, .scroll-cue", { y: 40, autoAlpha: 0, duration: 1.2, stagger: 0.1 }, 0.7);
+        .fromTo(lines, { yPercent: 105, y: 0 }, { yPercent: 0, y: 0, duration: 1.3, stagger: 0.12 }, 0.1)
+        .from(".hero-head > .eyebrow", { y: 20, autoAlpha: 0, duration: 1 }, 0)
+        .from(".hero-lead, .hero-actions, .hero-stats li", { y: 30, autoAlpha: 0, duration: 1.1, stagger: 0.07 }, 0.4)
+        .from("[data-hero-media]", { y: 80, autoAlpha: 0, duration: 1.6, ease: "power4.out" }, 0.45)
+        .from(".hero-card", { y: 30, autoAlpha: 0, duration: 1.1 }, 1);
 
 }
 
@@ -423,15 +420,21 @@ if (animate) {
 
     const mm = gsap.matchMedia();
 
-    // Hero: photo sinks and the copy lifts away as you scroll past
-    if (document.querySelector(".hero")) {
-        gsap.to("[data-hero-media]", {
-            yPercent: 18, ease: "none",
-            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true }
+    // Hero: the film frame opens out to full width as you scroll into it
+    const heroStage = document.querySelector(".hero-stage");
+    if (heroStage) {
+        mm.add("(min-width: 1101px)", () => {
+            const tween = gsap.fromTo("[data-hero-media]",
+                { clipPath: "inset(0% 6% 0% 6% round 36px)" },
+                {
+                    clipPath: "inset(0% 0% 0% 0% round 24px)", ease: "none",
+                    scrollTrigger: { trigger: heroStage, start: "top 85%", end: "top 15%", scrub: true }
+                });
+            return () => tween.kill();
         });
-        gsap.to("[data-hero-content]", {
-            y: -90, autoAlpha: 0, ease: "none",
-            scrollTrigger: { trigger: ".hero", start: "20% top", end: "85% top", scrub: true }
+        gsap.fromTo(".hero-media > img, .hero-media > video", { yPercent: -6, scale: 1.12 }, {
+            yPercent: 6, scale: 1.12, ease: "none",
+            scrollTrigger: { trigger: heroStage, start: "top bottom", end: "bottom top", scrub: true }
         });
     }
 
@@ -587,7 +590,7 @@ if (finePointer && !reduceMotion) {
 
 (function () {
 
-    const layers = Array.from(document.querySelectorAll(".space-sticky"));
+    const layers = Array.from(document.querySelectorAll(".space-sticky, .cosmos"));
     if (!layers.length) return;
 
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -604,9 +607,25 @@ if (finePointer && !reduceMotion) {
     sctx.fillStyle = glow;
     sctx.fillRect(0, 0, 64, 64);
 
+    // Light sections get small blue stars instead of white ones
+    const lightSprite = document.createElement("canvas");
+    lightSprite.width = lightSprite.height = 64;
+    const lctx = lightSprite.getContext("2d");
+    const lglow = lctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    lglow.addColorStop(0, "rgba(46,75,224,.95)");
+    lglow.addColorStop(0.2, "rgba(86,118,255,.55)");
+    lglow.addColorStop(0.5, "rgba(142,162,255,.12)");
+    lglow.addColorStop(1, "rgba(142,162,255,0)");
+    lctx.fillStyle = lglow;
+    lctx.fillRect(0, 0, 64, 64);
+
     function makeField(canvas) {
 
         const ctx = canvas.getContext("2d");
+        const light = canvas.dataset.tone === "light";
+        const glowSprite = light ? lightSprite : sprite;
+        const colors = light ? ["#2E4BE0", "#5676FF", "#1729A0"] : ["#FFFFFF", "#C9D4FF"];
+        const density = light ? 16000 : 5200;
         let stars = [];
         let w = 0;
         let h = 0;
@@ -617,19 +636,19 @@ if (finePointer && !reduceMotion) {
             if (!w || !h) return;
             canvas.width = Math.round(w * dpr);
             canvas.height = Math.round(h * dpr);
-            const count = Math.min(Math.round(w * h / 5200), 420);
+            const count = Math.min(Math.round(w * h / density), 420);
             stars = Array.from({ length: count }, () => {
                 const bright = Math.random() < 0.09;
                 return {
                     x: Math.random() * w,
                     y: Math.random() * h,
                     r: bright ? 1.1 + Math.random() * 1.2 : 0.35 + Math.random() * 0.75,
-                    base: bright ? 0.55 : 0.25 + Math.random() * 0.45,
+                    base: (bright ? 0.55 : 0.25 + Math.random() * 0.45) * (light ? 0.55 : 1),
                     amp: 0.25 + Math.random() * 0.5,
                     speed: 0.6 + Math.random() * 2.2,
                     phase: Math.random() * Math.PI * 2,
                     bright,
-                    tint: Math.random() < 0.3
+                    color: colors[Math.floor(Math.random() * colors.length)]
                 };
             });
         }
@@ -642,17 +661,17 @@ if (finePointer && !reduceMotion) {
                 if (s.bright) {
                     const size = s.r * 9 * (0.75 + a * 0.4);
                     ctx.globalAlpha = a;
-                    ctx.drawImage(sprite, s.x - size / 2, s.y - size / 2, size, size);
+                    ctx.drawImage(glowSprite, s.x - size / 2, s.y - size / 2, size, size);
                     // thin cross flare on the brightest moments
                     if (a > 0.8) {
                         ctx.globalAlpha = (a - 0.8) * 2.5;
-                        ctx.fillStyle = "#fff";
+                        ctx.fillStyle = light ? "#2E4BE0" : "#fff";
                         ctx.fillRect(s.x - size * 0.9, s.y - 0.35, size * 1.8, 0.7);
                         ctx.fillRect(s.x - 0.35, s.y - size * 0.9, 0.7, size * 1.8);
                     }
                 } else {
                     ctx.globalAlpha = a;
-                    ctx.fillStyle = s.tint ? "#C9D4FF" : "#FFFFFF";
+                    ctx.fillStyle = s.color;
                     ctx.beginPath();
                     ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
                     ctx.fill();
@@ -686,12 +705,12 @@ if (finePointer && !reduceMotion) {
 
     const io = new IntersectionObserver(entries => {
         entries.forEach(entry => {
-            const layer = entry.target.firstElementChild;
+            const layer = entry.target.classList.contains("cosmos") ? entry.target : entry.target.firstElementChild;
             entry.isIntersecting ? visible.add(layer) : visible.delete(layer);
         });
     });
 
-    layers.forEach(layer => io.observe(layer.parentElement));
+    layers.forEach(layer => io.observe(layer.classList.contains("cosmos") ? layer : layer.parentElement));
 
     (function loop(now) {
         const t = now / 1000;
