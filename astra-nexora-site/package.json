@@ -4,7 +4,8 @@
   "description": "Astra Nexora website — plain HTML/CSS/JS. Node is only used for the image pipeline.",
   "type": "module",
   "scripts": {
-    "images": "node scripts/fetch-images.mjs"
+    "images": "node scripts/fetch-images.mjs",
+    "build": "python3 scripts/build-site.py"
   },
   "devDependencies": {
     "sharp": "^0.33.5"

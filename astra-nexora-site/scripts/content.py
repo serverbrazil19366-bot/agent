@@ -1,6 +1,6 @@
 """Page content for the Astra Nexora service and project pages.
 
-Edit the copy here, then run:  python3 scripts/build-pages.py
+Edit the copy here, then run:  python3 scripts/build-site.py
 """
 
 SERVICES = [
@@ -431,3 +431,63 @@ PROJECTS = [
         "related": "branding",
     },
 ]
+
+
+# ---------------------------------------------------------------- homepage
+
+HOME = {
+    "hero_h1": ["Transforming brands", "into <em>digital</em>", "<em>powerhouses.</em>"],
+    "hero_lead": "A digital marketing agency in Chennai helping businesses build powerful digital identities through creativity, strategy and measurable growth.",
+    "stats": [("2025", "Founded in Chennai"), ("8", "Service areas"), ("Chennai", "Serving all of India")],
+    "statement": "We build marketing as one connected system. Strategy, websites, search, content, ads and automation, planned together by one team and measured on the enquiries they bring in.",
+    "about": [
+        "Astra Nexora is a digital marketing agency in Chennai helping businesses, new brands and creators build powerful digital identities through branding, websites, SEO, content and growth-focused marketing.",
+        "We don't just execute tasks. We think strategically, create with care and measure what matters. Every project starts with your business goals and ends with results you can see.",
+    ],
+    "process": [
+        ("Audit", "We review your website, Google presence and competitors, and show you what to fix first.", "Free · no obligation"),
+        ("Strategy", "Which pages, keywords, channels and content matter for your business, and in what order.", "Research · plan · prioritise"),
+        ("Build", "We design, build and launch, with tracking set up from day one.", "Design · develop · launch"),
+        ("Grow & report", "Ongoing improvements and clear reports on the numbers that matter to your business.", "Measure · optimise · grow"),
+    ],
+    "principles": [
+        ("compass", "Strategy before execution", "We never jump to design without understanding your business. Every page and every post serves a clear objective."),
+        ("target", "Obsessed with results", "Good design means little without measurable impact. We track and report on the numbers that matter to your business."),
+        ("spark", "Creative that converts", "Our creative work looks premium and is built to guide visitors toward action: a call, a message, a booking."),
+        ("gem", "Premium quality standard", "No shortcuts and no copy-paste templates. Your website and brand reflect the quality of your business."),
+        ("handshake", "True partnership", "We work as an extension of your team, with open communication and shared goals, not a vendor relationship."),
+        ("bolt", "Speed without sacrifice", "Clear processes let us deliver quickly without cutting corners on quality."),
+    ],
+    "founder": {
+        "name": "S. Saktheeswaran",
+        "role": "Founder & Managing Director",
+        "bio": [
+            "S. Saktheeswaran (Sakthi) is the Founder and Managing Director of Astra Nexora, specialising in digital marketing, SEO, website development, WordPress and Wix development, branding and content creation.",
+            "He focuses on helping businesses create digital experiences that combine creativity, strategy and measurable business growth.",
+        ],
+        "timeline": [
+            ("2019", "Started in digital marketing, building expertise in SEO and web development"),
+            ("2021", "Expanded into branding and content strategy for growing businesses"),
+            ("2025", "Founded Astra Nexora in Chennai"),
+        ],
+        "linkedin": "https://www.linkedin.com/in/saktheeswaran-s-30a036273/",
+    },
+    "faqs": [
+        ("What services does Astra Nexora offer?",
+         "Eight service areas: SEO (including local and AI search), social media marketing, performance marketing and paid ads, content marketing and creative, website design and development, branding and personal branding, email and lead generation, and AI solutions and marketing automation."),
+        ("How long does a typical project take?",
+         "It depends on scope. A website usually takes 4–8 weeks and a brand identity 3–4 weeks. SEO typically starts showing results in 3–6 months. You get a detailed timeline at kickoff and regular updates throughout."),
+        ("Do you work with businesses of all sizes?",
+         "Yes. We work with new businesses, growing SMEs and established companies, and we scope each project to your stage and goals."),
+        ("How do you measure and report on results?",
+         "Every engagement has clear goals tied to business outcomes such as traffic, leads and enquiries. You get regular reports that show what was done and what it achieved."),
+        ("What makes Astra Nexora different from other agencies?",
+         "Strategic thinking before any creative work, a focus on measurable business results, and a premium quality standard on every deliverable. You also work directly with the founder."),
+        ("Do you offer ongoing support after the project?",
+         "Yes. We offer ongoing maintenance, support and monthly growth retainers after launch."),
+        ("How do I get started?",
+         "Send us a message on WhatsApp at +91 88384 17707, email info.astranexora@gmail.com or fill in the form below. We'll set up a short discovery call and then send a proposal with timeline and cost."),
+        ("Which industries do you work with?",
+         "Our approach works across industries, including healthcare, professional services, e-commerce, education and creative businesses."),
+    ],
+}

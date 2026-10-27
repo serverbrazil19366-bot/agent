@@ -204,11 +204,16 @@ async function writeCredits(results) {
 
     await writeFile(path.join(stockDir, "CREDITS.md"), md);
 
-    // Largest size of every photo, used by scripts/build-pages.py for width/height
+    // Largest size of every photo plus a tiny blur-up preview (LQIP),
+    // used by scripts/build-pages.py for width/height and placeholders
     const dims = {};
     for (const [name, result] of results) {
         const largest = result.outputs[result.outputs.length - 1];
-        dims[name] = [largest.width, largest.height];
+        const tiny = await sharp(path.join(stockDir, result.outputs[0].file))
+            .resize({ width: 24 })
+            .webp({ quality: 40 })
+            .toBuffer();
+        dims[name] = [largest.width, largest.height, "data:image/webp;base64," + tiny.toString("base64")];
     }
     await writeFile(path.join(root, "scripts", "image-dims.json"), JSON.stringify(dims, null, 2) + "\n");
 }

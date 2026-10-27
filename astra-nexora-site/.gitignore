@@ -1,3 +1,4 @@
 node_modules/
 scripts/originals/
 .DS_Store
+__pycache__/
