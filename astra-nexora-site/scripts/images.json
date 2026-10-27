@@ -201,6 +201,46 @@
       "title": "Man Working with ChatGPT",
       "photographer": "Matheus Bertelli",
       "alt": "Hands typing on a laptop with an AI assistant open"
+    },
+    {
+      "slot": "page-social",
+      "status": "selected",
+      "source": "pexels",
+      "id": "7129038",
+      "page": "https://www.pexels.com/photo/crop-unrecognizable-man-using-smartphone-and-working-on-laptop-7129038/",
+      "title": "Crop unrecognizable man using smartphone and working on laptop",
+      "photographer": "",
+      "alt": "Hands holding a phone over a notebook"
+    },
+    {
+      "slot": "page-branding",
+      "status": "selected",
+      "source": "pexels",
+      "id": "7598019",
+      "page": "https://www.pexels.com/photo/pictures-of-brand-strategy-and-design-7598019/",
+      "title": "Pictures of Brand Strategy and Design",
+      "photographer": "",
+      "alt": "Brand strategy board with mood images and colour swatches"
+    },
+    {
+      "slot": "page-leads",
+      "status": "selected",
+      "source": "pexels",
+      "id": "39190577",
+      "page": "https://www.pexels.com/photo/creative-team-meeting-analyzing-business-growth-39190577/",
+      "title": "Creative Team Meeting Analyzing Business Growth",
+      "photographer": "",
+      "alt": "Team reviewing growth charts on a screen"
+    },
+    {
+      "slot": "page-ai",
+      "status": "selected",
+      "source": "pexels",
+      "id": "16094047",
+      "page": "https://www.pexels.com/photo/man-using-laptop-wit-chat-gpt-16094047/",
+      "title": "Man Using Laptop wit Chat GPT",
+      "photographer": "Matheus Bertelli",
+      "alt": "Close-up of hands typing on a laptop running an AI assistant"
     }
   ]
 }

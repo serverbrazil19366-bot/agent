@@ -203,6 +203,14 @@ async function writeCredits(results) {
     ].join("\n");
 
     await writeFile(path.join(stockDir, "CREDITS.md"), md);
+
+    // Largest size of every photo, used by scripts/build-pages.py for width/height
+    const dims = {};
+    for (const [name, result] of results) {
+        const largest = result.outputs[result.outputs.length - 1];
+        dims[name] = [largest.width, largest.height];
+    }
+    await writeFile(path.join(root, "scripts", "image-dims.json"), JSON.stringify(dims, null, 2) + "\n");
 }
 
 

@@ -517,3 +517,193 @@ updateActiveNav();
     });
 
 })();
+
+
+/* =====================================================
+   PREMIUM LAYER
+   Everything below is progressive: the page works without it,
+   and motion-heavy parts are skipped for reduced motion.
+===================================================== */
+
+const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+document.addEventListener("DOMContentLoaded", () => {
+    requestAnimationFrame(() => document.body.classList.add("is-ready"));
+});
+
+
+/* ---------- Word-by-word heading reveal ---------- */
+
+(function () {
+
+    if (prefersReducedMotion || !("IntersectionObserver" in window)) return;
+
+    const headings = document.querySelectorAll("[data-split]");
+
+    function splitNode(node, counter) {
+        Array.from(node.childNodes).forEach(child => {
+            if (child.nodeType === Node.TEXT_NODE) {
+                const parts = child.textContent.split(/(\s+)/);
+                const frag = document.createDocumentFragment();
+                parts.forEach(part => {
+                    if (!part) return;
+                    if (/^\s+$/.test(part)) {
+                        frag.appendChild(document.createTextNode(" "));
+                        return;
+                    }
+                    const outer = document.createElement("span");
+                    outer.className = "w";
+                    const inner = document.createElement("span");
+                    inner.textContent = part;
+                    inner.style.setProperty("--i", counter.i++);
+                    outer.appendChild(inner);
+                    frag.appendChild(outer);
+                });
+                child.replaceWith(frag);
+            } else if (child.nodeType === Node.ELEMENT_NODE && child.tagName !== "BR") {
+                splitNode(child, counter);
+            }
+        });
+    }
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("split-in");
+            observer.unobserve(entry.target);
+        });
+    }, { threshold: 0.2 });
+
+    headings.forEach(h => {
+        h.setAttribute("aria-label", h.textContent.replace(/\s+/g, " ").trim());
+        splitNode(h, { i: 0 });
+        h.querySelectorAll(".w").forEach(w => w.setAttribute("aria-hidden", "true"));
+        h.classList.add("split-ready");
+        observer.observe(h);
+    });
+
+})();
+
+
+/* ---------- Parallax (hero media and framed images) ---------- */
+
+(function () {
+
+    if (prefersReducedMotion) return;
+
+    const items = Array.from(document.querySelectorAll("[data-parallax], .hero-background"));
+
+    if (!items.length) return;
+
+    let ticking = false;
+
+    function update() {
+        const vh = window.innerHeight;
+        items.forEach(el => {
+            const rect = el.getBoundingClientRect();
+            if (rect.bottom < -200 || rect.top > vh + 200) return;
+            const speed = parseFloat(el.dataset.parallaxSpeed || "0.15");
+            const offset = (rect.top + rect.height / 2 - vh / 2) * -speed;
+            // Framed images move inside their frame; everything else moves itself
+            const target = el.classList.contains("split-frame") ? el.querySelector("img") : el;
+            if (target) target.style.transform = "translate3d(0," + offset.toFixed(1) + "px,0)";
+        });
+        ticking = false;
+    }
+
+    window.addEventListener("scroll", () => {
+        if (!ticking) {
+            ticking = true;
+            requestAnimationFrame(update);
+        }
+    }, { passive: true });
+
+    update();
+
+})();
+
+
+/* ---------- Magnetic buttons ---------- */
+
+(function () {
+
+    if (prefersReducedMotion || !finePointer) return;
+
+    document.querySelectorAll(".magnetic").forEach(el => {
+
+        el.addEventListener("pointermove", e => {
+            const r = el.getBoundingClientRect();
+            const x = (e.clientX - r.left - r.width / 2) * 0.22;
+            const y = (e.clientY - r.top - r.height / 2) * 0.32;
+            el.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px)";
+        });
+
+        el.addEventListener("pointerleave", () => {
+            el.style.transform = "";
+        });
+
+    });
+
+})();
+
+
+/* ---------- Cursor spotlight on cards ---------- */
+
+(function () {
+
+    if (!finePointer) return;
+
+    document.querySelectorAll(".spotlight").forEach(card => {
+        card.addEventListener("pointermove", e => {
+            const r = card.getBoundingClientRect();
+            card.style.setProperty("--mx", (e.clientX - r.left) + "px");
+            card.style.setProperty("--my", (e.clientY - r.top) + "px");
+        });
+    });
+
+})();
+
+
+/* ---------- Back to top with progress ring ---------- */
+
+(function () {
+
+    const button = document.querySelector(".to-top");
+
+    if (!button) return;
+
+    const ring = button.querySelector(".to-top-ring");
+    const length = 125.7;
+
+    function update() {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = max > 0 ? window.scrollY / max : 0;
+        button.classList.toggle("show", window.scrollY > 600);
+        if (ring) ring.style.strokeDashoffset = String(length - length * progress);
+    }
+
+    button.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
+    });
+
+    window.addEventListener("scroll", update, { passive: true });
+
+    update();
+
+})();
+
+
+/* ---------- Services dropdown: Escape closes it ---------- */
+
+(function () {
+
+    document.querySelectorAll(".nav-dropdown").forEach(dropdown => {
+        dropdown.addEventListener("keydown", e => {
+            if (e.key !== "Escape") return;
+            const toggle = dropdown.querySelector(".nav-dropdown-toggle");
+            toggle.focus();
+            toggle.blur();
+        });
+    });
+
+})();

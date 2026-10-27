@@ -3656,3 +3656,445 @@ button {
         transform: none;
     }
 }
+
+
+/* =====================================================
+   PREMIUM LAYER — shared by every page
+===================================================== */
+
+/* ---------- Services dropdown ---------- */
+
+.nav-dropdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.nav-dropdown-toggle span {
+    display: inline-block;
+    margin-left: 2px;
+    font-size: 10px;
+    transition: transform .3s var(--ease);
+}
+
+.nav-dropdown:hover .nav-dropdown-toggle span,
+.nav-dropdown:focus-within .nav-dropdown-toggle span {
+    transform: rotate(180deg);
+}
+
+.nav-dropdown-panel {
+    position: absolute;
+    top: calc(100% + 18px);
+    left: 50%;
+    width: 560px;
+    padding: 20px;
+    border-radius: 18px;
+    background: var(--white);
+    box-shadow: 0 30px 70px rgba(var(--navy-rgb), .18);
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, 10px);
+    transition: opacity .25s ease, transform .3s var(--ease), visibility .25s;
+}
+
+/* Hover bridge so the panel doesn't close on the way down */
+.nav-dropdown-panel::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -20px;
+    height: 20px;
+}
+
+.nav-dropdown:hover .nav-dropdown-panel,
+.nav-dropdown:focus-within .nav-dropdown-panel {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+}
+
+.nav-dropdown-title {
+    padding: 0 10px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.nav-dropdown-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+}
+
+.site-header .desktop-nav .nav-dropdown-panel a,
+.site-header:not(.scrolled):not(.menu-open) .desktop-nav .nav-dropdown-panel a {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 11px 10px;
+    border-radius: 10px;
+    color: var(--navy);
+    font-size: 13.5px;
+    line-height: 1.35;
+    transition: background .2s, color .2s;
+}
+
+.site-header .desktop-nav .nav-dropdown-panel a::after {
+    display: none;
+}
+
+.site-header .desktop-nav .nav-dropdown-panel a span {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--blue-bright);
+}
+
+.site-header .desktop-nav .nav-dropdown-panel a:hover,
+.site-header .desktop-nav .nav-dropdown-panel a:focus-visible,
+.site-header:not(.scrolled):not(.menu-open) .desktop-nav .nav-dropdown-panel a:hover,
+.site-header:not(.scrolled):not(.menu-open) .desktop-nav .nav-dropdown-panel a:focus-visible {
+    background: var(--paper);
+    color: var(--blue-bright);
+}
+
+.mobile-services summary {
+    cursor: pointer;
+    list-style: none;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--navy);
+}
+
+.mobile-services summary::-webkit-details-marker {
+    display: none;
+}
+
+.mobile-services summary::after {
+    content: " ▾";
+    font-size: 11px;
+}
+
+.mobile-services[open] summary {
+    margin-bottom: 10px;
+}
+
+.mobile-services a {
+    display: block;
+    padding: 7px 0 7px 14px;
+    border-left: 2px solid var(--border);
+    font-size: 14px !important;
+    font-weight: 500 !important;
+}
+
+
+/* ---------- Floating WhatsApp + back to top ---------- */
+
+.float-whatsapp {
+    position: fixed;
+    right: calc(16px + env(safe-area-inset-right, 0px));
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    z-index: 900;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 54px;
+    padding: 0 15px;
+    border-radius: 100px;
+    background: #1FAF57;
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 14px 34px rgba(31, 175, 87, .35);
+    transition: transform .3s var(--ease), box-shadow .3s;
+}
+
+.float-whatsapp svg {
+    width: 24px;
+    height: 24px;
+}
+
+.float-whatsapp span {
+    display: none;
+}
+
+.float-whatsapp:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 40px rgba(31, 175, 87, .45);
+}
+
+.to-top {
+    position: fixed;
+    right: calc(21px + env(safe-area-inset-right, 0px));
+    bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+    z-index: 900;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--white);
+    color: var(--navy);
+    box-shadow: 0 10px 26px rgba(var(--navy-rgb), .18);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity .3s, transform .3s var(--ease), visibility .3s;
+}
+
+.to-top.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.to-top svg {
+    position: absolute;
+    inset: 0;
+    transform: rotate(-90deg);
+}
+
+.to-top circle {
+    fill: none;
+    stroke-width: 2;
+}
+
+.to-top-track {
+    stroke: var(--border);
+}
+
+.to-top-ring {
+    stroke: var(--blue-bright);
+    stroke-dasharray: 125.7;
+    stroke-dashoffset: 125.7;
+}
+
+.to-top > span {
+    position: relative;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+@media (min-width: 769px) {
+    .float-whatsapp {
+        right: 24px;
+        bottom: 24px;
+        padding: 0 20px 0 16px;
+    }
+
+    .float-whatsapp span {
+        display: inline;
+    }
+
+    .to-top {
+        right: 29px;
+        bottom: 92px;
+    }
+}
+
+
+/* ---------- Cursor spotlight on cards ---------- */
+
+.spotlight {
+    --mx: 50%;
+    --my: 50%;
+}
+
+.spotlight::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(420px circle at var(--mx) var(--my), rgba(46, 75, 224, .10), transparent 45%);
+    opacity: 0;
+    transition: opacity .35s ease;
+    pointer-events: none;
+}
+
+.spotlight:hover::before {
+    opacity: 1;
+}
+
+.step-highlight.spotlight::before {
+    background: radial-gradient(420px circle at var(--mx) var(--my), rgba(86, 118, 255, .25), transparent 45%);
+}
+
+
+/* ---------- Word-by-word heading reveal ---------- */
+
+.split-ready .w {
+    display: inline-block;
+    overflow: hidden;
+    padding-bottom: .1em;
+    margin-bottom: -.1em;
+    vertical-align: top;
+}
+
+.split-ready .w > span {
+    display: inline-block;
+    transform: translateY(110%);
+    transition: transform 1s cubic-bezier(.2, .8, .2, 1);
+    transition-delay: calc(var(--i, 0) * 45ms);
+}
+
+.split-ready.split-in .w > span {
+    transform: translateY(0);
+}
+
+
+/* ---------- Project cards: whole card clickable ---------- */
+
+.project-card {
+    position: relative;
+}
+
+.project-cta-light {
+    background: var(--navy);
+    color: var(--white);
+}
+
+.project-cta-light span {
+    color: var(--blue-light);
+}
+
+.project-cta-light:hover {
+    background: var(--blue);
+}
+
+
+/* ---------- Hero upgrade ---------- */
+
+.hero-background {
+    will-change: transform;
+}
+
+.hero-card {
+    display: none;
+    position: absolute;
+    right: 6%;
+    bottom: 96px;
+    z-index: 3;
+    width: 300px;
+    padding: 20px 22px;
+    border: 1px solid rgba(255, 255, 255, .18);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, .1);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    color: var(--white);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, .25);
+    animation: heroCardIn 1s 1.1s both cubic-bezier(.2, .8, .2, 1);
+}
+
+.hero-card-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, .8);
+}
+
+.hero-card-status i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #35D07F;
+    box-shadow: 0 0 0 4px rgba(53, 208, 127, .2);
+    animation: livePulse 2s ease-in-out infinite;
+}
+
+.hero-card strong {
+    display: block;
+    margin-top: 12px;
+    font-family: var(--font-heading);
+    font-size: 20px;
+    letter-spacing: -.02em;
+}
+
+.hero-card p {
+    margin-top: 6px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, .75);
+}
+
+.hero-card a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--white);
+}
+
+.hero-card a span {
+    color: var(--blue-light);
+    transition: transform .3s var(--ease);
+}
+
+.hero-card a:hover span {
+    transform: translate(3px, -3px);
+}
+
+@keyframes heroCardIn {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+}
+
+.scroll-indicator i {
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, .25);
+}
+
+.scroll-indicator i::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--blue-light);
+    transform: translateX(-100%);
+    animation: scrollCue 2.2s ease-in-out infinite;
+}
+
+@keyframes scrollCue {
+    60%,
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+@media (min-width: 1101px) {
+    .hero-card {
+        display: block;
+    }
+
+    .hero-side-label {
+        display: none;
+    }
+}
+
+/* The floating WhatsApp button sits where the scroll cue was */
+.scroll-indicator {
+    display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-card,
+    .hero-card-status i,
+    .scroll-indicator i::after {
+        animation: none;
+    }
+
+    .split-ready .w > span {
+        transform: none;
+    }
+}
