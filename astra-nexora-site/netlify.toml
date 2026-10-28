@@ -1,0 +1,6 @@
+# Netlify deploys this folder straight from GitHub.
+# Only the public site files are copied into dist/, so the build scripts,
+# package files and review pages never go online.
+[build]
+  command = "rm -rf dist && mkdir -p dist/assets && cp -r index.html 404.html _headers llms.txt robots.txt sitemap.xml google*.html a123f165b7a63e7538bd05ef2faf6e66.txt css js services projects dist/ && cp -r assets/brand assets/founder assets/projects assets/stock assets/favicon.png assets/favicon-48.png assets/favicon-192.png assets/og-image.jpg dist/assets/ && rm -f dist/assets/stock/CREDITS.md"
+  publish = "dist"

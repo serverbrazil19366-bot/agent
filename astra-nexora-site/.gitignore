@@ -3,3 +3,4 @@ scripts/originals/
 .DS_Store
 __pycache__/
 undefined/
+dist/
