@@ -538,7 +538,7 @@ def home_page():
 </div>
 </section>
 
-<section aria-labelledby="servicesTitle" class="section ink services" id="services">
+<section aria-labelledby="servicesTitle" class="section ink space services" id="services">
 <div class="container">
 {label("02", "Services")}
 <div class="head">
@@ -552,6 +552,7 @@ def home_page():
 </div>
 <ol class="sc-list">
 {sc_items}</ol>
+<div aria-hidden="true" class="sc-progress"><span class="sc-count">01</span><span class="sc-track"><i></i></span><span>{len(SERVICES):02d}</span></div>
 </div>
 </div>
 </section>
@@ -569,7 +570,7 @@ def home_page():
 </div>
 </section>
 
-<section aria-labelledby="workTitle" class="section ink work" id="work">
+<section aria-labelledby="workTitle" class="section ink space work" id="work">
 <div class="container">
 {label("04", "Work")}
 <div class="head">
@@ -585,27 +586,39 @@ def home_page():
 </section>
 
 <section aria-labelledby="founderTitle" class="section paper founder" id="founder">
+<div aria-hidden="true" class="founder-bigword">FOUNDER</div>
 <div class="container">
 {label("05", "Founder")}
 <div class="founder-grid">
 <div class="founder-media" data-founder-media="">
+<span aria-hidden="true" class="founder-frame"></span>
 <div class="founder-photo img-wrap">
 <img alt="S. Saktheeswaran, Founder and Managing Director of Astra Nexora, at his desk" class="lqip" data-parallax-img="" decoding="async" height="900" loading="lazy" sizes="(min-width: 1001px) 40vw, 92vw" src="assets/founder/sakthi-desk-w720.webp" srcset="assets/founder/sakthi-desk-w480.webp 480w, assets/founder/sakthi-desk-w720.webp 720w" width="720"/>
 </div>
 <div class="founder-photo-alt img-wrap">
 <img alt="S. Saktheeswaran sitting in a leather armchair" class="lqip" decoding="async" height="900" loading="lazy" sizes="(min-width: 1001px) 16vw, 38vw" src="assets/founder/sakthi-chair-w480.webp" srcset="assets/founder/sakthi-chair-w480.webp 480w, assets/founder/sakthi-chair-w720.webp 720w" width="720"/>
 </div>
+<div class="founder-tag"><i aria-hidden="true" class="live-dot"></i><span>Works directly with every client</span></div>
 </div>
 <div class="founder-copy">
 <h2 class="title" data-split="" id="founderTitle">The vision behind <em>Astra Nexora.</em></h2>
 <p class="founder-role"><span class="founder-name">{esc(f["name"])}<svg aria-hidden="true" class="founder-underline" preserveaspectratio="none" viewbox="0 0 200 12"><path d="M2 8 C 50 2, 110 2, 198 6"></path></svg></span><small>{esc(f["role"])}</small></p>
 {bio}
-<ol class="timeline" data-timeline="">
+<dl class="founder-facts" data-reveal="">
+<div><dt>In digital marketing since</dt><dd>2019</dd></div>
+<div><dt>Service areas</dt><dd>8</dd></div>
+<div><dt>Based in</dt><dd>Chennai</dd></div>
+</dl>
+<div class="founder-actions">
+{btn("Connect on LinkedIn", f["linkedin"], "btn-dark", target=True)}
+{btn("Talk to Sakthi", WA, "btn-line", target=True)}
+</div>
+</div>
+</div>
+<ol class="journey" data-timeline="">
+<span aria-hidden="true" class="journey-line"><i></i></span>
 {timeline}
 </ol>
-{btn("Connect on LinkedIn", f["linkedin"], "btn-line", target=True)}
-</div>
-</div>
 </div>
 </section>
 

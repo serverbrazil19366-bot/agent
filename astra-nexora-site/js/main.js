@@ -323,6 +323,61 @@ if (animate) {
         });
     }
 
+    // Services: the showcase pins and shows one service at a time
+    mm.add("(min-width: 1001px)", () => {
+        const showcase = document.querySelector(".showcase");
+        if (!showcase) return;
+        const items = Array.from(showcase.querySelectorAll(".sc-item"));
+        const images = Array.from(showcase.querySelectorAll(".sc-img"));
+        const count = showcase.querySelector(".sc-count");
+        const track = showcase.querySelector(".sc-track i");
+        const n = items.length;
+        let current = -1;
+
+        function show(i) {
+            if (i === current) return;
+            current = i;
+            items.forEach((item, k) => item.classList.toggle("is-active", k === i));
+            images.forEach((image, k) => image.classList.toggle("is-active", k === i));
+            if (count) count.textContent = String(i + 1).padStart(2, "0");
+            if (track) track.style.setProperty("--p", ((i + 1) / n).toFixed(3));
+        }
+
+        showcase.classList.add("is-pinned");
+        show(0);
+        const header = document.getElementById("header");
+        const trigger = ScrollTrigger.create({
+            trigger: showcase,
+            start: () => "top top+=" + ((header ? header.offsetHeight : 80) + 20),
+            end: () => "+=" + (n - 1) * window.innerHeight * 0.55,
+            pin: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            onUpdate: self => show(Math.min(n - 1, Math.floor(self.progress * n)))
+        });
+        return () => { trigger.kill(); showcase.classList.remove("is-pinned"); };
+    });
+
+    // Founder: frame slides into place, tag pops in, journey line fills
+    if (document.querySelector(".founder-frame")) {
+        gsap.from(".founder-frame", {
+            x: -30, y: -30, autoAlpha: 0, duration: 1.4, ease: "expo.out",
+            scrollTrigger: { trigger: ".founder-media", start: "top 75%", once: true }
+        });
+        gsap.from(".founder-tag", {
+            scale: 0.6, autoAlpha: 0, duration: 0.9, ease: "back.out(1.8)", delay: 0.8,
+            scrollTrigger: { trigger: ".founder-media", start: "top 75%", once: true }
+        });
+        gsap.fromTo(".journey-line i", { "--p": 0 }, {
+            "--p": 1, ease: "none",
+            scrollTrigger: { trigger: ".journey", start: "top 85%", end: "bottom 60%", scrub: true }
+        });
+        gsap.from(".founder-facts dd", {
+            y: 30, autoAlpha: 0, duration: 1, ease: "power3.out", stagger: 0.1,
+            scrollTrigger: { trigger: ".founder-facts", start: "top 85%", once: true }
+        });
+    }
+
     // Work: vertical scroll drives the horizontal gallery on desktop
     mm.add("(min-width: 1001px)", () => {
         const work = document.querySelector(".work");
@@ -450,11 +505,125 @@ if (animate) {
         images.forEach(image => image.classList.toggle("is-active", image.dataset.i === i));
     }
 
+    const showcase = document.querySelector(".showcase");
     const io = new IntersectionObserver(entries => {
+        if (showcase && showcase.classList.contains("is-pinned")) return;
         entries.forEach(entry => { if (entry.isIntersecting) activate(entry.target.dataset.i); });
     }, { rootMargin: "-45% 0px -45% 0px" });
 
     items.forEach(item => io.observe(item));
+})();
+
+
+/* =====================================================
+   SPACE SECTIONS — twinkling star field on a canvas
+   Drawn at the screen's pixel density so stars stay sharp;
+   each canvas only animates while its section is on screen.
+===================================================== */
+
+(function () {
+    const sections = document.querySelectorAll(".space");
+    if (!sections.length) return;
+
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    const sprite = document.createElement("canvas");
+    sprite.width = sprite.height = 64;
+    const sctx = sprite.getContext("2d");
+    const glow = sctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    glow.addColorStop(0, "rgba(255,255,255,1)");
+    glow.addColorStop(0.18, "rgba(214,224,255,.85)");
+    glow.addColorStop(0.45, "rgba(142,162,255,.18)");
+    glow.addColorStop(1, "rgba(142,162,255,0)");
+    sctx.fillStyle = glow;
+    sctx.fillRect(0, 0, 64, 64);
+
+    const fields = [];
+
+    sections.forEach(section => {
+        const layer = document.createElement("div");
+        layer.className = "space-stars";
+        layer.setAttribute("aria-hidden", "true");
+        const canvas = document.createElement("canvas");
+        layer.appendChild(canvas);
+        section.prepend(layer);
+
+        const ctx = canvas.getContext("2d");
+        let stars = [], w = 0, h = 0;
+
+        function resize() {
+            w = canvas.clientWidth;
+            h = canvas.clientHeight;
+            if (!w || !h) return;
+            canvas.width = Math.round(w * dpr);
+            canvas.height = Math.round(h * dpr);
+            const total = Math.min(Math.round(w * h / 4200), 480);
+            stars = Array.from({ length: total }, () => {
+                const bright = Math.random() < 0.07;
+                return {
+                    x: Math.random() * w, y: Math.random() * h,
+                    r: bright ? 1.1 + Math.random() * 1.1 : 0.3 + Math.random() * 0.8,
+                    base: bright ? 0.6 : 0.2 + Math.random() * 0.5,
+                    amp: 0.2 + Math.random() * 0.5,
+                    speed: 0.5 + Math.random() * 2,
+                    phase: Math.random() * Math.PI * 2,
+                    bright,
+                    color: Math.random() < 0.3 ? "#C9D4FF" : "#FFFFFF"
+                };
+            });
+        }
+
+        function draw(t) {
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.clearRect(0, 0, w, h);
+            for (const s of stars) {
+                const a = Math.max(0, Math.min(1, s.base + s.amp * Math.sin(t * s.speed + s.phase)));
+                ctx.globalAlpha = a;
+                if (s.bright) {
+                    const size = s.r * 9 * (0.75 + a * 0.4);
+                    ctx.drawImage(sprite, s.x - size / 2, s.y - size / 2, size, size);
+                    if (a > 0.85) {
+                        ctx.globalAlpha = (a - 0.85) * 4;
+                        ctx.fillStyle = "#fff";
+                        ctx.fillRect(s.x - size * 0.9, s.y - 0.3, size * 1.8, 0.6);
+                        ctx.fillRect(s.x - 0.3, s.y - size * 0.9, 0.6, size * 1.8);
+                    }
+                } else {
+                    ctx.fillStyle = s.color;
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            ctx.globalAlpha = 1;
+        }
+
+        resize();
+        draw(0);
+        fields.push({ section, resize, draw, visible: false });
+    });
+
+    let timer = null;
+    window.addEventListener("resize", () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fields.forEach(f => { f.resize(); f.draw(performance.now() / 1000); }), 150);
+    });
+
+    if (reduceMotion || !("IntersectionObserver" in window)) return;
+
+    const io = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            const field = fields.find(f => f.section === entry.target);
+            if (field) field.visible = entry.isIntersecting;
+        });
+    });
+    fields.forEach(f => io.observe(f.section));
+
+    (function loop(now) {
+        const t = now / 1000;
+        fields.forEach(f => { if (f.visible) f.draw(t); });
+        requestAnimationFrame(loop);
+    })(performance.now());
 })();
 
 
