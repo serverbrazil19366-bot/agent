@@ -25,11 +25,22 @@ if (hasGsap) gsap.registerPlugin(ScrollTrigger);
 
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 
-if (!location.hash) window.scrollTo(0, 0);
+// scrollIntoView also scrolls any page this site is embedded in (a preview
+// frame), which window.scrollTo alone cannot reach.
+function toPageTop() {
+    if (location.hash && location.hash !== "#home") return;
+    window.scrollTo(0, 0);
+    const top = document.querySelector(".topbar, .dash-topbar") || document.body;
+    if (top && top.scrollIntoView) top.scrollIntoView({ block: "start", behavior: "instant" });
+}
+
+toPageTop();
+document.addEventListener("DOMContentLoaded", toPageTop);
+window.addEventListener("load", toPageTop);
 
 window.addEventListener("pageshow", event => {
     document.querySelector(".page-curtain")?.classList.remove("is-active");
-    if (event.persisted && !location.hash) window.scrollTo(0, 0);
+    if (event.persisted) toPageTop();
 });
 
 
@@ -230,7 +241,7 @@ if (animate && document.querySelector(".hero")) {
         .from(".hero-photo img", { scale: 1.25, duration: 2 }, 0.3)
         .from(".hero-cats span, .breadcrumb", { y: 20, autoAlpha: 0, duration: 0.8, stagger: 0.06 }, 0.75)
         .fromTo(".hero-title .ln > span", { yPercent: 110 }, { yPercent: 0, duration: 1.2, stagger: 0.12 }, 0.85)
-        .from(".hero-title .box", { backgroundColor: "rgba(215,25,11,0)", duration: 0.8 }, 1.3)
+        .from(".hero-title .box", { backgroundColor: "rgba(10,15,44,0)", duration: 0.8 }, 1.3)
         .from(".hero-lead, .hero-copy .actions .btn", { y: 26, autoAlpha: 0, duration: 1, stagger: 0.08 }, 1.05)
         .from(".hero-deco .shapes svg", { scale: 0, autoAlpha: 0, duration: 0.9, stagger: 0.1, ease: "back.out(2)" }, 1.1)
         .from(".hero-ghost", { xPercent: -20, autoAlpha: 0, duration: 1.8 }, 0.9)
@@ -335,7 +346,11 @@ if (animate) {
         const message = value("message");
         if (message) lines.push("", "Message: " + message);
 
-        window.open("https://wa.me/918838417707?text=" + encodeURIComponent(lines.join("\n")), "_blank", "noopener");
+        const url = "https://wa.me/918838417707?text=" + encodeURIComponent(lines.join("\n"));
+        // New tab where allowed; if pop-ups are blocked, go to WhatsApp in this tab
+        const tab = window.open(url, "_blank");
+        if (tab) tab.opener = null;
+        else window.location.href = url;
     });
 })();
 

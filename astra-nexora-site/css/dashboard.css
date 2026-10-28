@@ -5,7 +5,7 @@
 
 :root {
     /* Chart roles (validated: brand blue, aqua, orange — see dataviz check) */
-    --series-1: #2E4BE0;
+    --series-1: #1729A0;
     --series-2: #1BAF7A;
     --series-3: #EB6834;
     --chart-surface: #FFFFFF;
@@ -43,9 +43,20 @@
     gap: 16px;
 }
 
+.dash-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--navy);
+}
+
 .dash-brand img {
     width: auto;
-    height: 30px;
+    height: 32px;
+}
+
+.dash-brand .logo-text {
+    font-size: 22px;
 }
 
 .dash-sample-pill {

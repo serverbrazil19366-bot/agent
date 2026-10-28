@@ -487,7 +487,7 @@ HOME = {
         ("Do you offer ongoing support after the project?",
          "Yes. We offer ongoing maintenance, support and monthly growth retainers after launch."),
         ("How do I get started?",
-         "Send us a message on WhatsApp at +91 88384 17707, email info.astranexora@gmail.com or fill in the form below. We'll set up a short discovery call and then send a proposal with timeline and cost."),
+         "Tap the WhatsApp button to chat with us, email info.astranexora@gmail.com or fill in the form below. We'll set up a short discovery call and then send a proposal with timeline and cost."),
         ("Which industries do you work with?",
          "Our approach works across industries, including healthcare, professional services, e-commerce, education and creative businesses."),
     ],

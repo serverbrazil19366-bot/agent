@@ -25,7 +25,6 @@ from content import HOME, PROJECTS, SERVICES  # noqa: E402
 
 SITE = "https://astranexora.com/"
 WA = "https://wa.me/918838417707"
-PHONE = "+91 88384 17707"
 EMAIL = "info.astranexora@gmail.com"
 SOCIAL = [
     ("Instagram", "https://www.instagram.com/astranexora2025/"),
@@ -106,11 +105,11 @@ def img(base, alt, sizes, prefix, eager=False, cls=""):
             f'src="{prefix}assets/stock/{base}-w1200.webp" srcset="{srcset}" width="{w}"/>')
 
 
-def logo():
-    """Inline wordmark: star + ASTRA NEXORA. Swap for the real logo SVG when it arrives."""
-    return ('<svg aria-hidden="true" class="logo" viewbox="0 0 196 32">'
-            '<path class="logo-star" d="M16 1c1.1 7.7 4.3 11.2 12.5 12.5C20.3 14.8 17.1 18.3 16 26c-1.1-7.7-4.3-11.2-12.5-12.5C11.7 12.2 14.9 8.7 16 1z"/>'
-            '<text font-family="Oswald, Impact, sans-serif" font-size="22" font-weight="700" letter-spacing=".4" x="36" y="23">ASTRA NEXORA<tspan class="logo-dot">.</tspan></text></svg>')
+def logo(prefix="", colour=False):
+    """The AN mark from the Astra Nexora logo + the serif wordmark and tagline."""
+    mark = "an-mark" if colour else "an-mark-white"
+    return (f'<img alt="" class="logo-mark" height="40" src="{prefix}assets/brand/{mark}.webp" width="71"/>'
+            '<span class="logo-text">AstraNexora<small>Next Era in Digital Marketing</small></span>')
 
 
 def btn(label, href, kind="btn-white", target=False, arrow=True):
@@ -219,14 +218,14 @@ def header(prefix, home):
 <div class="wrap topbar-inner">
 <div class="tb-left">
 <a href="mailto:{EMAIL}">{svg(I_MAIL)}{EMAIL}</a>
-<a href="{WA}" rel="noopener" target="_blank">{svg(I_PHONE)}{PHONE}</a>
+<a href="{WA}" rel="noopener" target="_blank">{svg(I_CHAT)}Chat on WhatsApp</a>
 </div>
 <p class="tb-right">{svg(I_PIN)}Chennai, Tamil Nadu · Serving all of India</p>
 </div>
 </div>
 <header class="site-header" id="header">
 <div class="wrap header-inner">
-<a aria-label="Astra Nexora — home" class="brand" href="{home}#home">{logo()}</a>
+<a aria-label="Astra Nexora — home" class="brand" href="{home}#home">{logo(prefix)}</a>
 <nav aria-label="Main" class="desktop-nav">
 <a class="nav-link" href="{home}#home">Home<i>.</i></a>
 <a class="nav-link" href="{home}#about">About<i>.</i></a>
@@ -243,7 +242,7 @@ def header(prefix, home):
 <a class="nav-link" href="{home}#contact">Contact<i>.</i></a>
 </nav>
 <div class="header-tools">
-<a aria-label="WhatsApp {PHONE}" class="ht-icon" href="{WA}" rel="noopener" target="_blank">{WA_ICON}</a>
+<a aria-label="Chat on WhatsApp" class="ht-icon" href="{WA}" rel="noopener" target="_blank">{WA_ICON}</a>
 <a aria-label="Email {EMAIL}" class="ht-icon" href="mailto:{EMAIL}">{svg(I_MAIL)}</a>
 {btn("Free audit", f"{home}#contact", "btn-red btn-sm header-cta")}
 <button aria-controls="mobileMenu" aria-expanded="false" aria-label="Open menu" class="menu-toggle" id="menuToggle" type="button"><span></span><span></span><span></span></button>
@@ -261,7 +260,7 @@ def header(prefix, home):
 <a href="{home}#contact">Contact<i>.</i></a>
 <div class="mobile-contact">
 {btn("Get a free audit", f"{home}#contact", "btn-red")}
-<a href="{WA}" rel="noopener" target="_blank">WhatsApp {PHONE}</a>
+<a href="{WA}" rel="noopener" target="_blank">Chat on WhatsApp</a>
 <a href="mailto:{EMAIL}">{EMAIL}</a>
 </div>
 </nav>
@@ -275,7 +274,7 @@ def footer(prefix, home):
     return f'''<footer class="footer">
 <div class="wrap footer-grid">
 <div class="footer-brand">
-<a aria-label="Astra Nexora — home" class="brand" href="{home}#home">{logo()}</a>
+<a aria-label="Astra Nexora — home" class="brand" href="{home}#home">{logo(prefix)}</a>
 <p>A digital marketing agency in Chennai for SEO, websites, branding and performance marketing, planned as one system.</p>
 <div class="social">{social}</div>
 </div>
@@ -286,7 +285,7 @@ def footer(prefix, home):
 <div class="footer-col">
 <h3>Contact us<i>.</i></h3>
 <ul class="footer-contact">
-<li>{svg(I_PHONE)}<a href="{WA}" rel="noopener" target="_blank">{PHONE}</a></li>
+<li>{svg(I_CHAT)}<a href="{WA}" rel="noopener" target="_blank">Chat on WhatsApp</a></li>
 <li>{svg(I_MAIL)}<a href="mailto:{EMAIL}">{EMAIL}</a></li>
 <li>{svg(I_PIN)}<span>Chennai, Tamil Nadu<br/>Serving all of India</span></li>
 </ul>
@@ -373,7 +372,7 @@ def contact_section():
 <h3>Free website audit<i>.</i></h3>
 <p>We review your website, Google presence and competitors, and show you what to fix first. No obligation.</p>
 <ul class="contact-list">
-<li>{svg(I_CHAT)}<div><small>WhatsApp</small><a href="{WA}" rel="noopener" target="_blank">{PHONE}</a></div></li>
+<li>{svg(I_CHAT)}<div><small>WhatsApp</small><a href="{WA}" rel="noopener" target="_blank">Chat with us now</a></div></li>
 <li>{svg(I_MAIL)}<div><small>Email</small><a href="mailto:{EMAIL}">{EMAIL}</a></div></li>
 <li>{svg(I_PIN)}<div><small>Studio</small><span>Chennai, Tamil Nadu</span></div></li>
 </ul>
@@ -497,7 +496,6 @@ def home_page():
                 "url": SITE,
                 "logo": SITE + "assets/og-image.jpg",
                 "email": EMAIL,
-                "telephone": "+91-88384-17707",
                 "foundingDate": "2025",
                 "foundingLocation": "Chennai, India",
                 "founder": {"@type": "Person", "name": HOME["founder"]["name"], "jobTitle": HOME["founder"]["role"],
@@ -512,7 +510,6 @@ def home_page():
                 "url": SITE,
                 "image": SITE + "assets/og-image.jpg",
                 "email": EMAIL,
-                "telephone": "+91-88384-17707",
                 "parentOrganization": {"@id": SITE + "#organization"},
                 "address": {"@type": "PostalAddress", "addressLocality": "Chennai", "addressRegion": "Tamil Nadu", "addressCountry": "IN"},
                 "areaServed": {"@type": "Country", "name": "India"},
@@ -544,7 +541,7 @@ def home_page():
         for i, (_, t, d) in enumerate(HOME["principles"], 1))
 
     info = [
-        (I_CHAT, "Want a quick answer? Message us on WhatsApp at", PHONE, WA, True),
+        (I_CHAT, "Want a quick answer? Tap to", "chat with us on WhatsApp", WA, True),
         (I_MAIL, "Prefer email? Send your brief or questions to", EMAIL, f"mailto:{EMAIL}", False),
         (I_SHARE, "Follow our work and tips on", "Instagram, LinkedIn, Facebook", "#founder", False),
         (I_PIN, "Based in Chennai, working with businesses across", "Tamil Nadu & India", "#contact", False),
