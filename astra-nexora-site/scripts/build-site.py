@@ -164,6 +164,12 @@ def shapes(cls=""):
 </div>'''
 
 
+def asset_version(rel):
+    import hashlib
+    with open(os.path.join(ROOT, rel), "rb") as fh:
+        return hashlib.sha1(fh.read()).hexdigest()[:10]
+
+
 def head(title, description, path, prefix, schemas, preload=None, body_class="site"):
     pre = ""
     if preload:
@@ -203,7 +209,7 @@ def head(title, description, path, prefix, schemas, preload=None, body_class="si
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&amp;family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
-{pre}<link href="{prefix}css/style.css" rel="stylesheet"/>
+{pre}<link href="{prefix}css/style.css?v={asset_version("css/style.css")}" rel="stylesheet"/>
 <script>(function(d){{d.classList.add("js");if("scrollRestoration"in history)history.scrollRestoration="manual";try{{if(!sessionStorage.getItem("an-seen")&&!matchMedia("(prefers-reduced-motion: reduce)").matches){{d.classList.add("preload");sessionStorage.setItem("an-seen","1");}}}}catch(e){{}}}})(document.documentElement);</script>
 {ld}</head>
 <body class="{body_class}">
@@ -322,7 +328,7 @@ def scripts(prefix):
 <script defer src="{prefix}js/vendor/gsap.min.js"></script>
 <script defer src="{prefix}js/vendor/ScrollTrigger.min.js"></script>
 <script defer src="{prefix}js/vendor/lenis.min.js"></script>
-<script defer src="{prefix}js/main.js"></script>
+<script defer src="{prefix}js/main.js?v={asset_version("js/main.js")}"></script>
 </body>
 </html>
 '''
@@ -1045,27 +1051,76 @@ def slugify(text):
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
 
 
-def md_to_html(text):
-    """Returns (html, [(id, heading)]) for the post body."""
-    out, toc = [], []
+def md_to_html(text, prefix="../"):
+    """Returns (html, toc, faqs) for a post body.
+
+    Extras on top of plain Markdown:
+      ![Alt text](stock-key "Caption")   a figure using an image from assets/stock
+      Q: question / A: answer lines      an FAQ accordion (also FAQ schema)
+      ### headings                       each ### section becomes a card
+    The first paragraph is styled as the lead."""
+    out, toc, faqs = [], [], []
+    card_open = False
+    first_p = True
+
+    def close_card():
+        nonlocal card_open
+        if card_open:
+            out.append("</div>")
+            card_open = False
+
     for block in re.split(r"\n\s*\n", text.strip()):
         lines = [l.rstrip() for l in block.strip().split("\n")]
         first = lines[0]
+        m_img = re.match(r'!\[([^\]]*)\]\(([\w-]+)(?:\s+"([^"]*)")?\)$', first)
         if first.startswith("### "):
-            out.append(f"<h3>{md_inline(first[4:])}</h3>")
-        elif first.startswith("## "):
+            close_card()
+            card_open = True
+            n = re.match(r"(\d+)\.\s+(.*)", first[4:])
+            if n:
+                out.append(f'<div class="pcard"><span class="pcard-n">{int(n.group(1)):02d}</span><h3>{md_inline(n.group(2))}</h3>')
+            else:
+                out.append(f'<div class="pcard"><h3>{md_inline(first[4:])}</h3>')
+            continue
+        if first.startswith("## "):
+            close_card()
             hid = slugify(first[3:])
             toc.append((hid, first[3:]))
-            out.append(f'<h2 id="{hid}">{md_inline(first[3:])}</h2>')
-        elif all(re.match(r"[-*] ", l) for l in lines):
+            out.append(f'<h2 id="{hid}"><span>{len(toc):02d}</span>{md_inline(first[3:])}</h2>')
+            continue
+        if m_img:
+            close_card()
+            alt, key, cap = m_img.groups()
+            cap_html = f"<figcaption>{md_inline(cap)}</figcaption>" if cap else ""
+            out.append(f'<figure class="pfig"><div class="img-wrap">{img(key, alt, "(min-width: 1001px) 760px, 92vw", prefix)}</div>{cap_html}</figure>')
+            continue
+        if first.startswith("Q: "):
+            close_card()
+            pairs, q = [], None
+            for l in lines:
+                if l.startswith("Q: "):
+                    q = l[3:]
+                elif l.startswith("A: ") and q:
+                    pairs.append((q, l[3:]))
+                    q = None
+            faqs += pairs
+            out.append('<div class="pfaq">' + "".join(
+                f'<details class="faq-item"><summary><span class="faq-q">{esc(qq)}</span><i aria-hidden="true"></i></summary><div class="faq-a"><p>{md_inline(aa)}</p></div></details>'
+                for qq, aa in pairs) + "</div>")
+            continue
+        if all(re.match(r"[-*] ", l) for l in lines):
             out.append("<ul>" + "".join(f"<li>{md_inline(l[2:])}</li>" for l in lines) + "</ul>")
         elif all(re.match(r"\d+\. ", l) for l in lines):
             out.append("<ol>" + "".join(f"<li>{md_inline(l.split('. ', 1)[1])}</li>" for l in lines) + "</ol>")
         elif all(l.startswith(">") for l in lines):
-            out.append("<blockquote><p>" + md_inline(" ".join(l.lstrip("> ") for l in lines)) + "</p></blockquote>")
+            close_card()
+            out.append('<aside class="pnote"><p>' + md_inline(" ".join(l.lstrip("> ") for l in lines)) + "</p></aside>")
         else:
-            out.append("<p>" + md_inline(" ".join(lines)) + "</p>")
-    return "\n".join(out), toc
+            cls = ' class="lead"' if first_p and not out else ""
+            first_p = False
+            out.append(f"<p{cls}>" + md_inline(" ".join(lines)) + "</p>")
+    close_card()
+    return "\n".join(out), toc, faqs
 
 
 def load_posts():
@@ -1084,7 +1139,9 @@ def load_posts():
         if meta.get("draft") == "true":
             continue
         meta["slug"] = name[:-3]
-        meta["html"], meta["toc"] = md_to_html(body)
+        meta["html"], meta["toc"], meta["faqs"] = md_to_html(body)
+        meta["inline_images"] = re.findall(r"!\[[^\]]*\]\(([\w-]+)", body)
+        meta["takeaways"] = [x.strip() for x in meta.get("takeaways", "").split("|") if x.strip()]
         words = len(re.findall(r"\w+", body))
         meta["minutes"] = max(1, round(words / 200))
         y, m, d = meta["date"].split("-")
@@ -1159,48 +1216,80 @@ def post_page(post, posts):
     plain = strip_tags(post["title"])
     title = f"{post.get('seo_title', plain)} | Astra Nexora"
     f = HOME["founder"]
-    schema = {"@context": "https://schema.org", "@graph": [
+    graph = [
         {"@type": "BlogPosting", "headline": plain, "description": post["description"], "url": SITE + path,
          "datePublished": post["date"], "dateModified": post.get("updated", post["date"]),
          "image": SITE + f"assets/stock/{post['image']}-w1200.webp", "articleSection": post["category"],
-         "author": {"@type": "Person", "name": f["name"], "jobTitle": f["role"], "sameAs": [f["linkedin"]]},
+         "keywords": post.get("keywords", ""),
+         "author": {"@type": "Person", "name": f["name"], "jobTitle": f["role"], "url": SITE + "#founder", "sameAs": [f["linkedin"]]},
          "publisher": {"@type": "Organization", "name": "Astra Nexora", "logo": {"@type": "ImageObject", "url": SITE + "assets/brand/logo-square.png"}},
          "mainEntityOfPage": SITE + path},
         breadcrumb_schema([("Home", ""), ("Blog", "blog/"), (plain, path)]),
-    ]}
-    hero = page_hero(home, [("Home", home), ("Blog", "index.html"), (post["category"], None)],
-                     f"{esc(post['category'])} · {post['minutes']} min read", split_title(post["title"]), esc(post["description"]),
-                     btn("Free website audit", f"{home}#contact", "btn-white") + btn("Ask on WhatsApp", WA, "btn-white", target=True),
-                     img(post["image"], post["image_alt"], "(min-width: 1001px) 55vw, 100vw", p, eager=True))
+    ]
+    if post["faqs"]:
+        graph.append(faq_schema([(q, strip_tags(md_inline(a))) for q, a in post["faqs"]]))
+    schema = {"@context": "https://schema.org", "@graph": graph}
+
     toc = "".join(f'<li><a href="#{hid}">{esc(h)}</a></li>' for hid, h in post["toc"])
-    svc = "".join(f'<li><a href="../services/{s}.html">{icon(s)}<span>{esc(SERVICE_BY_SLUG[s]["nav"])}</span></a></li>' for s in post["services"] if s in SERVICE_BY_SLUG)
+    svc = "".join(f'<li><a href="../services/{s}.html">{icon(s)}<span>{esc(SERVICE_BY_SLUG[s]["nav"])}</span></a></li>'
+                  for s in post["services"] if s in SERVICE_BY_SLUG)
     url = SITE + path
-    share = (f'<a href="https://wa.me/?text={html.escape(plain + " " + url, quote=True).replace(" ", "%20")}" rel="noopener" target="_blank">WhatsApp</a>'
-             f'<a href="https://www.linkedin.com/sharing/share-offsite/?url={url}" rel="noopener" target="_blank">LinkedIn</a>'
-             f'<a href="https://www.facebook.com/sharer/sharer.php?u={url}" rel="noopener" target="_blank">Facebook</a>')
-    others = [x for x in posts if x["slug"] != post["slug"] and x["image"] != post["image"]][:3]
+    share = (f'<a aria-label="Share on WhatsApp" href="https://wa.me/?text={html.escape(plain + " " + url, quote=True).replace(" ", "%20")}" rel="noopener" target="_blank">{WA_ICON}</a>'
+             f'<a aria-label="Share on LinkedIn" href="https://www.linkedin.com/sharing/share-offsite/?url={url}" rel="noopener" target="_blank">{SOCIAL_ICONS["LinkedIn"]}</a>'
+             f'<a aria-label="Share on Facebook" href="https://www.facebook.com/sharer/sharer.php?u={url}" rel="noopener" target="_blank">{SOCIAL_ICONS["Facebook"]}</a>')
+    takeaways = ""
+    if post["takeaways"]:
+        takeaways = ('<div class="takeaways"><h2 class="tk-title">Key takeaways</h2><ul>'
+                     + "".join(f"<li>{CHECK}<span>{md_inline(t)}</span></li>" for t in post["takeaways"]) + "</ul></div>")
+    used = {post["image"], *post["inline_images"]}
+    others = [x for x in posts if x["slug"] != post["slug"] and x["image"] not in used][:3]
     more = ""
     if others:
-        more = f'''<section aria-labelledby="moreTitle" class="sec work">
+        more = f"""<section aria-labelledby="moreTitle" class="sec work">
 <div class="wrap">
 {heading("Keep reading", 'More from <span class="hl">the blog.</span>', center=True, title_id="moreTitle")}
-<div class="work-grid">
+<div class="work-grid posts">
 {"".join(post_card(x, p) for x in others)}
 </div>
 </div>
-</section>'''
-    body = f'''{header(p, home)}
+</section>"""
+    crumbs = f'<a href="{home}">Home</a><span aria-hidden="true">/</span><a href="index.html">Blog</a><span aria-hidden="true">/</span><span aria-current="page">{esc(post["category"])}</span>'
+
+    body = f"""{header(p, home)}
 
 <main id="main">
 
-{hero}
+<section class="post-hero" id="home">
+<div aria-hidden="true" class="ph-bg"><span class="hero-dots"></span>{shapes("sh-hero")}</div>
+<div class="wrap ph-inner">
+<nav aria-label="Breadcrumb" class="breadcrumb">{crumbs}</nav>
+<span class="ph-cat">{esc(post["category"])}</span>
+<h1 class="ph-title">{post["title"].replace("<em>", '<span class="hl">').replace("</em>", "</span>")}</h1>
+<p class="ph-lead">{esc(post["description"])}</p>
+<div class="ph-meta">
+<img alt="" class="ph-avatar" decoding="async" height="900" src="../assets/founder/sakthi-chair-w480.webp" width="720"/>
+<div><b>{esc(f["name"])}</b><span>{post["date_label"]} · {post["minutes"]} min read</span></div>
+</div>
+</div>
+</section>
+
+<div class="wrap ph-figure-wrap">
+<figure class="ph-figure img-wrap">{img(post["image"], post["image_alt"], "(min-width: 1001px) 1240px, 94vw", p, eager=True)}</figure>
+</div>
 
 <section class="sec post">
 <div class="wrap post-grid">
-<article class="prose" data-reveal="">
-<p class="post-meta"><span>{post["date_label"]}</span><span>{post["minutes"]} min read</span><span>By {esc(f["name"])}</span></p>
+<aside class="post-toc">
+{f'<div class="toc-box"><b>On this page</b><ol class="toc">{toc}</ol></div>' if toc else ""}
+<div class="toc-share"><b>Share</b>{share}</div>
+</aside>
+<article class="prose">
+{takeaways}
 {post["html"]}
-<div class="post-share"><b>Share this post</b>{share}</div>
+<div class="post-cta">
+<div><h2>Want us to check your website?</h2><p>Send your website and we'll reply on WhatsApp with what to fix first. Free, no obligation.</p></div>
+<div class="actions">{btn("Get my free audit", f"{home}#contact", "btn-white")}{btn("Chat on WhatsApp", WA, "btn-line", target=True)}</div>
+</div>
 <div class="author-box">
 <img alt="{esc(f["name"])}" decoding="async" height="900" loading="lazy" src="../assets/founder/sakthi-chair-w480.webp" width="720"/>
 <div><small>Written by</small><h3>{esc(f["name"])}</h3><p>{esc(f["role"])}, Astra Nexora. Works on SEO, websites, branding and content for businesses across India.</p>
@@ -1208,9 +1297,8 @@ def post_page(post, posts):
 </div>
 </article>
 <aside class="post-side">
-{f'<div class="side-card"><h3>In this post<i>.</i></h3><ol class="toc">{toc}</ol></div>' if toc else ""}
-<div class="side-card dark"><h3>Free website audit<i>.</i></h3><p>Send your website and we'll show you what to fix first. No obligation.</p>{btn("Get my audit", f"{home}#contact", "btn-white btn-sm")}</div>
 {f'<div class="side-card"><h3>Related services<i>.</i></h3><ul class="side-svc">{svc}</ul></div>' if svc else ""}
+<div class="side-card dark"><h3>Free website audit<i>.</i></h3><p>We review your website, Google presence and competitors, and show you what to fix first.</p>{btn("Get my audit", f"{home}#contact", "btn-white btn-sm")}</div>
 </aside>
 </div>
 </section>
@@ -1222,9 +1310,8 @@ def post_page(post, posts):
 </main>
 
 {footer(p, home)}
-'''
+"""
     return head(title, post["description"], path, p, [schema], preload=post["image"]) + body + scripts(p)
-
 
 
 def main():

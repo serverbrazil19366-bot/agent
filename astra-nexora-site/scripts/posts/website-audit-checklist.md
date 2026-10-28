@@ -7,10 +7,14 @@ category: Websites & SEO
 image: pexels-196644
 image_alt: Website wireframe sketches in a notebook during a site review
 services: website-development, seo, performance-marketing
+keywords: website audit checklist, website audit, free website audit, website review for small business
+takeaways: Every ad and post sends people to your website, so fix the website first. | Check speed and mobile use on your own phone, on mobile data. | Make sure Google has indexed your pages and your Business Profile is complete. | Give every page one clear next step, like WhatsApp or a call.
 ---
 Most businesses start marketing by spending on ads or posting more on social media. But every one of those visitors lands on your website. If the website is slow, confusing or hard to contact you from, you pay for the click and lose the customer.
 
 Before you spend another rupee on traffic, run through these 12 checks. You don't need technical skills for most of them, just your phone, a laptop and twenty minutes.
+
+![A person checking a website on a laptop](pexels-16094047 "Most of these checks need nothing more than your phone and a laptop.")
 
 ## Speed and mobile
 
@@ -72,4 +76,11 @@ If you don't know which pages or channels bring in calls and messages, you can't
 
 Start with whatever stops people from contacting you: broken forms, slow mobile loading and an unclear first screen. Then work on Google visibility. Ads come last, because they only multiply what your website already does, good or bad.
 
-> Want us to run this audit for you? Send your website through the form on our home page and we'll reply on WhatsApp with what to fix first. It's free and there's no obligation.
+## Frequently asked questions
+
+Q: How often should I audit my website?
+A: Do a quick check like this every three to six months, and always before you start a paid campaign or redesign.
+Q: Can I do a website audit myself?
+A: Yes. Most of the 12 checks above need only your phone and a browser. A professional audit adds technical checks such as crawl errors, indexing and page speed details.
+Q: What should I fix first?
+A: Anything that stops people contacting you: broken forms, slow mobile loading and an unclear first screen. Then work on Google visibility.
