@@ -210,23 +210,23 @@ if (animate) {
             part.innerHTML = [...part.textContent].map(c => '<span class="ch">' + c + "</span>").join("");
         });
         gsap.timeline({ defaults: { ease: "expo.out" } })
-            .from(".hero-top > *", { y: 24, autoAlpha: 0, duration: 1, stagger: 0.1 }, 0.1)
-            .from(".hero-name .ch", { yPercent: 110, rotate: 8, autoAlpha: 0, duration: 1.2, stagger: 0.04 }, 0.2)
-            .from(".hf-sun", { scale: 0, duration: 1.4, ease: "back.out(1.4)" }, 0.4)
-            .from(".hf-ring", { scale: 0.6, autoAlpha: 0, duration: 1.6 }, 0.6)
-            .from(".hf-cut img", { yPercent: 45, duration: 1.6 }, 0.55)
-            .from(".hf-cut", { autoAlpha: 0, duration: 0.6, ease: "none" }, 0.55)
-            .from(".hero-figure .hv-badge", { scale: 0, rotate: -180, duration: 1.4, ease: "back.out(1.6)" }, 1.1)
-            .from(".hero-figure .hv-chip", { y: 30, autoAlpha: 0, duration: 1 }, 1.2)
-            .from(".hero-copy > *", { y: 30, autoAlpha: 0, duration: 1, stagger: 0.08 }, 0.9)
-            .from(".hero-stats li, .hero-side .hero-tags span", { x: 40, autoAlpha: 0, duration: 1, stagger: 0.06 }, 1);
+            .from(".hero-copy .avail, .hero-copy .hello", { y: 24, autoAlpha: 0, duration: 1, stagger: 0.1 }, 0.1)
+            .from(".hero-name .ch", { yPercent: 110, rotate: 8, autoAlpha: 0, duration: 1.2, stagger: 0.035 }, 0.25)
+            .from(".hero-role, .hero-lead, .hero-copy .actions, .hero-foot", { y: 30, autoAlpha: 0, duration: 1, stagger: 0.08 }, 0.7)
+            .from(".hf-sun", { scale: 0, duration: 1.4, ease: "back.out(1.4)" }, 0.3)
+            .from(".hf-ring", { scale: 0.6, autoAlpha: 0, duration: 1.6 }, 0.5)
+            .from(".hf-dots", { scale: 0.4, autoAlpha: 0, duration: 1.2 }, 0.8)
+            .from(".hf-cut img", { yPercent: 45, duration: 1.6 }, 0.45)
+            .from(".hf-cut", { autoAlpha: 0, duration: 0.6, ease: "none" }, 0.45)
+            .from(".hero-figure .hv-badge", { scale: 0, rotate: -180, duration: 1.4, ease: "back.out(1.6)" }, 1)
+            .from(".hf-tag", { scale: 0.6, autoAlpha: 0, duration: 1, ease: "back.out(1.8)", stagger: 0.15 }, 1.1)
+            .from(".hero-figure .hv-chip", { y: 30, autoAlpha: 0, duration: 1 }, 1.2);
         const st = { trigger: ".hero", start: "top top", end: "bottom top", scrub: true };
-        gsap.to(".hero-name", { yPercent: 60, autoAlpha: 0.15, ease: "none", scrollTrigger: st });
-        gsap.to(".hero-name .hn-s", { xPercent: -40, ease: "none", scrollTrigger: st });
-        gsap.to(".hero-figure", { yPercent: -10, ease: "none", scrollTrigger: st });
-        gsap.to(".hf-sun", { scale: 1.25, ease: "none", scrollTrigger: st });
+        gsap.to(".hero-figure", { yPercent: -8, ease: "none", scrollTrigger: st });
+        gsap.to(".hf-sun", { scale: 1.2, ease: "none", scrollTrigger: st });
         gsap.to(".hf-ring", { rotate: 120, ease: "none", scrollTrigger: st });
-        gsap.to(".hero-copy, .hero-side", { yPercent: -18, autoAlpha: 0.3, ease: "none", scrollTrigger: { trigger: ".hero", start: "30% top", end: "bottom top", scrub: true } });
+        gsap.to(".hero-name .hn-s", { xPercent: -30, ease: "none", scrollTrigger: st });
+        gsap.to(".hero-copy", { yPercent: -12, autoAlpha: 0.3, ease: "none", scrollTrigger: { trigger: ".hero", start: "30% top", end: "bottom top", scrub: true } });
     }
 
     // Section headings: words rise one after another
@@ -338,7 +338,7 @@ if (animate) {
             gsap.to(".hf-cut", { x: x * 18, y: y * 10, duration: 1, ease: "power3.out" });
             gsap.to(".hf-sun", { x: x * -22, y: y * -14, duration: 1.2, ease: "power3.out" });
             gsap.to(".hf-ring", { x: x * -36, y: y * -24, duration: 1.4, ease: "power3.out" });
-            gsap.to(".hero-name", { x: x * -30, duration: 1.4, ease: "power3.out" });
+            gsap.to(".hero-figure .hv-badge", { x: x * 24, y: y * 18, duration: 1.2, ease: "power3.out" });
         });
         // Cards tilt slightly under the cursor
         document.querySelectorAll(".work-card, .svc, .quote").forEach(card => {

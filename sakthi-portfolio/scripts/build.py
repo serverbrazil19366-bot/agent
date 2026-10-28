@@ -258,31 +258,32 @@ def home():
 
 <section class="hero" id="top">
 <div aria-hidden="true" class="hero-glow"></div>
-<div class="wrap hero-top">
+<div aria-hidden="true" class="hero-grid-bg"></div>
+<div class="wrap hero-in">
+<div class="hero-copy">
 <span class="avail"><i></i>Available for freelance &amp; full-time work</span>
 <p class="hello">Hello, I'm</p>
-</div>
 <h1 class="hero-name"><span class="hn-s">S</span> <span class="hn-line">{esc(PROFILE["first"]).upper()}</span></h1>
-<div class="wrap hero-grid">
-<div class="hero-copy">
 <p class="hero-role">{esc(PROFILE["role"])}</p>
 <p class="hero-lead">{esc(PROFILE["lead"])}</p>
 <div class="actions">
 {btn("View My Work", "#work", "btn-dark")}
 {btn("Download CV", PROFILE["resume"], "btn-line", DOWNLOAD, target=True)}
 </div>
+<div class="hero-foot">
+<ul class="hero-stats">{hero_stats}</ul>
 {socials()}
+</div>
 </div>
 <div class="hero-figure">
 <span aria-hidden="true" class="hf-ring"></span>
 <span aria-hidden="true" class="hf-sun"></span>
-<div class="hf-cut">{img("img/sakthi-cut", PROFILE["name"] + ", founder of Astra Nexora", "(min-width: 1001px) 460px, 78vw", p, eager=True)}</div>
+<span aria-hidden="true" class="hf-dots"></span>
+<div class="hf-cut">{img("img/sakthi-cut", PROFILE["name"] + ", founder of Astra Nexora", "(min-width: 901px) 440px, 80vw", p, eager=True)}</div>
 <svg aria-hidden="true" class="hv-badge" viewbox="0 0 200 200"><defs><path d="M100 100m-72 0a72 72 0 1 1 144 0a72 72 0 1 1-144 0" id="badgePath"/></defs><circle cx="100" cy="100" fill="currentColor" r="98"/><text><textPath href="#badgePath">SEO · AUTOMATION · WEBSITES · GROWTH ·</textPath></text><path class="hb-star" d="M100 74c2.6 15.4 10 22.8 25.4 25.4C110 102 102.6 109.4 100 124.8 97.4 109.4 90 102 74.6 99.4 90 96.8 97.4 89.4 100 74z"/></svg>
+<div class="hf-tag hf-tag-a"><b>SEO</b> &amp; Local SEO</div>
+<div class="hf-tag hf-tag-b"><b>n8n</b> AI Automation</div>
 <div class="hv-chip"><i></i><span><b>Founder &amp; CEO</b>Astra Nexora</span></div>
-</div>
-<div class="hero-side">
-<ul class="hero-stats">{hero_stats}</ul>
-<p class="hero-tags"><span>SEO</span><span>AI Automation</span><span>WordPress</span><span>GA4</span><span>Local SEO</span></p>
 </div>
 </div>
 </section>
