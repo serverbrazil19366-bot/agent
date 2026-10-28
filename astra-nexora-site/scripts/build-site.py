@@ -185,6 +185,10 @@ def head(title, description, path, prefix, schemas, preload=None, body_class="si
 <meta content="website" property="og:type"/>
 <meta content="Astra Nexora" property="og:site_name"/>
 <meta content="{attr(title)}" property="og:title"/>
+<meta content="{attr(title)}" name="twitter:title"/>
+<meta content="{attr(description)}" name="twitter:description"/>
+<meta content="{SITE}assets/og-image.jpg" name="twitter:image"/>
+<meta content="Astra Nexora: Next Era in Digital Marketing" property="og:image:alt"/>
 <meta content="{attr(description)}" property="og:description"/>
 <meta content="{SITE}{path}" property="og:url"/>
 <meta content="{SITE}assets/og-image.jpg" property="og:image"/>
@@ -192,7 +196,9 @@ def head(title, description, path, prefix, schemas, preload=None, body_class="si
 <meta content="630" property="og:image:height"/>
 <meta content="en_IN" property="og:locale"/>
 <meta content="summary_large_image" name="twitter:card"/>
-<link href="{prefix}assets/favicon.png" rel="icon" type="image/png"/>
+<meta content="index, follow, max-image-preview:large, max-snippet:-1" name="robots"/>
+<link href="{prefix}assets/favicon-48.png" rel="icon" sizes="48x48" type="image/png"/>
+<link href="{prefix}assets/favicon-192.png" rel="icon" sizes="192x192" type="image/png"/>
 <link href="{prefix}assets/favicon.png" rel="apple-touch-icon"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -513,15 +519,27 @@ def home_page():
                 "@type": "Organization",
                 "@id": SITE + "#organization",
                 "name": "Astra Nexora",
-                "slogan": "Creative. Strategic. Growth Driven.",
+                "alternateName": ["AstraNexora", "Astra Nexora Digital Marketing"],
+                "slogan": "Next Era in Digital Marketing",
+                "description": "Astra Nexora (AstraNexora) is a digital marketing agency in Tamil Nadu, India for SEO, websites, branding, social media, performance marketing and AI automation.",
                 "url": SITE,
-                "logo": SITE + "assets/og-image.jpg",
+                "logo": {"@type": "ImageObject", "url": SITE + "assets/brand/logo-square.png", "width": 512, "height": 512},
+                "image": SITE + "assets/og-image.jpg",
                 "email": EMAIL,
                 "foundingDate": "2025",
                 "foundingLocation": "Tamil Nadu, India",
                 "founder": {"@type": "Person", "name": HOME["founder"]["name"], "jobTitle": HOME["founder"]["role"],
                             "sameAs": [HOME["founder"]["linkedin"]]},
                 "sameAs": [u for _, u in SOCIAL],
+            },
+            {
+                "@type": "WebSite",
+                "@id": SITE + "#website",
+                "name": "Astra Nexora",
+                "alternateName": ["AstraNexora", "Astra Nexora Digital Marketing"],
+                "url": SITE,
+                "publisher": {"@id": SITE + "#organization"},
+                "inLanguage": "en-IN",
             },
             {
                 "@type": "ProfessionalService",
@@ -541,9 +559,9 @@ def home_page():
     }
     faq = {"@context": "https://schema.org", **faq_schema(HOME["faqs"])}
 
-    title = "Digital Marketing & SEO Agency in Tamil Nadu, India | Astra Nexora"
-    desc = ("Astra Nexora is a digital marketing agency in Tamil Nadu, India for SEO, social media, Google and Meta ads, "
-            "content, websites, branding, lead generation and AI marketing automation.")
+    title = "Astra Nexora | Digital Marketing & SEO Agency in Tamil Nadu"
+    desc = ("Astra Nexora (AstraNexora) is a digital marketing agency in Tamil Nadu, India: SEO, websites, branding, "
+            "social media, Google & Meta ads and AI automation.")
 
     cards = "\n".join(svc_card(i, s["title"], SERVICE_TAGLINES[s["slug"]] + ". " + strip_tags(s["lead"]).split(". ")[0] + ".",
                                f"services/{s['slug']}.html", icon(s["slug"]))
@@ -950,6 +968,49 @@ def project_page(pr, index):
     return head(title, pr["summary"], path, p, [schema], preload=pr["hero"]) + body + scripts(p)
 
 
+def not_found_page():
+    p, home = "/", "/index.html"
+    body = f'''{header(p, home)}
+
+<main id="main">
+<section class="hero page-hero" id="home">
+<div class="hero-panel">
+<div aria-hidden="true" class="hero-deco">{shapes("sh-hero")}<span class="hero-dots"></span><span class="hero-beam"></span></div>
+<div class="hero-copy">
+<p class="hero-cats"><span>Error 404</span></p>
+<h1 class="hero-title"><span class="ln"><span>This page</span></span> <span class="ln"><span class="box">isn't here.</span></span></h1>
+<p class="hero-lead">The link may be old or mistyped. Head back home, or tell us what you were looking for on WhatsApp.</p>
+<div class="actions">{btn("Go to home", "/", "btn-white")}{btn("Chat on WhatsApp", WA, "btn-white", target=True)}</div>
+</div>
+</div>
+<div class="hero-photo img-wrap">{img("pexels-7598019", "", "(min-width: 1001px) 55vw, 100vw", p, eager=True)}</div>
+</section>
+</main>
+
+{footer(p, home)}
+'''
+    return (head("Page not found | Astra Nexora", "This page could not be found.", "404.html", p, [])
+            .replace('<meta content="index, follow, max-image-preview:large, max-snippet:-1" name="robots"/>', '<meta content="noindex" name="robots"/>')
+            + body + scripts(p))
+
+
+def llms_txt():
+    lines = [
+        "# Astra Nexora",
+        "",
+        "> Astra Nexora (AstraNexora) is a digital marketing agency in Tamil Nadu, India. Tagline: Next Era in Digital Marketing. "
+        "Founded in 2025 by S. Saktheeswaran (Sakthi), Founder & Managing Director. Serves businesses across India.",
+        "",
+        "## Services",
+    ]
+    lines += [f"- [{s['title']}]({SITE}services/{s['slug']}.html): {SERVICE_TAGLINES[s['slug']]}" for s in SERVICES]
+    lines += ["", "## Work", f"- [SEO report dashboard (sample data)]({SITE}projects/seo-report.html)"]
+    lines += [f"- [{pr['title']} (concept project)]({SITE}projects/{pr['slug']}.html)" for pr in PROJECTS]
+    lines += ["", "## Contact", f"- Website: {SITE}", f"- Email: {EMAIL}", f"- WhatsApp: {WA}",
+              "- Instagram: https://www.instagram.com/astranexora2025/", "- LinkedIn: https://www.linkedin.com/company/astra-nexora/", ""]
+    return "\n".join(lines)
+
+
 def main():
     with open(os.path.join(ROOT, "index.html"), "w") as f:
         f.write(home_page())
@@ -961,6 +1022,14 @@ def main():
     for i, pr in enumerate(PROJECTS, 1):
         with open(os.path.join(ROOT, "projects", f"{pr['slug']}.html"), "w") as f:
             f.write(project_page(pr, i))
+    with open(os.path.join(ROOT, "404.html"), "w") as f:
+        f.write(not_found_page())
+    with open(os.path.join(ROOT, "_headers"), "w") as f:
+        f.write("/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: SAMEORIGIN\n"
+                "/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n"
+                "/css/*\n  Cache-Control: public, max-age=86400\n/js/*\n  Cache-Control: public, max-age=86400\n")
+    with open(os.path.join(ROOT, "llms.txt"), "w") as f:
+        f.write(llms_txt())
     urls = [""] + [f"services/{s['slug']}.html" for s in SERVICES] + [f"projects/{pr['slug']}.html" for pr in PROJECTS] + ["projects/seo-report.html"]
     with open(os.path.join(ROOT, "sitemap.xml"), "w") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
