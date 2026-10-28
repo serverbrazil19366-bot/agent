@@ -961,7 +961,14 @@ def main():
     for i, pr in enumerate(PROJECTS, 1):
         with open(os.path.join(ROOT, "projects", f"{pr['slug']}.html"), "w") as f:
             f.write(project_page(pr, i))
-    print(f"Built index.html, {len(SERVICES)} service pages and {len(PROJECTS)} project pages")
+    urls = [""] + [f"services/{s['slug']}.html" for s in SERVICES] + [f"projects/{pr['slug']}.html" for pr in PROJECTS] + ["projects/seo-report.html"]
+    with open(os.path.join(ROOT, "sitemap.xml"), "w") as f:
+        f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
+        f.write("".join(f"  <url><loc>{SITE}{u}</loc></url>\n" for u in urls))
+        f.write("</urlset>\n")
+    with open(os.path.join(ROOT, "robots.txt"), "w") as f:
+        f.write(f"User-agent: *\nAllow: /\n\nSitemap: {SITE}sitemap.xml\n")
+    print(f"Built index.html, {len(SERVICES)} service pages, {len(PROJECTS)} project pages, sitemap.xml and robots.txt")
 
 
 if __name__ == "__main__":
