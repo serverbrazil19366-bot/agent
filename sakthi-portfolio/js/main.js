@@ -12,6 +12,7 @@ const fine = matchMedia("(hover: hover) and (pointer: fine)").matches;
 const hasGsap = !!(window.gsap && window.ScrollTrigger);
 const animate = hasGsap && !reduce;
 if (hasGsap) gsap.registerPlugin(ScrollTrigger);
+if (animate) document.querySelectorAll(".svc, .work-card, .vid, .quote, .xp, .edu, .cs-fig").forEach(el => el.removeAttribute("data-reveal"));
 
 /* ---------- always open at the top ---------- */
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
@@ -193,20 +194,114 @@ if (form) form.addEventListener("submit", e => {
 
 /* ---------- motion ---------- */
 if (animate) {
+    // Scroll progress line
+    const bar = document.createElement("div");
+    bar.className = "progress";
+    bar.setAttribute("aria-hidden", "true");
+    document.body.appendChild(bar);
+    gsap.to(bar, { scaleX: 1, ease: "none", scrollTrigger: { start: 0, end: "max", scrub: 0.3 } });
+
+    // Hero: entrance, then the photo and name drift apart as you scroll
     if (document.querySelector(".hero")) {
         gsap.timeline({ defaults: { ease: "expo.out" } })
             .from(".avail, .hello", { y: 24, autoAlpha: 0, duration: 1, stagger: 0.1 }, 0.1)
             .from(".hero-name", { yPercent: 40, autoAlpha: 0, duration: 1.3 }, 0.25)
-            .from(".hero-role, .hero-lead, .hero-copy .actions, .hero-copy .socials", { y: 24, autoAlpha: 0, duration: 1, stagger: 0.08 }, 0.5)
-            .from(".blob", { scale: 0.7, autoAlpha: 0, duration: 1.6 }, 0.2)
-            .from(".hero-ghost", { xPercent: 20, autoAlpha: 0, duration: 1.6 }, 0.3)
-            .from(".float-card", { scale: 0.4, autoAlpha: 0, duration: 1, stagger: 0.15, ease: "back.out(2)" }, 0.9);
-        gsap.to(".hero-ghost", { xPercent: -20, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
-        gsap.to(".blob img", { yPercent: 8, scale: 1.08, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
+            .from(".hero-role, .hero-tags span, .hero-lead, .hero-copy .actions, .hero-copy .socials", { y: 24, autoAlpha: 0, duration: 1, stagger: 0.05 }, 0.5)
+            .from(".hv-photo", { clipPath: "inset(100% 0 0 0 round 999px 999px 30px 30px)", duration: 1.6, ease: "expo.inOut" }, 0.15)
+            .from(".hv-photo img", { scale: 1.3, duration: 2 }, 0.3)
+            .from(".hv-back", { x: -26, y: -26, autoAlpha: 0, duration: 1.4 }, 0.7)
+            .from(".hv-line", { x: 24, y: 22, autoAlpha: 0, duration: 1.4 }, 0.8)
+            .from(".hv-dots", { scale: 0.4, autoAlpha: 0, duration: 1.2 }, 0.9)
+            .from(".hv-badge", { scale: 0, rotate: -180, duration: 1.4, ease: "back.out(1.6)" }, 1)
+            .from(".hv-chip", { y: 30, autoAlpha: 0, duration: 1 }, 1.1)
+            .from(".hero-ghost", { xPercent: 20, autoAlpha: 0, duration: 1.6 }, 0.3);
+        const st = { trigger: ".hero", start: "top top", end: "bottom top", scrub: true };
+        gsap.to(".hero-ghost", { xPercent: -25, ease: "none", scrollTrigger: st });
+        gsap.to(".hv-stage", { yPercent: -12, ease: "none", scrollTrigger: st });
+        gsap.to(".hv-photo img", { yPercent: 8, scale: 1.1, ease: "none", scrollTrigger: st });
+        gsap.to(".hero-name", { xPercent: -6, ease: "none", scrollTrigger: st });
+        gsap.to(".hero-copy", { autoAlpha: 0.2, ease: "none", scrollTrigger: { trigger: ".hero", start: "40% top", end: "bottom top", scrub: true } });
     }
-    document.querySelectorAll(".sec-num").forEach(n => gsap.fromTo(n, { y: 60 }, { y: -40, ease: "none", scrollTrigger: { trigger: n.parentElement, start: "top bottom", end: "bottom top", scrub: true } }));
-    const ap = document.querySelector(".ap-img img");
-    if (ap) gsap.fromTo(ap, { scale: 1.15, yPercent: -4 }, { scale: 1.15, yPercent: 4, ease: "none", scrollTrigger: { trigger: ".about-photo", start: "top bottom", end: "bottom top", scrub: true } });
+
+    // Section headings: words rise one after another
+    document.querySelectorAll(".sec-head h2, .contact-head h2").forEach(h2 => {
+        h2.setAttribute("aria-label", h2.textContent.replace(/\s+/g, " ").trim());
+        const wrap = node => [...node.childNodes].forEach(ch => {
+            if (ch.nodeType === 3) {
+                const frag = document.createDocumentFragment();
+                ch.textContent.split(/(\s+)/).forEach(part => {
+                    if (!part) return;
+                    if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+                    const w = document.createElement("span"), inner = document.createElement("span");
+                    w.className = "w"; inner.textContent = part; w.appendChild(inner); frag.appendChild(w);
+                });
+                ch.replaceWith(frag);
+            } else if (ch.nodeType === 1) wrap(ch);
+        });
+        wrap(h2);
+        gsap.from(h2.querySelectorAll(".w > span"), {
+            yPercent: 110, rotate: 4, duration: 1.1, ease: "expo.out", stagger: 0.05,
+            scrollTrigger: { trigger: h2, start: "top 88%", once: true }
+        });
+    });
+
+    // Big outline numbers drift
+    document.querySelectorAll(".sec-num").forEach(n => gsap.fromTo(n, { y: 80 }, { y: -60, ease: "none", scrollTrigger: { trigger: n.parentElement, start: "top bottom", end: "bottom top", scrub: true } }));
+
+    // Ticker: speeds up and leans with scroll velocity
+    const tick = document.querySelector(".ticker-track");
+    if (tick) {
+        const anim = tick.getAnimations()[0];
+        ScrollTrigger.create({ onUpdate: self => {
+            const v = self.getVelocity() / 600;
+            if (anim) anim.playbackRate = Math.max(-4, Math.min(4, 1 + Math.abs(v))) * (self.direction < 0 ? -1 : 1);
+            gsap.to(".ticker", { skewY: Math.max(-4, Math.min(4, v * 0.6)), duration: 0.4, overwrite: true });
+            clearTimeout(tick._rest);
+            tick._rest = setTimeout(() => {
+                gsap.to(".ticker", { skewY: 0, duration: 0.8, ease: "power3.out" });
+                if (anim) anim.playbackRate = 1;
+            }, 160);
+        } });
+    }
+
+    // Photos: wipe in, then a gentle parallax
+    gsap.utils.toArray(".ap-img, .ci-photo, .cs-cover, .cs-fig").forEach(box => {
+        gsap.fromTo(box, { clipPath: "inset(18% 12% 18% 12% round 22px)" }, {
+            clipPath: "inset(0% 0% 0% 0% round 22px)", duration: 1.4, ease: "expo.out",
+            scrollTrigger: { trigger: box, start: "top 85%", once: true }
+        });
+        const im = box.querySelector("img");
+        if (im) gsap.fromTo(im, { yPercent: -6, scale: 1.16 }, { yPercent: 6, scale: 1.16, ease: "none", scrollTrigger: { trigger: box, start: "top bottom", end: "bottom top", scrub: true } });
+    });
+
+    // Cards arrive in batches
+    const batch = (sel, from) => (gsap.set(sel, from), ScrollTrigger.batch(sel, {
+        start: "top 90%", once: true,
+        onEnter: els => gsap.to(els, { x: 0, y: 0, rotate: 0, autoAlpha: 1, duration: 1.1, ease: "expo.out", stagger: 0.1, overwrite: true })
+    }));
+    batch(".svc", { y: 80, rotate: 2.5, autoAlpha: 0 });
+    batch(".work-card", { y: 90, autoAlpha: 0 });
+    batch(".vid", { y: 70, autoAlpha: 0 });
+    batch(".skill", { y: 40, autoAlpha: 0 });
+    gsap.utils.toArray(".quote").forEach((q, k) => gsap.fromTo(q, { x: k % 2 ? 80 : -80, autoAlpha: 0 }, {
+        x: 0, autoAlpha: 1, duration: 1.2, ease: "expo.out", scrollTrigger: { trigger: q, start: "top 90%", once: true }
+    }));
+    gsap.utils.toArray(".work-card .wc-media img").forEach(im => gsap.fromTo(im, { yPercent: -5 }, { yPercent: 5, ease: "none", scrollTrigger: { trigger: im.closest(".work-card"), start: "top bottom", end: "bottom top", scrub: true } }));
+
+    // Experience: the line fills as you read down the timeline
+    const tl = document.querySelector(".tl-progress i");
+    if (tl) gsap.fromTo(tl, { scaleY: 0 }, { scaleY: 1, ease: "none", scrollTrigger: { trigger: ".timeline.main", start: "top 70%", end: "bottom 60%", scrub: true } });
+    gsap.utils.toArray(".timeline .xp, .timeline .edu").forEach(x => gsap.fromTo(x, { x: 60, autoAlpha: 0 }, {
+        x: 0, autoAlpha: 1, duration: 1.1, ease: "expo.out", scrollTrigger: { trigger: x, start: "top 90%", once: true }
+    }));
+
+    // "Let's work together" strip moves with the page
+    const bm = document.querySelector(".bm-track");
+    if (bm) gsap.fromTo(bm, { xPercent: 0 }, { xPercent: -30, ease: "none", scrollTrigger: { trigger: ".big-marquee", start: "top bottom", end: "bottom top", scrub: true } });
+
+    // Next-project card grows into view
+    const next = document.querySelector(".next-card");
+    if (next) gsap.fromTo(next, { scale: 0.9, borderRadius: 60 }, { scale: 1, borderRadius: 30, ease: "none", scrollTrigger: { trigger: next, start: "top bottom", end: "top 55%", scrub: true } });
 
     if (fine) {
         // Buttons lean toward the cursor
@@ -230,12 +325,22 @@ if (animate) {
             dot.classList.toggle("big", !!e.target.closest("a, button, select, input, textarea, label"));
         });
         document.addEventListener("pointerleave", () => dot.classList.add("off"));
-        // Hero photo tilts with the mouse
+        // Hero frame tilts with the mouse; layers move by depth
         const hero = document.querySelector(".hero");
         if (hero) hero.addEventListener("pointermove", e => {
             const x = e.clientX / innerWidth - 0.5, y = e.clientY / innerHeight - 0.5;
-            gsap.to(".blob", { rotateY: x * 10, rotateX: -y * 10, transformPerspective: 900, duration: 0.8, ease: "power3.out" });
-            gsap.to(".float-card", { x: x * -24, y: y * -24, duration: 1, ease: "power3.out" });
+            gsap.to(".hv-photo", { rotateY: x * 8, rotateX: -y * 8, transformPerspective: 900, duration: 0.8, ease: "power3.out" });
+            gsap.to(".hv-back", { x: 26 + x * 18, y: 26 + y * 18, duration: 1, ease: "power3.out" });
+            gsap.to(".hv-line", { x: -24 - x * 26, y: -22 - y * 26, duration: 1, ease: "power3.out" });
+            gsap.to(".hv-dots", { x: x * -30, y: y * -30, duration: 1.2, ease: "power3.out" });
+        });
+        // Cards tilt slightly under the cursor
+        document.querySelectorAll(".work-card, .svc, .quote").forEach(card => {
+            card.addEventListener("pointermove", e => {
+                const r = card.getBoundingClientRect();
+                gsap.to(card, { y: -8, rotateY: ((e.clientX - r.left) / r.width - 0.5) * 6, rotateX: -((e.clientY - r.top) / r.height - 0.5) * 6, transformPerspective: 1000, duration: 0.5, ease: "power3.out" });
+            });
+            card.addEventListener("pointerleave", () => gsap.to(card, { y: 0, rotateY: 0, rotateX: 0, duration: 0.7, ease: "power3.out" }));
         });
     }
     addEventListener("load", () => ScrollTrigger.refresh());

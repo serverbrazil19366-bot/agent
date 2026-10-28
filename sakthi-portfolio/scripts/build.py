@@ -248,6 +248,7 @@ def home():
         f'''<li class="quote" data-reveal=""><div class="stars">{STAR * 5}</div><blockquote>“{esc(q)}”</blockquote>
 <div class="q-who"><span class="q-av">{esc(n[:1])}</span><div><b>{esc(n)}</b><small>{esc(r)}</small></div></div></li>''' for q, n, r in TESTIMONIALS)
     results = "".join(f'<li><b>{esc(n)}</b><span>{esc(t)}</span></li>' for n, t in [STATS[2]] + RESULTS)
+    BIG_MARQUEE = "".join("<span>Let's work together</span><i>✦</i>" for _ in range(4))
     options = "".join(f'<option>{esc(t)}</option>' for t, _, _ in SERVICES) + "<option>Job opportunity</option><option>Something else</option>"
 
     body = f'''{header(p, h)}
@@ -260,7 +261,7 @@ def home():
 <div class="hero-copy">
 <span class="avail"><i></i>Available for freelance &amp; full-time work</span>
 <p class="hello">Hello, I'm</p>
-<h1 class="hero-name"><span class="hn-line">{esc(PROFILE["first"])}</span><span class="hn-s"> S</span></h1>
+<h1 class="hero-name"><span class="hn-s">S </span><span class="hn-line">{esc(PROFILE["first"])}</span></h1>
 <p class="hero-role">{esc(PROFILE["role"])}</p>
 <p class="hero-tags"><span>SEO</span><span>AI Automation</span><span>WordPress</span><span>GA4</span><span>Local SEO</span></p>
 <p class="hero-lead">{esc(PROFILE["lead"])}</p>
@@ -272,9 +273,16 @@ def home():
 </div>
 <div class="hero-visual">
 <span aria-hidden="true" class="hero-ghost">SAKTHI</span>
-<div class="blob">{img("img/sakthi-lean", PROFILE["name"] + ", founder of Astra Nexora", "(min-width: 1001px) 420px, 80vw", p, eager=True)}</div>
+<div class="hv-stage">
+<span aria-hidden="true" class="hv-back"></span>
+<span aria-hidden="true" class="hv-line"></span>
+<span aria-hidden="true" class="hv-dots"></span>
+<div class="hv-photo">{img("img/sakthi-lean", PROFILE["name"] + ", founder of Astra Nexora", "(min-width: 1001px) 420px, 80vw", p, eager=True)}</div>
+<svg aria-hidden="true" class="hv-badge" viewbox="0 0 200 200"><defs><path d="M100 100m-72 0a72 72 0 1 1 144 0a72 72 0 1 1-144 0" id="badgePath"/></defs><circle cx="100" cy="100" fill="currentColor" r="98"/><text><textPath href="#badgePath">SEO · AUTOMATION · WEBSITES · GROWTH ·</textPath></text><path class="hb-star" d="M100 74c2.6 15.4 10 22.8 25.4 25.4C110 102 102.6 109.4 100 124.8 97.4 109.4 90 102 74.6 99.4 90 96.8 97.4 89.4 100 74z"/></svg>
 <div class="float-card fc-a"><b>{STATS[0][0]}</b><span>Years Experience</span></div>
 <div class="float-card fc-b"><b>{STATS[1][0]}</b><span>Projects Done</span></div>
+<div class="hv-chip"><i></i><span><b>Founder &amp; CEO</b>Astra Nexora</span></div>
+</div>
 </div>
 </div>
 <a class="scroll-cue" href="#about"><i></i>Scroll</a>
@@ -323,7 +331,7 @@ def home():
 <div class="wrap">
 {sec_head("03", "Career path", 'Experience &amp; <em>education</em>', tid="xpTitle")}
 <div class="xp-in">
-<div><span class="col-label">Work experience</span><ol class="timeline">{exp}</ol></div>
+<div><span class="col-label">Work experience</span><div class="tl-wrap"><span aria-hidden="true" class="tl-progress"><i></i></span><ol class="timeline main">{exp}</ol></div></div>
 <div>
 <span class="col-label">Education</span><ul class="timeline">{edu}</ul>
 <span class="col-label bring-label">What I bring</span>
@@ -370,6 +378,8 @@ def home():
 <ul class="q-grid">{quotes}</ul>
 </div>
 </section>
+
+<div aria-hidden="true" class="big-marquee"><div class="bm-track">{BIG_MARQUEE}</div></div>
 
 <section aria-labelledby="contactTitle" class="sec contact" id="contact">
 <div class="wrap">
