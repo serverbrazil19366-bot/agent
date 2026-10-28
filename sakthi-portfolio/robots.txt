@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://saktheeswaran.netlify.app/sitemap.xml
