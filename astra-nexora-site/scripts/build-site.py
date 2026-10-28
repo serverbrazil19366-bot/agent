@@ -106,10 +106,8 @@ def img(base, alt, sizes, prefix, eager=False, cls=""):
 
 
 def logo(prefix="", colour=False):
-    """The AN mark from the Astra Nexora logo + the serif wordmark and tagline."""
-    mark = "an-mark" if colour else "an-mark-white"
-    return (f'<img alt="" class="logo-mark" height="40" src="{prefix}assets/brand/{mark}.webp" width="71"/>'
-            '<span class="logo-text">AstraNexora<small>Next Era in Digital Marketing</small></span>')
+    """Wordmark from the Astra Nexora logo: name + tagline, set as text."""
+    return '<span class="logo-text">AstraNexora<small>Next Era in Digital Marketing</small></span>'
 
 
 def btn(label, href, kind="btn-white", target=False, arrow=True):
@@ -220,7 +218,7 @@ def header(prefix, home):
 <a href="mailto:{EMAIL}">{svg(I_MAIL)}{EMAIL}</a>
 <a href="{WA}" rel="noopener" target="_blank">{svg(I_CHAT)}Chat on WhatsApp</a>
 </div>
-<p class="tb-right">{svg(I_PIN)}Chennai, Tamil Nadu · Serving all of India</p>
+<p class="tb-right">{svg(I_PIN)}Tamil Nadu · Serving all of India</p>
 </div>
 </div>
 <header class="site-header" id="header">
@@ -275,7 +273,7 @@ def footer(prefix, home):
 <div class="wrap footer-grid">
 <div class="footer-brand">
 <a aria-label="Astra Nexora — home" class="brand" href="{home}#home">{logo(prefix)}</a>
-<p>A digital marketing agency in Chennai for SEO, websites, branding and performance marketing, planned as one system.</p>
+<p>A digital marketing agency in Tamil Nadu for SEO, websites, branding and performance marketing, planned as one system.</p>
 <div class="social">{social}</div>
 </div>
 <div class="footer-col">
@@ -287,7 +285,7 @@ def footer(prefix, home):
 <ul class="footer-contact">
 <li>{svg(I_CHAT)}<a href="{WA}" rel="noopener" target="_blank">Chat on WhatsApp</a></li>
 <li>{svg(I_MAIL)}<a href="mailto:{EMAIL}">{EMAIL}</a></li>
-<li>{svg(I_PIN)}<span>Chennai, Tamil Nadu<br/>Serving all of India</span></li>
+<li>{svg(I_PIN)}<span>Tamil Nadu, India<br/>Serving clients across India</span></li>
 </ul>
 </div>
 <div class="footer-col">
@@ -374,7 +372,7 @@ def contact_section():
 <ul class="contact-list">
 <li>{svg(I_CHAT)}<div><small>WhatsApp</small><a href="{WA}" rel="noopener" target="_blank">Chat with us now</a></div></li>
 <li>{svg(I_MAIL)}<div><small>Email</small><a href="mailto:{EMAIL}">{EMAIL}</a></div></li>
-<li>{svg(I_PIN)}<div><small>Studio</small><span>Chennai, Tamil Nadu</span></div></li>
+<li>{svg(I_PIN)}<div><small>Based in</small><span>Tamil Nadu, India</span></div></li>
 </ul>
 <p class="contact-status"><i aria-hidden="true" class="live-dot"></i>Replies usually within 24 hours</p>
 </div>
@@ -419,16 +417,24 @@ def faq_section(faqs, title):
 
 
 def cta_band(home):
-    return f'''<section class="cta">
-{shapes("sh-cta")}
-<div class="wrap cta-inner">
-<div data-reveal="">
+    points = ["Free website audit", "Reply within 24 hours", "No obligation"]
+    steps = [("01", "Share your website"), ("02", "We review it"), ("03", "You get a fix list")]
+    return f'''<section aria-labelledby="ctaTitle" class="cta">
+<div class="wrap">
+<div class="cta-card" data-reveal="">
+<div aria-hidden="true" class="cta-deco">{shapes("sh-cta")}<span class="cta-ghost">LET'S GROW</span><i class="cta-glow"></i></div>
+<div class="cta-copy">
 <span class="sub">Free · no obligation</span>
-<h2>Find out what's holding your <span class="box">website back.</span></h2>
+<h2 id="ctaTitle">Find out what's holding your <span class="box">website back.</span></h2>
+<ul class="cta-points">{"".join(f"<li>{CHECK}{p}</li>" for p in points)}</ul>
 </div>
-<div class="actions" data-reveal="">
+<div class="cta-side">
+<ol class="cta-steps">{"".join(f'<li><b>{n}</b><span>{t}</span></li>' for n, t in steps)}</ol>
+<div class="actions">
 {btn("Get my free audit", f"{home}#contact", "btn-white")}
-{btn("Chat on WhatsApp", WA, "btn-dark", target=True)}
+{btn("Chat on WhatsApp", WA, "btn-line", target=True)}
+</div>
+</div>
 </div>
 </div>
 </section>'''
@@ -460,14 +466,27 @@ def steps_list(items, with_tags=False):
     return out
 
 
-def work_card(href, image_html, cat, label, title, text):
+def timeline(items):
+    out = "".join(
+        f'''<li class="tl-step" data-reveal=""><span class="tl-dot">{i:02d}</span><h3>{esc(it[0])}</h3><p>{esc(it[1])}</p></li>'''
+        for i, it in enumerate(items, 1))
+    return f'<div class="tl"><span aria-hidden="true" class="tl-line"><i></i></span><ol class="tl-steps">{out}</ol></div>'
+
+
+def step_cards(items):
+    return "\n".join(
+        f'''<li class="step-card" data-reveal=""><span class="sc-n">{i:02d}</span><h3>{esc(it[0])}</h3><p>{esc(it[1])}</p></li>'''
+        for i, it in enumerate(items, 1))
+
+
+def work_card(href, image_html, cat, label, title, text, more="View project"):
     return f'''<a class="work-card" data-reveal="" href="{href}">
 <div class="work-media img-wrap">{image_html}</div>
 <div class="work-body">
 <p class="work-meta"><span>{esc(label)}</span><i>/</i><b>{esc(cat)}</b></p>
 <h3>{esc(title)}</h3>
 <p>{esc(text)}</p>
-<span class="work-more">View project {ARROW}</span>
+<span class="work-more">{more} {ARROW}</span>
 </div>
 </a>'''
 
@@ -497,7 +516,7 @@ def home_page():
                 "logo": SITE + "assets/og-image.jpg",
                 "email": EMAIL,
                 "foundingDate": "2025",
-                "foundingLocation": "Chennai, India",
+                "foundingLocation": "Tamil Nadu, India",
                 "founder": {"@type": "Person", "name": HOME["founder"]["name"], "jobTitle": HOME["founder"]["role"],
                             "sameAs": [HOME["founder"]["linkedin"]]},
                 "sameAs": [u for _, u in SOCIAL],
@@ -506,12 +525,12 @@ def home_page():
                 "@type": "ProfessionalService",
                 "@id": SITE + "#service",
                 "name": "Astra Nexora",
-                "description": "Digital marketing agency in Chennai: " + ", ".join(s["title"] for s in SERVICES) + ".",
+                "description": "Digital marketing agency in Tamil Nadu, India: " + ", ".join(s["title"] for s in SERVICES) + ".",
                 "url": SITE,
                 "image": SITE + "assets/og-image.jpg",
                 "email": EMAIL,
                 "parentOrganization": {"@id": SITE + "#organization"},
-                "address": {"@type": "PostalAddress", "addressLocality": "Chennai", "addressRegion": "Tamil Nadu", "addressCountry": "IN"},
+                "address": {"@type": "PostalAddress", "addressRegion": "Tamil Nadu", "addressCountry": "IN"},
                 "areaServed": {"@type": "Country", "name": "India"},
                 "makesOffer": [{"@type": "Offer", "itemOffered": {"@type": "Service", "name": s["title"], "url": SITE + f"services/{s['slug']}.html"}} for s in SERVICES],
                 "sameAs": [u for _, u in SOCIAL],
@@ -520,8 +539,8 @@ def home_page():
     }
     faq = {"@context": "https://schema.org", **faq_schema(HOME["faqs"])}
 
-    title = "Digital Marketing & SEO Agency in Chennai | Astra Nexora"
-    desc = ("Astra Nexora is a digital marketing agency in Chennai for SEO, social media, Google and Meta ads, "
+    title = "Digital Marketing & SEO Agency in Tamil Nadu, India | Astra Nexora"
+    desc = ("Astra Nexora is a digital marketing agency in Tamil Nadu, India for SEO, social media, Google and Meta ads, "
             "content, websites, branding, lead generation and AI marketing automation.")
 
     cards = "\n".join(svc_card(i, s["title"], SERVICE_TAGLINES[s["slug"]] + ". " + strip_tags(s["lead"]).split(". ")[0] + ".",
@@ -534,7 +553,7 @@ def home_page():
         for pr in PROJECTS)
 
     f = HOME["founder"]
-    timeline = "".join(f'<li><b>{y}</b><span>{esc(t)}</span></li>' for y, t in f["timeline"])
+    timeline_html = "".join(f'<li><b>{y}</b><span>{esc(t)}</span></li>' for y, t in f["timeline"])
 
     principles = "\n".join(
         f'<li class="pr-item" data-reveal=""><span class="pr-n">{i:02d}</span><h3>{esc(t)}</h3><p>{esc(d)}</p></li>'
@@ -544,14 +563,13 @@ def home_page():
         (I_CHAT, "Want a quick answer? Tap to", "chat with us on WhatsApp", WA, True),
         (I_MAIL, "Prefer email? Send your brief or questions to", EMAIL, f"mailto:{EMAIL}", False),
         (I_SHARE, "Follow our work and tips on", "Instagram, LinkedIn, Facebook", "#founder", False),
-        (I_PIN, "Based in Chennai, working with businesses across", "Tamil Nadu & India", "#contact", False),
+        (I_PIN, "Based in Tamil Nadu, working with businesses across", "all of India", "#contact", False),
     ]
     info_html = "\n".join(
         f'<li class="info-card" data-reveal=""><span class="info-ic">{svg(ic)}</span>{svg(ic, "info-ghost")}'
         f'<p>{esc(t)} <a href="{h}"{" rel=\"noopener\" target=\"_blank\"" if blank else ""}>{esc(v)}</a></p></li>'
         for ic, t, v, h, blank in info)
 
-    social = "".join(f'<a href="{u}" rel="noopener" target="_blank">{n}</a>' for n, u in SOCIAL)
 
     body = f'''{header(p, home)}
 
@@ -580,9 +598,9 @@ def home_page():
 <div class="collage" data-reveal="">
 <span aria-hidden="true" class="tri tri-a"></span>
 <span aria-hidden="true" class="tri tri-b"></span>
-<div class="col-big img-wrap">{img("pexels-39205089", "Team planning a marketing strategy around a table", "(min-width: 1001px) 40vw, 90vw", p)}</div>
+<div class="col-big img-wrap clip-reveal">{img("pexels-39205089", "Team planning a marketing strategy around a table", "(min-width: 1001px) 40vw, 90vw", p)}</div>
 <div class="col-small img-wrap">{img("pexels-6476246", "Reviewing campaign results on a tablet", "(min-width: 1001px) 20vw, 50vw", p)}</div>
-<div class="col-badge"><b>2025</b><span>Founded in Chennai</span></div>
+<div class="col-badge"><b>2025</b><span>Founded in Tamil Nadu</span></div>
 </div>
 <div class="about-copy">
 {heading("About us", 'Few reasons why you should <span class="hl">choose us.</span>', title_id="aboutTitle")}
@@ -616,8 +634,8 @@ def home_page():
 <ol class="bars">
 {steps_list(HOME["process"])}</ol>
 </div>
-<div class="process-photo img-wrap" data-reveal="">
-{img("pexels-35184837", "Marketer working on a client plan at a laptop", "(min-width: 1001px) 40vw, 94vw", p)}
+<div class="process-photo img-wrap clip-reveal">
+{img("pexels-36706460", "Developer building a client website on two monitors", "(min-width: 1001px) 40vw, 94vw", p)}
 <div class="pp-card"><b>Free</b><span>Website audit to start</span></div>
 </div>
 </div>
@@ -630,26 +648,26 @@ def home_page():
 </section>
 
 <section aria-labelledby="founderTitle" class="sec founder" id="founder">
-<div class="wrap">
-{heading("Founder", 'Meet the person <span class="hl">behind the work.</span>', center=True, title_id="founderTitle", light=True)}
-<div class="founder-grid">
-<div class="founder-card" data-reveal="">
-<div class="fc-photo img-wrap"><img alt="S. Saktheeswaran, Founder and Managing Director of Astra Nexora" class="lqip" decoding="async" height="900" loading="lazy" sizes="(min-width: 1001px) 420px, 90vw" src="assets/founder/sakthi-chair-w720.webp" srcset="assets/founder/sakthi-chair-w480.webp 480w, assets/founder/sakthi-chair-w720.webp 720w" width="720"/></div>
-<small>Founder</small>
-<h3>{esc(f["name"])}</h3>
-<div class="fc-social">{social}</div>
+<span aria-hidden="true" class="founder-ghost">FOUNDER</span>
+<div class="wrap founder-grid">
+<div class="founder-visual" data-reveal="">
+<span aria-hidden="true" class="fv-frame"></span>
+<div class="fv-photo img-wrap clip-reveal"><img alt="S. Saktheeswaran, Founder and Managing Director of Astra Nexora" class="lqip" decoding="async" height="900" loading="lazy" sizes="(min-width: 1001px) 460px, 90vw" src="assets/founder/sakthi-chair-w720.webp" srcset="assets/founder/sakthi-chair-w480.webp 480w, assets/founder/sakthi-chair-w720.webp 720w" width="720"/></div>
+<div class="fv-desk img-wrap"><img alt="Sakthi at his desk in the Astra Nexora studio" class="lqip" decoding="async" height="900" loading="lazy" sizes="220px" src="assets/founder/sakthi-desk-w480.webp" width="720"/></div>
+<svg aria-hidden="true" class="fv-ring" viewbox="0 0 200 200"><defs><path d="M100 100m-78 0a78 78 0 1 1 156 0a78 78 0 1 1-156 0" id="ringPath"/></defs><text><textPath href="#ringPath">ASTRA NEXORA · NEXT ERA IN DIGITAL MARKETING ·</textPath></text></svg>
+<div class="fv-badge"><b>Since 2025</b><span>Founder-led studio</span></div>
 </div>
-<div class="founder-copy" data-reveal="">
-<p class="founder-role">{esc(f["role"])}</p>
-<p class="founder-quote">{esc(f["bio"][0])}</p>
-<p>{esc(f["bio"][1])} When you work with Astra Nexora, you work with him directly.</p>
-<ol class="founder-time">{timeline}</ol>
-<div class="actions">
-{btn("Talk to Sakthi", WA, "btn-red", target=True)}
+<div class="founder-copy">
+{heading("Meet the founder", f'{esc(f["name"])}<span class="hl">.</span>', title_id="founderTitle", light=True)}
+<p class="founder-role" data-reveal="">{esc(f["role"])}</p>
+<p class="founder-lead" data-reveal="">{esc(f["bio"][0])}</p>
+<p class="founder-p" data-reveal="">{esc(f["bio"][1])} When you work with Astra Nexora, you work with him directly.</p>
+<ul class="founder-skills" data-reveal="">{"".join(f"<li>{x}</li>" for x in ["Digital marketing", "SEO", "Website development", "WordPress & Wix", "Branding", "Content creation"])}</ul>
+<ol class="founder-time" data-reveal="">{timeline_html}</ol>
+<div class="actions" data-reveal="">
+{btn("Talk to Sakthi", WA, "btn-white", target=True)}
 {btn("LinkedIn", f["linkedin"], "btn-line", target=True)}
 </div>
-</div>
-<div class="founder-desk img-wrap" data-reveal=""><img alt="Sakthi at his desk in the Astra Nexora studio" class="lqip" decoding="async" height="900" loading="lazy" sizes="(min-width: 1001px) 300px, 90vw" src="assets/founder/sakthi-desk-w480.webp" srcset="assets/founder/sakthi-desk-w480.webp 480w, assets/founder/sakthi-desk-w720.webp 720w" width="720"/></div>
 </div>
 </div>
 </section>
@@ -725,7 +743,7 @@ def facts_row(facts):
 def service_page(s, index):
     p, home = "../", "../index.html"
     path = f"services/{s['slug']}.html"
-    title = f"{s['title']} in Chennai | Astra Nexora"
+    title = f"{s['title']} | Astra Nexora"
     desc = strip_tags(s["lead"])
 
     schema = {
@@ -761,7 +779,7 @@ def service_page(s, index):
     related = "\n".join(
         work_card(f'{SERVICE_BY_SLUG[slug]["slug"]}.html',
                   img(SERVICE_BY_SLUG[slug]["hero"], SERVICE_BY_SLUG[slug]["hero_alt"], "(min-width: 1001px) 400px, 94vw", p),
-                  SERVICE_BY_SLUG[slug]["nav"], "Service", SERVICE_BY_SLUG[slug]["title"], SERVICE_TAGLINES[slug] + ".")
+                  SERVICE_BY_SLUG[slug]["nav"], "Service", SERVICE_BY_SLUG[slug]["title"], SERVICE_TAGLINES[slug] + ".", "Explore service")
         for slug in s["related"])
     prev_s = SERVICES[(index - 2) % len(SERVICES)]
     next_s = SERVICES[index % len(SERVICES)]
@@ -774,13 +792,12 @@ def service_page(s, index):
 
 {facts_row(s["facts"])}
 
-<section aria-labelledby="overviewTitle" class="sec about">
-<div class="wrap about-grid">
-<div class="collage" data-reveal="">
+<section aria-labelledby="overviewTitle" class="sec overview">
+<div class="wrap ov-grid">
+<div class="ov-media" data-reveal="">
 <span aria-hidden="true" class="tri tri-a"></span>
-<span aria-hidden="true" class="tri tri-b"></span>
-<div class="col-big img-wrap">{img(s["side"], s["side_alt"], "(min-width: 1001px) 40vw, 90vw", p)}</div>
-<div class="col-small img-wrap">{img(s["hero"], "", "(min-width: 1001px) 20vw, 50vw", p)}</div>
+<div class="ov-photo img-wrap img-reveal">{img(s["side"], s["side_alt"], "(min-width: 1001px) 45vw, 92vw", p)}</div>
+<div class="ov-badge"><span class="svc-icon">{icon(s["slug"])}</span><div><b>Service {index:02d}</b><span>{esc(s["nav"])}</span></div></div>
 </div>
 <div class="about-copy">
 {heading("Why it matters", esc(s["overview"][0]), title_id="overviewTitle", cls="small")}
@@ -799,17 +816,10 @@ def service_page(s, index):
 </div>
 </section>
 
-<section aria-labelledby="processTitle" class="sec process">
-<div class="wrap process-grid">
-<div class="process-copy">
-{heading("How we work", 'A clear process, <span class="hl">start to finish.</span>', "You always know what's happening, what's next and what it's achieving.", title_id="processTitle")}
-<ol class="bars">
-{steps_list(s["process"])}</ol>
-</div>
-<div class="process-photo img-wrap" data-reveal="">
-{img(s["side"], "", "(min-width: 1001px) 40vw, 94vw", p)}
-<div class="pp-card"><b>{len(s["process"]):02d}</b><span>Clear steps</span></div>
-</div>
+<section aria-labelledby="processTitle" class="sec steps-sec">
+<div class="wrap">
+{heading("How we work", 'A clear process, <span class="hl">start to finish.</span>', "You always know what's happening, what's next and what it's achieving.", center=True, title_id="processTitle")}
+{timeline(s["process"])}
 </div>
 </section>
 
@@ -867,7 +877,7 @@ def project_page(pr, index):
         img(pr["hero"], pr["hero_alt"], "(min-width: 1001px) 55vw, 100vw", p, eager=True))
 
     deliver = "".join(f"<li>{CHECK}{esc(d)}</li>" for d in pr["deliverables"])
-    goals = "\n".join(svc_card(i, g, "A goal we'd set and report against for a project like this.") for i, g in enumerate(pr["goals"], 1))
+    goals = "\n".join(f'<li class="pr-item" data-reveal=""><span class="pr-n">{i:02d}</span><h3>{esc(g)}</h3></li>' for i, g in enumerate(pr["goals"], 1))
     nxt = PROJECTS[index % len(PROJECTS)]
 
     body = f'''{header(p, home)}
@@ -880,32 +890,24 @@ def project_page(pr, index):
 
 <div class="wrap note-wrap"><p class="concept-note"><strong>Concept project.</strong> This shows how we would approach this kind of brief. It is not a client case study and has no client results.</p></div>
 
-<section aria-labelledby="challengeTitle" class="sec about">
-<div class="wrap about-grid">
-<div class="collage" data-reveal="">
-<span aria-hidden="true" class="tri tri-a"></span>
-<span aria-hidden="true" class="tri tri-b"></span>
-<div class="col-big img-wrap">{img(pr["second"], pr["second_alt"], "(min-width: 1001px) 40vw, 90vw", p)}</div>
-<div class="col-small img-wrap">{img(pr["hero"], "", "(min-width: 1001px) 20vw, 50vw", p)}</div>
+<section aria-labelledby="challengeTitle" class="sec brief">
+<div class="wrap">
+<div class="brief-wrap">
+<div class="brief-photo img-wrap img-reveal">{img(pr["second"], pr["second_alt"], "(min-width: 1001px) 1240px, 94vw", p)}</div>
+<div class="brief-card" data-reveal="">
+{heading("The brief", 'The <span class="hl">challenge.</span>', title_id="challengeTitle", cls="small")}
+<p>{esc(pr["challenge"])}</p>
 </div>
-<div class="about-copy">
-{heading("The brief", 'The <span class="hl">challenge.</span>', title_id="challengeTitle")}
-<p class="big-p" data-reveal="">{esc(pr["challenge"])}</p>
 </div>
 </div>
 </section>
 
-<section aria-labelledby="approachTitle" class="sec process">
-<div class="wrap process-grid">
-<div class="process-copy">
-{heading("Our approach", 'How we\'d <span class="hl">solve it.</span>', "Four steps, each with a clear outcome before the next one starts.", title_id="approachTitle")}
-<ol class="bars">
-{steps_list(pr["approach"])}</ol>
-</div>
-<div class="process-photo img-wrap" data-reveal="">
-{img(pr["second"], "", "(min-width: 1001px) 40vw, 94vw", p)}
-<div class="pp-card"><b>Concept</b><span>Not a client project</span></div>
-</div>
+<section aria-labelledby="approachTitle" class="sec services">
+<div class="wrap">
+{heading("Our approach", 'How we\'d <span class="hl">solve it.</span>', "Four steps, each with a clear outcome before the next one starts.", center=True, title_id="approachTitle")}
+<ol class="step-grid">
+{step_cards(pr["approach"])}
+</ol>
 </div>
 </section>
 
@@ -916,10 +918,10 @@ def project_page(pr, index):
 </div>
 </section>
 
-<section aria-labelledby="goalsTitle" class="sec services">
+<section aria-labelledby="goalsTitle" class="sec principles">
 <div class="wrap">
-{heading("Success measures", 'What success <span class="hl">looks like.</span>', center=True, title_id="goalsTitle")}
-<ul class="svc-grid">
+{heading("Success measures", 'What success <span class="hl">looks like.</span>', "The goals we'd set and report against for a project like this.", center=True, title_id="goalsTitle")}
+<ul class="pr-grid two">
 {goals}
 </ul>
 </div>

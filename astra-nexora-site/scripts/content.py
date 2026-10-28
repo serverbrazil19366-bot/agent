@@ -438,11 +438,11 @@ PROJECTS = [
 HOME = {
     # Previous hero line (from the bolt.host site): "Transforming brands into digital powerhouses."
     "hero_h1": ["Marketing that", "gets your business", "<em>chosen.</em>"],
-    "hero_lead": "Astra Nexora is a Chennai studio for SEO, websites, branding and performance marketing, planned as one system and measured on the enquiries it brings in.",
-    "stats": [("2025", "Founded in Chennai"), ("8", "Service areas"), ("Chennai", "Serving all of India")],
+    "hero_lead": "Astra Nexora is a digital marketing studio for SEO, websites, branding and performance marketing, planned as one system and measured on the enquiries it brings in.",
+    "stats": [("2025", "Founded in Tamil Nadu"), ("8", "Service areas"), ("India", "Serving clients across India")],
     "statement": "We build marketing as one connected system. Strategy, websites, search, content, ads and automation, planned together by one team and measured on the enquiries they bring in.",
     "about": [
-        "Astra Nexora is a digital marketing agency in Chennai helping businesses, new brands and creators build powerful digital identities through branding, websites, SEO, content and growth-focused marketing.",
+        "Astra Nexora is a digital marketing agency in Tamil Nadu, India, helping businesses, new brands and creators build powerful digital identities through branding, websites, SEO, content and growth-focused marketing.",
         "We don't just execute tasks. We think strategically, create with care and measure what matters. Every project starts with your business goals and ends with results you can see.",
     ],
     "process": [
@@ -469,7 +469,7 @@ HOME = {
         "timeline": [
             ("2019", "Started in digital marketing, building expertise in SEO and web development"),
             ("2021", "Expanded into branding and content strategy for growing businesses"),
-            ("2025", "Founded Astra Nexora in Chennai"),
+            ("2025", "Founded Astra Nexora in Tamil Nadu"),
         ],
         "linkedin": "https://www.linkedin.com/in/saktheeswaran-s-30a036273/",
     },

@@ -26,10 +26,10 @@
 
     // Position 12 months ago, 6 months ago, 3 months ago, today
     const keywords = [
-        { kw: "dental lab chennai",          pos: 3,  was: { 3: 5,  6: 9,  12: 12 }, share: .19 },
+        { kw: "dental lab near me",          pos: 3,  was: { 3: 5,  6: 9,  12: 12 }, share: .19 },
         { kw: "dental lab near me",          pos: 4,  was: { 3: 6,  6: 10, 12: 15 }, share: .16 },
-        { kw: "zirconia crowns chennai",     pos: 5,  was: { 3: 8,  6: 13, 12: 19 }, share: .13 },
-        { kw: "implant crown lab chennai",   pos: 7,  was: { 3: 11, 6: 17, 12: 25 }, share: .08 },
+        { kw: "zirconia crowns near me",     pos: 5,  was: { 3: 8,  6: 13, 12: 19 }, share: .13 },
+        { kw: "implant crown lab near me",   pos: 7,  was: { 3: 11, 6: 17, 12: 25 }, share: .08 },
         { kw: "emax crowns lab",             pos: 9,  was: { 3: 10, 6: 12, 12: 15 }, share: .05 },
         { kw: "digital dental lab india",    pos: 12, was: { 3: 18, 6: 24, 12: 33 }, share: .03 }
     ];

@@ -208,6 +208,42 @@ document.querySelectorAll("img.lqip").forEach(img => {
 
 
 /* =====================================================
+   HEADINGS — words slide up one after another
+===================================================== */
+
+function splitWords(node, counter) {
+    Array.from(node.childNodes).forEach(child => {
+        if (child.nodeType === 3) {
+            const parts = child.textContent.split(/(\s+)/);
+            const frag = document.createDocumentFragment();
+            parts.forEach(part => {
+                if (!part) return;
+                if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+                const w = document.createElement("span");
+                const inner = document.createElement("span");
+                w.className = "w";
+                inner.textContent = part;
+                inner.style.setProperty("--i", counter.n++);
+                w.appendChild(inner);
+                frag.appendChild(w);
+            });
+            child.replaceWith(frag);
+        } else if (child.nodeType === 1) {
+            splitWords(child, counter);
+        }
+    });
+}
+
+if (!reduceMotion) {
+    document.querySelectorAll(".sec-title h2").forEach(h2 => {
+        h2.setAttribute("aria-label", h2.textContent.replace(/\s+/g, " ").trim());
+        splitWords(h2, { n: 0 });
+        h2.classList.add("split");
+    });
+}
+
+
+/* =====================================================
    REVEALS
 ===================================================== */
 
@@ -220,13 +256,23 @@ if ("IntersectionObserver" in window && !reduceMotion) {
         });
     }, { threshold: 0.12, rootMargin: "0px 0px -5% 0px" });
 
+    // A fully clipped element never counts as visible, so watch its parent instead
+    const wipe = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            entry.target.querySelectorAll(":scope > .img-reveal, :scope > .clip-reveal").forEach(el => el.classList.add("is-in"));
+            wipe.unobserve(entry.target);
+        });
+    }, { threshold: 0.15 });
+    document.querySelectorAll(".img-reveal, .clip-reveal").forEach(el => wipe.observe(el.parentElement));
+
     document.querySelectorAll("[data-reveal]").forEach(el => {
         const siblings = Array.from(el.parentElement.children).filter(c => c.hasAttribute("data-reveal"));
         el.style.transitionDelay = (siblings.indexOf(el) % 4) * 80 + "ms";
         io.observe(el);
     });
 } else {
-    document.querySelectorAll("[data-reveal]").forEach(el => el.classList.add("is-in"));
+    document.querySelectorAll("[data-reveal], .img-reveal, .clip-reveal").forEach(el => el.classList.add("is-in"));
 }
 
 
@@ -280,11 +326,64 @@ if (animate) {
         });
     });
 
-    const fc = document.querySelector(".fc-photo");
-    if (fc) {
-        gsap.from(fc, {
-            scale: 0.6, rotate: -20, autoAlpha: 0, duration: 1.4, ease: "expo.out",
-            scrollTrigger: { trigger: fc, start: "top 85%", once: true }
+    // Founder: the desk photo and badge float against the main portrait
+    if (document.querySelector(".founder-visual")) {
+        const st = { trigger: ".founder-visual", start: "top bottom", end: "bottom top", scrub: true };
+        gsap.fromTo(".fv-desk", { y: 70 }, { y: -50, ease: "none", scrollTrigger: st });
+        gsap.fromTo(".fv-badge", { y: 40 }, { y: -40, ease: "none", scrollTrigger: st });
+        gsap.fromTo(".fv-photo img", { scale: 1.2 }, { scale: 1.02, ease: "none", scrollTrigger: st });
+        gsap.from(".founder-time li", {
+            y: 30, autoAlpha: 0, duration: 1, stagger: 0.15, ease: "expo.out",
+            scrollTrigger: { trigger: ".founder-time", start: "top 88%", once: true }
+        });
+    }
+
+    // Service timeline: the line draws itself as you scroll through the steps
+    document.querySelectorAll(".tl").forEach(tl => {
+        gsap.fromTo(tl.querySelector(".tl-line i"), { scaleX: 0 }, {
+            scaleX: 1, ease: "none",
+            scrollTrigger: { trigger: tl, start: "top 80%", end: "bottom 55%", scrub: true }
+        });
+    });
+
+    // Scroll progress line along the top of the window
+    const bar = document.createElement("div");
+    bar.className = "scroll-progress";
+    bar.setAttribute("aria-hidden", "true");
+    document.body.appendChild(bar);
+    gsap.to(bar, { scaleX: 1, ease: "none", scrollTrigger: { start: 0, end: "max", scrub: 0.3 } });
+
+    if (finePointer) {
+        // Hero shapes and outline word follow the mouse a little
+        const hero = document.querySelector(".hero");
+        if (hero) {
+            const deco = hero.querySelectorAll(".shapes svg");
+            const ghost = hero.querySelector(".hero-ghost");
+            hero.addEventListener("pointermove", e => {
+                const r = hero.getBoundingClientRect();
+                const x = (e.clientX - r.left) / r.width - 0.5;
+                const y = (e.clientY - r.top) / r.height - 0.5;
+                deco.forEach((el, k) => gsap.to(el, { x: x * (30 + k * 18), y: y * (30 + k * 18), duration: 1, ease: "power3.out", overwrite: "auto" }));
+                if (ghost) gsap.to(ghost, { x: x * -40, duration: 1.2, ease: "power3.out", overwrite: "auto" });
+            });
+        }
+
+        // Buttons lean towards the cursor
+        document.querySelectorAll(".btn").forEach(b => {
+            b.addEventListener("pointermove", e => {
+                const r = b.getBoundingClientRect();
+                gsap.to(b, { x: (e.clientX - r.left - r.width / 2) * 0.18, y: (e.clientY - r.top - r.height / 2) * 0.3, duration: 0.5, ease: "power3.out" });
+            });
+            b.addEventListener("pointerleave", () => gsap.to(b, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.4)" }));
+        });
+
+        // CTA glow follows the cursor
+        document.querySelectorAll(".cta-card").forEach(card => {
+            card.addEventListener("pointermove", e => {
+                const r = card.getBoundingClientRect();
+                card.style.setProperty("--gx", (e.clientX - r.left) + "px");
+                card.style.setProperty("--gy", (e.clientY - r.top) + "px");
+            });
         });
     }
 }
