@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Builds the site and pushes the public files to the repo Netlify deploys from
+# (serverbrazil19366-bot/astranexora, branch main). Netlify publishes within a minute.
+#
+#   scripts/publish.sh "Commit message"
+#
+# Expects that repo cloned at $LIVE_REPO (default /home/user/astranexora).
+set -euo pipefail
+cd "$(dirname "$0")/.."
+LIVE_REPO="${LIVE_REPO:-/home/user/astranexora}"
+MSG="${1:-Update website}"
+
+python3 scripts/build-site.py
+CMD=$(python3 -c "import tomllib;print(tomllib.load(open('netlify.toml','rb'))['build']['command'])")
+bash -c "$CMD"
+
+git -C "$LIVE_REPO" pull --ff-only origin main
+find "$LIVE_REPO" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+cp -r dist/. "$LIVE_REPO"/
+rm -rf dist
+
+cd "$LIVE_REPO"
+git add -A
+if git diff --cached --quiet; then
+    echo "Nothing changed on the live site."
+    exit 0
+fi
+git commit -q -m "$MSG" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01NT32gBzirvy2Ba5PGYfNQt"
+git push origin main
+echo "Pushed. Netlify will publish in about a minute."
