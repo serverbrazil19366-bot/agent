@@ -280,8 +280,24 @@ if ("IntersectionObserver" in window && !reduceMotion) {
    HERO — intro and gentle parallax
 ===================================================== */
 
+/* First visit in a session: short name loader, then the hero intro */
+const root = document.documentElement;
+const preloading = root.classList.contains("preload");
+if (preloading) {
+    const loader = document.querySelector(".preloader");
+    let finished = false;
+    const finish = () => {
+        if (finished) return;
+        finished = true;
+        loader.classList.add("done");
+        setTimeout(() => root.classList.remove("preload"), 950);
+    };
+    window.addEventListener("load", () => setTimeout(finish, 700));
+    setTimeout(finish, 2200);
+}
+
 if (animate && document.querySelector(".hero")) {
-    gsap.timeline({ defaults: { ease: "expo.out" } })
+    gsap.timeline({ defaults: { ease: "expo.out" }, delay: preloading ? 1.1 : 0 })
         .from(".hero-panel", { clipPath: "inset(0 100% 0 0)", duration: 1.2, ease: "expo.inOut" }, 0)
         .from(".hero-photo", { clipPath: "inset(0 0 0 100%)", duration: 1.4, ease: "expo.inOut" }, 0.15)
         .from(".hero-photo img", { scale: 1.25, duration: 2 }, 0.3)
@@ -290,15 +306,10 @@ if (animate && document.querySelector(".hero")) {
         .from(".hero-title .box", { backgroundColor: "rgba(10,15,44,0)", duration: 0.8 }, 1.3)
         .from(".hero-lead, .hero-copy .actions .btn", { y: 26, autoAlpha: 0, duration: 1, stagger: 0.08 }, 1.05)
         .from(".hero-deco .shapes svg", { scale: 0, autoAlpha: 0, duration: 0.9, stagger: 0.1, ease: "back.out(2)" }, 1.1)
-        .from(".hero-ghost", { xPercent: -20, autoAlpha: 0, duration: 1.8 }, 0.9)
         .from(".site-header .brand, .site-header .nav-link, .header-tools > *", { y: -20, autoAlpha: 0, duration: 0.8, stagger: 0.04 }, 0.6);
 
     gsap.to(".hero-photo img", {
         yPercent: 10, ease: "none",
-        scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true }
-    });
-    gsap.to(".hero-ghost", {
-        xPercent: 18, ease: "none",
         scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true }
     });
 }
@@ -346,6 +357,14 @@ if (animate) {
         });
     });
 
+    // Footer wordmark fills in as the footer comes up
+    document.querySelectorAll(".footer-mark span").forEach(mark => {
+        gsap.fromTo(mark, { "--fill": "0%" }, {
+            "--fill": "100%", ease: "none",
+            scrollTrigger: { trigger: mark, start: "top bottom", end: "bottom 85%", scrub: true }
+        });
+    });
+
     // Scroll progress line along the top of the window
     const bar = document.createElement("div");
     bar.className = "scroll-progress";
@@ -358,13 +377,11 @@ if (animate) {
         const hero = document.querySelector(".hero");
         if (hero) {
             const deco = hero.querySelectorAll(".shapes svg");
-            const ghost = hero.querySelector(".hero-ghost");
             hero.addEventListener("pointermove", e => {
                 const r = hero.getBoundingClientRect();
                 const x = (e.clientX - r.left) / r.width - 0.5;
                 const y = (e.clientY - r.top) / r.height - 0.5;
                 deco.forEach((el, k) => gsap.to(el, { x: x * (30 + k * 18), y: y * (30 + k * 18), duration: 1, ease: "power3.out", overwrite: "auto" }));
-                if (ghost) gsap.to(ghost, { x: x * -40, duration: 1.2, ease: "power3.out", overwrite: "auto" });
             });
         }
 
@@ -376,6 +393,30 @@ if (animate) {
             });
             b.addEventListener("pointerleave", () => gsap.to(b, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.4)" }));
         });
+
+        // Cards: a soft spotlight follows the cursor
+        document.querySelectorAll(".svc-card, .work-card, .step-card, .info-card, .pr-item, .faq-item").forEach(card => {
+            card.addEventListener("pointermove", e => {
+                const r = card.getBoundingClientRect();
+                card.style.setProperty("--mx", (e.clientX - r.left) + "px");
+                card.style.setProperty("--my", (e.clientY - r.top) + "px");
+            });
+        });
+
+        // Cursor ring that grows over anything clickable
+        const ring = document.createElement("div");
+        ring.className = "cursor-ring is-hidden";
+        ring.setAttribute("aria-hidden", "true");
+        document.body.appendChild(ring);
+        const rx = gsap.quickTo(ring, "x", { duration: 0.35, ease: "power3" });
+        const ry = gsap.quickTo(ring, "y", { duration: 0.35, ease: "power3" });
+        window.addEventListener("pointermove", e => {
+            rx(e.clientX);
+            ry(e.clientY);
+            ring.classList.remove("is-hidden");
+            ring.classList.toggle("is-link", !!e.target.closest("a, button, summary, select, label"));
+        });
+        document.addEventListener("pointerleave", () => ring.classList.add("is-hidden"));
 
         // CTA glow follows the cursor
         document.querySelectorAll(".cta-card").forEach(card => {

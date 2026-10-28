@@ -198,11 +198,12 @@ def head(title, description, path, prefix, schemas, preload=None, body_class="si
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&amp;family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
 {pre}<link href="{prefix}css/style.css" rel="stylesheet"/>
-<script>(function(d){{d.classList.add("js");if("scrollRestoration"in history)history.scrollRestoration="manual";}})(document.documentElement);</script>
+<script>(function(d){{d.classList.add("js");if("scrollRestoration"in history)history.scrollRestoration="manual";try{{if(!sessionStorage.getItem("an-seen")&&!matchMedia("(prefers-reduced-motion: reduce)").matches){{d.classList.add("preload");sessionStorage.setItem("an-seen","1");}}}}catch(e){{}}}})(document.documentElement);</script>
 {ld}</head>
 <body class="{body_class}">
 <a class="skip-link" href="#main">Skip to content</a>
 <div aria-hidden="true" class="page-curtain"></div>
+<div aria-hidden="true" class="preloader"><div class="pl-inner"><span class="pl-name">AstraNexora</span><span class="pl-tag">Next Era in Digital Marketing</span><i class="pl-bar"></i></div></div>
 '''
 
 
@@ -296,6 +297,7 @@ def footer(prefix, home):
 </ul>
 </div>
 </div>
+<div aria-hidden="true" class="wrap footer-mark"><span>AstraNexora</span></div>
 <div class="footer-bottom">
 <div class="wrap fb-inner">
 <span>© 2026 Astra Nexora. All rights reserved.</span>
@@ -422,7 +424,7 @@ def cta_band(home):
     return f'''<section aria-labelledby="ctaTitle" class="cta">
 <div class="wrap">
 <div class="cta-card" data-reveal="">
-<div aria-hidden="true" class="cta-deco">{shapes("sh-cta")}<span class="cta-ghost">LET'S GROW</span><i class="cta-glow"></i></div>
+<div aria-hidden="true" class="cta-deco">{shapes("sh-cta")}<i class="cta-glow"></i></div>
 <div class="cta-copy">
 <span class="sub">Free · no obligation</span>
 <h2 id="ctaTitle">Find out what's holding your <span class="box">website back.</span></h2>
@@ -577,7 +579,7 @@ def home_page():
 
 <section aria-labelledby="heroTitle" class="hero" id="home">
 <div class="hero-panel">
-<div aria-hidden="true" class="hero-deco">{shapes("sh-hero")}<span class="hero-ghost">GROWTH</span></div>
+<div aria-hidden="true" class="hero-deco">{shapes("sh-hero")}<span class="hero-dots"></span><span class="hero-beam"></span></div>
 <div class="hero-copy">
 <p class="hero-cats"><span>SEO</span><span>Websites</span><span>Branding</span><span>Performance Ads</span></p>
 <h1 class="hero-title" id="heroTitle"><span class="ln"><span>Marketing that</span></span> <span class="ln"><span class="box">gets you chosen.</span></span></h1>
@@ -618,6 +620,7 @@ def home_page():
 </section>
 
 <section aria-labelledby="servicesTitle" class="sec services" id="services">
+<div aria-hidden="true" class="floaters"><i class="f1"></i><i class="f2"></i><i class="f3"></i><i class="f4"></i></div>
 <div aria-hidden="true" class="svc-bg img-wrap">{img("pexels-577210", "", "40vw", p)}</div>
 <div class="wrap">
 {heading("Services", 'Expand your digital <span class="hl">presence with us.</span>', "Eight services, planned together by one team. Pick one, or let us run the whole system.", center=True, title_id="servicesTitle")}
@@ -648,14 +651,14 @@ def home_page():
 </section>
 
 <section aria-labelledby="founderTitle" class="sec founder" id="founder">
-<span aria-hidden="true" class="founder-ghost">FOUNDER</span>
+<div aria-hidden="true" class="orbs"><i></i><i></i></div>
 <div class="wrap founder-grid">
 <div class="founder-visual" data-reveal="">
 <span aria-hidden="true" class="fv-frame"></span>
 <div class="fv-photo img-wrap clip-reveal"><img alt="S. Saktheeswaran, Founder and Managing Director of Astra Nexora" class="lqip" decoding="async" height="900" loading="lazy" sizes="(min-width: 1001px) 460px, 90vw" src="assets/founder/sakthi-chair-w720.webp" srcset="assets/founder/sakthi-chair-w480.webp 480w, assets/founder/sakthi-chair-w720.webp 720w" width="720"/></div>
 <div class="fv-desk img-wrap"><img alt="Sakthi at his desk in the Astra Nexora studio" class="lqip" decoding="async" height="900" loading="lazy" sizes="220px" src="assets/founder/sakthi-desk-w480.webp" width="720"/></div>
 <svg aria-hidden="true" class="fv-ring" viewbox="0 0 200 200"><defs><path d="M100 100m-78 0a78 78 0 1 1 156 0a78 78 0 1 1-156 0" id="ringPath"/></defs><text><textPath href="#ringPath">ASTRA NEXORA · NEXT ERA IN DIGITAL MARKETING ·</textPath></text></svg>
-<div class="fv-badge"><b>Since 2025</b><span>Founder-led studio</span></div>
+<div class="fv-badge"><b>Since 2025</b><span>Founder &amp; MD</span></div>
 </div>
 <div class="founder-copy">
 {heading("Meet the founder", f'{esc(f["name"])}<span class="hl">.</span>', title_id="founderTitle", light=True)}
@@ -673,6 +676,7 @@ def home_page():
 </section>
 
 <section aria-labelledby="principlesTitle" class="sec principles" id="principles">
+<div aria-hidden="true" class="floaters"><i class="f1"></i><i class="f2"></i><i class="f3"></i><i class="f4"></i></div>
 <div class="wrap">
 {heading("Why it works", 'Helping brands grow <span class="hl">with clarity.</span>', center=True, title_id="principlesTitle")}
 <ul class="pr-grid">
@@ -682,6 +686,7 @@ def home_page():
 </section>
 
 <section aria-labelledby="workTitle" class="sec work" id="work">
+<div aria-hidden="true" class="floaters"><i class="f1"></i><i class="f2"></i><i class="f3"></i><i class="f4"></i></div>
 <div class="wrap">
 {heading("Our work", 'Projects built <span class="hl">to deliver.</span>', "A live reporting demo and concept projects that show how we think. Client case studies are added as clients approve them.", center=True, title_id="workTitle")}
 <div class="work-grid">
@@ -709,7 +714,7 @@ def page_hero(home, crumbs, kicker, h1, lead, actions, image_html):
         for name, href in crumbs)
     return f'''<section class="hero page-hero" id="home">
 <div class="hero-panel">
-<div aria-hidden="true" class="hero-deco">{shapes("sh-hero")}<span class="hero-ghost">{kicker.split(" · ")[-1].upper()}</span></div>
+<div aria-hidden="true" class="hero-deco">{shapes("sh-hero")}<span class="hero-dots"></span><span class="hero-beam"></span></div>
 <div class="hero-copy">
 <nav aria-label="Breadcrumb" class="breadcrumb">{crumb_html}</nav>
 <p class="hero-cats"><span>{kicker}</span></p>

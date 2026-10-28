@@ -24,7 +24,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&amp;family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
 <link as="image" fetchpriority="high" href="assets/stock/pexels-39190577-w1200.webp" imagesizes="(min-width: 1001px) 55vw, 100vw" imagesrcset="assets/stock/pexels-39190577-w480.webp 480w, assets/stock/pexels-39190577-w800.webp 800w, assets/stock/pexels-39190577-w1200.webp 1200w, assets/stock/pexels-39190577-w2000.webp 2000w" rel="preload" type="image/webp"/>
 <link href="css/style.css" rel="stylesheet"/>
-<script>(function(d){d.classList.add("js");if("scrollRestoration"in history)history.scrollRestoration="manual";})(document.documentElement);</script>
+<script>(function(d){d.classList.add("js");if("scrollRestoration"in history)history.scrollRestoration="manual";try{if(!sessionStorage.getItem("an-seen")&&!matchMedia("(prefers-reduced-motion: reduce)").matches){d.classList.add("preload");sessionStorage.setItem("an-seen","1");}}catch(e){}})(document.documentElement);</script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -224,6 +224,7 @@
 <body class="site home">
 <a class="skip-link" href="#main">Skip to content</a>
 <div aria-hidden="true" class="page-curtain"></div>
+<div aria-hidden="true" class="preloader"><div class="pl-inner"><span class="pl-name">AstraNexora</span><span class="pl-tag">Next Era in Digital Marketing</span><i class="pl-bar"></i></div></div>
 <div class="topbar">
 <div class="wrap topbar-inner">
 <div class="tb-left">
@@ -298,7 +299,7 @@
 <svg class="sh-tri" viewbox="0 0 40 36"><path d="M20 3 37 33H3z" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
 <svg class="sh-arc" viewbox="0 0 40 40"><path d="M6 30A16 16 0 0 1 30 8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="3.2"/></svg>
 <svg class="sh-wave" viewbox="0 0 60 16"><path d="M2 12c6-10 10-10 14 0s8 10 14 0 10-10 14 0 8 10 14 0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.6"/></svg>
-</div><span class="hero-ghost">GROWTH</span></div>
+</div><span class="hero-dots"></span><span class="hero-beam"></span></div>
 <div class="hero-copy">
 <p class="hero-cats"><span>SEO</span><span>Websites</span><span>Branding</span><span>Performance Ads</span></p>
 <h1 class="hero-title" id="heroTitle"><span class="ln"><span>Marketing that</span></span> <span class="ln"><span class="box">gets you chosen.</span></span></h1>
@@ -343,6 +344,7 @@
 </section>
 
 <section aria-labelledby="servicesTitle" class="sec services" id="services">
+<div aria-hidden="true" class="floaters"><i class="f1"></i><i class="f2"></i><i class="f3"></i><i class="f4"></i></div>
 <div aria-hidden="true" class="svc-bg img-wrap"><img alt="" class="lqip" data-lqip="data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAAAwBACdASoYABAAPu1iqU2ppaQiMAgBMB2JZwDCgCGw1rKyZ10gFqKeQwAA/vJOSYXMKvZW+yjnAuxoS3sYHLhSRKCYP5/smPFWFR8l96Uctgiq8DLySoyw6FZjfl/n+V+dnQXXkhwjn+KOCP/2HbYgJ9FeB+DTqbBddVecCaIpI1PgQShqC3cnVZHNRLeC2kkDo38GAAA=" decoding="async" height="1325" loading="lazy" sizes="40vw" src="assets/stock/pexels-577210-w1200.webp" srcset="assets/stock/pexels-577210-w480.webp 480w, assets/stock/pexels-577210-w800.webp 800w, assets/stock/pexels-577210-w1200.webp 1200w, assets/stock/pexels-577210-w2000.webp 2000w" width="2000"/></div>
 <div class="wrap">
 <div class="sec-title center" data-reveal="">
@@ -443,14 +445,14 @@
 </section>
 
 <section aria-labelledby="founderTitle" class="sec founder" id="founder">
-<span aria-hidden="true" class="founder-ghost">FOUNDER</span>
+<div aria-hidden="true" class="orbs"><i></i><i></i></div>
 <div class="wrap founder-grid">
 <div class="founder-visual" data-reveal="">
 <span aria-hidden="true" class="fv-frame"></span>
 <div class="fv-photo img-wrap clip-reveal"><img alt="S. Saktheeswaran, Founder and Managing Director of Astra Nexora" class="lqip" decoding="async" height="900" loading="lazy" sizes="(min-width: 1001px) 460px, 90vw" src="assets/founder/sakthi-chair-w720.webp" srcset="assets/founder/sakthi-chair-w480.webp 480w, assets/founder/sakthi-chair-w720.webp 720w" width="720"/></div>
 <div class="fv-desk img-wrap"><img alt="Sakthi at his desk in the Astra Nexora studio" class="lqip" decoding="async" height="900" loading="lazy" sizes="220px" src="assets/founder/sakthi-desk-w480.webp" width="720"/></div>
 <svg aria-hidden="true" class="fv-ring" viewbox="0 0 200 200"><defs><path d="M100 100m-78 0a78 78 0 1 1 156 0a78 78 0 1 1-156 0" id="ringPath"/></defs><text><textPath href="#ringPath">ASTRA NEXORA · NEXT ERA IN DIGITAL MARKETING ·</textPath></text></svg>
-<div class="fv-badge"><b>Since 2025</b><span>Founder-led studio</span></div>
+<div class="fv-badge"><b>Since 2025</b><span>Founder &amp; MD</span></div>
 </div>
 <div class="founder-copy">
 <div class="sec-title light" data-reveal="">
@@ -472,6 +474,7 @@
 </section>
 
 <section aria-labelledby="principlesTitle" class="sec principles" id="principles">
+<div aria-hidden="true" class="floaters"><i class="f1"></i><i class="f2"></i><i class="f3"></i><i class="f4"></i></div>
 <div class="wrap">
 <div class="sec-title center" data-reveal="">
 <span class="sub">Why it works</span>
@@ -490,6 +493,7 @@
 </section>
 
 <section aria-labelledby="workTitle" class="sec work" id="work">
+<div aria-hidden="true" class="floaters"><i class="f1"></i><i class="f2"></i><i class="f3"></i><i class="f4"></i></div>
 <div class="wrap">
 <div class="sec-title center" data-reveal="">
 <span class="sub">Our work</span>
@@ -713,6 +717,7 @@
 </ul>
 </div>
 </div>
+<div aria-hidden="true" class="wrap footer-mark"><span>AstraNexora</span></div>
 <div class="footer-bottom">
 <div class="wrap fb-inner">
 <span>© 2026 Astra Nexora. All rights reserved.</span>

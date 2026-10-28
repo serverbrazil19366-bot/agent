@@ -24,7 +24,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&amp;family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
 <link as="image" fetchpriority="high" href="../assets/stock/unsplash-1432888498266-38ffec3eaf0a-w1200.webp" imagesizes="(min-width: 1001px) 55vw, 100vw" imagesrcset="../assets/stock/unsplash-1432888498266-38ffec3eaf0a-w480.webp 480w, ../assets/stock/unsplash-1432888498266-38ffec3eaf0a-w800.webp 800w, ../assets/stock/unsplash-1432888498266-38ffec3eaf0a-w1200.webp 1200w, ../assets/stock/unsplash-1432888498266-38ffec3eaf0a-w2000.webp 2000w" rel="preload" type="image/webp"/>
 <link href="../css/style.css" rel="stylesheet"/>
-<script>(function(d){d.classList.add("js");if("scrollRestoration"in history)history.scrollRestoration="manual";})(document.documentElement);</script>
+<script>(function(d){d.classList.add("js");if("scrollRestoration"in history)history.scrollRestoration="manual";try{if(!sessionStorage.getItem("an-seen")&&!matchMedia("(prefers-reduced-motion: reduce)").matches){d.classList.add("preload");sessionStorage.setItem("an-seen","1");}}catch(e){}})(document.documentElement);</script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -174,6 +174,7 @@
 <body class="site">
 <a class="skip-link" href="#main">Skip to content</a>
 <div aria-hidden="true" class="page-curtain"></div>
+<div aria-hidden="true" class="preloader"><div class="pl-inner"><span class="pl-name">AstraNexora</span><span class="pl-tag">Next Era in Digital Marketing</span><i class="pl-bar"></i></div></div>
 <div class="topbar">
 <div class="wrap topbar-inner">
 <div class="tb-left">
@@ -248,7 +249,7 @@
 <svg class="sh-tri" viewbox="0 0 40 36"><path d="M20 3 37 33H3z" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
 <svg class="sh-arc" viewbox="0 0 40 40"><path d="M6 30A16 16 0 0 1 30 8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="3.2"/></svg>
 <svg class="sh-wave" viewbox="0 0 60 16"><path d="M2 12c6-10 10-10 14 0s8 10 14 0 10-10 14 0 8 10 14 0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.6"/></svg>
-</div><span class="hero-ghost">CONTENT MARKETING &AMP; CREATIVE</span></div>
+</div><span class="hero-dots"></span><span class="hero-beam"></span></div>
 <div class="hero-copy">
 <nav aria-label="Breadcrumb" class="breadcrumb"><a href="../index.html">Home</a><span aria-hidden="true">/</span><a href="../index.html#services">Services</a><span aria-hidden="true">/</span><span aria-current="page">Content Marketing &amp; Creative</span></nav>
 <p class="hero-cats"><span>Service 04 · Content Marketing &amp; Creative</span></p>
@@ -438,7 +439,7 @@
 <svg class="sh-tri" viewbox="0 0 40 36"><path d="M20 3 37 33H3z" fill="none" stroke="currentColor" stroke-width="2.4"/></svg>
 <svg class="sh-arc" viewbox="0 0 40 40"><path d="M6 30A16 16 0 0 1 30 8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="3.2"/></svg>
 <svg class="sh-wave" viewbox="0 0 60 16"><path d="M2 12c6-10 10-10 14 0s8 10 14 0 10-10 14 0 8 10 14 0" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.6"/></svg>
-</div><span class="cta-ghost">LET'S GROW</span><i class="cta-glow"></i></div>
+</div><i class="cta-glow"></i></div>
 <div class="cta-copy">
 <span class="sub">Free · no obligation</span>
 <h2 id="ctaTitle">Find out what's holding your <span class="box">website back.</span></h2>
@@ -495,6 +496,7 @@
 </ul>
 </div>
 </div>
+<div aria-hidden="true" class="wrap footer-mark"><span>AstraNexora</span></div>
 <div class="footer-bottom">
 <div class="wrap fb-inner">
 <span>© 2026 Astra Nexora. All rights reserved.</span>
