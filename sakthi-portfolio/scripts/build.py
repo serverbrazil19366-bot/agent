@@ -15,7 +15,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "scripts"))
-from content import (ABOUT, EXPERIENCE, HIGHLIGHTS, PROFILE, PROJECTS, RESULTS, SERVICES,  # noqa: E402
+from content import (ABOUT, BRING, EDUCATION, EXPERIENCE, PROFILE, PROJECTS, RESULTS, SERVICES,  # noqa: E402
                      SKILL_TABS, SOFT_SKILLS, STATS, TESTIMONIALS, TICKER, TOOLS, VIDEOS)
 
 SITE = os.environ.get("PORTFOLIO_URL", "https://saktheeswaran.netlify.app/")
@@ -181,8 +181,10 @@ def footer(prefix, home):
 '''
 
 
-def work_card(p, prefix, i):
-    return f'''<a class="work-card{" wide" if i < 2 else ""}" data-reveal="" data-tag="{p["tag"]}" href="{prefix}work/{p["slug"]}.html">
+def work_card(p, prefix, i, n=None):
+    n = n or len(PROJECTS)
+    wide = i < 2 or ((n - 2) % 3 == 2 and i >= n - 2)
+    return f'''<a class="work-card{" wide" if wide else ""}" data-reveal="" data-tag="{p["tag"]}" href="{prefix}work/{p["slug"]}.html">
 <div class="wc-media">{img(p["cover"], p["title"] + " project screenshot", "(min-width: 1001px) 640px, 92vw", prefix)}<span class="wc-go">{ARROW_UR}</span></div>
 <div class="wc-body">
 <span class="wc-cat">{esc(p["category"])}</span>
@@ -197,16 +199,17 @@ def home():
     p, h = "", ""
     schema = {"@context": "https://schema.org", "@graph": [
         {"@type": "Person", "@id": SITE + "#person", "name": PROFILE["name"], "alternateName": "Sakthi",
-         "jobTitle": PROFILE["role"], "url": SITE, "email": EMAIL, "image": SITE + "assets/img/sakthi-suit-w900.webp",
+         "jobTitle": "Founder & CEO, Astra Nexora", "url": SITE, "email": EMAIL, "image": SITE + "assets/img/sakthi-lean-w900.webp",
+         "alumniOf": {"@type": "CollegeOrUniversity", "name": "Einstein College of Arts & Science, Tirunelveli"},
          "address": {"@type": "PostalAddress", "addressRegion": "Tamil Nadu", "addressCountry": "IN"},
          "sameAs": [u for _, u in PROFILE["social"]] + [PROFILE["agency"][1]],
          "worksFor": {"@type": "Organization", "name": "Astra Nexora", "url": PROFILE["agency"][1]},
-         "knowsAbout": ["Digital marketing", "SEO", "Local SEO", "Website development", "Social media marketing", "Google Analytics"]},
+         "knowsAbout": ["Digital marketing", "SEO", "Local SEO", "Website development", "n8n automation", "WhatsApp automation", "Google Ads", "Meta Ads", "Google Analytics 4"]},
         {"@type": "WebSite", "name": PROFILE["name"] + " Portfolio", "url": SITE},
     ]}
-    title = f"{PROFILE['name']} | Digital Marketer, SEO & Website Developer"
-    desc = (f"Portfolio of {PROFILE['name']} (Sakthi), digital marketing executive and SEO specialist from Tamil Nadu: "
-            "SEO, websites, social media and analytics. Founder of Astra Nexora.")
+    title = f"{PROFILE['name']} | Founder, SEO & Marketing Automation Expert"
+    desc = (f"Portfolio of {PROFILE['name']} (Sakthi), Founder & CEO of Astra Nexora: SEO, AI and n8n marketing "
+            "automation, WordPress websites, Google and Meta ads and GA4 reporting.")
 
     stats = "".join(f'<li><b data-count="{n}">{n}</b><span>{esc(t)}</span></li>' for n, t in STATS)
     ticker = "".join(f"<span>{esc(t)}</span><i>✦</i>" for t in TICKER)
@@ -222,11 +225,13 @@ def home():
         for n, k in TOOLS)
     soft = "".join(f"<li>{esc(s)}</li>" for s in SOFT_SKILLS)
     exp = "".join(
-        f'<li class="xp" data-reveal=""><span class="xp-date">{esc(d)}</span><h3>{esc(r)}</h3><span class="xp-co">{esc(c)}</span>{f"<p>{esc(t)}</p>" if t else ""}</li>'
-        for d, r, c, t in EXPERIENCE)
-    hl = "".join(f'<li class="hl-card" data-reveal=""><b>{esc(a)}</b><p>{esc(b)}</p></li>' for a, b in HIGHLIGHTS)
+        f'<li class="xp" data-reveal=""><span class="xp-date">{esc(d)}</span><h3>{esc(r)}</h3><span class="xp-co">{esc(c)}</span>'
+        f'{f"<p>{esc(t)}</p>" if t else ""}{"<ul>" + "".join(f"<li>{esc(x)}</li>" for x in pts) + "</ul>" if pts else ""}</li>'
+        for d, r, c, t, pts in EXPERIENCE)
+    edu = "".join(f'<li class="edu" data-reveal=""><span class="xp-date">{esc(d)}</span><h3>{esc(r)}</h3><span class="xp-co">{esc(c)}</span></li>' for d, r, c in EDUCATION)
+    bring = "".join(f'<li>{CHECK}<div><b>{esc(a)}</b><span>{esc(b)}</span></div></li>' for a, b in BRING)
     filters = "".join(f'<button aria-pressed="{"true" if k == "all" else "false"}" class="filter" data-filter="{k}" type="button">{n}</button>'
-                      for k, n in [("all", "All"), ("web", "Websites"), ("seo", "SEO"), ("social", "Social")])
+                      for k, n in [("all", "All"), ("web", "Websites"), ("seo", "SEO"), ("auto", "Automation"), ("social", "Social")])
     works = "\n".join(work_card(x, p, i) for i, x in enumerate(PROJECTS))
     services = "".join(
         f'<li class="svc" data-reveal=""><span class="svc-ic">{svg(I[ic])}</span><h3>{esc(t)}</h3><p>{esc(d)}</p><span aria-hidden="true" class="svc-n">{k:02d}</span></li>'
@@ -257,6 +262,7 @@ def home():
 <p class="hello">Hello, I'm</p>
 <h1 class="hero-name"><span class="hn-line">{esc(PROFILE["first"])}</span><span class="hn-s"> S</span></h1>
 <p class="hero-role">{esc(PROFILE["role"])}</p>
+<p class="hero-tags"><span>SEO</span><span>AI Automation</span><span>WordPress</span><span>GA4</span><span>Local SEO</span></p>
 <p class="hero-lead">{esc(PROFILE["lead"])}</p>
 <div class="actions">
 {btn("View My Work", "#work", "btn-dark")}
@@ -266,7 +272,7 @@ def home():
 </div>
 <div class="hero-visual">
 <span aria-hidden="true" class="hero-ghost">SAKTHI</span>
-<div class="blob">{img("img/sakthi-suit", PROFILE["name"] + ", digital marketer", "(min-width: 1001px) 420px, 80vw", p, eager=True)}</div>
+<div class="blob">{img("img/sakthi-lean", PROFILE["name"] + ", founder of Astra Nexora", "(min-width: 1001px) 420px, 80vw", p, eager=True)}</div>
 <div class="float-card fc-a"><b>{STATS[0][0]}</b><span>Years Experience</span></div>
 <div class="float-card fc-b"><b>{STATS[1][0]}</b><span>Projects Done</span></div>
 </div>
@@ -279,7 +285,7 @@ def home():
 <section aria-labelledby="aboutTitle" class="sec about" id="about">
 <div class="wrap about-in">
 <div class="about-photo" data-reveal="">
-<div class="ap-img">{img("img/sakthi-black", PROFILE["name"] + " portrait", "(min-width: 1001px) 440px, 90vw", p)}</div>
+<div class="ap-img">{img("img/sakthi-seated", PROFILE["name"] + " portrait", "(min-width: 1001px) 440px, 90vw", p)}</div>
 <div class="ap-badge"><b>2+</b><span>Years<br/>active</span></div>
 </div>
 <div class="about-copy">
@@ -288,7 +294,7 @@ def home():
 <ul class="facts" data-reveal="">
 <li><small>Name</small><b>{esc(PROFILE["name"])}</b></li>
 <li><small>Location</small><b>{esc(PROFILE["location"])}</b></li>
-<li><small>Availability</small><b class="ok">Open to work ✓</b></li>
+<li><small>Education</small><b>BBA, Einstein College</b></li>
 <li><small>Email</small><b><a href="mailto:{EMAIL}">{EMAIL}</a></b></li>
 </ul>
 <ul class="stats" data-reveal="">{stats}</ul>
@@ -315,10 +321,15 @@ def home():
 
 <section aria-labelledby="xpTitle" class="sec experience" id="experience">
 <div class="wrap">
-{sec_head("03", "Career path", 'Experience &amp; <em>highlights</em>', tid="xpTitle")}
+{sec_head("03", "Career path", 'Experience &amp; <em>education</em>', tid="xpTitle")}
 <div class="xp-in">
 <div><span class="col-label">Work experience</span><ol class="timeline">{exp}</ol></div>
-<div><span class="col-label">Highlights</span><ul class="highlights">{hl}</ul></div>
+<div>
+<span class="col-label">Education</span><ul class="timeline">{edu}</ul>
+<span class="col-label bring-label">What I bring</span>
+<ul class="bring" data-reveal="">{bring}</ul>
+<p class="bring-note" data-reveal="">“I don't outsource strategy. I execute it myself.”</p>
+</div>
 </div>
 </div>
 </section>
@@ -370,6 +381,7 @@ def home():
 </div>
 <div class="contact-in">
 <div class="contact-info" data-reveal="">
+<div class="ci-photo">{img("img/sakthi-pockets", PROFILE["name"], "(min-width: 1001px) 480px, 90vw", p)}<span class="ci-tag"><i></i>Usually replies within a day</span></div>
 <a class="big-mail" href="mailto:{EMAIL}">{EMAIL}</a>
 <ul class="info-list">
 <li>{svg(I["pin"])}<div><small>Location</small><b>{esc(PROFILE["location"])}</b></div></li>
@@ -398,7 +410,7 @@ def home():
 <div aria-hidden="true" class="vid-modal" id="vidModal"><div class="vm-box"><button aria-label="Close video" class="vm-close" type="button">✕</button><div class="vm-frame"></div></div></div>
 
 {footer(p, h)}'''
-    return head(title, desc, "", p, schema, preload="img/sakthi-suit-w900.webp") + body
+    return head(title, desc, "", p, schema, preload="img/sakthi-lean-w900.webp") + body
 
 
 def work_page(pr, i):

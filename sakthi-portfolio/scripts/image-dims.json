@@ -1,12 +1,4 @@
 {
- "img/sakthi-suit": [
-  900,
-  1600
- ],
- "img/sakthi-black": [
-  800,
-  1280
- ],
  "work/astra-1": [
   1400,
   875
@@ -54,5 +46,41 @@
  "work/gbp-2": [
   1400,
   935
+ ],
+ "img/sakthi-lean": [
+  900,
+  1125
+ ],
+ "img/sakthi-seated": [
+  1000,
+  1094
+ ],
+ "img/sakthi-pockets": [
+  800,
+  1000
+ ],
+ "work/ankhorcase-1": [
+  1400,
+  875
+ ],
+ "work/ankhorcase-2": [
+  1400,
+  875
+ ],
+ "work/ankhorcase-3": [
+  1400,
+  875
+ ],
+ "work/ankhorcase-m": [
+  780,
+  1688
+ ],
+ "work/akeelawa-1": [
+  1400,
+  875
+ ],
+ "work/akeelawa-m": [
+  780,
+  1688
  ]
 }
