@@ -306,23 +306,41 @@ if (animate) {
 
     const mm = gsap.matchMedia();
 
-    // Hero film: the frame widens to the full page as you scroll into it
-    const heroMedia = document.querySelector(".hero [data-hero-media]");
-    if (heroMedia) {
-        mm.add("(min-width: 1001px)", () => {
-            const tween = gsap.fromTo(heroMedia,
-                { clipPath: "inset(0% 8% 0% 8% round 14px)" },
-                {
-                    clipPath: "inset(0% 0% 0% 0% round 14px)", ease: "none",
-                    scrollTrigger: { trigger: heroMedia, start: "top 90%", end: "top 20%", scrub: true }
-                });
-            return () => tween.kill();
+    // Hero: the film drifts and zooms slowly, the copy lifts away as you leave
+    const heroBg = document.querySelector(".hero-bg");
+    if (heroBg) {
+        gsap.to(heroBg, {
+            yPercent: 18, scale: 1.08, ease: "none",
+            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true }
         });
-        gsap.fromTo(heroMedia.querySelectorAll("img, video"), { yPercent: -5, scale: 1.1 }, {
-            yPercent: 5, scale: 1.1, ease: "none",
-            scrollTrigger: { trigger: heroMedia, start: "top bottom", end: "bottom top", scrub: true }
+        gsap.to("[data-hero-content]", {
+            y: -80, autoAlpha: 0, ease: "none",
+            scrollTrigger: { trigger: ".hero", start: "30% top", end: "90% top", scrub: true }
+        });
+        gsap.to(".spin-badge", {
+            y: 120, rotate: 90, ease: "none",
+            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true }
         });
     }
+
+    // Work: vertical scroll drives the horizontal gallery on desktop
+    mm.add("(min-width: 1001px)", () => {
+        const work = document.querySelector(".work");
+        const gallery = document.querySelector(".gallery");
+        const track = document.querySelector(".gal-track");
+        const bar = document.querySelector(".gal-bar");
+        if (!work || !gallery || !track) return;
+        const distance = () => Math.max(0, track.scrollWidth - window.innerWidth);
+        const tween = gsap.to(track, {
+            x: () => -distance(), ease: "none",
+            scrollTrigger: {
+                trigger: gallery, start: "center center", end: () => "+=" + distance(),
+                pin: work, scrub: 0.6, invalidateOnRefresh: true, anticipatePin: 1,
+                onUpdate: self => { if (bar) bar.style.setProperty("--p", self.progress.toFixed(3)); }
+            }
+        });
+        return () => tween.kill();
+    });
 
     // Inner page hero image: opens from the centre
     document.querySelectorAll(".page-media").forEach(media => {
@@ -419,43 +437,24 @@ if (animate) {
 
 
 /* =====================================================
-   SERVICES — the row's photo follows the pointer
+   SERVICES SHOWCASE — the sticky photo follows the service in view
 ===================================================== */
 
 (function () {
-    const preview = document.querySelector(".svc-preview");
-    const rows = document.querySelectorAll(".svc-row a[data-preview]");
-    if (!preview || !rows.length || !finePointer || reduceMotion) return;
+    const items = Array.from(document.querySelectorAll(".sc-item"));
+    const images = Array.from(document.querySelectorAll(".sc-img"));
+    if (!items.length || !("IntersectionObserver" in window)) return;
 
-    const image = preview.querySelector("img");
-    let x = 0, y = 0, tx = 0, ty = 0, running = false;
-
-    function tick() {
-        x += (tx - x) * 0.14;
-        y += (ty - y) * 0.14;
-        preview.style.transform = "translate(" + (x - 150) + "px," + (y - 112) + "px)";
-        if (running) requestAnimationFrame(tick);
+    function activate(i) {
+        items.forEach(item => item.classList.toggle("is-active", item.dataset.i === i));
+        images.forEach(image => image.classList.toggle("is-active", image.dataset.i === i));
     }
 
-    rows.forEach(row => {
-        row.addEventListener("pointerenter", e => {
-            image.src = row.dataset.preview;
-            tx = x = e.clientX;
-            ty = y = e.clientY;
-            preview.classList.add("is-on");
-            if (!running) { running = true; requestAnimationFrame(tick); }
-        });
-        row.addEventListener("pointermove", e => { tx = e.clientX; ty = e.clientY; });
-        row.addEventListener("pointerleave", () => {
-            preview.classList.remove("is-on");
-            running = false;
-        });
-    });
+    const io = new IntersectionObserver(entries => {
+        entries.forEach(entry => { if (entry.isIntersecting) activate(entry.target.dataset.i); });
+    }, { rootMargin: "-45% 0px -45% 0px" });
 
-    // Warm the cache so the first hover isn't blank
-    window.addEventListener("load", () => {
-        rows.forEach(row => { const i = new Image(); i.src = row.dataset.preview; });
-    }, { once: true });
+    items.forEach(item => io.observe(item));
 })();
 
 

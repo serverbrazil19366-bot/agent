@@ -412,51 +412,48 @@ def home_page():
 
     hero_lines = "\n".join(f'<span class="line"><span>{l}</span></span>' for l in HOME["hero_h1"])
 
-    # Services: an index list; the photo follows the pointer on desktop
-    services = ""
+    # Services: sticky showcase. The photo on the left changes as each service scrolls past
+    sc_media = ""
+    sc_items = ""
     for i, s in enumerate(SERVICES, 1):
-        subs = " · ".join(n for n, _ in s["includes"][:4])
-        services += f'''<li class="svc-row" data-reveal="">
-<a href="services/{s["slug"]}.html" data-preview="assets/stock/{s["hero"]}-w800.webp">
-<span class="svc-num">{i:02d}</span>
-<span class="svc-name">{esc(s["title"])}</span>
-<span class="svc-subs">{esc(subs)}</span>
-<span class="svc-go">{ARROW}</span>
-</a>
+        chips = "".join(f"<li>{esc(n)}</li>" for n, _ in s["includes"][:5])
+        sc_media += f'<figure class="sc-img img-wrap{" is-active" if i == 1 else ""}" data-i="{i}">{img(s["hero"], s["hero_alt"], "(min-width: 1001px) 44vw, 94vw", p)}</figure>\n'
+        sc_items += f'''<li class="sc-item{" is-active" if i == 1 else ""}" data-i="{i}">
+<div class="sc-mobile-img img-wrap">{img(s["hero"], s["hero_alt"], "94vw", p)}</div>
+<span class="sc-num">{i:02d} <i>/ {len(SERVICES):02d}</i></span>
+<h3><a href="services/{s["slug"]}.html">{esc(s["title"])}</a></h3>
+<p>{esc(s["lead"])}</p>
+<ul class="sc-chips">{chips}</ul>
+<a class="text-link" href="services/{s["slug"]}.html">Explore {esc(s["nav"])} {ARROW}</a>
 </li>
 '''
 
-    # Work: featured live demo, then concept projects in a two-column grid
-    work = f'''<article class="case case-feature" data-reveal="">
-<a class="case-link" href="projects/seo-report.html">
-<div class="case-media img-wrap">
-<img alt="Astra Nexora SEO report dashboard showing organic clicks, enquiries and rankings" class="lqip" decoding="async" height="1125" loading="lazy" sizes="(min-width: 1320px) 1280px, 94vw" src="assets/projects/seo-report-dashboard-w1200.webp" srcset="assets/projects/seo-report-dashboard-w800.webp 800w, assets/projects/seo-report-dashboard-w1200.webp 1200w, assets/projects/seo-report-dashboard-w1800.webp 1800w" width="1800"/>
-<span class="case-view" aria-hidden="true">Open demo</span>
+    # Work: pinned horizontal gallery of large cards
+    work = f'''<article class="gal-card gal-feature">
+<a href="projects/seo-report.html">
+<div class="gal-media img-wrap">
+<img alt="Astra Nexora SEO report dashboard showing organic clicks, enquiries and rankings" class="lqip" decoding="async" height="1125" loading="lazy" sizes="(min-width: 1001px) 60vw, 86vw" src="assets/projects/seo-report-dashboard-w1200.webp" srcset="assets/projects/seo-report-dashboard-w800.webp 800w, assets/projects/seo-report-dashboard-w1200.webp 1200w, assets/projects/seo-report-dashboard-w1800.webp 1800w" width="1800"/>
+<span class="gal-tag live"><i aria-hidden="true" class="live-dot"></i>Live demo</span>
 </div>
-<div class="case-meta">
-<h3>SEO Report Dashboard</h3>
-<span>Analytics &amp; reporting</span>
-<span>Live demo · sample data</span>
-</div>
+<div class="gal-meta"><span>01</span><h3>SEO Report Dashboard</h3><p>Analytics &amp; reporting · sample data</p></div>
 </a>
 </article>
 '''
-    for pr in PROJECTS:
-        work += f'''<article class="case" data-reveal="">
-<a class="case-link" href="projects/{pr["slug"]}.html">
-<div class="case-media img-wrap">{img(pr["hero"], pr["hero_alt"], "(min-width: 901px) 46vw, 94vw", p)}<span class="case-view" aria-hidden="true">View</span></div>
-<div class="case-meta">
-<h3>{esc(pr["title"])}</h3>
-<span>{esc(pr["category"])}</span>
-<span>Concept</span>
-</div>
+    for n, pr in enumerate(PROJECTS, 2):
+        work += f'''<article class="gal-card">
+<a href="projects/{pr["slug"]}.html">
+<div class="gal-media img-wrap">{img(pr["hero"], pr["hero_alt"], "(min-width: 1001px) 40vw, 86vw", p)}<span class="gal-tag">Concept</span></div>
+<div class="gal-meta"><span>{n:02d}</span><h3>{esc(pr["title"])}</h3><p>{esc(pr["category"])}</p></div>
 </a>
 </article>
 '''
 
-    principles = "\n".join(
-        f'''<li data-reveal=""><span>{i:02d}</span><h3>{esc(t)}</h3><p>{esc(d)}</p></li>'''
-        for i, (_, t, d) in enumerate(HOME["principles"], 1))
+    # Why: bento grid; the first principle is the big blue tile, plus one photo tile
+    bento = ""
+    for i, (_, t, d) in enumerate(HOME["principles"], 1):
+        bento += f'<li class="bento-tile t{i}" data-reveal=""><span>{i:02d}</span><h3>{esc(t)}</h3><p>{esc(d)}</p></li>\n'
+        if i == 3:
+            bento += f'<li aria-hidden="true" class="bento-tile bento-photo img-wrap" data-reveal="">{img("pexels-7598011", "", "(min-width: 1001px) 40vw, 94vw", p)}</li>\n'
 
     checks = [
         ("Speed & Core Web Vitals", "How fast your pages load on a real phone, and what's slowing them down."),
@@ -495,7 +492,13 @@ def home_page():
 <main id="main">
 
 <section aria-labelledby="heroTitle" class="hero" id="home">
-<div class="container">
+<div class="hero-bg" data-hero-media="">
+<img alt="Team reviewing marketing analytics on a laptop during a meeting" decoding="async" fetchpriority="high" height="1080" sizes="100vw" src="assets/stock/pexels-7147921-poster-w1200.webp" srcset="assets/stock/pexels-7147921-poster-w480.webp 480w, assets/stock/pexels-7147921-poster-w800.webp 800w, assets/stock/pexels-7147921-poster-w1200.webp 1200w, assets/stock/pexels-7147921-poster-w2000.webp 1920w" width="1920"/>
+<!-- Desktop-only video (Pexels 7147921, see assets/video/CREDITS.md). The poster above is its first frame. -->
+<video aria-hidden="true" class="hero-video" data-src="assets/video/hero.mp4" loop="" muted="" playsinline="" preload="none"></video>
+</div>
+<div aria-hidden="true" class="hero-shade"></div>
+<div class="container hero-inner" data-hero-content="">
 <dl class="hero-meta">
 {stats}
 </dl>
@@ -506,18 +509,15 @@ def home_page():
 <p class="hero-lead">{esc(HOME["hero_lead"])}</p>
 <div class="actions">
 {btn("Get a free website audit", "#contact", "btn-blue")}
-{btn("See our work", "#work", "btn-line")}
+{btn("See our work", "#work", "btn-glass")}
 </div>
 </div>
 </div>
-<div class="container hero-stage">
-<div class="hero-media" data-hero-media="">
-<img alt="Team reviewing marketing analytics on a laptop during a meeting" decoding="async" fetchpriority="high" height="1080" sizes="(min-width: 1320px) 1280px, 94vw" src="assets/stock/pexels-7147921-poster-w1200.webp" srcset="assets/stock/pexels-7147921-poster-w480.webp 480w, assets/stock/pexels-7147921-poster-w800.webp 800w, assets/stock/pexels-7147921-poster-w1200.webp 1200w, assets/stock/pexels-7147921-poster-w2000.webp 1920w" width="1920"/>
-<!-- Desktop-only video (Pexels 7147921, see assets/video/CREDITS.md). The poster above is its first frame. -->
-<video aria-hidden="true" class="hero-video" data-src="assets/video/hero.mp4" loop="" muted="" playsinline="" preload="none"></video>
+<a aria-label="Get a free website audit" class="spin-badge" href="#contact">
+<svg aria-hidden="true" viewbox="0 0 160 160"><defs><path d="M80,80 m-62,0 a62,62 0 1,1 124,0 a62,62 0 1,1 -124,0" id="badgeRing"></path></defs><text><textPath href="#badgeRing">FREE WEBSITE AUDIT ✦ FREE WEBSITE AUDIT ✦ </textPath></text></svg>
+{ARROW}
+</a>
 <button aria-pressed="false" class="hero-video-toggle" hidden="" type="button"><span aria-hidden="true" class="hero-video-toggle-icon"></span><span class="hero-video-toggle-label">Pause</span></button>
-</div>
-</div>
 </section>
 
 <section aria-labelledby="aboutTitle" class="section" id="about">
@@ -538,17 +538,22 @@ def home_page():
 </div>
 </section>
 
-<section aria-labelledby="servicesTitle" class="section services" id="services">
+<section aria-labelledby="servicesTitle" class="section ink services" id="services">
 <div class="container">
 {label("02", "Services")}
 <div class="head">
 <h2 class="title" data-split="" id="servicesTitle">Digital growth, <em>powered by strategy.</em></h2>
 <p class="lead">Eight services, planned together. Pick one, or let us run the whole system.</p>
 </div>
-<ul class="svc-list">
-{services}</ul>
+<div class="showcase">
+<div aria-hidden="true" class="sc-media">
+<div class="sc-frame">
+{sc_media}</div>
 </div>
-<div aria-hidden="true" class="svc-preview"><img alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" /></div>
+<ol class="sc-list">
+{sc_items}</ol>
+</div>
+</div>
 </section>
 
 <section aria-labelledby="processTitle" class="section paper" id="process">
@@ -564,16 +569,19 @@ def home_page():
 </div>
 </section>
 
-<section aria-labelledby="workTitle" class="section" id="work">
+<section aria-labelledby="workTitle" class="section ink work" id="work">
 <div class="container">
 {label("04", "Work")}
 <div class="head">
 <h2 class="title" data-split="" id="workTitle">Selected <em>work.</em></h2>
 <p class="lead">A live reporting demo and concept projects that show how we think. Client case studies are added as clients approve them.</p>
 </div>
-<div class="cases">
+</div>
+<div class="gallery">
+<div class="gal-track">
 {work}</div>
 </div>
+<div class="container gal-foot"><span class="gal-hint">Scroll to explore</span><span aria-hidden="true" class="gal-bar"><i></i></span></div>
 </section>
 
 <section aria-labelledby="founderTitle" class="section paper founder" id="founder">
@@ -608,20 +616,19 @@ def home_page():
 <h2 class="title" data-split="" id="whyTitle">What sets <em>us apart.</em></h2>
 <p class="lead">Six principles behind every project we take on.</p>
 </div>
-<ol class="principles">
-{principles}
-</ol>
+<ol class="bento">
+{bento}</ol>
 </div>
 </section>
 
-<section aria-labelledby="auditTitle" class="section ink" id="audit">
+<section aria-labelledby="auditTitle" class="section blue" id="audit">
 <div class="container">
 {label("07", "Free audit")}
 <div class="audit-grid">
 <div class="audit-copy">
 <h2 class="title" data-split="" id="auditTitle">Find out what's holding your <em>website back.</em></h2>
 <p class="lead">Send us your website and we'll check the six things that decide whether visitors find you, trust you and get in touch. Free, with no obligation.</p>
-{btn("Get my free audit", "#contact", "btn-blue")}
+{btn("Get my free audit", "#contact", "btn-white")}
 </div>
 <ol class="checks">
 {audit}
@@ -703,7 +710,7 @@ def service_page(s, index):
 
 <main id="main">
 
-<section class="page-hero" id="home">
+<section class="page-hero ink" id="home">
 <div class="container">
 <nav aria-label="Breadcrumb" class="breadcrumb"><a href="{home}">Home</a><span aria-hidden="true">/</span><a href="{home}#services">Services</a><span aria-hidden="true">/</span><span aria-current="page">{esc(s["nav"])}</span></nav>
 {label(num, "Service")}
@@ -712,7 +719,7 @@ def service_page(s, index):
 <p class="hero-lead">{esc(s["lead"])}</p>
 <div class="actions">
 {btn("Get a free consultation", f"{home}#contact", "btn-blue")}
-{btn("Chat on WhatsApp", WA, "btn-line", target=True)}
+{btn("Chat on WhatsApp", WA, "btn-glass", target=True)}
 </div>
 </div>
 <dl class="facts">
@@ -765,7 +772,7 @@ def service_page(s, index):
 </div>
 </section>
 
-<section aria-labelledby="deliverTitle" class="section ink">
+<section aria-labelledby="deliverTitle" class="section blue">
 <div class="container">
 {label("04", "Deliverables")}
 <div class="split">
@@ -774,7 +781,7 @@ def service_page(s, index):
 <ul class="deliver-list" data-reveal="">
 {deliver}
 </ul>
-{btn("Start a project", f"{home}#contact", "btn-blue")}
+{btn("Start a project", f"{home}#contact", "btn-white")}
 </div>
 </div>
 </div>
@@ -839,7 +846,7 @@ def project_page(pr, index):
 
 <main id="main">
 
-<section class="page-hero" id="home">
+<section class="page-hero ink" id="home">
 <div class="container">
 <nav aria-label="Breadcrumb" class="breadcrumb"><a href="{home}">Home</a><span aria-hidden="true">/</span><a href="{home}#work">Work</a><span aria-hidden="true">/</span><span aria-current="page">{esc(pr["title"])}</span></nav>
 {label("✦", "Concept project · " + esc(pr["category"]))}
@@ -881,7 +888,7 @@ def project_page(pr, index):
 </div>
 </section>
 
-<section aria-labelledby="deliverTitle" class="section ink">
+<section aria-labelledby="deliverTitle" class="section blue">
 <div class="container">
 {label("03", "Scope")}
 <div class="split">
