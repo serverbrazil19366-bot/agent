@@ -243,7 +243,7 @@ def header(prefix, home):
 </div>
 </div>
 <a class="nav-link" href="{home}#work">Work<i>.</i></a>
-<a class="nav-link" href="{home}#founder">Founder<i>.</i></a>
+<a class="nav-link" href="{prefix}blog/index.html">Blog<i>.</i></a>
 <a class="nav-link" href="{home}#contact">Contact<i>.</i></a>
 </nav>
 <div class="header-tools">
@@ -260,6 +260,7 @@ def header(prefix, home):
 {mobile}
 </details>
 <a href="{home}#work">Work<i>.</i></a>
+<a href="{prefix}blog/index.html">Blog<i>.</i></a>
 <a href="{home}#founder">Founder<i>.</i></a>
 <a href="{home}#faq">FAQ<i>.</i></a>
 <a href="{home}#contact">Contact<i>.</i></a>
@@ -307,7 +308,7 @@ def footer(prefix, home):
 <div class="footer-bottom">
 <div class="wrap fb-inner">
 <span>© 2026 Astra Nexora. All rights reserved.</span>
-<nav aria-label="Footer"><a href="{home}#about">About</a><a href="{home}#services">Services</a><a href="{home}#faq">FAQ</a><a href="{home}#contact">Contact</a></nav>
+<nav aria-label="Footer"><a href="{home}#about">About</a><a href="{home}#services">Services</a><a href="{prefix}blog/index.html">Blog</a><a href="{home}#faq">FAQ</a><a href="{home}#contact">Contact</a></nav>
 </div>
 </div>
 </footer>
@@ -509,7 +510,7 @@ def dashboard_card(prefix):
 
 # =================================================================== home
 
-def home_page():
+def home_page(posts=()):
     p, home = "", ""
 
     org = {
@@ -712,6 +713,8 @@ def home_page():
 </div>
 </div>
 </section>
+
+{blog_section(posts, p) if posts else ""}
 
 {faq_section(HOME["faqs"], 'Questions, <span class="hl">answered.</span>')}
 
@@ -994,7 +997,7 @@ def not_found_page():
             + body + scripts(p))
 
 
-def llms_txt():
+def llms_txt(posts=()):
     lines = [
         "# Astra Nexora",
         "",
@@ -1006,14 +1009,234 @@ def llms_txt():
     lines += [f"- [{s['title']}]({SITE}services/{s['slug']}.html): {SERVICE_TAGLINES[s['slug']]}" for s in SERVICES]
     lines += ["", "## Work", f"- [SEO report dashboard (sample data)]({SITE}projects/seo-report.html)"]
     lines += [f"- [{pr['title']} (concept project)]({SITE}projects/{pr['slug']}.html)" for pr in PROJECTS]
+    if posts:
+        lines += ["", "## Blog"] + [f"- [{strip_tags(x['title'])}]({SITE}blog/{x['slug']}.html): {x['description']}" for x in posts]
     lines += ["", "## Contact", f"- Website: {SITE}", f"- Email: {EMAIL}", f"- WhatsApp: {WA}",
               "- Instagram: https://www.instagram.com/astranexora2025/", "- LinkedIn: https://www.linkedin.com/company/astra-nexora/", ""]
     return "\n".join(lines)
 
 
+# =================================================================== blog
+# Posts live in scripts/posts/<slug>.md: a small "key: value" header between
+# --- lines, then the body in a simple Markdown subset (## / ### headings,
+# paragraphs, - and 1. lists, > quotes, **bold**, *italic*, [links](url)).
+# Header keys: title (wrap the boxed part in <em>), seo_title (optional, under
+# ~45 characters), description, date (YYYY-MM-DD), category, image + image_alt
+# (a key from assets/stock), services (comma-separated slugs), draft: true.
+
+POSTS_DIR = os.path.join(ROOT, "scripts", "posts")
+MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+
+def md_inline(text):
+    text = esc(text)
+    text = re.sub(r"`([^`]+)`", r"<code>\1</code>", text)
+    text = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
+    text = re.sub(r"(?<![*\w])\*(?!\s)(.+?)(?<!\s)\*(?!\w)", r"<em>\1</em>", text)
+
+    def link(m):
+        label, href = m.group(1), m.group(2)
+        ext = href.startswith("http") and "astranexora" not in href
+        return f'<a href="{href}"{" rel=\"noopener\" target=\"_blank\"" if ext else ""}>{label}</a>'
+    return re.sub(r"\[([^\]]+)\]\(([^)\s]+)\)", link, text)
+
+
+def slugify(text):
+    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+
+
+def md_to_html(text):
+    """Returns (html, [(id, heading)]) for the post body."""
+    out, toc = [], []
+    for block in re.split(r"\n\s*\n", text.strip()):
+        lines = [l.rstrip() for l in block.strip().split("\n")]
+        first = lines[0]
+        if first.startswith("### "):
+            out.append(f"<h3>{md_inline(first[4:])}</h3>")
+        elif first.startswith("## "):
+            hid = slugify(first[3:])
+            toc.append((hid, first[3:]))
+            out.append(f'<h2 id="{hid}">{md_inline(first[3:])}</h2>')
+        elif all(re.match(r"[-*] ", l) for l in lines):
+            out.append("<ul>" + "".join(f"<li>{md_inline(l[2:])}</li>" for l in lines) + "</ul>")
+        elif all(re.match(r"\d+\. ", l) for l in lines):
+            out.append("<ol>" + "".join(f"<li>{md_inline(l.split('. ', 1)[1])}</li>" for l in lines) + "</ol>")
+        elif all(l.startswith(">") for l in lines):
+            out.append("<blockquote><p>" + md_inline(" ".join(l.lstrip("> ") for l in lines)) + "</p></blockquote>")
+        else:
+            out.append("<p>" + md_inline(" ".join(lines)) + "</p>")
+    return "\n".join(out), toc
+
+
+def load_posts():
+    posts = []
+    if not os.path.isdir(POSTS_DIR):
+        return posts
+    for name in sorted(os.listdir(POSTS_DIR)):
+        if not name.endswith(".md"):
+            continue
+        raw = open(os.path.join(POSTS_DIR, name), encoding="utf-8").read()
+        _, header_block, body = raw.split("---", 2)
+        meta = {}
+        for line in header_block.strip().split("\n"):
+            k, v = line.split(":", 1)
+            meta[k.strip()] = v.strip()
+        if meta.get("draft") == "true":
+            continue
+        meta["slug"] = name[:-3]
+        meta["html"], meta["toc"] = md_to_html(body)
+        words = len(re.findall(r"\w+", body))
+        meta["minutes"] = max(1, round(words / 200))
+        y, m, d = meta["date"].split("-")
+        meta["date_label"] = f"{int(d)} {MONTHS[int(m) - 1]} {y}"
+        meta["services"] = [x.strip() for x in meta.get("services", "").split(",") if x.strip()]
+        posts.append(meta)
+    return sorted(posts, key=lambda p: p["date"], reverse=True)
+
+
+def post_card(post, prefix):
+    return work_card(f"{prefix}blog/{post['slug']}.html",
+                     img(post["image"], post["image_alt"], "(min-width: 1001px) 400px, 94vw", prefix),
+                     post["category"], post["date_label"], strip_tags(post["title"]), post["description"], "Read post")
+
+
+def blog_section(posts, prefix, title="Latest from <span class=\"hl\">the blog.</span>", kicker="Blog"):
+    cards = "\n".join(post_card(p, prefix) for p in posts[:3])
+    return f'''<section aria-labelledby="blogTitle" class="sec work blog-latest" id="blog">
+<div class="wrap">
+{heading(kicker, title, "Practical guides on SEO, websites and marketing for growing businesses.", center=True, title_id="blogTitle")}
+<div class="work-grid">
+{cards}
+</div>
+<div class="center-cta">{btn("All blog posts", f"{prefix}blog/index.html", "btn-red")}</div>
+</div>
+</section>'''
+
+
+def blog_index_page(posts):
+    p, home = "../", "../index.html"
+    path = "blog/"
+    title = "Blog: SEO, Websites & Digital Marketing Guides | Astra Nexora"
+    desc = "Practical guides from Astra Nexora on SEO, websites, branding, ads and AI marketing for businesses in India."
+    schema = {"@context": "https://schema.org", "@graph": [
+        {"@type": "Blog", "name": "Astra Nexora Blog", "url": SITE + path, "publisher": {"@type": "Organization", "name": "Astra Nexora", "url": SITE},
+         "blogPost": [{"@type": "BlogPosting", "headline": strip_tags(x["title"]), "url": SITE + f"blog/{x['slug']}.html", "datePublished": x["date"]} for x in posts]},
+        breadcrumb_schema([("Home", ""), ("Blog", path)]),
+    ]}
+    hero = page_hero(home, [("Home", home), ("Blog", None)], "Blog · Guides",
+                     '<span class="ln"><span>Ideas that help you</span></span> <span class="ln"><span class="box">get chosen.</span></span>',
+                     "Practical guides on SEO, websites, branding and marketing, written for business owners, not marketers.",
+                     btn("Free website audit", f"{home}#contact", "btn-white") + btn("WhatsApp", WA, "btn-white", target=True),
+                     img("pexels-4467737", "Writing marketing notes next to a laptop", "(min-width: 1001px) 55vw, 100vw", p, eager=True))
+    cards = "\n".join(post_card(x, p) for x in posts) or '<p class="sec-lead">The first posts are on the way.</p>'
+    body = f'''{header(p, home)}
+
+<main id="main">
+
+{hero}
+
+<section aria-labelledby="postsTitle" class="sec work">
+<div class="wrap">
+{heading("All posts", 'Guides and <span class="hl">insights.</span>', center=True, title_id="postsTitle")}
+<div class="work-grid posts">
+{cards}
+</div>
+</div>
+</section>
+
+{cta_band(home)}
+
+</main>
+
+{footer(p, home)}
+'''
+    return head(title, desc, path, p, [schema], preload="pexels-4467737") + body + scripts(p)
+
+
+def post_page(post, posts):
+    p, home = "../", "../index.html"
+    path = f"blog/{post['slug']}.html"
+    plain = strip_tags(post["title"])
+    title = f"{post.get('seo_title', plain)} | Astra Nexora"
+    f = HOME["founder"]
+    schema = {"@context": "https://schema.org", "@graph": [
+        {"@type": "BlogPosting", "headline": plain, "description": post["description"], "url": SITE + path,
+         "datePublished": post["date"], "dateModified": post.get("updated", post["date"]),
+         "image": SITE + f"assets/stock/{post['image']}-w1200.webp", "articleSection": post["category"],
+         "author": {"@type": "Person", "name": f["name"], "jobTitle": f["role"], "sameAs": [f["linkedin"]]},
+         "publisher": {"@type": "Organization", "name": "Astra Nexora", "logo": {"@type": "ImageObject", "url": SITE + "assets/brand/logo-square.png"}},
+         "mainEntityOfPage": SITE + path},
+        breadcrumb_schema([("Home", ""), ("Blog", "blog/"), (plain, path)]),
+    ]}
+    hero = page_hero(home, [("Home", home), ("Blog", "index.html"), (post["category"], None)],
+                     f"{esc(post['category'])} · {post['minutes']} min read", split_title(post["title"]), esc(post["description"]),
+                     btn("Free website audit", f"{home}#contact", "btn-white") + btn("Ask on WhatsApp", WA, "btn-white", target=True),
+                     img(post["image"], post["image_alt"], "(min-width: 1001px) 55vw, 100vw", p, eager=True))
+    toc = "".join(f'<li><a href="#{hid}">{esc(h)}</a></li>' for hid, h in post["toc"])
+    svc = "".join(f'<li><a href="../services/{s}.html">{icon(s)}<span>{esc(SERVICE_BY_SLUG[s]["nav"])}</span></a></li>' for s in post["services"] if s in SERVICE_BY_SLUG)
+    url = SITE + path
+    share = (f'<a href="https://wa.me/?text={html.escape(plain + " " + url, quote=True).replace(" ", "%20")}" rel="noopener" target="_blank">WhatsApp</a>'
+             f'<a href="https://www.linkedin.com/sharing/share-offsite/?url={url}" rel="noopener" target="_blank">LinkedIn</a>'
+             f'<a href="https://www.facebook.com/sharer/sharer.php?u={url}" rel="noopener" target="_blank">Facebook</a>')
+    others = [x for x in posts if x["slug"] != post["slug"] and x["image"] != post["image"]][:3]
+    more = ""
+    if others:
+        more = f'''<section aria-labelledby="moreTitle" class="sec work">
+<div class="wrap">
+{heading("Keep reading", 'More from <span class="hl">the blog.</span>', center=True, title_id="moreTitle")}
+<div class="work-grid">
+{"".join(post_card(x, p) for x in others)}
+</div>
+</div>
+</section>'''
+    body = f'''{header(p, home)}
+
+<main id="main">
+
+{hero}
+
+<section class="sec post">
+<div class="wrap post-grid">
+<article class="prose" data-reveal="">
+<p class="post-meta"><span>{post["date_label"]}</span><span>{post["minutes"]} min read</span><span>By {esc(f["name"])}</span></p>
+{post["html"]}
+<div class="post-share"><b>Share this post</b>{share}</div>
+<div class="author-box">
+<img alt="{esc(f["name"])}" decoding="async" height="900" loading="lazy" src="../assets/founder/sakthi-chair-w480.webp" width="720"/>
+<div><small>Written by</small><h3>{esc(f["name"])}</h3><p>{esc(f["role"])}, Astra Nexora. Works on SEO, websites, branding and content for businesses across India.</p>
+<a href="{f["linkedin"]}" rel="noopener" target="_blank">LinkedIn {ARROW}</a></div>
+</div>
+</article>
+<aside class="post-side">
+{f'<div class="side-card"><h3>In this post<i>.</i></h3><ol class="toc">{toc}</ol></div>' if toc else ""}
+<div class="side-card dark"><h3>Free website audit<i>.</i></h3><p>Send your website and we'll show you what to fix first. No obligation.</p>{btn("Get my audit", f"{home}#contact", "btn-white btn-sm")}</div>
+{f'<div class="side-card"><h3>Related services<i>.</i></h3><ul class="side-svc">{svc}</ul></div>' if svc else ""}
+</aside>
+</div>
+</section>
+
+{more}
+
+{cta_band(home)}
+
+</main>
+
+{footer(p, home)}
+'''
+    return head(title, post["description"], path, p, [schema], preload=post["image"]) + body + scripts(p)
+
+
+
 def main():
+    posts = load_posts()
     with open(os.path.join(ROOT, "index.html"), "w") as f:
-        f.write(home_page())
+        f.write(home_page(posts))
+    os.makedirs(os.path.join(ROOT, "blog"), exist_ok=True)
+    with open(os.path.join(ROOT, "blog", "index.html"), "w") as f:
+        f.write(blog_index_page(posts))
+    for post in posts:
+        with open(os.path.join(ROOT, "blog", f"{post['slug']}.html"), "w") as f:
+            f.write(post_page(post, posts))
     os.makedirs(os.path.join(ROOT, "services"), exist_ok=True)
     os.makedirs(os.path.join(ROOT, "projects"), exist_ok=True)
     for i, s in enumerate(SERVICES, 1):
@@ -1029,15 +1252,15 @@ def main():
                 "/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n"
                 "/css/*\n  Cache-Control: public, max-age=86400\n/js/*\n  Cache-Control: public, max-age=86400\n")
     with open(os.path.join(ROOT, "llms.txt"), "w") as f:
-        f.write(llms_txt())
-    urls = [""] + [f"services/{s['slug']}.html" for s in SERVICES] + [f"projects/{pr['slug']}.html" for pr in PROJECTS] + ["projects/seo-report.html"]
+        f.write(llms_txt(posts))
+    urls = [""] + ["blog/"] + [f"blog/{x['slug']}.html" for x in posts] + [f"services/{s['slug']}.html" for s in SERVICES] + [f"projects/{pr['slug']}.html" for pr in PROJECTS] + ["projects/seo-report.html"]
     with open(os.path.join(ROOT, "sitemap.xml"), "w") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
         f.write("".join(f"  <url><loc>{SITE}{u}</loc></url>\n" for u in urls))
         f.write("</urlset>\n")
     with open(os.path.join(ROOT, "robots.txt"), "w") as f:
         f.write(f"User-agent: *\nAllow: /\n\nSitemap: {SITE}sitemap.xml\n")
-    print(f"Built index.html, {len(SERVICES)} service pages, {len(PROJECTS)} project pages, sitemap.xml and robots.txt")
+    print(f"Built index.html, {len(SERVICES)} service pages, {len(PROJECTS)} project pages, {len(posts)} blog posts, sitemap.xml and robots.txt")
 
 
 if __name__ == "__main__":
