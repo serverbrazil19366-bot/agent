@@ -1,5 +1,5 @@
 /* =====================================================
-   ASTRA NEXORA — site behaviour (v12)
+   ASTRA NEXORA — site behaviour (v13)
    Works without the vendor libraries (GSAP, ScrollTrigger,
    Lenis): every animated element has a CSS fallback state,
    and reduced-motion visitors get the static page.
@@ -111,8 +111,9 @@ const header = document.getElementById("header");
 
 const toTop = document.querySelector(".to-top");
 
+// The header sits over the hero, then sticks as a black bar once the hero is passed
 function onScroll() {
-    if (header) header.classList.toggle("scrolled", window.scrollY > 20);
+    if (header) header.classList.toggle("stuck", window.scrollY > 260);
     if (toTop) toTop.classList.toggle("show", window.scrollY > 700);
 }
 
@@ -219,149 +220,63 @@ if ("IntersectionObserver" in window && !reduceMotion) {
 
 
 /* =====================================================
-   HERO — intro and gentle photo parallax
+   HERO — intro and gentle parallax
 ===================================================== */
 
-if (animate && document.querySelector(".hero-frame")) {
+if (animate && document.querySelector(".hero")) {
     gsap.timeline({ defaults: { ease: "expo.out" } })
-        .from(".chev-l i", { x: 30, autoAlpha: 0, duration: 0.8, stagger: 0.03 }, 0)
-        .from(".chev-r i", { x: -30, autoAlpha: 0, duration: 0.8, stagger: 0.03 }, 0)
-        .from(".ht-word", { yPercent: 60, autoAlpha: 0, duration: 1.3, stagger: 0.12 }, 0.1)
-        .from(".ht-orb", { scale: 0.4, rotate: -90, autoAlpha: 0, duration: 1.4 }, 0.2)
-        .from(".hero-lead, .hero-actions", { y: 24, autoAlpha: 0, duration: 1, stagger: 0.08 }, 0.45)
-        .from(".hero-frame .pixels i", { scale: 0, duration: 0.6, stagger: 0.05, ease: "back.out(2)" }, 0.3)
-        .from(".hero-stats li", { x: -30, autoAlpha: 0, duration: 1, stagger: 0.1 }, 0.6);
+        .from(".hero-panel", { clipPath: "inset(0 100% 0 0)", duration: 1.2, ease: "expo.inOut" }, 0)
+        .from(".hero-photo", { clipPath: "inset(0 0 0 100%)", duration: 1.4, ease: "expo.inOut" }, 0.15)
+        .from(".hero-photo img", { scale: 1.25, duration: 2 }, 0.3)
+        .from(".hero-cats span, .breadcrumb", { y: 20, autoAlpha: 0, duration: 0.8, stagger: 0.06 }, 0.75)
+        .fromTo(".hero-title .ln > span", { yPercent: 110 }, { yPercent: 0, duration: 1.2, stagger: 0.12 }, 0.85)
+        .from(".hero-title .box", { backgroundColor: "rgba(215,25,11,0)", duration: 0.8 }, 1.3)
+        .from(".hero-lead, .hero-copy .actions .btn", { y: 26, autoAlpha: 0, duration: 1, stagger: 0.08 }, 1.05)
+        .from(".hero-deco .shapes svg", { scale: 0, autoAlpha: 0, duration: 0.9, stagger: 0.1, ease: "back.out(2)" }, 1.1)
+        .from(".hero-ghost", { xPercent: -20, autoAlpha: 0, duration: 1.8 }, 0.9)
+        .from(".site-header .brand, .site-header .nav-link, .header-tools > *", { y: -20, autoAlpha: 0, duration: 0.8, stagger: 0.04 }, 0.6);
 
-    gsap.fromTo(".hero-photo img", { yPercent: -8, scale: 1.15 }, {
-        yPercent: 8, scale: 1.15, ease: "none",
-        scrollTrigger: { trigger: ".hero-photo", start: "top bottom", end: "bottom top", scrub: true }
+    gsap.to(".hero-photo img", {
+        yPercent: 10, ease: "none",
+        scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true }
+    });
+    gsap.to(".hero-ghost", {
+        xPercent: 18, ease: "none",
+        scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true }
     });
 }
 
 if (animate) {
-    // Black-and-white photos drift slightly as they pass
-    document.querySelectorAll(".about-photo img, .ph-photo img").forEach(img => {
-        gsap.fromTo(img, { yPercent: -5, scale: 1.1 }, {
-            yPercent: 5, scale: 1.1, ease: "none",
+    // Collage: the small photo and the triangles drift against the big one
+    document.querySelectorAll(".collage").forEach(collage => {
+        const st = { trigger: collage, start: "top bottom", end: "bottom top", scrub: true };
+        gsap.fromTo(collage.querySelector(".col-small"), { y: 60 }, { y: -40, ease: "none", scrollTrigger: st });
+        gsap.fromTo(collage.querySelectorAll(".tri"), { y: -40, rotate: -8 }, { y: 50, rotate: 8, ease: "none", scrollTrigger: st });
+    });
+
+    document.querySelectorAll(".process-photo img, .col-big img, .founder-desk img").forEach(img => {
+        gsap.fromTo(img, { yPercent: -6, scale: 1.14 }, {
+            yPercent: 6, scale: 1.14, ease: "none",
             scrollTrigger: { trigger: img.parentElement, start: "top bottom", end: "bottom top", scrub: true }
         });
     });
 
-    const founderImg = document.querySelector(".founder-photo img");
-    if (founderImg) {
-        gsap.fromTo(founderImg, { yPercent: -6, scale: 1.12 }, {
-            yPercent: 6, scale: 1.12, ease: "none",
-            scrollTrigger: { trigger: ".founder-frame", start: "top bottom", end: "bottom top", scrub: true }
-        });
-    }
-
-    // Service numbers slide up as each column arrives
-    gsap.utils.toArray(".svc-num").forEach(num => {
+    // Faded card numbers rise as the cards arrive
+    gsap.utils.toArray(".svc-big").forEach(num => {
         gsap.from(num, {
-            yPercent: 40, autoAlpha: 0, duration: 1.2, ease: "expo.out",
-            scrollTrigger: { trigger: num, start: "top 92%", once: true }
+            yPercent: 60, autoAlpha: 0, duration: 1.2, ease: "expo.out",
+            scrollTrigger: { trigger: num.parentElement, start: "top 88%", once: true }
         });
     });
 
-    // Marquee: speeds up while you scroll
-    const tracks = document.querySelectorAll(".mq-track");
-    if (tracks.length && lenis) {
-        lenis.on("scroll", e => {
-            const rate = 1 + Math.min(Math.abs(e.velocity) / 6, 4);
-            tracks.forEach(t => t.getAnimations().forEach(a => { a.playbackRate = rate; }));
+    const fc = document.querySelector(".fc-photo");
+    if (fc) {
+        gsap.from(fc, {
+            scale: 0.6, rotate: -20, autoAlpha: 0, duration: 1.4, ease: "expo.out",
+            scrollTrigger: { trigger: fc, start: "top 85%", once: true }
         });
     }
 }
-
-
-/* =====================================================
-   STATS — count up once in view
-===================================================== */
-
-(function () {
-    const nums = Array.from(document.querySelectorAll(".hero-stats strong")).filter(el => /^\d+$/.test(el.textContent.trim()));
-    if (!nums.length || reduceMotion || !("IntersectionObserver" in window)) return;
-
-    nums.forEach(el => {
-        const target = el.textContent.trim();
-        const to = parseInt(target, 10);
-        const from = to > 1000 ? to - 25 : 0;
-        const pad = target.length;
-        el.textContent = String(from).padStart(pad, "0");
-        new IntersectionObserver((entries, obs) => {
-            if (!entries[0].isIntersecting) return;
-            obs.disconnect();
-            const start = performance.now();
-            (function step(now) {
-                const p = Math.min((now - start) / 1600, 1);
-                const v = Math.round(from + (to - from) * (1 - Math.pow(1 - p, 3)));
-                el.textContent = String(v).padStart(pad, "0");
-                if (p < 1) requestAnimationFrame(step);
-            })(start);
-        }).observe(el);
-    });
-})();
-
-
-/* =====================================================
-   WORK SLIDER — buttons, arrow keys, swipe, autoplay
-===================================================== */
-
-(function () {
-    const slider = document.querySelector("[data-slider]");
-    if (!slider) return;
-
-    const slides = Array.from(slider.querySelectorAll(".slide"));
-    const count = slider.querySelector(".slider-count b");
-    let current = 0;
-    let timer = null;
-
-    function show(i) {
-        current = (i + slides.length) % slides.length;
-        slides.forEach((slide, k) => {
-            const on = k === current;
-            slide.classList.toggle("is-active", on);
-            slide.setAttribute("aria-hidden", String(!on));
-            slide.querySelectorAll("a").forEach(a => { a.tabIndex = on ? 0 : -1; });
-        });
-        if (count) count.textContent = String(current + 1).padStart(2, "0");
-    }
-
-    function start() {
-        if (reduceMotion) return;
-        stop();
-        timer = setInterval(() => show(current + 1), 6000);
-    }
-
-    function stop() {
-        clearInterval(timer);
-    }
-
-    slider.querySelector(".sl-prev").addEventListener("click", () => { show(current - 1); start(); });
-    slider.querySelector(".sl-next").addEventListener("click", () => { show(current + 1); start(); });
-    slider.addEventListener("keydown", e => {
-        if (e.key === "ArrowLeft") { show(current - 1); start(); }
-        if (e.key === "ArrowRight") { show(current + 1); start(); }
-    });
-
-    let x0 = null;
-    slider.addEventListener("pointerdown", e => { x0 = e.clientX; });
-    slider.addEventListener("pointerup", e => {
-        if (x0 === null) return;
-        const dx = e.clientX - x0;
-        if (Math.abs(dx) > 50) { show(current + (dx < 0 ? 1 : -1)); start(); }
-        x0 = null;
-    });
-
-    slider.addEventListener("mouseenter", stop);
-    slider.addEventListener("mouseleave", start);
-    slider.addEventListener("focusin", stop);
-
-    show(0);
-    if ("IntersectionObserver" in window) {
-        new IntersectionObserver(entries => { entries[0].isIntersecting ? start() : stop(); }, { threshold: 0.3 }).observe(slider);
-    }
-})();
 
 
 /* =====================================================
