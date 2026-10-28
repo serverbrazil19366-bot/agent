@@ -7,9 +7,9 @@ projects/seo-report.html (the dashboard demo) is hand-written and left alone.
 Image sizes and blur-up placeholders come from scripts/image-dims.json,
 which `npm run images` keeps up to date.
 
-Design v11: bright and modern. White canvas with soft animated blue-violet
-gradients, Geist type, rounded cards, and interactive pieces (hero dashboard,
-process tabs, work filter) instead of static blocks.
+Design v12: light grey canvas framed by visible grid lines, pixel-block
+accents in brand blue, Urbanist type, black-and-white photography, bold blue
+bands, and interactive pieces (work slider, process cards, marquee).
 """
 
 import html
@@ -106,11 +106,10 @@ def img(base, alt, sizes, prefix, eager=False, cls=""):
 
 
 def logo():
-    """Inline wordmark: gradient star + Astra Nexora. Swap for the real logo SVG when it arrives."""
+    """Inline wordmark: star + astra nexora. Swap for the real logo SVG when it arrives."""
     return ('<svg aria-hidden="true" class="logo" viewbox="0 0 200 32">'
-            '<defs><linearGradient id="lg" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#5676FF"/><stop offset="1" stop-color="#7B4DFF"/></linearGradient></defs>'
-            '<path d="M16 1c1.1 7.7 4.3 11.2 12.5 12.5C20.3 14.8 17.1 18.3 16 26c-1.1-7.7-4.3-11.2-12.5-12.5C11.7 12.2 14.9 8.7 16 1z" fill="url(#lg)"/>'
-            '<text font-family="Geist, Inter, system-ui, sans-serif" font-size="17" font-weight="600" letter-spacing="-.2" x="38" y="19.5">Astra Nexora</text></svg>')
+            '<path class="logo-star" d="M16 1c1.1 7.7 4.3 11.2 12.5 12.5C20.3 14.8 17.1 18.3 16 26c-1.1-7.7-4.3-11.2-12.5-12.5C11.7 12.2 14.9 8.7 16 1z"/>'
+            '<text font-family="Urbanist, Inter, system-ui, sans-serif" font-size="19" font-weight="700" letter-spacing="-.3" x="37" y="20">astra nexora</text></svg>')
 
 
 def btn(label, href, kind="btn-primary", target=False, arrow=True):
@@ -118,21 +117,31 @@ def btn(label, href, kind="btn-primary", target=False, arrow=True):
     return f'<a class="btn {kind}" href="{href}"{t}><span>{label}</span>{ARROW if arrow else ""}</a>'
 
 
-def pill(text):
-    return f'<span class="pill"><i aria-hidden="true"></i>{text}</span>'
+# =================================================================== shared
+
+STAR = ('<svg aria-hidden="true" class="star" viewbox="0 0 32 32"><path d="M16 1c1.1 7.7 4.3 11.2 12.5 12.5C20.3 14.8 17.1 18.3 16 26'
+        'c-1.1-7.7-4.3-11.2-12.5-12.5C11.7 12.2 14.9 8.7 16 1z" fill="currentColor"/></svg>')
 
 
-def section_head(kicker, title_html, lead=None, center=True, title_id=None):
+def tag(text, dark=True):
+    """Small square-marked label used above headings (the 'pixel' tag)."""
+    return f'<span class="tag{" dark" if dark else ""}"><i aria-hidden="true"></i>{text}</span>'
+
+
+def heading(kicker, title, lead=None, center=False, title_id=None, cls=""):
     tid = f' id="{title_id}"' if title_id else ""
     lead_html = f'<p class="lead">{lead}</p>' if lead else ""
-    return f'''<div class="shead{" center" if center else ""}" data-reveal="">
-{pill(kicker)}
-<h2 class="h2"{tid}>{title_html}</h2>
+    return f'''<div class="head{" center" if center else ""}{(" " + cls) if cls else ""}" data-reveal="">
+{tag(kicker, dark=False)}
+<h2 class="h2"{tid}>{title}</h2>
 {lead_html}
 </div>'''
 
 
-# =================================================================== shared
+def pixels(cls):
+    """Decorative pixel-block cluster."""
+    return f'<div aria-hidden="true" class="pixels {cls}"><i></i><i></i><i></i><i></i><i></i><i></i></div>'
+
 
 def head(title, description, path, prefix, schemas, preload=None, body_class="site"):
     pre = ""
@@ -150,7 +159,7 @@ def head(title, description, path, prefix, schemas, preload=None, body_class="si
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <title>{esc(title)}</title>
 <meta content="{attr(description)}" name="description"/>
-<meta content="#FFFFFF" name="theme-color"/>
+<meta content="#F3F4F6" name="theme-color"/>
 <link href="{SITE}{path}" rel="canonical"/>
 <meta content="website" property="og:type"/>
 <meta content="Astra Nexora" property="og:site_name"/>
@@ -166,7 +175,7 @@ def head(title, description, path, prefix, schemas, preload=None, body_class="si
 <link href="{prefix}assets/favicon.png" rel="apple-touch-icon"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
 {pre}<link href="{prefix}css/style.css" rel="stylesheet"/>
 <script>(function(d){{d.classList.add("js");if("scrollRestoration"in history)history.scrollRestoration="manual";}})(document.documentElement);</script>
 {ld}</head>
@@ -182,40 +191,45 @@ def header(prefix, home):
         f'<small>{esc(SERVICE_TAGLINES[s["slug"]])}</small></span></a>'
         for s in SERVICES)
     mobile = "\n".join(f'<a href="{prefix}services/{s["slug"]}.html">{esc(s["nav"])}</a>' for s in SERVICES)
-    return f'''<header class="site-header" id="header">
-<div class="nav-shell">
+    return f'''<div class="topbar">
+<div class="frame topbar-inner">
+<a href="mailto:{EMAIL}">{EMAIL}</a>
+<span class="tb-center">{STAR}<span>Now taking projects · <b>Free website audit</b></span>{STAR}</span>
+<a href="{WA}" rel="noopener" target="_blank">{PHONE}</a>
+</div>
+</div>
+<header class="site-header" id="header">
+<div class="frame header-inner">
 <a aria-label="Astra Nexora — home" class="brand" href="{home}#home">{logo()}</a>
 <nav aria-label="Main" class="desktop-nav">
+<a class="nav-link" href="{home}#home">Home</a>
+<a class="nav-link" href="{home}#about">About</a>
 <div class="nav-dropdown">
-<a aria-haspopup="true" class="nav-link nav-dropdown-toggle" href="{home}#services">Services <svg aria-hidden="true" viewbox="0 0 12 12"><path d="m3 4.5 3 3 3-3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"/></svg></a>
+<a aria-haspopup="true" class="nav-link nav-dropdown-toggle" href="{home}#services">Services</a>
 <div class="nav-dropdown-panel">
 <div class="nav-dropdown-grid">
 {menu}
 </div>
 </div>
 </div>
-<a class="nav-link" href="{home}#process">Process</a>
 <a class="nav-link" href="{home}#work">Work</a>
-<a class="nav-link" href="{home}#founder">About</a>
 <a class="nav-link" href="{home}#faq">FAQ</a>
+<a class="nav-link" href="{home}#contact">Contact</a>
 </nav>
-<div class="header-actions">
-<a aria-label="WhatsApp {PHONE}" class="icon-btn" href="{WA}" rel="noopener" target="_blank">{WA_ICON}</a>
-{btn("Get free audit", f"{home}#contact", "btn-primary btn-sm")}
-</div>
+{btn("Start a project", f"{home}#contact", "btn-dark header-cta")}
 <button aria-controls="mobileMenu" aria-expanded="false" aria-label="Open menu" class="menu-toggle" id="menuToggle" type="button"><span></span><span></span></button>
 </div>
 <nav aria-label="Mobile" class="mobile-menu" id="mobileMenu">
+<a href="{home}#about">About</a>
 <details class="mobile-services"><summary>Services</summary>
 {mobile}
 </details>
-<a href="{home}#process">Process</a>
 <a href="{home}#work">Work</a>
-<a href="{home}#founder">About</a>
+<a href="{home}#process">Process</a>
 <a href="{home}#faq">FAQ</a>
 <a href="{home}#contact">Contact</a>
 <div class="mobile-contact">
-{btn("Get free audit", f"{home}#contact", "btn-primary")}
+{btn("Start a project", f"{home}#contact", "btn-dark")}
 <a href="{WA}" rel="noopener" target="_blank">WhatsApp {PHONE}</a>
 <a href="mailto:{EMAIL}">{EMAIL}</a>
 </div>
@@ -224,33 +238,33 @@ def header(prefix, home):
 
 
 def footer(prefix, home):
-    services = "\n".join(f'<a href="{prefix}services/{s["slug"]}.html">{esc(s["nav"])}</a>' for s in SERVICES)
+    services = "\n".join(f'<li><a href="{prefix}services/{s["slug"]}.html">{esc(s["nav"])}</a></li>' for s in SERVICES)
     social = "\n".join(f'<a href="{u}" rel="noopener" target="_blank">{n}</a>' for n, u in SOCIAL)
     return f'''<footer class="footer">
-<div class="container">
+<div class="frame">
+<div class="footer-cta">
+<h2>Let's build your <span>next era.</span></h2>
+{btn("Start a project", f"{home}#contact", "btn-blue btn-lg")}
+</div>
 <div class="footer-grid">
 <div class="footer-brand">
 <a aria-label="Astra Nexora — home" class="brand" href="{home}#home">{logo()}</a>
 <p>A digital marketing studio in Chennai for SEO, websites, branding and performance marketing, planned as one system.</p>
-<div class="footer-social">{social}</div>
 </div>
 <div class="footer-col">
-<h2>Services</h2>
-{services}
+<h3>Services</h3>
+<ul class="footer-two">{services}</ul>
 </div>
 <div class="footer-col">
-<h2>Studio</h2>
-<a href="{home}#process">Process</a>
-<a href="{home}#work">Work</a>
-<a href="{prefix}projects/seo-report.html">Sample SEO report</a>
-<a href="{home}#founder">About the founder</a>
-<a href="{home}#faq">FAQ</a>
-</div>
-<div class="footer-col">
-<h2>Contact</h2>
+<h3>Contact</h3>
 <a href="{WA}" rel="noopener" target="_blank">WhatsApp {PHONE}</a>
 <a href="mailto:{EMAIL}">{EMAIL}</a>
-<p>Chennai, Tamil Nadu<br/>Serving all of India</p>
+<p>Chennai, Tamil Nadu · Serving all of India</p>
+</div>
+<div class="footer-col">
+<h3>Follow</h3>
+{social}
+<a href="{prefix}projects/seo-report.html">Sample SEO report</a>
 </div>
 </div>
 <div class="footer-bottom">
@@ -260,7 +274,8 @@ def footer(prefix, home):
 </div>
 </footer>
 
-<a aria-label="Chat with Astra Nexora on WhatsApp" class="float-whatsapp" href="{WA}" rel="noopener" target="_blank">{WA_ICON}</a>'''
+<a aria-label="Chat with Astra Nexora on WhatsApp" class="float-whatsapp" href="{WA}" rel="noopener" target="_blank">{WA_ICON}</a>
+<button aria-label="Back to top" class="to-top" type="button"><svg aria-hidden="true" viewbox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg></button>'''
 
 
 def scripts(prefix):
@@ -313,7 +328,7 @@ def audit_form():
 <textarea id="message" name="message" placeholder="A line about your goals" rows="2"></textarea>
 </div>
 <div class="form-actions">
-<button class="btn btn-primary btn-block" type="submit">{WA_ICON}<span>Send on WhatsApp</span></button>
+<button class="btn btn-dark btn-block" type="submit"><span>Send on WhatsApp</span>{ARROW}</button>
 <p class="form-note">No website yet? Type "none". This opens WhatsApp with your details; nothing is stored here.</p>
 </div>
 </form>'''
@@ -321,38 +336,22 @@ def audit_form():
 
 def contact_section(prefix, home):
     social = " · ".join(f'<a href="{u}" rel="noopener" target="_blank">{n}</a>' for n, u in SOCIAL)
-    return f'''<section aria-labelledby="contactTitle" class="section contact" id="contact">
-<div class="container contact-grid">
-<div class="contact-info" data-reveal="">
-{pill("Contact")}
-<h2 class="h2" id="contactTitle">Let's build your <span class="grad">next era.</span></h2>
-<p class="lead">Tell us about your business. You'll get a clear next step, usually within 24 hours.</p>
-<ul class="contact-cards">
-<li><a href="{WA}" rel="noopener" target="_blank"><span class="cc-icon wa">{WA_ICON}</span><span><small>WhatsApp</small>{PHONE}</span></a></li>
-<li><a href="mailto:{EMAIL}"><span class="cc-icon"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" viewbox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7 8.5 6 8.5-6"/></svg></span><span><small>Email</small>{EMAIL}</span></a></li>
-<li><span class="cc-static"><span class="cc-icon"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" viewbox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span><span><small>Studio</small>Chennai · Serving all of India</span></span></li>
-</ul>
-<p class="contact-social">Follow: {social}</p>
-</div>
-<div class="form-card" data-reveal="">
-<div class="form-head"><strong>Get your free website audit</strong><span><i aria-hidden="true" class="live-dot"></i>Taking on new projects</span></div>
+    return f'''<section aria-labelledby="contactTitle" class="contact" id="contact">
+<div class="frame contact-inner">
+<div class="contact-card" data-reveal="">
+{tag("Get in touch", dark=False)}
+<h2 class="h2" id="contactTitle">Get your free <span class="hl">website audit.</span></h2>
 {audit_form()}
 </div>
-</div>
-</section>'''
-
-
-def cta_band(prefix, home):
-    return f'''<section class="section cta-section">
-<div class="container">
-<div class="cta-band" data-reveal="">
-<div aria-hidden="true" class="cta-glow"></div>
-<h2>Ready to grow? <span>Start with a free website audit.</span></h2>
-<p>We'll check speed, SEO, Google Business Profile and enquiry paths, and send you a clear list of what to fix first.</p>
-<div class="actions">
-{btn("Get my free audit", f"{home}#contact", "btn-white")}
-{btn("Chat on WhatsApp", WA, "btn-ghost", target=True)}
-</div>
+<div class="contact-side" data-reveal="">
+<div aria-hidden="true" class="dot-map"></div>
+<ul class="contact-list">
+<li><span>WhatsApp</span><a href="{WA}" rel="noopener" target="_blank">{PHONE}</a></li>
+<li><span>Email</span><a href="mailto:{EMAIL}">{EMAIL}</a></li>
+<li><span>Studio</span><p>Chennai, Tamil Nadu · Serving all of India</p></li>
+<li><span>Follow</span><p>{social}</p></li>
+</ul>
+<p class="contact-status"><i aria-hidden="true" class="live-dot"></i>Replies usually within 24 hours</p>
 </div>
 </div>
 </section>'''
@@ -368,14 +367,6 @@ def breadcrumb_schema(items):
     }
 
 
-def faq_html(faqs):
-    return "\n".join(
-        f'''<details class="faq-item"{' open=""' if i == 1 else ''}>
-<summary><span>{esc(q)}</span><i aria-hidden="true"></i></summary>
-<div class="faq-body"><p>{esc(a)}</p></div>
-</details>''' for i, (q, a) in enumerate(faqs, 1))
-
-
 def faq_schema(faqs):
     return {
         "@type": "FAQPage",
@@ -383,53 +374,48 @@ def faq_schema(faqs):
     }
 
 
-def faq_section(faqs, title_html, prefix):
-    return f'''<section aria-labelledby="faqTitle" class="section" id="faq">
-<div class="container faq-grid">
-<div class="faq-side" data-reveal="">
-{pill("FAQ")}
-<h2 class="h2" id="faqTitle">{title_html}</h2>
-<p class="lead">Can't find your answer? Message us on WhatsApp and we'll reply.</p>
-{btn("Ask on WhatsApp", WA, "btn-outline", target=True)}
+def faq_section(faqs, title, prefix, num="FAQ"):
+    items = "\n".join(
+        f'''<details class="faq-item"{' open=""' if i == 1 else ''}>
+<summary><span class="faq-n">{i:02d}</span><span class="faq-q">{esc(q)}</span><i aria-hidden="true"></i></summary>
+<div class="faq-a"><p>{esc(a)}</p></div>
+</details>''' for i, (q, a) in enumerate(faqs, 1))
+    return f'''<section aria-labelledby="faqTitle" class="block" id="faq">
+<div class="frame">
+<div class="block-head">{heading(num, title, "Can't find your answer? Message us on WhatsApp and we'll reply.", title_id="faqTitle")}</div>
+<div class="faq-list">
+{items}
 </div>
-<div class="faq-list" data-reveal="">
-{faq_html(faqs)}
+</div>
+</section>'''
+
+
+def marquee():
+    words = ["STRATEGY", "CREATIVITY", "GROWTH", "SEARCH", "BRANDING"]
+    row = "".join(f'<span>{w}</span><i aria-hidden="true">{STAR}</i>' for w in words)
+    return f'''<section aria-hidden="true" class="marquee">
+<div class="mq-row"><div class="mq-track">{row}{row}</div></div>
+<div class="mq-row reverse"><div class="mq-track">{row}{row}</div></div>
+</section>'''
+
+
+def cta_band(prefix, home):
+    return f'''<section class="cta">
+<div class="frame cta-inner">
+{pixels("px-cta")}
+<div>
+{tag("Free · no obligation")}
+<h2>Find out what's holding your <span class="hl">website back.</span></h2>
+</div>
+<div class="actions">
+{btn("Get my free audit", f"{home}#contact", "btn-white btn-lg")}
+{btn("Chat on WhatsApp", WA, "btn-line-light btn-lg", target=True)}
 </div>
 </div>
 </section>'''
 
 
 # =================================================================== home
-
-def hero_dashboard(p):
-    """Hero visual: our real SEO report demo in a browser window, with live
-    example widgets floating around it. All numbers are labelled as examples."""
-    return f'''<div class="hero-visual" data-tilt="">
-<div class="hv-window">
-<div class="hv-bar"><span></span><span></span><span></span><em>astranexora.com/seo-report</em></div>
-<a class="hv-screen" href="projects/seo-report.html" aria-label="Open the live SEO report dashboard demo">
-<img alt="Astra Nexora SEO report dashboard demo" decoding="async" fetchpriority="high" height="1125" sizes="(min-width: 1001px) 900px, 92vw" src="assets/projects/seo-report-dashboard-w1200.webp" srcset="assets/projects/seo-report-dashboard-w800.webp 800w, assets/projects/seo-report-dashboard-w1200.webp 1200w, assets/projects/seo-report-dashboard-w1800.webp 1800w" width="1800"/>
-</a>
-</div>
-<div class="hv-card hv-rank" data-depth="1.4">
-<small>Google ranking <b>Example</b></small>
-<div class="hv-rank-row"><span class="kw">"dentist in chennai"</span><span class="pos">#<em data-count-from="14" data-count-to="3">14</em></span></div>
-<div class="hv-spark"><svg viewbox="0 0 120 32" preserveaspectratio="none"><path d="M2 28 L20 26 L38 24 L56 18 L74 15 L92 9 L118 4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></div>
-</div>
-<div class="hv-card hv-score" data-depth="2">
-<svg class="ring" viewbox="0 0 64 64"><circle cx="32" cy="32" r="27"/><circle class="ring-fill" cx="32" cy="32" r="27"/></svg>
-<div><strong data-count-from="0" data-count-to="92">0</strong><small>Website health<br/><b>Example audit</b></small></div>
-</div>
-<div class="hv-card hv-toast" data-depth="2.6" aria-live="off">
-<span class="hv-wa">{WA_ICON}</span>
-<div><small>New enquiry · WhatsApp</small><p data-toasts='["Hi, can I get a quote for a new website?","Saw your page on Google. Is SEO available?","Need help with Instagram ads for my clinic."]'>Hi, can I get a quote for a new website?</p></div>
-</div>
-<div class="hv-card hv-bars" data-depth="1.8">
-<small>Leads by month <b>Example</b></small>
-<div class="bars"><i style="--h:.35"></i><i style="--h:.48"></i><i style="--h:.44"></i><i style="--h:.62"></i><i style="--h:.71"></i><i style="--h:.9"></i></div>
-</div>
-</div>'''
-
 
 def home_page():
     p, home = "", ""
@@ -475,210 +461,222 @@ def home_page():
     desc = ("Astra Nexora is a digital marketing agency in Chennai for SEO, social media, Google and Meta ads, "
             "content, websites, branding, lead generation and AI marketing automation.")
 
-    # Services bento: first two cards are large and carry a photo
-    cards = ""
+    chev_l = "".join(f'<i style="--d:{(13 - k) * .12:.2f}">‹</i>' for k in range(14))
+    chev_r = "".join(f'<i style="--d:{k * .12:.2f}">›</i>' for k in range(14))
+
+    stats = [
+        ("2025", "Founded in Chennai", '<path d="M4 20V10l8-6 8 6v10M9 20v-6h6v6"/>'),
+        ("08", "Service areas under one roof", '<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>'),
+        ("1:1", "You work directly with the founder", '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>'),
+    ]
+    stat_html = "\n".join(
+        f'<li><span class="st-icon"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24">{ic}</svg></span>'
+        f'<div><strong>{esc(a)}</strong><small>{esc(b)}</small></div></li>'
+        for a, b, ic in stats)
+
+    platforms = "".join(f'<li>{esc(x)}</li>' for x in PLATFORMS[:8])
+
+    # Services: columns with huge outlined numbers
+    cols = ""
     for i, s in enumerate(SERVICES, 1):
-        subs = "".join(f"<li>{esc(n)}</li>" for n, _ in s["includes"][:3])
-        big = i <= 2
-        media = f'<div class="svc-media img-wrap">{img(s["hero"], s["hero_alt"], "(min-width: 1101px) 40vw, 92vw", p)}</div>' if big else ""
-        cards += f'''<a class="svc-card{" big" if big else ""} spot" data-reveal="" href="services/{s["slug"]}.html">
-<span class="svc-icon">{icon(s["slug"])}</span>
+        subs = "".join(f"<li>{esc(n)}</li>" for n, _ in s["includes"][:4])
+        cols += f'''<a class="svc-col" data-reveal="" href="services/{s["slug"]}.html">
+{tag(esc(s["nav"]))}
+<span aria-hidden="true" class="svc-num">{i:02d}</span>
 <h3>{esc(s["title"])}</h3>
-<p>{esc(SERVICE_TAGLINES[s["slug"]])}</p>
-<ul class="svc-tags">{subs}</ul>
-<span class="svc-more">Explore {ARROW}</span>
-{media}
+<ul>{subs}</ul>
+<span class="svc-go">Explore {ARROW}</span>
 </a>
 '''
 
-    # Process: interactive tabs
-    step_imgs = ["pexels-577210", "pexels-39205089", "pexels-36706460", "pexels-6476246"]
-    tabs = ""
-    panels = ""
-    for i, (t, d, tag) in enumerate(HOME["process"], 1):
-        sel = i == 1
-        tabs += (f'<button aria-controls="step{i}" aria-selected="{"true" if sel else "false"}" class="ptab" id="tab{i}" role="tab" '
-                 f'tabindex="{0 if sel else -1}" type="button"><span>{i:02d}</span><strong>{esc(t)}</strong><i aria-hidden="true"></i></button>\n')
-        panels += f'''<div aria-labelledby="tab{i}" class="ppanel{" is-active" if sel else ""}" id="step{i}" role="tabpanel"{"" if sel else " hidden"}>
-<div class="ppanel-copy"><span class="ppanel-tag">{esc(tag)}</span><h3>{esc(t)}</h3><p>{esc(d)}</p></div>
-<div class="ppanel-media img-wrap">{img(step_imgs[i - 1], "", "(min-width: 1001px) 40vw, 92vw", p)}</div>
+    # Work: slider with overlay info box
+    slides = f'''<li class="slide is-active">
+<div class="slide-media img-wrap"><img alt="Astra Nexora SEO report dashboard showing organic clicks, enquiries and rankings" class="lqip" decoding="async" height="1125" loading="lazy" sizes="(min-width: 1001px) 1240px, 94vw" src="assets/projects/seo-report-dashboard-w1200.webp" srcset="assets/projects/seo-report-dashboard-w800.webp 800w, assets/projects/seo-report-dashboard-w1200.webp 1200w, assets/projects/seo-report-dashboard-w1800.webp 1800w" width="1800"/></div>
+<div class="slide-info">
+<h3>SEO Report Dashboard</h3>
+<p>The monthly dashboard every SEO client gets: clicks, enquiries, rankings, Business Profile and site health. Shown with sample data.</p>
+<dl><div><dt>Live demo</dt><dd>Sample data</dd></div><div><dt>Type</dt><dd>Analytics</dd></div><div><dt>Stack</dt><dd>GA4 · GSC</dd></div></dl>
+<a class="slide-link" href="projects/seo-report.html">Open the demo {ARROW}</a>
 </div>
-'''
-
-    # Work: filterable grid
-    def kind(category):
-        c = category.lower()
-        return "web" if "web" in c else "brand" if ("brand" in c or "identity" in c) else "seo"
-
-    work = f'''<a class="work-card feature" data-kind="seo" data-reveal="" href="projects/seo-report.html">
-<div class="work-media img-wrap">
-<img alt="Astra Nexora SEO report dashboard showing organic clicks, enquiries and rankings" class="lqip" decoding="async" height="1125" loading="lazy" sizes="(min-width: 1001px) 60vw, 92vw" src="assets/projects/seo-report-dashboard-w1200.webp" srcset="assets/projects/seo-report-dashboard-w800.webp 800w, assets/projects/seo-report-dashboard-w1200.webp 1200w, assets/projects/seo-report-dashboard-w1800.webp 1800w" width="1800"/>
-</div>
-<div class="work-body"><div class="work-tags"><span class="tag live"><i aria-hidden="true" class="live-dot"></i>Live demo</span><span class="tag">Analytics &amp; reporting</span></div>
-<h3>SEO Report Dashboard</h3><p>The monthly dashboard every SEO client gets: clicks, enquiries, rankings and site health. Shown with sample data.</p><span class="work-go">Open the demo {ARROW}</span></div>
-</a>
+</li>
 '''
     for pr in PROJECTS:
-        work += f'''<a class="work-card" data-kind="{kind(pr["category"])}" data-reveal="" href="projects/{pr["slug"]}.html">
-<div class="work-media img-wrap">{img(pr["hero"], pr["hero_alt"], "(min-width: 1001px) 30vw, 92vw", p)}</div>
-<div class="work-body"><div class="work-tags"><span class="tag">{esc(pr["category"])}</span><span class="tag soft">Concept</span></div>
-<h3>{esc(pr["title"])}</h3><span class="work-go">View project {ARROW}</span></div>
-</a>
+        meta = dict(pr["meta"])
+        slides += f'''<li class="slide">
+<div class="slide-media img-wrap">{img(pr["hero"], pr["hero_alt"], "(min-width: 1001px) 1240px, 94vw", p)}</div>
+<div class="slide-info">
+<h3>{esc(pr["title"])}</h3>
+<p>{esc(pr["summary"])}</p>
+<dl><div><dt>Concept</dt><dd>Not a client</dd></div><div><dt>Type</dt><dd>{esc(pr["category"])}</dd></div><div><dt>Platform</dt><dd>{esc(meta.get("Platform", meta.get("Services", "—")).split(",")[0])}</dd></div></dl>
+<a class="slide-link" href="projects/{pr["slug"]}.html">View project {ARROW}</a>
+</div>
+</li>
 '''
 
-    compare = [
-        ("Starts with", "A design or a fixed package", "An audit of your business and goals"),
-        ("Reports on", "Likes and impressions", "Enquiries, leads and rankings you can check"),
-        ("You talk to", "An account manager", "The founder, directly"),
-        ("Design", "Copy-paste templates", "Built around your brand"),
-        ("Channels", "One service in isolation", "SEO, ads, content and web planned together"),
-        ("After launch", "Hand-off and goodbye", "Ongoing support and monthly growth plans"),
+    # Process: cards with small UI mock-ups drawn in CSS
+    mocks = [
+        '<div class="mock mock-audit"><span style="--w:.86"></span><span style="--w:.52"></span><span style="--w:.7"></span><span style="--w:.34"></span><b>Audit score</b></div>',
+        '<div class="mock mock-flow"><span class="on">Goals</span><span>Keywords</span><span class="on">Pages</span><span>Channels</span><span class="on">Priorities</span></div>',
+        '<div class="mock mock-site"><i></i><i></i><i></i><span class="hero-b"></span><span class="l"></span><span class="l s"></span><span class="btn-b"></span></div>',
+        '<div class="mock mock-grow"><i style="--h:.3"></i><i style="--h:.42"></i><i style="--h:.5"></i><i style="--h:.66"></i><i class="on" style="--h:.92"></i></div>',
     ]
-    rows = "\n".join(
-        f'<div class="cmp-row" data-reveal="" role="row"><span class="cmp-label" role="rowheader">{esc(l)}</span><span class="cmp-them" role="cell">{CROSS}{esc(a)}</span><span class="cmp-us" role="cell">{CHECK}{esc(b)}</span></div>'
-        for l, a, b in compare)
+    steps = ""
+    for i, (t, d, tg) in enumerate(HOME["process"], 1):
+        steps += f'''<li class="step" data-reveal="">
+{mocks[i - 1]}
+<div class="step-cap"><span>//{i:02d}</span><h3>{esc(t)}</h3></div>
+<p>{esc(d)}</p>
+<small>{esc(tg)}</small>
+</li>
+'''
 
-    checks = ["Speed & Core Web Vitals", "Mobile experience", "SEO & indexing", "Google Business Profile", "Enquiry paths", "Tracking & analytics"]
-    audit_list = "".join(f"<li>{CHECK}{esc(c)}</li>" for c in checks)
+    compare_them = ["Starts with a design or a fixed package", "Reports likes and impressions",
+                    "You talk to an account manager", "Copy-paste templates",
+                    "One service in isolation", "Hand-off after launch"]
+    compare_us = ["Starts with an audit of your business and goals", "Reports enquiries, leads and rankings",
+                  "You talk to the founder, directly", "Designed around your brand",
+                  "SEO, ads, content and web planned together", "Ongoing support and monthly growth plans"]
+    them = "".join(f"<li>{CROSS}{esc(x)}</li>" for x in compare_them)
+    us = "".join(f"<li>{CHECK}{esc(x)}</li>" for x in compare_us)
+
+    features = ""
+    feat_icons = ['<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/>', '<path d="M13 3 5 13h6l-1 8 8-10h-6z"/>',
+                  '<path d="M8 12h8M12 8v8"/><circle cx="12" cy="12" r="9"/>', '<path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9z"/>']
+    for i, (_, t, d) in enumerate(HOME["principles"][:4]):
+        features += f'''<li class="feat" data-reveal=""><span class="feat-icon"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24">{feat_icons[i]}</svg></span><h3>{esc(t)}</h3><p>{esc(d)}</p></li>
+'''
 
     f = HOME["founder"]
-    bio = "\n".join(f"<p>{esc(b)}</p>" for b in f["bio"])
-    timeline = "\n".join(f'<li><strong>{y}</strong><span>{esc(t)}</span></li>' for y, t in f["timeline"])
-
-    platforms = "".join(f"<li>{esc(x)}</li>" for x in PLATFORMS)
-
-    testimonials = ""
-    if TESTIMONIALS:
-        quotes = "\n".join(
-            f'<figure class="quote" data-reveal=""><blockquote>{esc(q)}</blockquote><figcaption><strong>{esc(n)}</strong>{esc(b)}</figcaption></figure>'
-            for q, n, b in TESTIMONIALS)
-        testimonials = f'''<section aria-labelledby="feedbackTitle" class="section" id="feedback">
-<div class="container">
-{section_head("Client voices", 'In their <span class="grad">words.</span>', title_id="feedbackTitle")}
-<div class="quotes">{quotes}</div>
-</div>
-</section>
-'''
+    timeline = "".join(f'<li><b>{y}</b><span>{esc(t)}</span></li>' for y, t in f["timeline"])
 
     body = f'''{header(p, home)}
 
 <main id="main">
 
 <section aria-labelledby="heroTitle" class="hero" id="home">
-<div aria-hidden="true" class="hero-bg"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="grid-fade"></span></div>
-<div class="container hero-copy">
-<a class="hero-pill" href="#contact"><span class="hp-new">Free</span>Website audit for your business {ARROW}</a>
-<h1 class="hero-title" id="heroTitle">Marketing that gets<br/>your business <span class="grad">chosen.</span></h1>
+<div class="frame hero-frame">
+{pixels("px-hero-a")}
+{pixels("px-hero-b")}
+<div aria-hidden="true" class="chev chev-l">{chev_l}</div>
+<h1 class="hero-title" id="heroTitle"><span class="ht-word">We grow</span><span aria-hidden="true" class="ht-orb"><span class="orb">{STAR}</span></span><span class="ht-word">brands</span></h1>
+<div aria-hidden="true" class="chev chev-r">{chev_r}</div>
 <p class="hero-lead">{esc(HOME["hero_lead"])}</p>
-<div class="actions center">
-{btn("Get a free website audit", "#contact", "btn-primary btn-lg")}
-{btn("Explore services", "#services", "btn-outline btn-lg")}
+<div class="actions hero-actions">
+{btn("Explore services", "#services", "btn-white")}
+{btn("Get a free audit", "#contact", "btn-dark")}
 </div>
-<ul aria-label="At a glance" class="hero-points">
-<li>{CHECK}Founded in Chennai, 2025</li>
-<li>{CHECK}8 service areas, one team</li>
-<li>{CHECK}Work directly with the founder</li>
+</div>
+<div class="frame hero-split">
+<ul class="hero-stats">
+{stat_html}
 </ul>
-</div>
-<div class="container hero-stage">
-{hero_dashboard(p)}
-</div>
-</section>
-
-<section aria-label="Platforms we work with" class="platforms">
-<div class="container">
-<p>Platforms we build and run on</p>
-<div class="plat-mask"><ul class="plat-track">{platforms}{platforms}</ul></div>
-</div>
-</section>
-
-<section aria-labelledby="servicesTitle" class="section" id="services">
-<div class="container">
-{section_head("Services", 'Everything you need to <span class="grad">grow online.</span>', "Eight services, planned together by one team. Pick one, or let us run the whole system.", title_id="servicesTitle")}
-<div class="svc-grid">
-{cards}</div>
-</div>
-</section>
-
-<section aria-labelledby="processTitle" class="section tint" id="process">
-<div class="container">
-{section_head("Process", 'From audit to growth, <span class="grad">in four steps.</span>', "Every project starts with your business goals and ends with numbers you can check.", title_id="processTitle")}
-<div class="process" data-reveal="">
-<div aria-label="Process steps" class="ptabs" role="tablist">
-{tabs}</div>
-<div class="ppanels">
-{panels}</div>
+<div class="hero-photo img-wrap" data-parallax-wrap="">
+{img("pexels-39205089", "Team planning a marketing strategy around a table", "(min-width: 1001px) 60vw, 94vw", p, eager=True)}
+{pixels("px-photo")}
 </div>
 </div>
 </section>
 
-<section aria-labelledby="workTitle" class="section" id="work">
-<div class="container">
-<div class="work-head">
-{section_head("Work", 'Projects built <span class="grad">to deliver.</span>', "A live reporting demo and concept projects that show how we think. Client case studies are added as clients approve them.", center=False, title_id="workTitle")}
-<div aria-label="Filter projects" class="filters" role="group">
-<button aria-pressed="true" data-filter="all" type="button">All</button>
-<button aria-pressed="false" data-filter="web" type="button">Websites</button>
-<button aria-pressed="false" data-filter="brand" type="button">Branding</button>
-<button aria-pressed="false" data-filter="seo" type="button">SEO &amp; data</button>
-</div>
-</div>
-<div class="work-grid">
-{work}</div>
+<section aria-label="Platforms we work on" class="platforms">
+<div class="frame plat-grid">
+<p>//Platforms<br/>we work on</p>
+<ul>{platforms}</ul>
 </div>
 </section>
 
-<section aria-labelledby="founderTitle" class="section" id="founder">
-<div class="container">
-<div class="founder-card">
-<div class="founder-media" data-reveal="">
+<section aria-labelledby="aboutTitle" class="block" id="about">
+<div class="frame">
+<div class="about-top" data-reveal="">
+{tag("About us", dark=False)}
+<h2 class="about-statement" id="aboutTitle">We build marketing as one connected system, <span class="inline-img img-wrap">{img("pexels-6476246", "", "160px", p)}</span> planned together and measured on the enquiries it brings in.</h2>
+</div>
+<div class="about-row">
+<div class="about-copy" data-reveal="">
+{"".join(f"<p>{esc(t)}</p>" for t in HOME["about"])}
+</div>
+<div class="about-photo img-wrap" data-reveal="">{img("pexels-7598011", "Brand strategy notes and sketches on a desk", "(min-width: 1001px) 50vw, 94vw", p, cls="bw")}</div>
+</div>
+</div>
+</section>
+
+<section aria-labelledby="servicesTitle" class="block" id="services">
+<div class="frame">
+<div class="block-head">{heading("Services", 'We plan. We build. <span class="hl">We grow.</span>', "Eight services, planned together by one team. Pick one, or let us run the whole system.", center=True, title_id="servicesTitle")}</div>
+<div class="svc-cols">
+{cols}</div>
+</div>
+</section>
+
+<section aria-labelledby="workTitle" class="block work" id="work">
+<div class="frame">
+<div class="block-head split">{heading("Our work", 'Projects built <span class="hl">to deliver.</span>', title_id="workTitle")}<p class="lead">A live reporting demo and concept projects that show how we think. Client case studies are added as clients approve them.</p></div>
+<div class="slider" data-slider="">
+<ul class="slides">
+{slides}</ul>
+<div class="slider-nav">
+<span class="slider-count"><b>01</b> / {len(PROJECTS) + 1:02d}</span>
+<button aria-label="Previous project" class="sl-prev" type="button">‹</button>
+<button aria-label="Next project" class="sl-next" type="button">›</button>
+</div>
+</div>
+</div>
+</section>
+
+<section aria-labelledby="processTitle" class="block" id="process">
+<div class="frame process">
+<div class="process-side" data-reveal="">
+{tag("Process", dark=False)}
+<h2 class="h2" id="processTitle">Combine creativity <span class="hl">with strategy.</span></h2>
+<p class="lead">Every step is designed for clarity, impact and results you can check.</p>
+{btn("Start a project", "#contact", "btn-dark")}
+</div>
+<ol class="steps">
+{steps}</ol>
+</div>
+</section>
+
+{marquee()}
+
+<section aria-labelledby="whyTitle" class="block" id="why">
+<div class="frame">
+<div class="block-head">{heading("The difference", 'Why choose <span class="hl">Astra Nexora.</span>', center=True, title_id="whyTitle")}</div>
+<div class="compare">
+<div class="cmp-card" data-reveal=""><h3>Other agencies</h3><ul>{them}</ul></div>
+<div class="cmp-card us" data-reveal=""><h3>{logo()}<span class="visually-hidden">Astra Nexora</span></h3><ul>{us}</ul></div>
+</div>
+<div class="center-cta">{btn("Get started", "#contact", "btn-dark")}</div>
+</div>
+</section>
+
+<section aria-labelledby="founderTitle" class="founder" id="founder">
+<div class="frame founder-frame">
 <div class="founder-photo img-wrap">
-<img alt="S. Saktheeswaran, Founder and Managing Director of Astra Nexora, at his desk" class="lqip" decoding="async" height="900" loading="lazy" sizes="(min-width: 1001px) 36vw, 92vw" src="assets/founder/sakthi-desk-w720.webp" srcset="assets/founder/sakthi-desk-w480.webp 480w, assets/founder/sakthi-desk-w720.webp 720w" width="720"/>
+<img alt="S. Saktheeswaran, Founder and Managing Director of Astra Nexora, at his desk" class="lqip bw" decoding="async" height="900" loading="lazy" sizes="(min-width: 1001px) 1240px, 94vw" src="assets/founder/sakthi-desk-w720.webp" srcset="assets/founder/sakthi-desk-w480.webp 480w, assets/founder/sakthi-desk-w720.webp 720w" width="720"/>
 </div>
-<div class="founder-badge"><span class="fb-photo img-wrap"><img alt="" class="lqip" decoding="async" height="900" loading="lazy" sizes="64px" src="assets/founder/sakthi-chair-w480.webp" width="720"/></span><span><strong>{esc(f["name"])}</strong><small>{esc(f["role"])}</small></span></div>
-</div>
-<div class="founder-copy" data-reveal="">
-{pill("Meet the founder")}
-<h2 class="h2" id="founderTitle">The vision behind <span class="grad">Astra Nexora.</span></h2>
-{bio}
-<ol class="founder-steps">
-{timeline}
-</ol>
-<div class="actions">
-{btn("Connect on LinkedIn", f["linkedin"], "btn-dark", target=True)}
-{btn("Talk to Sakthi", WA, "btn-outline", target=True)}
-</div>
+{pixels("px-founder")}
+<div class="founder-card" data-reveal="">
+{tag("Meet the founder")}
+<h2 id="founderTitle">{esc(f["name"])}</h2>
+<p class="founder-role">{esc(f["role"])}</p>
+<p>{esc(f["bio"][0])}</p>
+<ol class="founder-time">{timeline}</ol>
+<div class="founder-foot">
+<a class="founder-link" href="{f["linkedin"]}" rel="noopener" target="_blank">LinkedIn {ARROW}</a>
+<a class="founder-link" href="{WA}" rel="noopener" target="_blank">Talk to Sakthi {ARROW}</a>
 </div>
 </div>
 </div>
 </section>
 
-<section aria-labelledby="whyTitle" class="section tint" id="why">
-<div class="container">
-{section_head("Why Astra Nexora", 'Not your typical <span class="grad">agency.</span>', "How we work differently, side by side.", title_id="whyTitle")}
-<div aria-label="Typical agency compared with Astra Nexora" class="compare" role="table">
-<div class="cmp-row cmp-head" role="row"><span role="columnheader"></span><span role="columnheader">Typical agency</span><span class="cmp-us-head" role="columnheader">{logo()}<span class="visually-hidden">Astra Nexora</span></span></div>
-{rows}
-</div>
+<section aria-labelledby="growTitle" class="block" id="principles">
+<div class="frame">
+<div class="block-head split">{heading("Why it works", 'Helping brands grow <span class="hl">with clarity.</span>', title_id="growTitle")}<p class="lead">The principles behind every project we take on.</p></div>
+<ul class="feats">
+{features}</ul>
 </div>
 </section>
 
-<section aria-labelledby="auditTitle" class="section" id="audit">
-<div class="container">
-<div class="audit-card" data-reveal="">
-<div aria-hidden="true" class="audit-glow"></div>
-<div class="audit-copy">
-<span class="pill on-dark"><i aria-hidden="true"></i>Free · no obligation</span>
-<h2 id="auditTitle">Find out what's holding your website back.</h2>
-<p>Send us your website and we'll check the six things that decide whether visitors find you, trust you and get in touch.</p>
-{btn("Get my free audit", "#contact", "btn-white btn-lg")}
-</div>
-<ul class="audit-list">{audit_list}</ul>
-</div>
-</div>
-</section>
-
-{testimonials}{faq_section(HOME["faqs"], 'Questions, <span class="grad">answered.</span>', p)}
+{faq_section(HOME["faqs"], 'Questions, <span class="hl">answered.</span>', p)}
 
 {contact_section(p, home)}
 
@@ -695,23 +693,23 @@ def page_hero(prefix, home, crumbs, kicker, h1, lead, actions, image_html, facts
     crumb_html = "".join(
         f'<a href="{href}">{esc(name)}</a><span aria-hidden="true">/</span>' if href else f'<span aria-current="page">{esc(name)}</span>'
         for name, href in crumbs)
-    fact_html = "\n".join(f'<div><dt>{esc(k)}</dt><dd>{esc(v)}</dd></div>' for k, v in facts)
+    fact_html = "\n".join(f'<li><span>{esc(k)}</span><strong>{esc(v)}</strong></li>' for k, v in facts)
     return f'''<section class="page-hero" id="home">
-<div aria-hidden="true" class="hero-bg"><span class="blob b1"></span><span class="blob b2"></span><span class="grid-fade"></span></div>
-<div class="container ph-grid">
-<div class="ph-copy">
+<div class="frame ph-frame">
+{pixels("px-hero-a")}
 <nav aria-label="Breadcrumb" class="breadcrumb">{crumb_html}</nav>
-{pill(kicker)}
+{tag(kicker)}
 <h1 class="ph-title">{h1}</h1>
+<div class="ph-foot">
 <p class="hero-lead">{lead}</p>
 <div class="actions">{actions}</div>
 </div>
-<div class="ph-media img-wrap" data-tilt="">{image_html}</div>
 </div>
-<div class="container">
-<dl class="ph-facts">
+<div class="frame ph-split">
+<ul class="ph-facts">
 {fact_html}
-</dl>
+</ul>
+<div class="ph-photo img-wrap">{image_html}{pixels("px-photo")}</div>
 </div>
 </section>'''
 
@@ -741,20 +739,20 @@ def service_page(s, index):
         ],
     }
 
-    h1 = s["h1"].replace("<em>", '<span class="grad">').replace("</em>", "</span>")
+    h1 = s["h1"].replace("<em>", '<span class="hl">').replace("</em>", "</span>")
     hero = page_hero(
         p, home,
         [("Home", home), ("Services", f"{home}#services"), (s["nav"], None)],
         f"Service {index:02d} · {s['nav']}", h1, esc(s["lead"]),
-        btn("Get a free consultation", f"{home}#contact", "btn-primary") + btn("Chat on WhatsApp", WA, "btn-outline", target=True),
-        img(s["hero"], s["hero_alt"], "(min-width: 1001px) 44vw, 92vw", p, eager=True) + f'<span class="ph-chip">{icon(s["slug"])}{esc(s["nav"])}</span>',
+        btn("Get a free consultation", f"{home}#contact", "btn-dark") + btn("Chat on WhatsApp", WA, "btn-white", target=True),
+        img(s["hero"], s["hero_alt"], "(min-width: 1001px) 60vw, 94vw", p, eager=True),
         s["facts"])
 
     includes = "\n".join(
-        f'<li class="inc-card spot" data-reveal=""><span class="inc-num">{i:02d}</span><h3>{esc(n)}</h3><p>{esc(d)}</p></li>'
+        f'''<li class="svc-col static" data-reveal=""><span aria-hidden="true" class="svc-num">{i:02d}</span><h3>{esc(n)}</h3><p>{esc(d)}</p></li>'''
         for i, (n, d) in enumerate(s["includes"], 1))
     steps = "\n".join(
-        f'<li class="step-card" data-reveal=""><span class="step-num">{i:02d}</span><h3>{esc(t)}</h3><p>{esc(d)}</p></li>'
+        f'<li class="step simple" data-reveal=""><div class="step-cap"><span>//{i:02d}</span><h3>{esc(t)}</h3></div><p>{esc(d)}</p></li>'
         for i, (t, d) in enumerate(s["process"], 1))
     deliver = "".join(f"<li>{CHECK}{esc(d)}</li>" for d in s["deliverables"])
     ideal = "".join(f"<li>{esc(t)}</li>" for t in s["ideal"])
@@ -762,11 +760,9 @@ def service_page(s, index):
     related = ""
     for slug in s["related"]:
         r = SERVICE_BY_SLUG[slug]
-        related += f'''<a class="svc-card spot" data-reveal="" href="{r["slug"]}.html">
-<span class="svc-icon">{icon(r["slug"])}</span>
-<h3>{esc(r["title"])}</h3>
-<p>{esc(SERVICE_TAGLINES[r["slug"]])}</p>
-<span class="svc-more">Explore {ARROW}</span>
+        related += f'''<a class="rel-card" data-reveal="" href="{r["slug"]}.html">
+<div class="rel-media img-wrap">{img(r["hero"], r["hero_alt"], "(min-width: 1001px) 30vw, 94vw", p)}</div>
+<div class="rel-body">{tag(esc(r["nav"]))}<h3>{esc(r["title"])}</h3><span class="svc-go">Explore {ARROW}</span></div>
 </a>
 '''
     prev_s = SERVICES[(index - 2) % len(SERVICES)]
@@ -778,61 +774,67 @@ def service_page(s, index):
 
 {hero}
 
-<section aria-labelledby="overviewTitle" class="section">
-<div class="container split">
-<div data-reveal="">
-{pill("Why it matters")}
-<h2 class="h2" id="overviewTitle">Built for <span class="grad">real growth.</span></h2>
-<p class="lead-lg">{esc(s["overview"][0])}</p>
-<p class="body-muted">{esc(s["overview"][1])}</p>
+<section aria-labelledby="overviewTitle" class="block">
+<div class="frame">
+<div class="about-top" data-reveal="">
+{tag("Why it matters", dark=False)}
+<h2 class="about-statement" id="overviewTitle">{esc(s["overview"][0])}</h2>
+</div>
+<div class="about-row">
+<div class="about-copy" data-reveal="">
+<p>{esc(s["overview"][1])}</p>
 <div class="ideal"><small>Ideal for</small><ul class="chips">{ideal}</ul></div>
 </div>
-<div class="split-media img-wrap" data-reveal="">{img(s["side"], s["side_alt"], "(min-width: 1001px) 44vw, 92vw", p)}</div>
+<div class="about-photo img-wrap" data-reveal="">{img(s["side"], s["side_alt"], "(min-width: 1001px) 50vw, 94vw", p, cls="bw")}</div>
+</div>
 </div>
 </section>
 
-<section aria-labelledby="includesTitle" class="section tint">
-<div class="container">
-{section_head("What's included", f'Everything in <span class="grad">{esc(s["nav"])}.</span>', "Choose the pieces you need, or let us run the whole service for you.", title_id="includesTitle")}
-<ul class="inc-grid">
+<section aria-labelledby="includesTitle" class="block">
+<div class="frame">
+<div class="block-head">{heading("What's included", f'Everything in <span class="hl">{esc(s["nav"])}.</span>', "Choose the pieces you need, or let us run the whole service for you.", center=True, title_id="includesTitle")}</div>
+<ul class="svc-cols">
 {includes}
 </ul>
 </div>
 </section>
 
-<section aria-labelledby="processTitle" class="section">
-<div class="container">
-{section_head("How we work", 'A clear process, <span class="grad">start to finish.</span>', "You always know what's happening, what's next and what it's achieving.", title_id="processTitle")}
-<ol class="step-grid">
+<section aria-labelledby="processTitle" class="block">
+<div class="frame process">
+<div class="process-side" data-reveal="">
+{tag("How we work", dark=False)}
+<h2 class="h2" id="processTitle">A clear process, <span class="hl">start to finish.</span></h2>
+<p class="lead">You always know what's happening, what's next and what it's achieving.</p>
+{btn("Start a project", f"{home}#contact", "btn-dark")}
+</div>
+<ol class="steps">
 {steps}
 </ol>
 </div>
 </section>
 
-<section aria-labelledby="deliverTitle" class="section">
-<div class="container">
-<div class="deliver-card" data-reveal="">
-<div>
-<span class="pill on-dark"><i aria-hidden="true"></i>Deliverables</span>
-<h2 id="deliverTitle">What you get.</h2>
+<section aria-labelledby="deliverTitle" class="deliver">
+<div class="frame deliver-inner">
+{pixels("px-cta")}
+<div data-reveal="">
+{tag("Deliverables")}
+<h2 id="deliverTitle">What you <span class="hl">get.</span></h2>
 <p>Every engagement comes with clear deliverables and regular reporting.</p>
-{btn("Start a project", f"{home}#contact", "btn-white")}
 </div>
-<ul class="deliver-list">{deliver}</ul>
-</div>
+<ul class="deliver-list" data-reveal="">{deliver}</ul>
 </div>
 </section>
 
-{faq_section(s["faqs"], f'Questions about <span class="grad">{esc(s["nav"])}.</span>', p)}
+{faq_section(s["faqs"], f'Questions about <span class="hl">{esc(s["nav"])}.</span>', p)}
 
-<section aria-labelledby="relatedTitle" class="section tint">
-<div class="container">
-{section_head("Related", 'Works well <span class="grad">with.</span>', title_id="relatedTitle")}
-<div class="related-grid">
+<section aria-labelledby="relatedTitle" class="block">
+<div class="frame">
+<div class="block-head">{heading("Related", 'Works well <span class="hl">with.</span>', center=True, title_id="relatedTitle")}</div>
+<div class="rel-grid">
 {related}</div>
 <nav aria-label="More services" class="pager">
-<a href="{prev_s["slug"]}.html"><small>← Previous</small><strong>{esc(prev_s["nav"])}</strong></a>
-<a href="{next_s["slug"]}.html"><small>Next →</small><strong>{esc(next_s["nav"])}</strong></a>
+<a href="{prev_s["slug"]}.html"><small>‹ Previous</small><strong>{esc(prev_s["nav"])}</strong></a>
+<a href="{next_s["slug"]}.html"><small>Next ›</small><strong>{esc(next_s["nav"])}</strong></a>
 </nav>
 </div>
 </section>
@@ -865,15 +867,17 @@ def project_page(pr, index):
         p, home,
         [("Home", home), ("Work", f"{home}#work"), (pr["title"], None)],
         f"Concept project · {pr['category']}", esc(pr["title"]), esc(pr["summary"]),
-        btn("Start a similar project", f"{home}#contact", "btn-primary") + btn(f"See {svc['nav']}", f"../services/{svc['slug']}.html", "btn-outline"),
-        img(pr["hero"], pr["hero_alt"], "(min-width: 1001px) 44vw, 92vw", p, eager=True) + '<span class="ph-chip">Concept project</span>',
+        btn("Start a similar project", f"{home}#contact", "btn-dark") + btn(f"See {svc['nav']}", f"../services/{svc['slug']}.html", "btn-white"),
+        img(pr["hero"], pr["hero_alt"], "(min-width: 1001px) 60vw, 94vw", p, eager=True),
         pr["meta"])
 
     steps = "\n".join(
-        f'<li class="step-card" data-reveal=""><span class="step-num">{i:02d}</span><h3>{esc(t)}</h3><p>{esc(d)}</p></li>'
+        f'<li class="step simple" data-reveal=""><div class="step-cap"><span>//{i:02d}</span><h3>{esc(t)}</h3></div><p>{esc(d)}</p></li>'
         for i, (t, d) in enumerate(pr["approach"], 1))
     deliver = "".join(f"<li>{CHECK}{esc(d)}</li>" for d in pr["deliverables"])
-    goals = "\n".join(f'<li class="inc-card" data-reveal=""><span class="inc-num">{i:02d}</span><h3>{esc(g)}</h3></li>' for i, g in enumerate(pr["goals"], 1))
+    goals = "\n".join(
+        f'<li class="svc-col static" data-reveal=""><span aria-hidden="true" class="svc-num">{i:02d}</span><h3>{esc(g)}</h3></li>'
+        for i, g in enumerate(pr["goals"], 1))
     nxt = PROJECTS[index % len(PROJECTS)]
 
     body = f'''{header(p, home)}
@@ -882,56 +886,58 @@ def project_page(pr, index):
 
 {hero}
 
-<div class="container"><p class="concept-note"><strong>Concept project.</strong> This shows how we would approach this kind of brief. It is not a client case study and has no client results.</p></div>
+<div class="frame note-frame"><p class="concept-note"><strong>Concept project.</strong> This shows how we would approach this kind of brief. It is not a client case study and has no client results.</p></div>
 
-<section aria-labelledby="challengeTitle" class="section">
-<div class="container split">
-<div data-reveal="">
-{pill("The brief")}
-<h2 class="h2" id="challengeTitle">The <span class="grad">challenge.</span></h2>
-<p class="lead-lg">{esc(pr["challenge"])}</p>
+<section aria-labelledby="challengeTitle" class="block">
+<div class="frame">
+<div class="about-top" data-reveal="">
+{tag("The brief", dark=False)}
+<h2 class="about-statement" id="challengeTitle">{esc(pr["challenge"])}</h2>
 </div>
-<div class="split-media img-wrap" data-reveal="">{img(pr["second"], pr["second_alt"], "(min-width: 1001px) 44vw, 92vw", p)}</div>
+<div class="about-photo wide img-wrap" data-reveal="">{img(pr["second"], pr["second_alt"], "(min-width: 1001px) 1240px, 94vw", p, cls="bw")}</div>
 </div>
 </section>
 
-<section aria-labelledby="approachTitle" class="section tint">
-<div class="container">
-{section_head("Our approach", 'How we\'d <span class="grad">solve it.</span>', "Four steps, each with a clear outcome before the next one starts.", title_id="approachTitle")}
-<ol class="step-grid">
+<section aria-labelledby="approachTitle" class="block">
+<div class="frame process">
+<div class="process-side" data-reveal="">
+{tag("Our approach", dark=False)}
+<h2 class="h2" id="approachTitle">How we'd <span class="hl">solve it.</span></h2>
+<p class="lead">Four steps, each with a clear outcome before the next one starts.</p>
+{btn("Start a similar project", f"{home}#contact", "btn-dark")}
+</div>
+<ol class="steps">
 {steps}
 </ol>
 </div>
 </section>
 
-<section aria-labelledby="deliverTitle" class="section">
-<div class="container">
-<div class="deliver-card" data-reveal="">
-<div>
-<span class="pill on-dark"><i aria-hidden="true"></i>Scope</span>
-<h2 id="deliverTitle">What we'd deliver.</h2>
+<section aria-labelledby="deliverTitle" class="deliver">
+<div class="frame deliver-inner">
+{pixels("px-cta")}
+<div data-reveal="">
+{tag("Scope")}
+<h2 id="deliverTitle">What we'd <span class="hl">deliver.</span></h2>
 <p>Part of our {esc(svc["title"])} service.</p>
-{btn(f"Explore {svc['nav']}", f"../services/{svc['slug']}.html", "btn-white")}
 </div>
-<ul class="deliver-list">{deliver}</ul>
-</div>
+<ul class="deliver-list" data-reveal="">{deliver}</ul>
 </div>
 </section>
 
-<section aria-labelledby="goalsTitle" class="section">
-<div class="container">
-{section_head("Success measures", 'What success <span class="grad">looks like.</span>', "The goals we'd set and report against for a project like this.", title_id="goalsTitle")}
-<ul class="inc-grid goals">
+<section aria-labelledby="goalsTitle" class="block">
+<div class="frame">
+<div class="block-head">{heading("Success measures", 'What success <span class="hl">looks like.</span>', "The goals we'd set and report against for a project like this.", center=True, title_id="goalsTitle")}</div>
+<ul class="svc-cols four">
 {goals}
 </ul>
 </div>
 </section>
 
-<section class="section">
-<div class="container">
-<a class="next-card" data-reveal="" href="{nxt["slug"]}.html">
-<div class="next-media img-wrap">{img(nxt["hero"], "", "(min-width: 1001px) 40vw, 92vw", p)}</div>
-<div class="next-copy"><small>Next project</small><strong>{esc(nxt["title"])}</strong><span class="work-go">View project {ARROW}</span></div>
+<section class="block">
+<div class="frame">
+<a class="next-proj" data-reveal="" href="{nxt["slug"]}.html">
+<div class="slide-media img-wrap">{img(nxt["hero"], "", "(min-width: 1001px) 1240px, 94vw", p)}</div>
+<div class="slide-info"><small>Next project</small><h3>{esc(nxt["title"])}</h3><span class="slide-link">View project {ARROW}</span></div>
 </a>
 </div>
 </section>
