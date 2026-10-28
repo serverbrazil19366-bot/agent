@@ -1,7 +1,7 @@
 /* =====================================================
    SAKTHI — portfolio behaviour
-   Works without the vendor libraries; reduced-motion
-   visitors get the static page.
+   Works without the vendor libraries. Reduced-motion
+   visitors keep the reveals but lose smooth scrolling.
 ===================================================== */
 
 (function () {
@@ -10,7 +10,7 @@
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const fine = matchMedia("(hover: hover) and (pointer: fine)").matches;
 const hasGsap = !!(window.gsap && window.ScrollTrigger);
-const animate = hasGsap && !reduce;
+const animate = hasGsap;
 if (hasGsap) gsap.registerPlugin(ScrollTrigger);
 if (animate) document.querySelectorAll(".svc, .work-card, .vid, .quote, .xp, .edu, .cs-fig").forEach(el => el.removeAttribute("data-reveal"));
 
@@ -28,7 +28,7 @@ addEventListener("pageshow", e => { if (e.persisted) toTop(); });
 
 /* ---------- smooth scroll ---------- */
 let lenis = null;
-if (animate && window.Lenis) {
+if (animate && !reduce && window.Lenis) {
     lenis = new Lenis({ lerp: 0.1, smoothWheel: true, anchors: false });
     lenis.on("scroll", ScrollTrigger.update);
     gsap.ticker.add(t => lenis.raf(t * 1000));
@@ -97,7 +97,7 @@ document.querySelector(".theme-btn").addEventListener("click", () => {
 });
 
 /* ---------- reveals + counters ---------- */
-if ("IntersectionObserver" in window && !reduce) {
+if ("IntersectionObserver" in window) {
     const io = new IntersectionObserver(es => es.forEach(en => {
         if (!en.isIntersecting) return;
         en.target.classList.add("in");
@@ -120,7 +120,7 @@ if ("IntersectionObserver" in window && !reduce) {
             if (p < 1) requestAnimationFrame(step);
         })(t0);
     }), { threshold: 0.6 });
-    document.querySelectorAll(".stats b, .results b, .float-card b").forEach(b => { if (/^\d/.test(b.textContent)) cio.observe(b); });
+    document.querySelectorAll(".stats b, .results b, .hero-stats b").forEach(b => { if (/^\d/.test(b.textContent)) cio.observe(b); });
 } else {
     document.querySelectorAll("[data-reveal]").forEach(el => el.classList.add("in"));
 }
@@ -132,7 +132,7 @@ document.querySelectorAll(".tab").forEach(tab => tab.addEventListener("click", (
 }));
 // Draw the first panel's lines once it is on screen
 const firstPanel = document.querySelector(".panel.on");
-if (firstPanel && "IntersectionObserver" in window && !reduce) {
+if (firstPanel && "IntersectionObserver" in window) {
     firstPanel.classList.remove("on");
     firstPanel.style.display = "grid";
     new IntersectionObserver((es, o) => { if (es[0].isIntersecting) { firstPanel.style.display = ""; firstPanel.classList.add("on"); o.disconnect(); } }, { threshold: 0.3 }).observe(firstPanel);
@@ -144,7 +144,7 @@ document.querySelectorAll(".filter").forEach(f => f.addEventListener("click", ()
     document.querySelectorAll(".work-card").forEach(card => {
         const show = f.dataset.filter === "all" || card.dataset.tag === f.dataset.filter;
         card.classList.toggle("is-hidden", !show);
-        if (show && !reduce) card.animate([{ opacity: 0, transform: "translateY(16px)" }, { opacity: 1, transform: "none" }], { duration: 500, easing: "cubic-bezier(.22,1,.36,1)" });
+        if (show) card.animate([{ opacity: 0, transform: "translateY(16px)" }, { opacity: 1, transform: "none" }], { duration: 500, easing: "cubic-bezier(.22,1,.36,1)" });
     });
 }));
 
@@ -201,26 +201,32 @@ if (animate) {
     document.body.appendChild(bar);
     gsap.to(bar, { scaleX: 1, ease: "none", scrollTrigger: { start: 0, end: "max", scrub: 0.3 } });
 
-    // Hero: entrance, then the photo and name drift apart as you scroll
+    // Hero: the name rises letter by letter, the portrait climbs out of the sun
     if (document.querySelector(".hero")) {
+        const name = document.querySelector(".hero-name");
+        name.setAttribute("aria-label", name.textContent.trim());
+        name.querySelectorAll(".hn-s, .hn-line").forEach(part => {
+            part.setAttribute("aria-hidden", "true");
+            part.innerHTML = [...part.textContent].map(c => '<span class="ch">' + c + "</span>").join("");
+        });
         gsap.timeline({ defaults: { ease: "expo.out" } })
-            .from(".avail, .hello", { y: 24, autoAlpha: 0, duration: 1, stagger: 0.1 }, 0.1)
-            .from(".hero-name", { yPercent: 40, autoAlpha: 0, duration: 1.3 }, 0.25)
-            .from(".hero-role, .hero-tags span, .hero-lead, .hero-copy .actions, .hero-copy .socials", { y: 24, autoAlpha: 0, duration: 1, stagger: 0.05 }, 0.5)
-            .from(".hv-photo", { clipPath: "inset(100% 0 0 0 round 999px 999px 30px 30px)", duration: 1.6, ease: "expo.inOut" }, 0.15)
-            .from(".hv-photo img", { scale: 1.3, duration: 2 }, 0.3)
-            .from(".hv-back", { x: -26, y: -26, autoAlpha: 0, duration: 1.4 }, 0.7)
-            .from(".hv-line", { x: 24, y: 22, autoAlpha: 0, duration: 1.4 }, 0.8)
-            .from(".hv-dots", { scale: 0.4, autoAlpha: 0, duration: 1.2 }, 0.9)
-            .from(".hv-badge", { scale: 0, rotate: -180, duration: 1.4, ease: "back.out(1.6)" }, 1)
-            .from(".hv-chip", { y: 30, autoAlpha: 0, duration: 1 }, 1.1)
-            .from(".hero-ghost", { xPercent: 20, autoAlpha: 0, duration: 1.6 }, 0.3);
+            .from(".hero-top > *", { y: 24, autoAlpha: 0, duration: 1, stagger: 0.1 }, 0.1)
+            .from(".hero-name .ch", { yPercent: 110, rotate: 8, autoAlpha: 0, duration: 1.2, stagger: 0.04 }, 0.2)
+            .from(".hf-sun", { scale: 0, duration: 1.4, ease: "back.out(1.4)" }, 0.4)
+            .from(".hf-ring", { scale: 0.6, autoAlpha: 0, duration: 1.6 }, 0.6)
+            .from(".hf-cut img", { yPercent: 45, duration: 1.6 }, 0.55)
+            .from(".hf-cut", { autoAlpha: 0, duration: 0.6, ease: "none" }, 0.55)
+            .from(".hero-figure .hv-badge", { scale: 0, rotate: -180, duration: 1.4, ease: "back.out(1.6)" }, 1.1)
+            .from(".hero-figure .hv-chip", { y: 30, autoAlpha: 0, duration: 1 }, 1.2)
+            .from(".hero-copy > *", { y: 30, autoAlpha: 0, duration: 1, stagger: 0.08 }, 0.9)
+            .from(".hero-stats li, .hero-side .hero-tags span", { x: 40, autoAlpha: 0, duration: 1, stagger: 0.06 }, 1);
         const st = { trigger: ".hero", start: "top top", end: "bottom top", scrub: true };
-        gsap.to(".hero-ghost", { xPercent: -25, ease: "none", scrollTrigger: st });
-        gsap.to(".hv-stage", { yPercent: -12, ease: "none", scrollTrigger: st });
-        gsap.to(".hv-photo img", { yPercent: 8, scale: 1.1, ease: "none", scrollTrigger: st });
-        gsap.to(".hero-name", { xPercent: -6, ease: "none", scrollTrigger: st });
-        gsap.to(".hero-copy", { autoAlpha: 0.2, ease: "none", scrollTrigger: { trigger: ".hero", start: "40% top", end: "bottom top", scrub: true } });
+        gsap.to(".hero-name", { yPercent: 60, autoAlpha: 0.15, ease: "none", scrollTrigger: st });
+        gsap.to(".hero-name .hn-s", { xPercent: -40, ease: "none", scrollTrigger: st });
+        gsap.to(".hero-figure", { yPercent: -10, ease: "none", scrollTrigger: st });
+        gsap.to(".hf-sun", { scale: 1.25, ease: "none", scrollTrigger: st });
+        gsap.to(".hf-ring", { rotate: 120, ease: "none", scrollTrigger: st });
+        gsap.to(".hero-copy, .hero-side", { yPercent: -18, autoAlpha: 0.3, ease: "none", scrollTrigger: { trigger: ".hero", start: "30% top", end: "bottom top", scrub: true } });
     }
 
     // Section headings: words rise one after another
@@ -325,14 +331,14 @@ if (animate) {
             dot.classList.toggle("big", !!e.target.closest("a, button, select, input, textarea, label"));
         });
         document.addEventListener("pointerleave", () => dot.classList.add("off"));
-        // Hero frame tilts with the mouse; layers move by depth
+        // Hero layers move by depth with the mouse
         const hero = document.querySelector(".hero");
         if (hero) hero.addEventListener("pointermove", e => {
             const x = e.clientX / innerWidth - 0.5, y = e.clientY / innerHeight - 0.5;
-            gsap.to(".hv-photo", { rotateY: x * 8, rotateX: -y * 8, transformPerspective: 900, duration: 0.8, ease: "power3.out" });
-            gsap.to(".hv-back", { x: 26 + x * 18, y: 26 + y * 18, duration: 1, ease: "power3.out" });
-            gsap.to(".hv-line", { x: -24 - x * 26, y: -22 - y * 26, duration: 1, ease: "power3.out" });
-            gsap.to(".hv-dots", { x: x * -30, y: y * -30, duration: 1.2, ease: "power3.out" });
+            gsap.to(".hf-cut", { x: x * 18, y: y * 10, duration: 1, ease: "power3.out" });
+            gsap.to(".hf-sun", { x: x * -22, y: y * -14, duration: 1.2, ease: "power3.out" });
+            gsap.to(".hf-ring", { x: x * -36, y: y * -24, duration: 1.4, ease: "power3.out" });
+            gsap.to(".hero-name", { x: x * -30, duration: 1.4, ease: "power3.out" });
         });
         // Cards tilt slightly under the cursor
         document.querySelectorAll(".work-card, .svc, .quote").forEach(card => {
