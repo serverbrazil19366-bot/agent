@@ -280,14 +280,20 @@ VIDEOS = [
 
 # Posters and print pieces Sakthi designed for clients: (image key, client, format, title)
 DESIGNS = [
-    ("akeela-implant", "Akeela Dental Care", "Social poster", "Fixed teeth in just 72 hours"),
+    ("akeela-years", "Akeela Dental Care", "Brand poster", "Three decades. One smile."),
     ("propedo-launch", "ProPedoZR", "Launch post", "Meet ProPedo ZR"),
-    ("propedo-flyer", "ProPedoZR", "Product flyer", "Pediatric zirconium crown solutions"),
+    ("akeela-wisdom", "Akeela Dental Care", "Awareness poster", "Wisdom tooth pain? Don't ignore it."),
+    ("propedo-zirconia", "ProPedoZR", "Product poster", "Why zirconia for little smiles?"),
+    ("akeela-missing", "Akeela Dental Care", "Implant ad", "Missing a tooth?"),
     ("propedo-ad", "ProPedoZR", "Product ad", "The right fit for little smiles"),
+    ("akeela-implant", "Akeela Dental Care", "Social poster", "Fixed teeth in just 72 hours"),
+    ("propedo-strong", "ProPedoZR", "Campaign poster", "Strong foundations for bigger tomorrows"),
     ("propedo-gandhi", "ProPedoZR", "Festive post", "Gandhi Jayanti greeting"),
 ]
-BROCHURE = ("ProPedoZR", "Trifold brochure", "Precision for growing smiles",
-            [("propedo-brochure-1", "Outside spread"), ("propedo-brochure-2", "Inside spread")])
+# Print pieces for one client, shown together: (client, heading, [(image key, label)])
+PRINT = ("ProPedoZR", "Product flyer &amp; trifold brochure",
+         [("propedo-flyer", "Product flyer"), ("propedo-brochure-1", "Brochure, outside spread"),
+          ("propedo-brochure-2", "Brochure, inside spread")])
 
 # Shared by Sakthi from real clients, with their permission. Quotes are kept word for word.
 TESTIMONIALS = [
