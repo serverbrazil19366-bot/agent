@@ -478,3 +478,130 @@ KEYWORD_PAGES = [
         ],
     },
 ]
+
+# More depth for the keyword pages: extra sections, a step-by-step process, tools and FAQs
+_KW_MORE = {
+    "seo-expert-tamil-nadu": {
+        "sections": [
+            ("Technical SEO: fixing the foundations",
+             "Google has to be able to crawl, understand and trust your website before it ranks it. I check indexing in "
+             "Search Console, page speed and Core Web Vitals, broken links, duplicate or missing titles and descriptions, "
+             "heading structure, mobile layout and structured data. On the Ankhor Dental Lab website, the problems were "
+             "missing metadata, inconsistent headings, weak internal linking and indexing issues; fixing those gave the "
+             "site a much stronger technical base."),
+            ("On-page SEO and content",
+             "Every important service needs its own page, written around what customers actually type into Google: the "
+             "service, the problem and the area. I do the keyword research, then rewrite titles, headings and content so "
+             "each page clearly answers one search, and link related pages together so visitors and Google can find them."),
+            ("Local SEO and Google Business Profile",
+             "For clinics, labs and shops, most enquiries come from the map pack. I audit and complete your Google "
+             "Business Profile: the right categories and services, accurate hours and contact details, real photos, and "
+             "a steady flow of reviews. Your name, address and phone number are kept consistent everywhere they appear."),
+            ("AI search (AEO)",
+             "More people now ask ChatGPT, Gemini and Google's AI Overviews instead of scrolling results. Clear answers, "
+             "FAQ sections, structured data and consistent information about your business across the web make it more "
+             "likely those tools mention you."),
+            ("Reporting you can understand",
+             "I set up Google Search Console and GA4 properly, then send a monthly report in plain language: which "
+             "searches you appear for, how many people clicked, which pages bring enquiries and what I'm working on next."),
+        ],
+        "process": [
+            ("Audit", "Website, Google Business Profile, Search Console data and the competitors ranking above you."),
+            ("Plan", "The keywords worth winning, the pages to create or fix, and the order to do it in."),
+            ("Fix & build", "Technical fixes, on-page optimisation, new service pages and local SEO updates."),
+            ("Measure", "Search Console and GA4 tracking with a clear monthly report and next steps."),
+        ],
+        "tools": ["Google Search Console", "Google Analytics 4", "Rank Math", "WordPress", "Google Business Profile",
+                  "PageSpeed Insights", "Schema markup"],
+        "faqs": [
+            ("What's included in an SEO audit?",
+             "Indexing and crawl checks, page speed, titles and descriptions, headings, internal links, mobile usability, "
+             "structured data, your Google Business Profile and a look at the competitors ranking above you. You get a "
+             "prioritised list of what to fix first."),
+            ("Do I need a new website to improve SEO?",
+             "Usually not. Most websites can be fixed and improved. I only recommend a rebuild when the current site is "
+             "too slow or too hard to change to be worth fixing."),
+            ("Do you write the content too?",
+             "Yes. I write or rewrite service pages, titles, descriptions and FAQs based on the keyword research, and you "
+             "approve everything before it goes live."),
+        ],
+    },
+    "digital-marketing-expert-tamil-nadu": {
+        "sections": [
+            ("Search: SEO and Google Business Profile",
+             "Showing up when people search for your service is usually the cheapest source of steady enquiries. I handle "
+             "technical and on-page SEO, local SEO and Google Business Profile optimisation, and track it all in Search "
+             "Console and GA4."),
+            ("Websites that turn visitors into enquiries",
+             "Your website should make it obvious what you offer and how to contact you, especially on mobile. For Akeela "
+             "Dental Care I reorganised the treatments, improved readability and made booking, calls and WhatsApp easy "
+             "to reach from every page. I build on WordPress, Wix, Framer and custom code, depending on what fits."),
+            ("Ads: Google and Meta",
+             "When you need enquiries faster, I set up Google Ads and Meta Ads campaigns with proper conversion tracking, "
+             "so you can see which campaigns bring calls and messages, not just clicks."),
+            ("Social media and creatives",
+             "Consistent, on-brand content builds trust. I plan content and design posters, product creatives and reels; "
+             "for Guggulr, a premium gift box brand, I created a series of product creatives that kept every post on-brand."),
+            ("Automation that follows up for you",
+             "Leads go cold when nobody replies. I connect forms, WhatsApp and email with n8n so enquiries reach your team "
+             "instantly and confirmations go out on their own."),
+        ],
+        "process": [
+            ("Understand", "Your business, your customers, where enquiries come from today and where they're lost."),
+            ("Plan", "The channels worth focusing on first, with clear goals for each one."),
+            ("Execute", "Website, SEO, ads, content and automation, done by me, not handed off."),
+            ("Measure & improve", "GA4 and Search Console reporting, then adjust based on what brings enquiries."),
+        ],
+        "tools": ["Google Analytics 4", "Google Search Console", "Google Ads", "Meta Ads", "WordPress", "Wix", "Framer",
+                  "Canva", "CapCut", "n8n"],
+        "faqs": [
+            ("Which digital marketing channel should I start with?",
+             "For most local businesses: a clear website, a complete Google Business Profile and basic SEO first, because "
+             "they keep working without ad spend. Ads come next when you need faster results."),
+            ("Can you handle everything, or only one part?",
+             "Both. Some clients hire me for one thing, like SEO or a website; others want the website, search, social "
+             "and automation handled together."),
+        ],
+    },
+    "marketing-automation-expert": {
+        "sections": [
+            ("Case study: WhatsApp bookings for a dental clinic",
+             "Akeela Dental Care was getting calls during busy clinic hours and enquiries that were easy to miss. I built "
+             "a booking form (name, phone, treatment and message) that opens WhatsApp with the request filled in, set up "
+             "WhatsApp automation for booking enquiries and added call and WhatsApp buttons that stay on screen on mobile. "
+             "Now every request reaches the team with the patient's details, ready to confirm in one reply."),
+            ("Case study: scan and case booking for a dental lab",
+             "Ankhor Dental Lab received bookings through calls and scattered WhatsApp messages. I built a Book a Scan "
+             "flow where clinics pick a free slot and add their case details; the booking is saved, a WhatsApp message is "
+             "ready to send, the case appears in a team dashboard, and email and app notifications go out automatically. "
+             "Taken slots show as booked straight away."),
+            ("What n8n makes possible",
+             "n8n connects the tools you already use. A new form entry can create a row in a sheet, send an email, notify "
+             "the team, add the lead to a CRM and schedule a follow-up, all without anyone copying and pasting."),
+            ("Keeping it simple to run",
+             "Automation should make your day easier, not add another tool to manage. I document each flow, keep it "
+             "close to how your team already works, and make sure someone gets alerted if anything fails."),
+        ],
+        "process": [
+            ("Map", "How enquiries and bookings flow today, and where time is lost or messages get missed."),
+            ("Design", "The simplest flow that removes those steps, using the tools you already have."),
+            ("Build & test", "n8n workflows, forms, WhatsApp and email messages, dashboards and notifications."),
+            ("Hand over", "Documentation, a walkthrough for your team and alerts if a step fails."),
+        ],
+        "tools": ["n8n", "WhatsApp Business", "Email automation", "Google Sheets", "Dashboards", "App notifications"],
+        "faqs": [
+            ("Which businesses benefit most from automation?",
+             "Any business that handles bookings or enquiries every day: clinics, labs, salons, service businesses and "
+             "online stores. If your team repeats the same messages or copies data by hand, there's something to automate."),
+            ("Can automation work with my existing website?",
+             "Yes. Forms and booking flows can be added to most websites, including WordPress and Wix, and connected to "
+             "n8n without rebuilding the site."),
+        ],
+    },
+}
+for _k in KEYWORD_PAGES:
+    _m = _KW_MORE[_k["slug"]]
+    _k["sections"] = _k["sections"] + _m["sections"]
+    _k["process"] = _m["process"]
+    _k["tools"] = _m["tools"]
+    _k["faqs"] = _k["faqs"] + _m["faqs"]

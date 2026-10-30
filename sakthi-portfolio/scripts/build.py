@@ -608,6 +608,14 @@ def keyword_page(k):
 </div>
 </section>
 
+<section class="sec kw-process">
+<div class="wrap">
+{sec_head("", "How I work", 'Step by <em>step</em>', tid="kwSteps")}
+<ol class="kw-steps">{"".join(f'<li data-reveal=""><span>{n:02d}</span><h3>{esc(t)}</h3><p>{esc(d)}</p></li>' for n, (t, d) in enumerate(k["process"], 1))}</ol>
+<div class="kw-tools" data-reveal=""><span class="col-label">Tools I use</span><ul class="chips">{"".join(f"<li>{esc(t)}</li>" for t in k["tools"])}</ul></div>
+</div>
+</section>
+
 <section class="sec kw-work-sec">
 <div class="wrap">
 {sec_head("", "Related work", 'Projects that <em>show how</em>', tid="kwWork")}
