@@ -229,6 +229,16 @@ PROJECTS = [
         "summary": "A consistent Instagram creative system that gave a premium gift box brand a stronger identity.",
         "cover": "work/guggulr-1",
         "gallery": [],
+        # Product creatives Sakthi designed in Canva and edited for the brand's Instagram
+        "creatives": [
+            ("guggulr-02", "Trésor Céleste"), ("guggulr-01", "Turquoise gift box"),
+            ("guggulr-03", "Édition Velaris collage"), ("guggulr-04", "Coffret Aurore Noël collage"),
+            ("guggulr-05", "Édition Velaris"), ("guggulr-06", "Peacock gift box"),
+            ("guggulr-07", "Coffret Aurore Noël"), ("guggulr-08", "Paon Royal"),
+            ("guggulr-09", "L'édition Majestic"), ("guggulr-10", "Majestic box, three views"),
+            ("guggulr-11", "Rose basket hamper"), ("guggulr-12", "Garden dry fruit tray"),
+            ("guggulr-13", "Christmas greeting"),
+        ],
         "live": "",
         "meta": [("Year", "2026"), ("Industry", "Premium gift boxes"), ("Client", "GUGGULR"), ("Role", "Social media & creative")],
         "sections": [

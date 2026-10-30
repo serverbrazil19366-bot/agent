@@ -57,6 +57,8 @@ def svg(paths, cls="ic", sw="1.7"):
             f'stroke-linejoin="round" stroke-width="{sw}" viewbox="0 0 24 24">{paths}</svg>')
 
 
+IMG_MODAL = '<div aria-hidden="true" aria-label="Design preview" aria-modal="true" class="img-modal" id="imgModal" role="dialog"><button aria-label="Close" class="vm-close" type="button">✕</button><button aria-label="Previous design" class="im-nav im-prev" type="button">‹</button><figure><img alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" decoding="async"/><figcaption></figcaption></figure><button aria-label="Next design" class="im-nav im-next" type="button">›</button></div>'
+
 ARROW = svg('<path d="M5 12h14M13 6l6 6-6 6"/>', "ic arrow", "2")
 ARROW_UR = svg('<path d="M7 17 17 7M8 7h9v9"/>', "ic arrow", "2")
 DOWNLOAD = svg('<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>', "ic", "2")
@@ -445,7 +447,7 @@ def home():
 
 </main>
 
-<div aria-hidden="true" aria-label="Design preview" aria-modal="true" class="img-modal" id="imgModal" role="dialog"><button aria-label="Close" class="vm-close" type="button">✕</button><button aria-label="Previous design" class="im-nav im-prev" type="button">‹</button><figure><img alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" decoding="async"/><figcaption></figcaption></figure><button aria-label="Next design" class="im-nav im-next" type="button">›</button></div>
+{IMG_MODAL}
 <div aria-hidden="true" class="vid-modal" id="vidModal"><div class="vm-box"><button aria-label="Close video" class="vm-close" type="button">✕</button><div class="vm-frame"></div></div></div>
 
 {footer(p, h)}'''
@@ -472,6 +474,18 @@ def work_page(pr, i):
             f'<figure class="cs-fig{" phone" if g.endswith("-m") else ""}" data-reveal="">{img(g, pr["title"] + " screenshot", "(min-width: 1001px) 900px, 92vw", p)}</figure>'
             for g in pr["gallery"])
         gallery = f'<section class="sec cs-gallery"><div class="wrap gal-grid">{figs}</div></section>'
+    if pr.get("creatives"):
+        cards = "".join(
+            f'''<li class="dz">
+<button aria-label="View larger: {attr(t)}" class="dz-btn" data-full="{p}assets/work/{key}-w{DIMS["work/" + key][0]}.webp" data-cap="{attr(t)}" type="button">
+{img("work/" + key, pr["meta"][2][1] + " product creative: " + t, "(min-width: 1001px) 300px, 50vw", p)}
+<span aria-hidden="true" class="dz-zoom">{svg('<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>', "ic", "2")}</span>
+</button>
+</li>''' for key, t in pr["creatives"])
+        gallery += f'''<section aria-labelledby="crTitle" class="sec design cs-creatives"><div class="wrap">
+{sec_head("", "Product creatives", 'Posts I <em>designed</em>', "Product creatives designed in Canva and edited for the brand's Instagram.", tid="crTitle")}
+<ul class="cr-grid">{cards}</ul>
+</div></section>'''
     nxt = PROJECTS[(i + 1) % len(PROJECTS)]
     live = btn("Visit live site", pr["live"], "btn-accent", ARROW_UR, target=True) if pr["live"] else ""
     body = f'''{header(p, h)}
@@ -509,6 +523,7 @@ def work_page(pr, i):
 </div>
 </section>
 </main>
+{IMG_MODAL if pr.get("creatives") else ""}
 
 {footer(p, h)}'''
     return head(f"{pr['title']} | {PROFILE['name']}", pr["summary"], path, p, schema) + body
