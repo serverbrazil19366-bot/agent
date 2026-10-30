@@ -129,7 +129,10 @@ def head(title, desc, path, prefix, schema, preload=""):
 <meta content="{SITE}{path}" property="og:url"/>
 <meta content="{SITE}assets/og.jpg" property="og:image"/>
 <meta content="summary_large_image" name="twitter:card"/>
-<link href="{prefix}assets/favicon.png" rel="icon" type="image/png"/>
+<link href="{prefix}assets/favicon-32.png" rel="icon" sizes="32x32" type="image/png"/>
+<link href="{prefix}assets/favicon.png" rel="icon" sizes="48x48" type="image/png"/>
+<link href="{prefix}assets/favicon-192.png" rel="icon" sizes="192x192" type="image/png"/>
+<link href="{prefix}assets/apple-touch-icon.png" rel="apple-touch-icon"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Phudu:wght@600;700;800;900&amp;family=Instrument+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
