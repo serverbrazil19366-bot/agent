@@ -14,7 +14,7 @@ python3 scripts/build.py
 
 git -C "$LIVE_REPO" pull --ff-only origin main
 find "$LIVE_REPO" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
-cp -r index.html 404.html robots.txt sitemap.xml netlify.toml google*.html css js assets work "$LIVE_REPO"/
+cp -r index.html 404.html robots.txt sitemap.xml netlify.toml google*.html [0-9a-f]*.txt css js assets work "$LIVE_REPO"/
 
 cd "$LIVE_REPO"
 git add -A
