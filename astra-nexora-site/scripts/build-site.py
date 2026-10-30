@@ -535,8 +535,9 @@ def home_page(posts=()):
                 "email": EMAIL,
                 "foundingDate": "2025",
                 "foundingLocation": "Tamil Nadu, India",
-                "founder": {"@type": "Person", "name": HOME["founder"]["name"], "jobTitle": HOME["founder"]["role"],
-                            "sameAs": [HOME["founder"]["linkedin"]]},
+                "founder": {"@type": "Person", "@id": HOME["founder"]["portfolio"] + "#person", "name": HOME["founder"]["name"],
+                            "alternateName": "Sakthi", "jobTitle": HOME["founder"]["role"], "url": HOME["founder"]["portfolio"],
+                            "sameAs": [HOME["founder"]["portfolio"], HOME["founder"]["linkedin"]]},
                 "sameAs": [u for _, u in SOCIAL],
             },
             {
@@ -694,6 +695,7 @@ def home_page(posts=()):
 <ol class="founder-time" data-reveal="">{timeline_html}</ol>
 <div class="actions" data-reveal="">
 {btn("Talk to Sakthi", WA, "btn-white", target=True)}
+{btn("View portfolio", f["portfolio"], "btn-line", target=True)}
 {btn("LinkedIn", f["linkedin"], "btn-line", target=True)}
 </div>
 </div>
@@ -1008,7 +1010,7 @@ def llms_txt(posts=()):
         "# Astra Nexora",
         "",
         "> Astra Nexora (AstraNexora) is a digital marketing agency in Tamil Nadu, India. Tagline: Next Era in Digital Marketing. "
-        "Founded in 2025 by S. Saktheeswaran (Sakthi), Founder & Managing Director. Serves businesses across India.",
+        "Founded in 2025 by S. Saktheeswaran (Sakthi), Founder & Managing Director (portfolio: https://saktheeswaran.netlify.app/). Serves businesses across India.",
         "",
         "## Services",
     ]
@@ -1221,7 +1223,7 @@ def post_page(post, posts):
          "datePublished": post["date"], "dateModified": post.get("updated", post["date"]),
          "image": SITE + f"assets/stock/{post['image']}-w1200.webp", "articleSection": post["category"],
          "keywords": post.get("keywords", ""),
-         "author": {"@type": "Person", "name": f["name"], "jobTitle": f["role"], "url": SITE + "#founder", "sameAs": [f["linkedin"]]},
+         "author": {"@type": "Person", "name": f["name"], "jobTitle": f["role"], "url": f["portfolio"], "sameAs": [f["portfolio"], f["linkedin"]]},
          "publisher": {"@type": "Organization", "name": "Astra Nexora", "logo": {"@type": "ImageObject", "url": SITE + "assets/brand/logo-square.png"}},
          "mainEntityOfPage": SITE + path},
         breadcrumb_schema([("Home", ""), ("Blog", "blog/"), (plain, path)]),
@@ -1293,7 +1295,7 @@ def post_page(post, posts):
 <div class="author-box">
 <img alt="{esc(f["name"])}" decoding="async" height="900" loading="lazy" src="../assets/founder/sakthi-chair-w480.webp" width="720"/>
 <div><small>Written by</small><h3>{esc(f["name"])}</h3><p>{esc(f["role"])}, Astra Nexora. Works on SEO, websites, branding and content for businesses across India.</p>
-<a href="{f["linkedin"]}" rel="noopener" target="_blank">LinkedIn {ARROW}</a></div>
+<a href="{f["portfolio"]}" rel="noopener" target="_blank">Portfolio {ARROW}</a> <a href="{f["linkedin"]}" rel="noopener" target="_blank">LinkedIn {ARROW}</a></div>
 </div>
 </article>
 <aside class="post-side">

@@ -471,7 +471,8 @@ HOME = {
             ("2021", "Expanded into branding and content strategy for growing businesses"),
             ("2025", "Founded Astra Nexora in Tamil Nadu"),
         ],
-        "linkedin": "https://www.linkedin.com/in/saktheeswaran-s-30a036273/",
+        "linkedin": "https://www.linkedin.com/in/saktheeswaran-digital-marketing-expert/",
+        "portfolio": "https://saktheeswaran.netlify.app/",
     },
     "faqs": [
         ("What services does Astra Nexora offer?",

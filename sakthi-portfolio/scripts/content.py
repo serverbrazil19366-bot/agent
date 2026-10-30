@@ -25,7 +25,8 @@ STATS = [("2+", "Years experience"), ("18+", "Projects completed"), ("12+", "Hap
 RESULTS = [("98%", "Client satisfaction"), ("200%", "Revenue growth delivered for clients")]
 
 ABOUT = [
-    "I help businesses grow their online visibility, traffic and lead generation through structured, data-driven "
+    "I'm S. Saktheeswaran (Sakthi), founder & CEO of Astra Nexora and a digital marketing and SEO expert based in "
+    "Tamil Nadu, India. I help businesses grow their online visibility, traffic and lead generation through structured, data-driven "
     "digital marketing. As founder of Astra Nexora, I run end-to-end digital marketing across multiple brands, "
     "handling everything from SEO strategy to website development to marketing automation, personally.",
     "I don't outsource strategy, I execute it myself. That means faster iteration, tighter feedback loops and "

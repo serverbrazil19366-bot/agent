@@ -199,19 +199,24 @@ def work_card(p, prefix, i, n=None):
 
 def home():
     p, h = "", ""
+    title = "S Saktheeswaran – Founder of Astra Nexora | Digital Marketing & SEO Expert, Tamil Nadu"
+    desc = (f"{PROFILE['name']} (Sakthi), founder of Astra Nexora, is a digital marketing and SEO expert in Tamil "
+            "Nadu, India: SEO, websites, Google and Meta ads and marketing automation.")
     schema = {"@context": "https://schema.org", "@graph": [
-        {"@type": "Person", "@id": SITE + "#person", "name": PROFILE["name"], "alternateName": "Sakthi",
+        {"@type": "Person", "@id": SITE + "#person", "name": PROFILE["name"],
+         "alternateName": ["Sakthi", "S Saktheeswaran", "Saktheeswaran S", "Saktheeswaran"],
+         "description": "Founder & CEO of Astra Nexora and a digital marketing and SEO expert in Tamil Nadu, India.",
          "jobTitle": "Founder & CEO, Astra Nexora", "url": SITE, "email": EMAIL, "image": SITE + "assets/img/sakthi-lean-w900.webp",
          "alumniOf": {"@type": "CollegeOrUniversity", "name": "Einstein College of Arts & Science, Tirunelveli"},
          "address": {"@type": "PostalAddress", "addressRegion": "Tamil Nadu", "addressCountry": "IN"},
          "sameAs": [u for _, u in PROFILE["social"]] + [PROFILE["agency"][1]],
-         "worksFor": {"@type": "Organization", "name": "Astra Nexora", "url": PROFILE["agency"][1]},
+         "worksFor": {"@id": PROFILE["agency"][1] + "#org"},
          "knowsAbout": ["Digital marketing", "SEO", "Local SEO", "Website development", "n8n automation", "WhatsApp automation", "Google Ads", "Meta Ads", "Google Analytics 4"]},
+        {"@type": "Organization", "@id": PROFILE["agency"][1] + "#org", "name": "Astra Nexora", "url": PROFILE["agency"][1],
+         "founder": {"@id": SITE + "#person"}},
+        {"@type": "ProfilePage", "url": SITE, "name": title, "mainEntity": {"@id": SITE + "#person"}},
         {"@type": "WebSite", "name": PROFILE["name"] + " Portfolio", "url": SITE},
     ]}
-    title = f"{PROFILE['name']} | Founder, SEO & Marketing Automation Expert"
-    desc = (f"Portfolio of {PROFILE['name']} (Sakthi), Founder & CEO of Astra Nexora: SEO, AI and n8n marketing "
-            "automation, WordPress websites, Google and Meta ads and GA4 reporting.")
 
     stats = "".join(f'<li><b data-count="{n}">{n}</b><span>{esc(t)}</span></li>' for n, t in STATS)
     ticker = "".join(f"<span>{esc(t)}</span><i>✦</i>" for t in TICKER)
