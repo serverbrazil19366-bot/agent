@@ -278,6 +278,17 @@ VIDEOS = [
      "A reel built on trending formats and marketing-focused storytelling."),
 ]
 
+# Posters and print pieces Sakthi designed for clients: (image key, client, format, title)
+DESIGNS = [
+    ("akeela-implant", "Akeela Dental Care", "Social poster", "Fixed teeth in just 72 hours"),
+    ("propedo-launch", "ProPedoZR", "Launch post", "Meet ProPedo ZR"),
+    ("propedo-flyer", "ProPedoZR", "Product flyer", "Pediatric zirconium crown solutions"),
+    ("propedo-ad", "ProPedoZR", "Product ad", "The right fit for little smiles"),
+    ("propedo-gandhi", "ProPedoZR", "Festive post", "Gandhi Jayanti greeting"),
+]
+BROCHURE = ("ProPedoZR", "Trifold brochure", "Precision for growing smiles",
+            [("propedo-brochure-1", "Outside spread"), ("propedo-brochure-2", "Inside spread")])
+
 # Shared by Sakthi from real clients, with their permission. Quotes are kept word for word.
 TESTIMONIALS = [
     ("Launching our startup became much easier with his digital marketing guidance. The website, branding, and "

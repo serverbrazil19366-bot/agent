@@ -169,6 +169,44 @@ if (modal) {
     modal.addEventListener("click", e => { if (e.target === modal || e.target.closest(".vm-close")) closeVideo(); });
 }
 
+/* ---------- design lightbox ---------- */
+const imgModal = document.getElementById("imgModal");
+const dzBtns = [...document.querySelectorAll(".dz-btn")];
+let dzAt = 0, dzFrom = null;
+function showDesign(i) {
+    dzAt = (i + dzBtns.length) % dzBtns.length;
+    const b = dzBtns[dzAt], im = imgModal.querySelector("img");
+    im.src = b.dataset.full;
+    im.alt = b.querySelector("img").alt;
+    imgModal.querySelector("figcaption").textContent = b.dataset.cap;
+}
+function closeDesign() {
+    if (!imgModal || !imgModal.classList.contains("open")) return;
+    imgModal.classList.remove("open");
+    imgModal.setAttribute("aria-hidden", "true");
+    if (lenis) lenis.start();
+    if (dzFrom) dzFrom.focus();
+}
+if (imgModal && dzBtns.length) {
+    dzBtns.forEach((b, i) => b.addEventListener("click", () => {
+        dzFrom = b;
+        showDesign(i);
+        imgModal.classList.add("open");
+        imgModal.setAttribute("aria-hidden", "false");
+        if (lenis) lenis.stop();
+        imgModal.querySelector(".vm-close").focus();
+    }));
+    imgModal.querySelector(".im-prev").addEventListener("click", () => showDesign(dzAt - 1));
+    imgModal.querySelector(".im-next").addEventListener("click", () => showDesign(dzAt + 1));
+    imgModal.addEventListener("click", e => { if (e.target === imgModal || e.target.closest(".vm-close")) closeDesign(); });
+    addEventListener("keydown", e => {
+        if (!imgModal.classList.contains("open")) return;
+        if (e.key === "Escape") closeDesign();
+        if (e.key === "ArrowLeft") showDesign(dzAt - 1);
+        if (e.key === "ArrowRight") showDesign(dzAt + 1);
+    });
+}
+
 /* ---------- contact form → WhatsApp ---------- */
 const form = document.getElementById("contactForm");
 if (form) form.addEventListener("submit", e => {
@@ -289,6 +327,7 @@ if (animate) {
     batch(".work-card", { y: 90, autoAlpha: 0 });
     batch(".vid", { y: 70, autoAlpha: 0 });
     batch(".skill", { y: 40, autoAlpha: 0 });
+    batch(".dz", { y: 80, rotate: 1.5, autoAlpha: 0 });
     gsap.utils.toArray(".quote").forEach((q, k) => gsap.fromTo(q, { x: k % 2 ? 80 : -80, autoAlpha: 0 }, {
         x: 0, autoAlpha: 1, duration: 1.2, ease: "expo.out", scrollTrigger: { trigger: q, start: "top 90%", once: true }
     }));

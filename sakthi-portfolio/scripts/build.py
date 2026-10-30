@@ -15,7 +15,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "scripts"))
-from content import (ABOUT, BRING, EDUCATION, EXPERIENCE, PROFILE, PROJECTS, RESULTS, SERVICES,  # noqa: E402
+from content import (ABOUT, BRING, BROCHURE, DESIGNS, EDUCATION, EXPERIENCE, PROFILE, PROJECTS, RESULTS, SERVICES,  # noqa: E402
                      SKILL_TABS, SOFT_SKILLS, STATS, TESTIMONIALS, TICKER, TOOLS, VIDEOS)
 
 SITE = os.environ.get("PORTFOLIO_URL", "https://saktheeswaran.netlify.app/")
@@ -143,7 +143,7 @@ def head(title, desc, path, prefix, schema, preload=""):
 
 def header(prefix, home):
     links = [("About", "about"), ("Skills", "skills"), ("Experience", "experience"), ("Work", "work"),
-             ("Services", "services"), ("Videos", "videos"), ("Contact", "contact")]
+             ("Services", "services"), ("Videos", "videos"), ("Design", "design"), ("Contact", "contact")]
     nav = "".join(f'<a href="{home}#{a}">{n}</a>' for n, a in links)
     return f'''<header class="site-header" id="header">
 <div class="wrap header-in">
@@ -244,6 +244,23 @@ def home():
 </button>
 <span class="vid-cat">{esc(cat)}</span><h3>{esc(title)}</h3><p>{esc(d)}</p>
 </li>''' for vid, kind, cat, title, d in VIDEOS)
+    designs = "".join(
+        f'''<li class="dz">
+<button aria-label="View larger: {attr(title)}" class="dz-btn" data-full="assets/design/{key}-w{DIMS["design/" + key][0]}.webp" data-cap="{attr(client + " · " + fmt)}" type="button">
+{img("design/" + key, client + ": " + title, "(min-width: 1001px) 380px, (min-width: 701px) 45vw, 90vw")}
+<span aria-hidden="true" class="dz-zoom">{svg('<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>', "ic", "2")}</span>
+</button>
+<span class="vid-cat">{esc(client)} · {esc(fmt)}</span><h3>{esc(title)}</h3>
+</li>''' for key, client, fmt, title in DESIGNS)
+    b_client, b_fmt, b_title, b_pages = BROCHURE
+    brochure = "".join(
+        f'''<li class="dz">
+<button aria-label="View larger: {attr(b_title + ", " + side)}" class="dz-btn" data-full="assets/design/{key}-w{DIMS["design/" + key][0]}.webp" data-cap="{attr(b_client + " · " + b_fmt + " · " + side)}" type="button">
+{img("design/" + key, b_client + " " + b_fmt.lower() + ", " + side.lower(), "(min-width: 1001px) 580px, 90vw")}
+<span aria-hidden="true" class="dz-zoom">{svg('<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>', "ic", "2")}</span>
+</button>
+<span class="vid-cat">{esc(side)}</span>
+</li>''' for key, side in b_pages)
     quotes = "".join(
         f'''<li class="quote" data-reveal=""><div class="stars">{STAR * 5}</div><blockquote>“{esc(q)}”</blockquote>
 <div class="q-who"><span class="q-av">{esc(n[:1])}</span><div><b>{esc(n)}</b><small>{esc(r)}</small></div></div></li>''' for q, n, r in TESTIMONIALS)
@@ -371,9 +388,20 @@ def home():
 </div>
 </section>
 
+<section aria-labelledby="dzTitle" class="sec design" id="design">
+<div class="wrap">
+{sec_head("07", "Graphic design", 'Posters &amp; <em>print</em>', "Social media posters, product ads and a trifold brochure I designed for healthcare and dental brands.", tid="dzTitle")}
+<ul class="dz-grid">{designs}</ul>
+<div class="dz-bro">
+<div class="dz-bro-head"><span class="vid-cat">{esc(b_client)} · {esc(b_fmt)}</span><h3>{esc(b_title)}</h3></div>
+<ul class="dz-bro-grid">{brochure}</ul>
+</div>
+</div>
+</section>
+
 <section aria-labelledby="qTitle" class="sec quotes" id="testimonials">
 <div class="wrap">
-{sec_head("07", "Kind words", 'What clients <em>say about me</em>', center=True, tid="qTitle")}
+{sec_head("08", "Kind words", 'What clients <em>say about me</em>', center=True, tid="qTitle")}
 <ul class="results" data-reveal="">{results}</ul>
 <ul class="q-grid">{quotes}</ul>
 </div>
@@ -417,6 +445,7 @@ def home():
 
 </main>
 
+<div aria-hidden="true" aria-label="Design preview" aria-modal="true" class="img-modal" id="imgModal" role="dialog"><button aria-label="Close" class="vm-close" type="button">✕</button><button aria-label="Previous design" class="im-nav im-prev" type="button">‹</button><figure><img alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" decoding="async"/><figcaption></figcaption></figure><button aria-label="Next design" class="im-nav im-next" type="button">›</button></div>
 <div aria-hidden="true" class="vid-modal" id="vidModal"><div class="vm-box"><button aria-label="Close video" class="vm-close" type="button">✕</button><div class="vm-frame"></div></div></div>
 
 {footer(p, h)}'''
