@@ -6,6 +6,8 @@ Edit the copy here, then run:  python3 scripts/build-site.py
 SERVICES = [
     {
         "slug": "seo",
+        "seo_title": "SEO Services in Tamil Nadu | SEO Agency – Astra Nexora",
+        "seo_desc": "SEO services in Tamil Nadu from Astra Nexora: technical, on-page, local and AI-search SEO that moves your business up Google and Maps, with monthly reports.",
         "nav": "SEO",
         "title": "Search Engine Optimization (SEO)",
         "h1": "Get found by the people <em>already searching for you.</em>",
@@ -45,6 +47,8 @@ SERVICES = [
     },
     {
         "slug": "social-media-marketing",
+        "seo_title": "Social Media Marketing Agency in Tamil Nadu | Astra Nexora",
+        "seo_desc": "Social media marketing in Tamil Nadu: strategy, content and management for Instagram, Facebook, LinkedIn and YouTube, built around enquiries and sales.",
         "nav": "Social Media Marketing",
         "title": "Social Media Marketing",
         "h1": "Turn followers into <em>real enquiries.</em>",
@@ -85,6 +89,8 @@ SERVICES = [
     },
     {
         "slug": "performance-marketing",
+        "seo_title": "Google & Meta Ads Agency in Tamil Nadu | Astra Nexora",
+        "seo_desc": "Google Ads, Meta Ads, YouTube and LinkedIn campaigns run from Tamil Nadu, with proper conversion tracking, tested creatives and weekly optimisation.",
         "nav": "Performance Marketing & Paid Ads",
         "title": "Performance Marketing & Paid Ads",
         "h1": "Paid campaigns built for <em>leads and sales.</em>",
@@ -125,6 +131,8 @@ SERVICES = [
     },
     {
         "slug": "content-marketing",
+        "seo_title": "Content Marketing Agency in Tamil Nadu | Astra Nexora",
+        "seo_desc": "Content marketing, copywriting, design and video from Tamil Nadu, planned on one calendar to support your search, social and sales goals.",
         "nav": "Content Marketing & Creative",
         "title": "Content Marketing & Creative",
         "h1": "Content that earns attention <em>and drives action.</em>",
@@ -165,6 +173,8 @@ SERVICES = [
     },
     {
         "slug": "website-development",
+        "seo_title": "Website Design & Development in Tamil Nadu | Astra Nexora",
+        "seo_desc": "Website design and development in Tamil Nadu: fast, mobile-first, SEO-ready business websites, WordPress and Wix sites and landing pages that get enquiries.",
         "nav": "Website Design & Development",
         "title": "Website Design & Development",
         "h1": "Websites built to <em>turn visitors into customers.</em>",
@@ -205,6 +215,8 @@ SERVICES = [
     },
     {
         "slug": "branding",
+        "seo_title": "Branding & Personal Branding Agency, Tamil Nadu | Astra Nexora",
+        "seo_desc": "Brand strategy, logo and visual identity for businesses, plus personal branding and LinkedIn for founders and professionals in Tamil Nadu and across India.",
         "nav": "Branding & Personal Branding",
         "title": "Branding & Personal Branding",
         "h1": "A brand people <em>recognise and trust.</em>",
@@ -244,6 +256,8 @@ SERVICES = [
     },
     {
         "slug": "email-lead-generation",
+        "seo_title": "Email Marketing & Lead Generation, Tamil Nadu | Astra Nexora",
+        "seo_desc": "Lead funnels, email campaigns and nurturing sequences for businesses in Tamil Nadu and across India, measured and reported every month.",
         "nav": "Email & Lead Generation",
         "title": "Email & Lead Generation",
         "h1": "More leads in. <em>More customers back.</em>",
@@ -284,6 +298,8 @@ SERVICES = [
     },
     {
         "slug": "ai-automation",
+        "seo_title": "n8n, WhatsApp & AI Marketing Automation | Astra Nexora",
+        "seo_desc": "AI chatbots, n8n workflows, WhatsApp automation and CRM integrations for businesses in Tamil Nadu and India, so no lead is missed.",
         "nav": "AI Solutions & Marketing Automation",
         "title": "AI Solutions & Marketing Automation",
         "h1": "Marketing that follows up <em>while you work.</em>",

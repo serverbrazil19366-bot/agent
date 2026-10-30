@@ -572,3 +572,29 @@ main { overflow-x: clip; }
 @media (max-width: 1100px) {
     .cr-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
 }
+
+/* ---------- v8: FAQ and keyword pages ---------- */
+.faq-in { max-width: 920px; }
+.faq-list { display: grid; gap: 12px; }
+.faq-item { border: 1px solid var(--line); border-radius: 18px; background: var(--card); padding: 0 24px; }
+.faq-item summary { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 22px 0; cursor: pointer; list-style: none; font-family: var(--font-display); font-weight: 700; font-size: 20px; color: var(--ink); }
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary span { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--bg-2); color: var(--accent); font-size: 22px; transition: transform .35s var(--ease); }
+.faq-item[open] summary span { transform: rotate(45deg); }
+.faq-item p { padding: 0 0 22px; font-size: 16.5px; line-height: 1.75; color: var(--text); }
+.kw-hero h1 em { font-style: normal; color: var(--accent); }
+.kw-hero .actions { margin-top: 28px; }
+.kw-hero { padding-bottom: 20px; }
+.kw-list { list-style: none; display: grid; gap: 10px; margin-bottom: 26px; }
+.kw-list li { display: flex; gap: 10px; font-size: 15px; line-height: 1.5; color: var(--text); }
+.kw-list .check { flex: none; width: 18px; height: 18px; margin-top: 2px; color: var(--accent); }
+.cs-side p { font-size: 15px; line-height: 1.6; color: var(--text); margin-bottom: 18px; }
+.kw-work.three .work-card { grid-column: span 2; }
+.kw-more { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
+.kw-more a { display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px; border-radius: 99px; border: 1px solid var(--line); background: var(--card); font-weight: 600; font-size: 14px; color: var(--ink); }
+.kw-more a .ic { width: 15px; height: 15px; color: var(--accent); }
+.foot-kw { display: flex; flex-wrap: wrap; gap: 8px 22px; padding-top: 18px; font-size: 13.5px; }
+.foot-kw a { color: var(--muted); }
+.foot-kw a:hover { color: var(--accent); }
+@media (max-width: 1100px) { .kw-work.three .work-card { grid-column: span 3; } }
+@media (max-width: 700px) { .faq-item { padding: 0 18px; } .faq-item summary { font-size: 17px; } .kw-work.three .work-card { grid-column: span 6; } }

@@ -777,8 +777,8 @@ def facts_row(facts):
 def service_page(s, index):
     p, home = "../", "../index.html"
     path = f"services/{s['slug']}.html"
-    title = f"{s['title']} | Astra Nexora"
-    desc = strip_tags(s["lead"])
+    title = s.get("seo_title") or f"{s['title']} | Astra Nexora"
+    desc = s.get("seo_desc") or strip_tags(s["lead"])
 
     schema = {
         "@context": "https://schema.org",
@@ -790,7 +790,7 @@ def service_page(s, index):
                 "description": desc,
                 "url": SITE + path,
                 "provider": {"@type": "ProfessionalService", "name": "Astra Nexora", "url": SITE},
-                "areaServed": {"@type": "Country", "name": "India"},
+                "areaServed": [{"@type": "State", "name": "Tamil Nadu"}, {"@type": "Country", "name": "India"}],
                 "hasOfferCatalog": {"@type": "OfferCatalog", "name": s["title"], "itemListElement": [
                     {"@type": "Offer", "itemOffered": {"@type": "Service", "name": n, "description": d}} for n, d in s["includes"]]},
             },

@@ -317,3 +317,164 @@ TESTIMONIALS = [
     ("Saktheeswaran helped us improve our online presence with effective SEO and digital marketing strategies. We "
      "started receiving more customer inquiries within a short period.", "Karthi", "Small Business Owner"),
 ]
+
+# Search titles and descriptions for the case studies (the on-page title stays as above)
+PROJECT_SEO = {
+    "astra-nexora-website": ("Digital Marketing Agency Website – Astra Nexora Case Study",
+                             "How S. Saktheeswaran planned and launched the Astra Nexora agency website: service pages, an SEO blog, structured data and a WhatsApp enquiry form."),
+    "ankhor-case-booking-automation": ("Dental Lab Case Booking & n8n Automation – Ankhor Case Study",
+                                       "Online scan booking, a team dashboard, email and app notifications and WhatsApp automation for Ankhor Dental Lab, built with n8n."),
+    "ankhor-dental-lab": ("Dental Lab Website & SEO – Ankhor Dental Lab Case Study",
+                          "On-page SEO, technical fixes and a clearer website structure that improved search visibility for Ankhor Dental Lab."),
+    "akeela-dental-care": ("Dental Clinic Website Design – Akeela Dental Care Case Study",
+                           "A clearer, faster dental clinic website for Akeela Dental Care that helps patients find treatments and book an appointment quickly."),
+    "akeela-whatsapp-automation": ("WhatsApp Booking Automation for a Dental Clinic – Case Study",
+                                   "A dental clinic booking flow where every appointment request arrives in WhatsApp with the patient's name, number and treatment, ready to confirm."),
+    "guggulr-instagram": ("Instagram Creatives for a Gift Box Brand – Guggulr Case Study",
+                          "Instagram content planning and product creatives designed in Canva for Guggulr, a premium gift box brand, keeping every post on-brand."),
+    "google-business-profile": ("Google Business Profile Optimisation – Local SEO Case Study",
+                                "Local SEO work: optimising Google Business Profiles so nearby customers find accurate details, photos and reviews and choose the business."),
+}
+
+# Questions people search about Sakthi; shown on the home page with FAQPage schema
+FAQS = [
+    ("Who is S Saktheeswaran?",
+     "S. Saktheeswaran (Sakthi) is a digital marketing and SEO expert from Tamil Nadu, India, and the founder & CEO of "
+     "Astra Nexora, a digital marketing agency. He works on SEO, websites, Google and Meta ads and marketing automation."),
+    ("Who is the founder of Astra Nexora?",
+     "Astra Nexora was founded in 2025 by S. Saktheeswaran (Sakthi). He leads strategy and delivery for every client himself."),
+    ("What services does Sakthi offer?",
+     "SEO and local SEO, website design and development (WordPress, Wix and custom builds), Google and Meta ads, n8n and "
+     "WhatsApp automation, social media content and GA4 reporting."),
+    ("Do you work with clients outside Tamil Nadu?",
+     "Yes. Sakthi is based in Tamil Nadu and works with businesses across India, remotely over WhatsApp, email and calls."),
+    ("Are you open to full-time roles as well as freelance projects?",
+     "Yes, both. Recruiters and businesses can reach Sakthi on WhatsApp or at saktheesw2005@gmail.com."),
+]
+
+# Pages for the searches people use to find someone like Sakthi
+KEYWORD_PAGES = [
+    {
+        "slug": "seo-expert-tamil-nadu",
+        "nav": "SEO expert",
+        "seo_title": "SEO Expert in Tamil Nadu | S Saktheeswaran (Sakthi)",
+        "desc": ("Looking for an SEO expert in Tamil Nadu? S. Saktheeswaran, founder of Astra Nexora, does technical, "
+                 "on-page and local SEO and Google Business Profile optimisation."),
+        "kicker": "SEO · Tamil Nadu",
+        "h1": "SEO expert in <em>Tamil Nadu</em>",
+        "lead": ("I help businesses in Tamil Nadu and across India get found on Google: in search results, on Google "
+                 "Maps and in AI answers. I run every audit and fix myself, so you always know who is doing the work."),
+        "sections": [
+            ("Why SEO matters for your business",
+             "Most customers start on Google. If your website isn't on the first page, or your business doesn't show on "
+             "Maps when someone nearby searches, those calls and enquiries go to a competitor. Good SEO makes sure the "
+             "people already looking for what you sell find you first."),
+            ("How I work",
+             "First an audit of your website, your Google Business Profile and the competitors ranking above you. Then I "
+             "fix what holds you back, build pages around what your customers actually search for, and set up Search "
+             "Console and GA4 so we can see what's working. You get a clear monthly report in plain language."),
+            ("What I won't promise",
+             "No honest SEO expert can guarantee the number one spot. What I can promise is a clear plan, real fixes you "
+             "can see on your site, and reporting that shows exactly what changed. SEO usually starts showing results in "
+             "three to six months."),
+        ],
+        "list_title": "SEO services",
+        "list": ["Technical SEO audit and fixes", "On-page SEO: titles, content and internal links",
+                 "Local SEO and Google Business Profile optimisation", "Keyword research for your services and city",
+                 "Schema / structured data", "Search Console, GA4 and monthly reporting",
+                 "AI search (AEO) basics so you show up in AI answers"],
+        "projects": ["ankhor-dental-lab", "google-business-profile", "astra-nexora-website"],
+        "faqs": [
+            ("How long does SEO take to show results?",
+             "Usually three to six months, depending on your website, your competition and how much content you need. "
+             "Technical fixes and Google Business Profile updates can help sooner."),
+            ("Can you guarantee first page rankings?",
+             "No. Nobody controls Google's rankings, and anyone who guarantees them is guessing. I focus on the work that "
+             "moves rankings and show you the results every month."),
+            ("Do you do local SEO for clinics and shops?",
+             "Yes. Most of my SEO work is local: dental clinics, a dental lab and local businesses that need to show up "
+             "on Google Maps and nearby searches."),
+            ("How much does SEO cost?",
+             "It depends on the size of your website and your goals. Send me your website on WhatsApp and I'll reply with "
+             "what I'd fix first and a quote."),
+        ],
+    },
+    {
+        "slug": "digital-marketing-expert-tamil-nadu",
+        "nav": "Digital marketing expert",
+        "seo_title": "Digital Marketing Expert in Tamil Nadu | S Saktheeswaran",
+        "desc": ("S. Saktheeswaran (Sakthi) is a digital marketing expert in Tamil Nadu and founder of Astra Nexora: "
+                 "SEO, websites, Google and Meta ads, social media and automation."),
+        "kicker": "Digital marketing · Tamil Nadu",
+        "h1": "Digital marketing expert in <em>Tamil Nadu</em>",
+        "lead": ("I'm Sakthi, founder of Astra Nexora. I plan and run digital marketing for businesses in Tamil Nadu and "
+                 "across India: search, websites, ads, social media and the automation that ties it together."),
+        "sections": [
+            ("One person who sees the whole picture",
+             "Many businesses hire one person for the website, another for ads and someone else for social media, and "
+             "nobody connects the dots. I work across all of it, so your website, your Google presence, your ads and "
+             "your WhatsApp follow-up all work towards the same goal: more enquiries."),
+            ("Who I work with",
+             "Dental clinics, a dental laboratory, a premium gift box brand, startups and small businesses. Each project "
+             "on this site shows the problem, what I built and what changed."),
+            ("How we start",
+             "Send me your website or Instagram on WhatsApp. I'll look at where you're losing customers today and reply "
+             "with the first three things I'd fix. No obligation."),
+        ],
+        "list_title": "What I do",
+        "list": ["SEO and local SEO", "Website design and development (WordPress, Wix, custom)",
+                 "Google Ads and Meta Ads with conversion tracking", "Social media strategy and creatives",
+                 "WhatsApp and email automation with n8n", "GA4 and Search Console reporting"],
+        "projects": ["akeela-dental-care", "akeela-whatsapp-automation", "guggulr-instagram"],
+        "faqs": [
+            ("What does a digital marketing expert do?",
+             "Plans and runs the channels that bring a business customers online: search, website, ads, social media "
+             "and follow-up. The job is to turn those into calls, enquiries and sales, and to measure it."),
+            ("Do you work with small businesses?",
+             "Yes. Most of my clients are small and growing businesses, and I keep the work practical: what brings in "
+             "enquiries first."),
+            ("Do you work outside Tamil Nadu?",
+             "Yes, with businesses across India. Everything runs remotely over WhatsApp, email and calls."),
+        ],
+    },
+    {
+        "slug": "marketing-automation-expert",
+        "nav": "Automation expert",
+        "seo_title": "n8n & WhatsApp Automation Expert in India | S Saktheeswaran",
+        "desc": ("n8n and WhatsApp automation for clinics and small businesses: booking flows, dashboards, email and app "
+                 "notifications. Built by S. Saktheeswaran, Tamil Nadu."),
+        "kicker": "Automation · n8n · WhatsApp",
+        "h1": "n8n &amp; WhatsApp <em>automation expert</em>",
+        "lead": ("I build automation that removes the repetitive work from your day: bookings that arrive ready to "
+                 "confirm, notifications that go out on their own, and one place to see everything."),
+        "sections": [
+            ("Where automation helps most",
+             "If your team copies details from WhatsApp into a spreadsheet, types the same confirmation again and again, "
+             "or misses enquiries during busy hours, that work can be automated. Your customers keep using WhatsApp and "
+             "email, the tools they already know."),
+            ("What I've built",
+             "A WhatsApp booking flow for a dental clinic, where every request reaches the team with the patient's name, "
+             "number and treatment. And an online scan booking system for a dental lab, with a team dashboard, email and "
+             "app notifications, and WhatsApp and email confirmations."),
+            ("How it works",
+             "I map your current process first, then remove steps instead of adding software. Most flows use n8n, "
+             "WhatsApp, email and a simple dashboard. You get a timeline before we start."),
+        ],
+        "list_title": "Automation I build",
+        "list": ["Booking forms that open WhatsApp with the details filled in", "n8n workflows connecting forms, email, sheets and CRMs",
+                 "Team dashboards for incoming requests", "Email and app notifications for new bookings",
+                 "Automatic confirmations and status updates", "Lead capture and follow-up sequences"],
+        "projects": ["akeela-whatsapp-automation", "ankhor-case-booking-automation"],
+        "faqs": [
+            ("What is n8n?",
+             "n8n is a workflow automation tool. It connects apps like forms, WhatsApp, email, Google Sheets and CRMs, "
+             "so that when something happens in one, the next steps happen automatically."),
+            ("Do I need the WhatsApp Business API?",
+             "Not always. Many booking flows work by opening a pre-filled WhatsApp chat. Fully automatic replies need "
+             "the WhatsApp Business API, which I can help set up."),
+            ("How long does an automation project take?",
+             "It depends on the flow. A booking form that sends requests to WhatsApp is quick; a dashboard with "
+             "notifications takes longer. You get a timeline before we start."),
+        ],
+    },
+]

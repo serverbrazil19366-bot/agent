@@ -7,6 +7,7 @@ Layout follows a warm editorial portfolio style: cream background, heavy
 condensed headings (Phudu), Instrument Sans body, orange accent, dark mode.
 """
 
+import datetime
 import hashlib
 import html
 import json
@@ -15,7 +16,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "scripts"))
-from content import (ABOUT, BRING, DESIGNS, PRINT, EDUCATION, EXPERIENCE, PROFILE, PROJECTS, RESULTS, SERVICES,  # noqa: E402
+from content import (ABOUT, BRING, DESIGNS, FAQS, KEYWORD_PAGES, PRINT, PROJECT_SEO, EDUCATION, EXPERIENCE, PROFILE, PROJECTS, RESULTS, SERVICES,  # noqa: E402
                      SKILL_TABS, SOFT_SKILLS, STATS, TESTIMONIALS, TICKER, TOOLS, VIDEOS)
 
 SITE = os.environ.get("PORTFOLIO_URL", "https://saktheeswaran.netlify.app/")
@@ -168,6 +169,7 @@ def footer(prefix, home):
 <nav aria-label="Footer">{"".join(f'<a href="{home}#{a}">{n}</a>' for n, a in [("About", "about"), ("Work", "work"), ("Services", "services"), ("Videos", "videos"), ("Contact", "contact")])}</nav>
 {socials()}
 </div>
+<nav aria-label="Services" class="wrap foot-kw">{"".join(f'<a href="{prefix}{k["slug"]}.html">{esc(k["seo_title"].split(" | ")[0])}</a>' for k in KEYWORD_PAGES)}</nav>
 <div class="wrap foot-bottom">
 <span>© 2026 {PROFILE["name"]}. All rights reserved.</span>
 <span>Founder of <a href="{PROFILE["agency"][1]}" rel="noopener" target="_blank">{PROFILE["agency"][0]}</a></span>
@@ -181,6 +183,17 @@ def footer(prefix, home):
 </body>
 </html>
 '''
+
+
+def faq_schema(faqs):
+    return {"@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faqs]}
+
+
+def faq_list(faqs):
+    return '<div class="faq-list">' + "".join(
+        f'<details class="faq-item" data-reveal=""><summary>{esc(q)}<span aria-hidden="true">+</span></summary><p>{esc(a)}</p></details>'
+        for q, a in faqs) + "</div>"
 
 
 def work_card(p, prefix, i, n=None):
@@ -201,7 +214,7 @@ def home():
     p, h = "", ""
     title = "S Saktheeswaran – Founder of Astra Nexora | Digital Marketing & SEO Expert, Tamil Nadu"
     desc = (f"{PROFILE['name']} (Sakthi), founder of Astra Nexora, is a digital marketing and SEO expert in Tamil "
-            "Nadu, India: SEO, websites, Google and Meta ads and marketing automation.")
+            "Nadu: SEO, websites, ads and marketing automation.")
     schema = {"@context": "https://schema.org", "@graph": [
         {"@type": "Person", "@id": SITE + "#person", "name": PROFILE["name"],
          "alternateName": ["Sakthi", "S Saktheeswaran", "Saktheeswaran S", "Saktheeswaran"],
@@ -216,6 +229,7 @@ def home():
          "founder": {"@id": SITE + "#person"}},
         {"@type": "ProfilePage", "url": SITE, "name": title, "mainEntity": {"@id": SITE + "#person"}},
         {"@type": "WebSite", "name": PROFILE["name"] + " Portfolio", "url": SITE},
+        faq_schema(FAQS),
     ]}
 
     stats = "".join(f'<li><b data-count="{n}">{n}</b><span>{esc(t)}</span></li>' for n, t in STATS)
@@ -414,6 +428,13 @@ def home():
 </div>
 </section>
 
+<section aria-labelledby="faqTitle" class="sec faq" id="faq">
+<div class="wrap faq-in">
+{sec_head("09", "Questions", 'Good to <em>know</em>', "Quick answers about me, Astra Nexora and how I work.", tid="faqTitle")}
+{faq_list(FAQS)}
+</div>
+</section>
+
 <div aria-hidden="true" class="big-marquee"><div class="bm-track">{BIG_MARQUEE}</div></div>
 
 <section aria-labelledby="contactTitle" class="sec contact" id="contact">
@@ -531,7 +552,8 @@ def work_page(pr, i):
 {IMG_MODAL if pr.get("creatives") else ""}
 
 {footer(p, h)}'''
-    return head(f"{pr['title']} | {PROFILE['name']}", pr["summary"], path, p, schema) + body
+    t, d = PROJECT_SEO.get(pr["slug"], (pr["title"], pr["summary"]))
+    return head(f"{t} | S Saktheeswaran", d, path, p, schema) + body
 
 
 def not_found():
@@ -544,6 +566,83 @@ def not_found():
         '<meta content="index, follow, max-image-preview:large" name="robots"/>', '<meta content="noindex" name="robots"/>') + body
 
 
+def keyword_page(k):
+    p, h = "", "index.html"
+    path = f"{k['slug']}.html"
+    plain_h1 = k["h1"].replace("<em>", "").replace("</em>", "").replace("&amp;", "&")
+    schema = {"@context": "https://schema.org", "@graph": [
+        {"@type": "WebPage", "name": k["seo_title"], "description": k["desc"], "url": SITE + path,
+         "about": {"@id": SITE + "#person"}},
+        {"@type": "Service", "name": plain_h1, "description": k["desc"], "url": SITE + path,
+         "provider": {"@type": "Person", "@id": SITE + "#person", "name": PROFILE["name"], "url": SITE},
+         "areaServed": [{"@type": "State", "name": "Tamil Nadu"}, {"@type": "Country", "name": "India"}]},
+        {"@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": SITE},
+            {"@type": "ListItem", "position": 2, "name": plain_h1, "item": SITE + path}]},
+        faq_schema(k["faqs"]),
+    ]}
+    secs = "".join(f'<div class="cs-row" data-reveal=""><h2><span>{n:02d}</span>{esc(t)}</h2><p>{esc(d)}</p></div>'
+                   for n, (t, d) in enumerate(k["sections"], 1))
+    items = "".join(f"<li>{CHECK}<span>{esc(x)}</span></li>" for x in k["list"])
+    projs = [x for x in PROJECTS if x["slug"] in k["projects"]]
+    cards = "".join(work_card(x, p, i, len(projs)) for i, x in enumerate(projs))
+    others = "".join(f'<a href="{o["slug"]}.html">{esc(o["seo_title"].split(" | ")[0])} {ARROW_UR}</a>' for o in KEYWORD_PAGES if o is not k)
+    body = f'''{header(p, h)}
+
+<main id="main">
+<section class="cs-hero kw-hero" id="top">
+<div class="wrap">
+<a class="back" href="{h}#top">← {esc(PROFILE["name"])}</a>
+<span class="kicker">{esc(k["kicker"])}</span>
+<h1>{k["h1"]}</h1>
+<p class="sec-lead">{esc(k["lead"])}</p>
+<div class="actions">{btn("Chat on WhatsApp", WA, "btn-accent", target=True)}{btn("See my work", h + "#work", "btn-dark")}</div>
+</div>
+</section>
+
+<section class="sec cs-body">
+<div class="wrap cs-in">
+<div class="cs-text">{secs}</div>
+<aside class="cs-side" data-reveal=""><h3>{esc(k["list_title"])}</h3><ul class="kw-list">{items}</ul>
+<h3>About me</h3><p>I'm {esc(PROFILE["name"])} (Sakthi), founder &amp; CEO of <a href="{PROFILE["agency"][1]}" rel="noopener" target="_blank">Astra Nexora</a>, based in Tamil Nadu.</p>{btn("Chat on WhatsApp", WA, "btn-dark btn-sm", target=True)}</aside>
+</div>
+</section>
+
+<section class="sec kw-work-sec">
+<div class="wrap">
+{sec_head("", "Related work", 'Projects that <em>show how</em>', tid="kwWork")}
+<div class="work-grid kw-work{" three" if len(projs) == 3 else ""}">{cards}</div>
+</div>
+</section>
+
+<section class="sec faq">
+<div class="wrap faq-in">
+{sec_head("", "FAQ", 'Common <em>questions</em>', tid="kwFaq")}
+{faq_list(k["faqs"])}
+<nav aria-label="Related pages" class="kw-more">{others}</nav>
+</div>
+</section>
+</main>
+
+{footer(p, h)}'''
+    return head(k["seo_title"], k["desc"], path, p, schema) + body
+
+
+LLMS = f"""# {PROFILE["name"]} (Sakthi)
+
+> {PROFILE["name"]} (Sakthi) is a digital marketing and SEO expert from Tamil Nadu, India, and the founder & CEO of Astra Nexora ({PROFILE["agency"][1]}), a digital marketing agency founded in 2025. He works on SEO and local SEO, websites, Google and Meta ads, n8n and WhatsApp automation and social media creatives.
+
+- Portfolio: {SITE}
+- LinkedIn: {PROFILE["social"][0][1]}
+- Email: {EMAIL}
+- Location: Tamil Nadu, India (works with clients across India)
+
+## Pages
+""" + "".join(f"- [{k['seo_title'].split(' | ')[0]}]({SITE}{k['slug']}.html): {k['desc']}\n" for k in KEYWORD_PAGES) + """
+## Case studies
+""" + "".join(f"- [{x['title']}]({SITE}work/{x['slug']}.html): {x['summary']}\n" for x in PROJECTS)
+
+
 def main():
     with open(os.path.join(ROOT, "index.html"), "w") as f:
         f.write(home())
@@ -551,12 +650,18 @@ def main():
     for i, pr in enumerate(PROJECTS):
         with open(os.path.join(ROOT, "work", f"{pr['slug']}.html"), "w") as f:
             f.write(work_page(pr, i))
+    for k in KEYWORD_PAGES:
+        with open(os.path.join(ROOT, f"{k['slug']}.html"), "w") as f:
+            f.write(keyword_page(k))
     with open(os.path.join(ROOT, "404.html"), "w") as f:
         f.write(not_found())
-    urls = [""] + [f"work/{x['slug']}.html" for x in PROJECTS]
+    urls = [""] + [f"{k['slug']}.html" for k in KEYWORD_PAGES] + [f"work/{x['slug']}.html" for x in PROJECTS]
+    today = datetime.date.today().isoformat()
     with open(os.path.join(ROOT, "sitemap.xml"), "w") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-                + "".join(f"  <url><loc>{SITE}{u}</loc></url>\n" for u in urls) + "</urlset>\n")
+                + "".join(f"  <url><loc>{SITE}{u}</loc><lastmod>{today}</lastmod></url>\n" for u in urls) + "</urlset>\n")
+    with open(os.path.join(ROOT, "llms.txt"), "w") as f:
+        f.write(LLMS)
     with open(os.path.join(ROOT, "robots.txt"), "w") as f:
         f.write(f"User-agent: *\nAllow: /\n\nSitemap: {SITE}sitemap.xml\n")
     print(f"Built index.html, {len(PROJECTS)} project pages, 404, sitemap and robots")
