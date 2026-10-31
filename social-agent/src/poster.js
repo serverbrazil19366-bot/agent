@@ -76,7 +76,7 @@ header { display: flex; align-items: center; justify-content: space-between; }
 .brand { display: flex; align-items: center; gap: 18px; font-family: Oswald; font-weight: 600; font-size: 30px; letter-spacing: .14em; text-transform: uppercase; }
 .brand img { height: 46px; ${t.logo === "dark" ? "filter: brightness(0) saturate(100%) invert(12%) sepia(64%) saturate(4200%) hue-rotate(228deg);" : ""} }
 .pill { font-family: Oswald; font-weight: 500; font-size: 24px; letter-spacing: .16em; text-transform: uppercase; padding: 12px 26px; border-radius: 100px; border: 2px solid ${t.accent}; color: ${t.accent}; }
-main { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 40px; }
+main { flex: 1; min-height: 0; margin: 48px 0 40px; display: flex; flex-direction: column; justify-content: center; gap: 40px; }
 .kicker { font-family: Oswald; font-weight: 500; font-size: 28px; letter-spacing: .22em; text-transform: uppercase; color: ${t.accent}; display: flex; align-items: center; gap: 20px; }
 .kicker::before { content: ""; width: 56px; height: 3px; background: ${t.accent}; }
 h1 { font-family: Oswald; font-weight: 700; text-transform: uppercase; line-height: 1.02; letter-spacing: -.005em; font-size: ${big ? 124 : 96}px; text-wrap: balance; }
@@ -91,7 +91,7 @@ h1 em { font-style: normal; color: ${t.accent}; }
 .tag { font-family: Oswald; font-weight: 600; font-size: 24px; letter-spacing: .18em; justify-self: start; padding: 6px 16px; border-radius: 8px; }
 .tag.bad { background: #E5484D; color: #fff; }
 .tag.good { background: #2FB37A; color: #fff; }
-.bigq { font-family: Oswald; font-weight: 700; font-size: 260px; line-height: .8; color: ${t.accent}; opacity: .9; }
+.bigq { font-family: Oswald; font-weight: 700; font-size: 200px; line-height: .8; color: ${t.accent}; opacity: .9; }
 .bigq.quote { font-family: Crimson; font-size: 300px; line-height: .6; }
 footer { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; padding-top: 34px; border-top: 2px solid ${t.line}; }
 .cta { max-width: 520px; font-family: Oswald; font-weight: 600; font-size: 34px; line-height: 1.15; text-transform: uppercase; letter-spacing: .04em; }

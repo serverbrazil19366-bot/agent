@@ -67,6 +67,7 @@ const SAMPLE = {
   captions: {
     instagram: "Sample Instagram caption.\n\n#digitalmarketing #localseo",
     facebook: "Sample Facebook caption. https://astranexora.netlify.app/",
+    twitter: "Sample X post. https://astranexora.netlify.app/",
     linkedin: "Sample LinkedIn post. https://astranexora.netlify.app/",
   },
   altText: "Astra Nexora poster with four Google Business Profile tips.",
@@ -142,6 +143,10 @@ async function main() {
       console.error(`x ${channel.service}: ${err.message}`);
       failures.push(channel.service);
     }
+  }
+
+  for (const service of config.channels.manual ?? []) {
+    if (post.captions[service]) console.log(`\n--- ${service} caption (post this by hand) ---\n${post.captions[service]}\n`);
   }
 
   if (scheduled.length) {

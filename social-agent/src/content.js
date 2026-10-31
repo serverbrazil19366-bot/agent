@@ -18,7 +18,8 @@ const PostSchema = z.object({
   captions: z.object({
     instagram: z.string().describe("Instagram caption: hook line, 3-6 short lines of value, CTA ('link in bio' or DM), then 8-12 relevant hashtags on the last line"),
     facebook: z.string().describe("Facebook caption: friendly, 60-120 words, ends with the website link and WhatsApp number, 2-4 hashtags"),
-    linkedin: z.string().describe("LinkedIn post: professional, 120-220 words, short paragraphs, a clear takeaway, ends with the website link and 3-5 hashtags"),
+    twitter: z.string().describe("X (Twitter) post: one punchy takeaway, at most 250 characters including the website link and 1-2 hashtags"),
+    linkedin: z.string().describe("LinkedIn post (posted by hand): professional, 120-220 words, short paragraphs, a clear takeaway, ends with the website link and 3-5 hashtags"),
   }),
   altText: z.string().describe("Image alt text describing the poster for screen readers"),
 });

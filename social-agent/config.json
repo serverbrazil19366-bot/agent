@@ -7,20 +7,21 @@
     "voice": "Clear, confident, practical. Plain English a busy owner understands. No hype, no jargon without a one-line explanation. Helpful first, sales second.",
     "website": "https://astranexora.netlify.app/",
     "websiteLabel": "astranexora.netlify.app",
-    "instagramHandle": "@astranexora2025",
+    "instagramHandle": "@astranexora",
     "whatsapp": "+91 88384 17707",
     "email": "info.astranexora@gmail.com"
   },
 
   "timezone": "Asia/Kolkata",
   "postTimes": {
-    "linkedin": "09:30",
+    "twitter": "13:00",
     "instagram": "18:30",
     "facebook": "19:00"
   },
 
   "channels": {
-    "services": ["instagram", "facebook", "linkedin"],
+    "services": ["instagram", "facebook", "twitter"],
+    "manual": ["linkedin"],
     "nameMatch": "astra"
   },
 
