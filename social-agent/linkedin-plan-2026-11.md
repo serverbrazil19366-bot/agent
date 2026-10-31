@@ -60,7 +60,7 @@ Full captions for each week go in `linkedin/week-<date>.md` (week 1: `week-2026-
 | 25 | Fri 27 Nov | Black Friday | Should Indian local businesses run "Black Friday" sales? | "Black Friday is trending in India. Should your shop join in?" | Discount vs value comparison | Claude |
 | 26 | Sat 28 Nov | Tips | 5 design rules for a post people stop at | "Most business posts fail in the first second." | Poster by Sakthi | Sakthi |
 | 27 | Sun 29 Nov | Myth vs fact | "Google Ads will fix a slow month" | "A slow month isn't always an ads problem." | Torn-note style card | Claude |
-| 28 | Mon 30 Nov | Own data | 30 days of daily posting: the real numbers | "I posted on LinkedIn every day for 30 days. Here's what changed." | Chart from real analytics | Sakthi (analytics) + Claude |
+| 28 | Mon 30 Nov | Personal | 5 things nobody tells you about running an agency alone | "I run a digital marketing agency on my own." | Poster by Sakthi | Sakthi |
 | 29 | Tue 1 Dec | Planning | Plan next year's marketing in one hour | "December is the best month to plan next year. Here's a 1-hour template." | Fill-in worksheet poster | Claude |
 | 30 | Wed 2 Dec | Tip | 5 things every small business should automate first | "Start with the 5 tasks your team repeats every day." | Process diagram | Claude |
 
