@@ -1,7 +1,7 @@
 # LinkedIn plan: 3 Nov – 2 Dec 2026
 
 Profile: Saktheeswaran S. One post a day, 10:00 AM IST, scheduled in Typefully (polls are posted by hand).
-Full captions for each week go in `linkedin/week-<date>.md` (week 1: `week-2026-11-03.md`, week 2: `week-2026-11-10.md`, week 3: `week-2026-11-17.md`). Sakthi makes the posters from the poster text in those files.
+Full captions for each week go in `linkedin/week-<date>.md` (week 1: `week-2026-11-03.md`, week 2: `week-2026-11-10.md`, week 3: `week-2026-11-17.md`, week 4: `week-2026-11-24.md`). Sakthi makes the posters from the poster text in those files.
 
 ## Rules
 
