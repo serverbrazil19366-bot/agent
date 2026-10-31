@@ -51,14 +51,14 @@ Full captions for each week go in `linkedin/week-<date>.md` (week 1: `week-2026-
 | 16 | Wed 18 Nov | Carousel | 7 questions to ask before hiring a marketing agency | "Most businesses pick an agency on price. Ask these 7 questions instead." | 8 checklist slides | Claude |
 | 17 | Thu 19 Nov | Tip | Who actually owns your website? | "If your agency disappeared tomorrow, could you still log in to your website?" | Ownership checklist | Claude |
 | 18 | Fri 20 Nov | Practical plan | What I'd do with ₹10,000 a month for a local business | "If a local business gave me ₹10,000 a month for marketing, this is where it would go." | Budget split chart | Claude |
-| 19 | Sat 21 Nov | Tips | 5 design rules for a post people stop at | "Most business posts fail in the first second." | Poster by Sakthi | Sakthi |
+| 19 | Sat 21 Nov | Tools | 18 free marketing tools | "You don't need a big budget to market a small business well." | Poster by Sakthi | Sakthi |
 | 20 | Sun 22 Nov | Comparison | Instagram vs Google Business Profile for local customers | "Instagram builds attention. Google Business Profile catches buyers." | Split comparison card | Claude |
 | 21 | Mon 23 Nov | Tip | The 3 searches every local business must rank for | "Every local business needs to show up for 3 kinds of search." | Three stacked search bars | Claude |
 | 22 | Tue 24 Nov | 🪔 **Karthigai Deepam + Guru Nanak Jayanti** | Greeting | "Happy Karthigai Deepam and Guru Nanak Jayanti." | Poster by Sakthi | Sakthi |
 | 23 | Wed 25 Nov | Tip | 4 free WhatsApp Business features most shops don't use | "Your customers already message you on WhatsApp. Most shops use a fraction of it." | Poster by Sakthi | Sakthi |
 | 24 | Thu 26 Nov | Carousel | 10 checks before any website goes live | "Before any website I build goes live, it has to pass these 10 checks." | Checklist slides | Claude |
 | 25 | Fri 27 Nov | Black Friday | Should Indian local businesses run "Black Friday" sales? | "Black Friday is trending in India. Should your shop join in?" | Discount vs value comparison | Claude |
-| 26 | Sat 28 Nov | Poll | Do you show prices on your website? | "Business owners: do you show prices on your website?" | Native poll | Sakthi |
+| 26 | Sat 28 Nov | Tips | 5 design rules for a post people stop at | "Most business posts fail in the first second." | Poster by Sakthi | Sakthi |
 | 27 | Sun 29 Nov | Myth vs fact | "Google Ads will fix a slow month" | "A slow month isn't always an ads problem." | Torn-note style card | Claude |
 | 28 | Mon 30 Nov | Own data | 30 days of daily posting: the real numbers | "I posted on LinkedIn every day for 30 days. Here's what changed." | Chart from real analytics | Sakthi (analytics) + Claude |
 | 29 | Tue 1 Dec | Planning | Plan next year's marketing in one hour | "December is the best month to plan next year. Here's a 1-hour template." | Fill-in worksheet poster | Claude |
