@@ -1,11 +1,11 @@
-# Runs the Astra Nexora social media agent every day. At 17:53 IST it writes
-# tomorrow's post, designs the poster and schedules it in Buffer for
-# Instagram, Facebook and LinkedIn. See social-agent/README.md for setup.
+# API-key version of the Astra Nexora social media agent: writes a post,
+# designs the poster and schedules it in Buffer. Manual runs only; the daily
+# post comes from the no-API-key routine in social-agent/ROUTINE.md. To run
+# this daily instead, add the secrets from social-agent/README.md and a
+# schedule trigger, e.g. cron "23 12 * * *" (17:53 IST).
 name: Social media agent
 
 on:
-  schedule:
-    - cron: "23 12 * * *" # 12:23 UTC = 17:53 IST
   workflow_dispatch:
     inputs:
       date:

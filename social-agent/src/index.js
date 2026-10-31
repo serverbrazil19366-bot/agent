@@ -7,6 +7,9 @@
 //   node src/index.js --sample        skip Claude and use sample copy (to check the design)
 //   node src/index.js --mode draft    save to Buffer drafts instead of scheduling
 //   node src/index.js --force         run again for a date that was already posted
+//   node src/index.js --post post.json --dry-run
+//                                     design a poster from copy written elsewhere
+//                                     (the no-API-key routine, see ROUTINE.md)
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -26,6 +29,7 @@ function parseArgs(argv) {
     else if (a === "--force") args.force = true;
     else if (a === "--date") args.date = argv[++i];
     else if (a === "--mode") args.mode = argv[++i];
+    else if (a === "--post") args.post = argv[++i];
     else throw new Error(`Unknown option: ${a}`);
   }
   return args;
@@ -87,7 +91,9 @@ async function main() {
   const theme = THEME_NAMES[dayNumber % THEME_NAMES.length];
   console.log(`> ${date} (${weekday}) - ${pillar.name}, ${pillar.format} format, ${theme} theme`);
 
-  const post = args.sample
+  const post = args.post
+    ? JSON.parse(readFileSync(args.post, "utf8"))
+    : args.sample
     ? SAMPLE
     : await writePost({ config, date, pillar, recentTopics: history.slice(-30).map((h) => `${h.pillar}: ${h.topic}`) });
   console.log(`> Topic: ${post.topic}`);

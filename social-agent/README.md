@@ -9,6 +9,17 @@ upload pannum, Buffer-la Instagram 18:30, Facebook 19:00, LinkedIn 09:30 (IST)
 schedule pannum. Neenga onnum panna vendaam. Approve panni post panna
 venumna `POST_MODE` = `draft` vechidunga.
 
+## Two ways to run it
+
+- **No API keys (recommended):** a daily Claude Code routine on your Claude
+  plan writes the post, renders the poster, hosts it on GitHub and schedules
+  it through the Buffer connector. Setup: connect Buffer in claude.ai
+  (Customize → Connectors → Buffer, or add a custom connector with
+  `https://mcp.buffer.com/mcp`), then create the routine. Steps the routine
+  follows: [ROUTINE.md](ROUTINE.md).
+- **API keys:** the GitHub Actions workflow below, using a Claude API key,
+  a Buffer API key and Cloudinary. Manual runs only unless you add a schedule.
+
 ## How it works
 
 | Step | What happens | Code |
