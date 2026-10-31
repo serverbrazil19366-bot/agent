@@ -26,7 +26,7 @@ venumna `POST_MODE` = `draft` vechidunga.
 |---|---|---|
 | 1. Plan | Picks the day's pillar (Mon SEO tip, Tue social media, Wed website check, Thu myth vs fact, Fri AI & automation, Sat brand & local, Sun audience question) | `config.json` |
 | 2. Write | Claude writes the poster copy plus separate Instagram, Facebook and LinkedIn captions, avoiding the last 30 topics | `src/content.js` |
-| 3. Design | Renders a 1080×1350 poster in the brand fonts (Oswald, Crimson Text) and colours, rotating navy, blue and light themes | `src/poster.js` |
+| 3. Design | Renders a 1080×1350 poster in the Astra Nexora LinkedIn style (white, Playfair Display + Inter, blue #0B5CFF): headline, 3 feature cards, outcome badges, a search / website / dashboard / phone mockup, benefits row and CTA pill | `src/poster.js` |
 | 4. Host | Uploads the poster to Cloudinary, because Buffer needs a public image URL | `src/host.js` |
 | 5. Schedule | Creates one Buffer post per channel at the times in `config.json` | `src/buffer.js` |
 | 6. Remember | Adds the topic to `history.json` so topics don't repeat | `src/index.js` |

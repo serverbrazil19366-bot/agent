@@ -25,13 +25,21 @@ The routine prompt is: "Follow social-agent/ROUTINE.md for tomorrow's post."
    ```json
    {
      "topic": "...",
-     "poster": { "kicker": "...", "headline": "max 9 words", "highlight": "word(s) from headline",
-                 "subline": "...", "points": ["..."], "cta": "..." },
+     "poster": {
+       "kicker": "...", "headline": "max 9 words", "highlight": "part of headline in blue",
+       "subline": "max 12 words",
+       "visual": "search | website | dashboard | social | chat", "visualText": "max 6 words",
+       "badges": [{ "icon": "...", "label": "max 3 words, no numbers" }],
+       "points": [{ "icon": "...", "title": "max 4 words", "text": "max 8 words" }],
+       "benefits": [{ "icon": "...", "label": "max 2 words" }],
+       "cta": "max 6 words"
+     },
      "captions": { "instagram": "...", "facebook": "...", "twitter": "max 250 chars", "linkedin": "..." },
      "altText": "..."
    }
    ```
-   `points`: 3-4 for tips/checklist, exactly [myth, fact] for myth, [] for quote/question.
+   3 badges, exactly 3 points, exactly 4 benefits. Icons must be names from
+   `ICONS` in `src/poster.js`. Vary `visual` from day to day.
 5. Render: `node src/index.js --post output/post.json --dry-run --date <date>`.
    Open `output/<date>/poster.png` and look at it. If text is cut off or
    cramped, shorten the copy and render again.

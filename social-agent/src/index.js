@@ -14,7 +14,7 @@ import { mkdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { writePost } from "./content.js";
-import { posterHtml, renderPoster, THEME_NAMES } from "./poster.js";
+import { posterHtml, renderPoster } from "./poster.js";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const config = JSON.parse(readFileSync(path.join(root, "config.json"), "utf8"));
@@ -57,12 +57,20 @@ function zonedToUtc(date, time, tz) {
 const SAMPLE = {
   topic: "Google Business Profile photos",
   poster: {
-    kicker: "Local SEO tip",
-    headline: "Get found on Google Maps this week",
-    highlight: "Google Maps",
-    subline: "Small fixes to your Business Profile bring more calls from people nearby.",
-    points: ["Pick the most exact primary category", "Add 10 real photos of your shop and team", "Reply to every review within 48 hours", "Post an offer or update every week"],
-    cta: "Free profile audit - DM us",
+    kicker: "Being online isn't enough.",
+    headline: "Your Customers are Searching. Can They Find You?",
+    highlight: "Can They Find You?",
+    subline: "A strong digital presence starts with visibility.",
+    visual: "search",
+    visualText: "best dental clinic in chennai",
+    badges: [{ icon: "growth", label: "Higher visibility" }, { icon: "users", label: "More enquiries" }, { icon: "target", label: "Quality traffic" }],
+    points: [
+      { icon: "search", title: "Search Engine Optimization", text: "Get discovered by the right audience." },
+      { icon: "location", title: "Local Search Visibility", text: "Connect with customers in your area." },
+      { icon: "chart", title: "Performance Tracking", text: "Measure visibility, traffic and enquiries." },
+    ],
+    benefits: [{ icon: "search", label: "Better visibility" }, { icon: "users", label: "Relevant traffic" }, { icon: "chart", label: "More enquiries" }, { icon: "leaf", label: "Long-term growth" }],
+    cta: "Let's improve your search visibility",
   },
   captions: {
     instagram: "Sample Instagram caption.\n\n#digitalmarketing #localseo",
@@ -88,9 +96,7 @@ async function main() {
 
   const weekday = new Date(`${date}T12:00:00Z`).toLocaleDateString("en-US", { weekday: "long", timeZone: "UTC" }).toLowerCase();
   const pillar = config.pillars[weekday];
-  const dayNumber = Math.floor(Date.parse(`${date}T00:00:00Z`) / 86400000);
-  const theme = THEME_NAMES[dayNumber % THEME_NAMES.length];
-  console.log(`> ${date} (${weekday}) - ${pillar.name}, ${pillar.format} format, ${theme} theme`);
+  console.log(`> ${date} (${weekday}) - ${pillar.name}, ${pillar.format} format`);
 
   const post = args.post
     ? JSON.parse(readFileSync(args.post, "utf8"))
@@ -102,8 +108,8 @@ async function main() {
   const outDir = path.join(root, "output", date);
   mkdirSync(outDir, { recursive: true });
   const posterFile = path.join(outDir, "poster.png");
-  await renderPoster(posterHtml({ post, pillar, brand: config.brand, theme }), posterFile);
-  writeFileSync(path.join(outDir, "post.json"), JSON.stringify({ date, pillar: pillar.name, theme, ...post }, null, 2));
+  await renderPoster(posterHtml({ post, brand: config.brand }), posterFile);
+  writeFileSync(path.join(outDir, "post.json"), JSON.stringify({ date, pillar: pillar.name, ...post }, null, 2));
   console.log(`> Poster: ${path.relative(process.cwd(), posterFile)}`);
 
   if (args.dryRun) {

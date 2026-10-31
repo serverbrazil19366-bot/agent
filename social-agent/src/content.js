@@ -2,18 +2,23 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { z } from "zod";
+import { ICON_NAMES, VISUALS } from "./poster.js";
 
 const MODEL = process.env.CLAUDE_MODEL || "claude-opus-5-5";
 
 const PostSchema = z.object({
   topic: z.string().describe("Short internal label for today's topic, used to avoid repeats"),
   poster: z.object({
-    kicker: z.string().describe("2-4 word label above the headline, e.g. 'SEO TIP'"),
-    headline: z.string().describe("Poster headline, max 9 words"),
-    highlight: z.string().describe("One or two words copied exactly from the headline to colour as the accent"),
-    subline: z.string().describe("One supporting sentence, max 20 words"),
-    points: z.array(z.string()).describe("For tips/checklist: 3 or 4 points of max 9 words each. For myth: exactly 2 items, the myth then the fact. For quote/question: empty array"),
-    cta: z.string().describe("Short call to action for the poster footer, max 6 words"),
+    kicker: z.string().describe("Short line above the headline, max 5 words, e.g. 'Being online isn't enough.'"),
+    headline: z.string().describe("Poster headline, max 9 words, often two short sentences, e.g. 'Your customers are searching. Can they find you?'"),
+    highlight: z.string().describe("The part of the headline to colour blue, copied exactly (usually the second sentence)"),
+    subline: z.string().describe("One supporting sentence, max 12 words"),
+    visual: z.enum(VISUALS).describe("Device mockup: search (Google-style results), website (landing page), dashboard (growth charts), social (phone with a post), chat (WhatsApp-style automation)"),
+    visualText: z.string().describe("Text shown inside the mockup, max 6 words: the search query, page button, report title, post title or the customer's chat message"),
+    badges: z.array(z.object({ icon: z.enum(ICON_NAMES), label: z.string().describe("Max 3 words, no numbers, e.g. 'More enquiries'") })).describe("3 floating outcome badges (shown with laptop mockups)"),
+    points: z.array(z.object({ icon: z.enum(ICON_NAMES), title: z.string().describe("Max 4 words"), text: z.string().describe("Max 8 words") })).describe("Exactly 3 feature cards: the tips, checklist items, myth/fact/fix, or ways we help"),
+    benefits: z.array(z.object({ icon: z.enum(ICON_NAMES), label: z.string().describe("Max 2 words") })).describe("Exactly 4 short benefits for the bottom row"),
+    cta: z.string().describe("Call-to-action button text, max 6 words, e.g. 'Let's improve your search visibility'"),
   }),
   captions: z.object({
     instagram: z.string().describe("Instagram caption: hook line, 3-6 short lines of value, CTA ('link in bio' or DM), then 8-12 relevant hashtags on the last line"),
