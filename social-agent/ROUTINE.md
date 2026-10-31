@@ -21,8 +21,9 @@ The routine prompt is: "Follow social-agent/ROUTINE.md for tomorrow's post."
    from those.
 4. Write `output/post.json` with exactly this shape (the rules in
    `systemPrompt` and the field descriptions in `src/content.js` apply - no
-   invented statistics, client names, results or testimonials, and never
-   mention any name in `config.json` `brand.neverMention`, e.g. Guggulr):
+   invented statistics, client names, results or testimonials, and the
+   LinkedIn caption never mentions a name in `config.json`
+   `brand.linkedinNeverMention`, e.g. Guggulr):
    ```json
    {
      "topic": "...",

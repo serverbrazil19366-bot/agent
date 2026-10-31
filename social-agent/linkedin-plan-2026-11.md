@@ -39,7 +39,7 @@ No invented numbers or client results. "You" in the Media column means a photo o
 
 ## Notes
 
-- **Never mention Guggulr** anywhere, and never post anything related to it.
+- **Never mention Guggulr in new LinkedIn posts**, and no posts about it. Existing content elsewhere stays as it is.
 
 - Posts 3, 10, 15 and 19 reuse real work (Akeela, ProPedoZR, Ankhor). The Akeela WhatsApp, Ankhor and design-gallery posts (31 Oct – 2 Nov) are already scheduled, so these posts take a different angle.
 - Post 28 needs real figures from LinkedIn analytics on 30 Nov; if there are none to share, it becomes a lessons-only post.
