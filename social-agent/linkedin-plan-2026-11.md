@@ -32,7 +32,7 @@ Full captions for each week go in `linkedin/week-<date>.md`; week 1 is `linkedin
 
 | # | Date | Type | Topic | Hook (first line) | Poster | Made by |
 |---|------|------|-------|-------------------|--------|---------|
-| 1 | Tue 3 Nov | Insight | Patients search for the price | "Patients don't search for 'the best dentist in Chennai'. They search for the price." | Dark, phone with search suggestions | Claude ✅ |
+| 1 | Tue 3 Nov | List | Why customers choose your competitor | "Your business might be better than your competitor. Customers still pick them." | Poster by Sakthi | Sakthi |
 | 2 | Wed 4 Nov | Carousel | Google Business Profile: 5 fixes | "For most local businesses, the first page a customer sees isn't the website." | 6 white/blue slides | Claude |
 | 3 | Thu 5 Nov | Own data | What 50+ of my posts taught me | "The ones I worked hardest on got the least reach." | Editorial bar chart | Claude ✅ |
 | 4 | Fri 6 Nov | 🪔 Festive tips | 5 quick Deepavali marketing ideas for local businesses | "Most shops will post a 'Happy Deepavali' poster and stop there." | Festive checklist with diya | Claude |
