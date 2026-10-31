@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="38%" r="50%"><stop offset="0" stop-color="#ffd27a" stop-opacity=".9"/><stop offset=".4" stop-color="#ffb347" stop-opacity=".35"/><stop offset="1" stop-color="#ff9a1f" stop-opacity="0"/></radialGradient>
+    <linearGradient id="flame" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fff6d5"/><stop offset=".5" stop-color="#ffc94a"/><stop offset="1" stop-color="#ff7a1a"/></linearGradient>
+    <linearGradient id="bowl" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#e2a24a"/><stop offset="1" stop-color="#8a4a17"/></linearGradient>
+  </defs>
+  <circle cx="100" cy="78" r="80" fill="url(#glow)"/>
+  <path d="M100 30 C112 52 120 64 120 80 C120 94 111 104 100 104 C89 104 80 94 80 80 C80 64 88 52 100 30 Z" fill="url(#flame)"/>
+  <path d="M100 66 C105 74 108 80 108 86 C108 92 104 96 100 96 C96 96 92 92 92 86 C92 80 95 74 100 66 Z" fill="#fffbe8"/>
+  <path d="M30 112 C40 150 70 168 100 168 C130 168 160 150 170 112 C140 122 60 122 30 112 Z" fill="url(#bowl)"/>
+  <path d="M30 112 C60 122 140 122 170 112 C160 108 150 106 140 106 L60 106 C50 106 40 108 30 112 Z" fill="#f2c27a"/>
+</svg>

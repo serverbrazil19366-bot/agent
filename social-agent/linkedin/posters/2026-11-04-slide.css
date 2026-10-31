@@ -1,0 +1,11 @@
+body { background: #ffffff; color: #0a0b2a; padding: 96px 88px; }
+.top { display: flex; justify-content: space-between; font-size: 20px; letter-spacing: .24em; text-transform: uppercase; color: #5b6380; font-weight: 600; }
+.top b { color: #0b5cff; }
+.n { font-family: Serif; font-weight: 800; font-size: 200px; line-height: .9; color: #e8eeff; margin-top: 70px; }
+h2 { font-family: Serif; font-weight: 800; font-size: 86px; line-height: 1.05; letter-spacing: -.015em; margin-top: -40px; }
+h2 em { font-style: normal; color: #0b5cff; }
+.how { margin-top: 48px; font-size: 40px; line-height: 1.45; color: #2a3050; }
+.why { position: absolute; left: 88px; right: 88px; bottom: 150px; background: #eef3ff; border-radius: 22px; padding: 34px 38px; font-size: 32px; line-height: 1.4; color: #1d2340; }
+.why b { color: #0b5cff; letter-spacing: .14em; font-size: 20px; display: block; margin-bottom: 8px; }
+.sign { color: #5b6380; }
+.bar { position: absolute; left: 0; top: 0; bottom: 0; width: 14px; background: #0b5cff; }
