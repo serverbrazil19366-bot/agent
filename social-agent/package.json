@@ -1,0 +1,17 @@
+{
+  "name": "astra-nexora-social-agent",
+  "private": true,
+  "description": "Daily social media agent for Astra Nexora: writes the post, designs the poster, schedules it in Buffer.",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "run": "node src/index.js",
+    "preview": "node src/index.js --dry-run",
+    "channels": "node src/channels.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.3.0",
+    "playwright": "1.63.0",
+    "zod": "^4.1.0"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "brand": {
+    "name": "Astra Nexora",
+    "tagline": "Next Era in Digital Marketing",
+    "about": "Digital marketing agency in Tamil Nadu, India, founded in 2025 by S. Saktheeswaran (Sakthi). Serves small and growing businesses across India. Services: SEO, social media marketing, performance marketing and paid ads (Google, Meta, LinkedIn), content and creative, website design and development, branding and personal branding, email and lead generation, AI solutions and marketing automation (chatbots, n8n, WhatsApp).",
+    "audience": "Owners of small and medium businesses in India (clinics, retail, real estate, local services, startups) who want more enquiries online but are not marketing experts.",
+    "voice": "Clear, confident, practical. Plain English a busy owner understands. No hype, no jargon without a one-line explanation. Helpful first, sales second.",
+    "website": "https://astranexora.netlify.app/",
+    "websiteLabel": "astranexora.netlify.app",
+    "instagramHandle": "@astranexora2025",
+    "whatsapp": "+91 88384 17707",
+    "email": "info.astranexora@gmail.com"
+  },
+
+  "timezone": "Asia/Kolkata",
+  "postTimes": {
+    "linkedin": "09:30",
+    "instagram": "18:30",
+    "facebook": "19:00"
+  },
+
+  "channels": {
+    "services": ["instagram", "facebook", "linkedin"],
+    "nameMatch": "astra"
+  },
+
+  "mode": "schedule",
+
+  "pillars": {
+    "monday":    { "name": "SEO Tip",              "format": "tips",     "brief": "One practical SEO or local SEO tip a business owner can act on this week." },
+    "tuesday":   { "name": "Social Media",         "format": "tips",     "brief": "A social media marketing tip for Instagram, Facebook or LinkedIn growth." },
+    "wednesday": { "name": "Website Check",        "format": "checklist","brief": "A website or landing-page improvement that brings more enquiries (speed, mobile, trust, calls to action)." },
+    "thursday":  { "name": "Myth vs Fact",         "format": "myth",     "brief": "Bust a common digital marketing myth that small businesses believe." },
+    "friday":    { "name": "AI & Automation",      "format": "tips",     "brief": "How a small business can use AI, chatbots, WhatsApp automation or n8n to save time or capture leads." },
+    "saturday":  { "name": "Brand & Local",        "format": "quote",    "brief": "Branding, personal branding or Google Business Profile insight, delivered as one strong statement." },
+    "sunday":    { "name": "Ask the Audience",     "format": "question", "brief": "An engaging question that gets business owners to comment about their marketing challenges." }
+  }
+}

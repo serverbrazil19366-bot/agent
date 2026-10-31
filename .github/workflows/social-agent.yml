@@ -1,0 +1,75 @@
+# Runs the Astra Nexora social media agent every day. At 17:53 IST it writes
+# tomorrow's post, designs the poster and schedules it in Buffer for
+# Instagram, Facebook and LinkedIn. See social-agent/README.md for setup.
+name: Social media agent
+
+on:
+  schedule:
+    - cron: "23 12 * * *" # 12:23 UTC = 17:53 IST
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Post date YYYY-MM-DD (empty = tomorrow)"
+        required: false
+      mode:
+        description: "schedule, draft or queue (empty = config.json)"
+        required: false
+      dry_run:
+        description: "Only write and design, don't schedule"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: social-agent
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: social-agent
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: social-agent/package-lock.json
+
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+
+      - name: Write, design and schedule
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
+          BUFFER_ORG_ID: ${{ vars.BUFFER_ORG_ID }}
+          BUFFER_CHANNEL_IDS: ${{ vars.BUFFER_CHANNEL_IDS }}
+          POST_MODE: ${{ inputs.mode || vars.POST_MODE }}
+        run: |
+          args=()
+          [ -n "${{ inputs.date }}" ] && args+=(--date "${{ inputs.date }}")
+          [ "${{ inputs.dry_run }}" = "true" ] && args+=(--dry-run)
+          node src/index.js "${args[@]}"
+
+      - name: Keep the poster
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: social-post-${{ github.run_id }}
+          path: social-agent/output/
+          if-no-files-found: ignore
+
+      - name: Save post history
+        if: success() && inputs.dry_run != true
+        run: |
+          git config user.name "astra-nexora-social-agent"
+          git config user.email "actions@users.noreply.github.com"
+          git add history.json
+          git diff --cached --quiet || { git commit -m "Social agent: post history" && git push; }
