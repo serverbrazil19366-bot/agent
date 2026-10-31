@@ -1,7 +1,7 @@
 # LinkedIn plan: 3 Nov – 2 Dec 2026
 
 Profile: Saktheeswaran S. One post a day, 10:00 AM IST, scheduled in Typefully (polls are posted by hand).
-Full captions for each week go in `linkedin/week-<date>.md`; week 1 is `linkedin/week-2026-11-03.md`.
+Full captions for each week go in `linkedin/week-<date>.md` (week 1: `week-2026-11-03.md`, week 2: `week-2026-11-10.md`). Sakthi makes the posters from the poster text in those files.
 
 ## Rules
 
@@ -41,7 +41,7 @@ Full captions for each week go in `linkedin/week-<date>.md`; week 1 is `linkedin
 | 6 | Sun 8 Nov | 🪔 **Deepavali** | Greeting + thank-you | "Happy Deepavali from Astra Nexora." | Blue/gold greeting with lamps | Claude |
 | 7 | Mon 9 Nov | Myth vs fact | "A new website will bring more customers" | "'We need a new website.' It's often the wrong fix." | Red / green split card | Claude |
 | 8 | Tue 10 Nov | Comparison | Wix vs WordPress vs custom code for a small business | "Wix, WordPress or custom? The right answer depends on one question." | 3-column comparison table | Claude |
-| 9 | Wed 11 Nov | Tip | 4 free WhatsApp Business features most shops don't use | "Your customers already message you on WhatsApp. Most shops use a fraction of it." | Phone chat mockup | Claude |
+| 9 | Wed 11 Nov | Templates | 3 ways to reply to Google reviews (good, average, bad) | "Most businesses reply 'Thank you!' to every review. That's a missed chance." | Poster by Sakthi | Sakthi |
 | 10 | Thu 12 Nov | Carousel | Anatomy of a service page that ranks | "Every service page that ranks has the same 7 parts." | Annotated wireframe slides | Claude |
 | 11 | Fri 13 Nov | Behind the scenes | The AI assistant that runs our social media | "Our own social media was always the first thing to slip." | Flow diagram | Claude |
 | 12 | Sat 14 Nov | Children's Day | 3 business lessons from how children learn | "Kids ask 'why?' until they get a real answer. Most marketing never does." | Light, playful typographic poster | Claude |
@@ -54,8 +54,8 @@ Full captions for each week go in `linkedin/week-<date>.md`; week 1 is `linkedin
 | 19 | Sat 21 Nov | Poll | Do you reply to every Google review? | "Business owners: honest answer." | Native poll | Sakthi |
 | 20 | Sun 22 Nov | Comparison | Instagram vs Google Business Profile for local customers | "Instagram builds attention. Google Business Profile catches buyers." | Split comparison card | Claude |
 | 21 | Mon 23 Nov | Tip | The 3 searches every local business must rank for | "Every local business needs to show up for 3 kinds of search." | Three stacked search bars | Claude |
-| 22 | Tue 24 Nov | 🪔 **Karthigai Deepam + Guru Nanak Jayanti** | Greeting | "Happy Karthigai Deepam and Guru Nanak Jayanti." | Rows of agal lamps, warm light | Claude |
-| 23 | Wed 25 Nov | Templates | 3 ways to reply to Google reviews (good, average, bad) | "Most businesses reply 'Thank you!' to every review. That's a missed chance." | Three review cards with replies | Claude |
+| 22 | Tue 24 Nov | 🪔 **Karthigai Deepam + Guru Nanak Jayanti** | Greeting | "Happy Karthigai Deepam and Guru Nanak Jayanti." | Poster by Sakthi | Sakthi |
+| 23 | Wed 25 Nov | Tip | 4 free WhatsApp Business features most shops don't use | "Your customers already message you on WhatsApp. Most shops use a fraction of it." | Poster by Sakthi | Sakthi |
 | 24 | Thu 26 Nov | Carousel | 10 checks before any website goes live | "Before any website I build goes live, it has to pass these 10 checks." | Checklist slides | Claude |
 | 25 | Fri 27 Nov | Black Friday | Should Indian local businesses run "Black Friday" sales? | "Black Friday is trending in India. Should your shop join in?" | Discount vs value comparison | Claude |
 | 26 | Sat 28 Nov | Poll | Do you show prices on your website? | "Business owners: do you show prices on your website?" | Native poll | Sakthi |
