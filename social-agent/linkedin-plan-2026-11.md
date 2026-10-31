@@ -1,7 +1,7 @@
 # LinkedIn plan: 3 Nov – 2 Dec 2026
 
 Profile: Saktheeswaran S. One post a day, 10:00 AM IST, scheduled in Typefully (polls are posted by hand).
-Full captions for each week go in `linkedin/week-<date>.md` (week 1: `week-2026-11-03.md`, week 2: `week-2026-11-10.md`). Sakthi makes the posters from the poster text in those files.
+Full captions for each week go in `linkedin/week-<date>.md` (week 1: `week-2026-11-03.md`, week 2: `week-2026-11-10.md`, week 3: `week-2026-11-17.md`). Sakthi makes the posters from the poster text in those files.
 
 ## Rules
 
@@ -51,7 +51,7 @@ Full captions for each week go in `linkedin/week-<date>.md` (week 1: `week-2026-
 | 16 | Wed 18 Nov | Carousel | 7 questions to ask before hiring a marketing agency | "Most businesses pick an agency on price. Ask these 7 questions instead." | 8 checklist slides | Claude |
 | 17 | Thu 19 Nov | Tip | Who actually owns your website? | "If your agency disappeared tomorrow, could you still log in to your website?" | Ownership checklist | Claude |
 | 18 | Fri 20 Nov | Practical plan | What I'd do with ₹10,000 a month for a local business | "If a local business gave me ₹10,000 a month for marketing, this is where it would go." | Budget split chart | Claude |
-| 19 | Sat 21 Nov | Poll | Do you reply to every Google review? | "Business owners: honest answer." | Native poll | Sakthi |
+| 19 | Sat 21 Nov | Tips | 5 design rules for a post people stop at | "Most business posts fail in the first second." | Poster by Sakthi | Sakthi |
 | 20 | Sun 22 Nov | Comparison | Instagram vs Google Business Profile for local customers | "Instagram builds attention. Google Business Profile catches buyers." | Split comparison card | Claude |
 | 21 | Mon 23 Nov | Tip | The 3 searches every local business must rank for | "Every local business needs to show up for 3 kinds of search." | Three stacked search bars | Claude |
 | 22 | Tue 24 Nov | 🪔 **Karthigai Deepam + Guru Nanak Jayanti** | Greeting | "Happy Karthigai Deepam and Guru Nanak Jayanti." | Poster by Sakthi | Sakthi |
