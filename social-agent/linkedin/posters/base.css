@@ -1,0 +1,7 @@
+@font-face { font-family: Inter; src: url(../../assets/fonts/inter-latin-wght-normal.woff2) format("woff2"); font-weight: 100 900; }
+@font-face { font-family: Serif; src: url(../../assets/fonts/PlayfairDisplay-wght.ttf); font-weight: 400 900; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1080px; height: 1350px; overflow: hidden; }
+body { font-family: Inter, sans-serif; position: relative; }
+.sign { position: absolute; left: 80px; right: 80px; bottom: 56px; display: flex; justify-content: space-between; align-items: center; font-size: 20px; letter-spacing: .2em; text-transform: uppercase; }
+.sign b { font-weight: 800; letter-spacing: .12em; }
