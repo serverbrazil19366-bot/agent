@@ -20,7 +20,7 @@ No invented numbers or client results. "You" in the Media column means a photo o
 | 12 | Sat 14 Nov | Question | Which platform brings you the most enquiries? | "Instagram, Google, WhatsApp or word of mouth?" | None |
 | 13 | Sun 15 Nov | Personal | My tool stack | "The 6 tools I use every day to run Astra Nexora:" | Collage |
 | 14 | Mon 16 Nov | Tip | Local SEO: getting into "near me" searches | "'Near me' searches are buyers, not browsers." | Poster |
-| 15 | Tue 17 Nov | Case study | Guggulr festive creatives | "Festive season creatives: what makes people stop scrolling." | Designs |
+| 15 | Tue 17 Nov | Case study | Ankhor Dental Lab homepage speed (294 KB → 6.8 KB) | "Same homepage. 294 KB → 6.8 KB. Here's what we removed." | Before/after |
 | 16 | Wed 18 Nov | Myth vs fact | "More followers means more sales" | "Myth: more followers = more sales." | Poster |
 | 17 | Thu 19 Nov | Tip | Turning missed calls into bookings with WhatsApp | "Every missed call is a customer calling your competitor next." | Poster |
 | 18 | Fri 20 Nov | Tip | Personal branding for doctors and founders | "People trust people before they trust brands." | Poster |
@@ -39,6 +39,8 @@ No invented numbers or client results. "You" in the Media column means a photo o
 
 ## Notes
 
-- Posts 3, 10, 15 and 19 reuse real work from the portfolio (Akeela, ProPedoZR, Guggulr). The Akeela WhatsApp, Ankhor and design-gallery posts (31 Oct – 2 Nov) are already scheduled, so these posts take a different angle.
+- **Never mention Guggulr** anywhere, and never post anything related to it.
+
+- Posts 3, 10, 15 and 19 reuse real work (Akeela, ProPedoZR, Ankhor). The Akeela WhatsApp, Ankhor and design-gallery posts (31 Oct – 2 Nov) are already scheduled, so these posts take a different angle.
 - Post 28 needs real figures from LinkedIn analytics on 30 Nov; if there are none to share, it becomes a lessons-only post.
 - Post 29 is only worth posting if you can actually take on 5 free audits.

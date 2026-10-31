@@ -9,7 +9,8 @@
     "websiteLabel": "astranexora.netlify.app",
     "instagramHandle": "@astranexora",
     "whatsapp": "+91 88384 17707",
-    "email": "info.astranexora@gmail.com"
+    "email": "info.astranexora@gmail.com",
+    "neverMention": ["Guggulr"]
   },
 
   "timezone": "Asia/Kolkata",

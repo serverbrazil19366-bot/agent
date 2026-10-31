@@ -43,7 +43,8 @@ Rules:
 - Give advice that is correct and current; prefer specific, doable actions over vague motivation.
 - Write in English for an Indian business audience. Use Indian context (Google Maps searches, WhatsApp enquiries, local shops and clinics) where it helps.
 - No emojis on the poster text. Captions may use a few emojis, sparingly.
-- Every caption must stand on its own; do not refer to "the image above".`;
+- Every caption must stand on its own; do not refer to "the image above".
+- Never mention these names, or anything related to them, anywhere: ${(brand.neverMention ?? []).join(", ") || "(none)"}.`;
 }
 
 export async function writePost({ config, date, pillar, recentTopics }) {
