@@ -13,6 +13,7 @@ Full captions for each week go in `linkedin/week-<date>.md`; week 1 is `linkedin
 - Hook in the first 2 lines. One idea per post. No invented numbers.
 - Talk to buyers (clinic and business owners), not other marketers.
 - No links in the body (first comment), 3 hashtags, no "comment KEYWORD" bait.
+- **No polls for now** (not enough active followers yet). Replace each poll with a regular post.
 - After posting: reply to every comment in the first hour, then 15 minutes commenting on business owners' posts.
 
 **Made by:** "Claude" means Claude designs the poster from HTML. "Sakthi" means it needs something from Sakthi first.
@@ -36,7 +37,7 @@ Full captions for each week go in `linkedin/week-<date>.md`; week 1 is `linkedin
 | 2 | Wed 4 Nov | Carousel | Google Business Profile: 5 fixes | "For most local businesses, the first page a customer sees isn't the website." | 6 white/blue slides | Claude |
 | 3 | Thu 5 Nov | Own data | What 50+ of my posts taught me | "The ones I worked hardest on got the least reach." | Editorial bar chart | Claude ✅ |
 | 4 | Fri 6 Nov | 🪔 Festive tips | 5 quick Deepavali marketing ideas for local businesses | "Most shops will post a 'Happy Deepavali' poster and stop there." | Festive checklist with diya | Claude |
-| 5 | Sat 7 Nov | Poll | Where do your new customers find you? | "Business owners: where do most of your new customers find you?" | Native poll | Sakthi |
+| 5 | Sat 7 Nov | Tools | 5 free tools every small business should be using | "You don't need expensive software to run your marketing." | Poster by Sakthi | Sakthi |
 | 6 | Sun 8 Nov | 🪔 **Deepavali** | Greeting + thank-you | "Happy Deepavali from Astra Nexora." | Blue/gold greeting with lamps | Claude |
 | 7 | Mon 9 Nov | Myth vs fact | "A new website will bring more customers" | "'We need a new website.' It's often the wrong fix." | Red / green split card | Claude |
 | 8 | Tue 10 Nov | Comparison | Wix vs WordPress vs custom code for a small business | "Wix, WordPress or custom? The right answer depends on one question." | 3-column comparison table | Claude |
