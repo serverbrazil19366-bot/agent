@@ -7,7 +7,7 @@ Times (IST): X 1:00 PM · Instagram 6:30 PM · Facebook 7:00 PM. Sakthi makes th
 
 - Voice: "we", clear and practical, helpful first, sales second. Plain words a busy owner understands.
 - Audience: small and local business owners (clinics, shops, restaurants, real estate, services).
-- Every poster: Astra Nexora logo + @astranexora. A soft call to action in the caption (WhatsApp +91 88384 17707 or astranexora.netlify.app).
+- Every poster: Astra Nexora logo + @astranexora. Captions end with the website link (astranexora.netlify.app). **No phone number in captions.**
 - No client brand names, no invented numbers or results, no fake testimonials. Guggulr is never mentioned on LinkedIn.
 - No polls for now. Sunday is a service spotlight instead of a question post.
 - Different topics from Sakthi's personal LinkedIn on the same day.
@@ -94,7 +94,7 @@ Check it in 10 seconds:
 The fix: add your website to Google Search Console (free) and submit your sitemap. Google usually starts showing new pages within a few days to a few weeks.
 
 Tried it? Tell us what you found 👇
-Need help getting your website on Google? WhatsApp us: +91 88384 17707
+Need help getting your website on Google? Visit astranexora.netlify.app 🌐
 
 #SEO #SEOTips #GoogleSearch #SmallBusiness #DigitalMarketing #WebsiteTips #AstraNexora
 ```
@@ -112,7 +112,7 @@ No results → Google hasn't found it yet ❌
 
 The fix: add your website to Google Search Console (it's free) and submit your sitemap.
 
-Need help? WhatsApp us on +91 88384 17707 or visit https://astranexora.netlify.app/
+Need help? 🌐 https://astranexora.netlify.app/
 
 #SEO #SmallBusiness #AstraNexora
 ```
