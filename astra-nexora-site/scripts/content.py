@@ -483,8 +483,8 @@ HOME = {
             "He focuses on helping businesses create digital experiences that combine creativity, strategy and measurable business growth.",
         ],
         "timeline": [
-            ("2019", "Started in digital marketing, building expertise in SEO and web development"),
-            ("2021", "Expanded into branding and content strategy for growing businesses"),
+            ("2022", "Started in digital marketing, building expertise in SEO and web development"),
+            ("2024", "Expanded into branding and content strategy for growing businesses"),
             ("2025", "Founded Astra Nexora in Tamil Nadu"),
         ],
         "linkedin": "https://www.linkedin.com/in/saktheeswaran-digital-marketing-expert/",
