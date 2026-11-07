@@ -13,14 +13,14 @@
 - [n8n & WhatsApp Automation Expert in India](https://saktheeswaran.netlify.app/marketing-automation-expert.html): n8n and WhatsApp automation for clinics and small businesses: booking flows, dashboards, email and app notifications. Built by S. Saktheeswaran, Tamil Nadu.
 
 ## Insights
-- [SEO for Dental Clinics in Tamil Nadu: A Practical Guide](https://saktheeswaran.netlify.app/insights/seo-for-dental-clinics-tamil-nadu.html): How dental clinics in Tamil Nadu can get more patients from Google: Google Business Profile, local SEO, treatment pages, reviews and easy booking. A practical guide by S. Saktheeswaran.
-- [WhatsApp Booking Automation with n8n: How I Built It for Clinics](https://saktheeswaran.netlify.app/insights/whatsapp-booking-automation-n8n.html): How I automated appointment and case bookings for a dental clinic and a dental lab using WhatsApp, n8n, email and a simple dashboard, and what any small business can copy.
+- [SEO for Dental Clinics in Tamil Nadu: A Practical Guide](https://saktheeswaran.netlify.app/insights/seo-for-dental-clinics-tamil-nadu.html): How a dental clinic in Tamil Nadu can get more patients from Google: treatment pages, Google Business Profile, reviews and WhatsApp booking, from my work on the Akeela Dental Care website.
+- [Dental Lab Website, Case Portal & Automation: Ankhor Case Study](https://saktheeswaran.netlify.app/insights/dental-lab-case-portal-automation.html): How I built Ankhor Dental Lab's website, an online case portal with dashboard, email and WhatsApp alerts, a mobile app, a scan booking platform and a Diwali referral program.
 
 ## Case studies
 - [Astra Nexora – Agency Website](https://saktheeswaran.netlify.app/work/astra-nexora-website.html): A fast, SEO-ready agency website with service pages, a blog and a WhatsApp enquiry form.
-- [Ankhor Dental Lab – Case Booking & Automation](https://saktheeswaran.netlify.app/work/ankhor-case-booking-automation.html): Online scan and case booking with a team dashboard, email and app notifications, and WhatsApp and email automation.
+- [Ankhor Dental Lab – Case Portal, Scan Booking & Automation](https://saktheeswaran.netlify.app/work/ankhor-case-booking-automation.html): An online case portal and scan booking platform with dashboards, email and WhatsApp alerts, a mobile app and a Diwali referral program.
 - [Ankhor Dental Lab – Website & SEO](https://saktheeswaran.netlify.app/work/ankhor-dental-lab.html): Stronger search visibility through on-page SEO, technical fixes and a clearer website structure.
-- [Akeela Dental Care – Website & UX](https://saktheeswaran.netlify.app/work/akeela-dental-care.html): A clearer, more responsive website that helps patients find treatments and book quickly.
+- [Akeela Dental Care – Website & SEO](https://saktheeswaran.netlify.app/work/akeela-dental-care.html): A new dental clinic website with a page for every treatment, full SEO and WhatsApp appointment booking.
 - [Akeela Dental Care – WhatsApp Booking Automation](https://saktheeswaran.netlify.app/work/akeela-whatsapp-automation.html): Appointment requests that arrive in WhatsApp with the patient's details, ready for the clinic to confirm.
 - [GUGGULR – Instagram Brand Growth](https://saktheeswaran.netlify.app/work/guggulr-instagram.html): A consistent Instagram creative system that gave a premium gift box brand a stronger identity.
 - [Google Business Profile Optimisation](https://saktheeswaran.netlify.app/work/google-business-profile.html): Optimising Business Profiles so local customers find accurate details and trust the business.

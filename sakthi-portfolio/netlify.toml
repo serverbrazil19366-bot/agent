@@ -19,3 +19,8 @@
   for = "/js/vendor/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+[[redirects]]
+  from = "/insights/whatsapp-booking-automation-n8n.html"
+  to = "/insights/dental-lab-case-portal-automation.html"
+  status = 301
