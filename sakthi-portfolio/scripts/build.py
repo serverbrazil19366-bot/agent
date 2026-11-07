@@ -578,7 +578,8 @@ def not_found():
 
 
 def article_card(a, prefix):
-    return (f'<a class="ins-card" data-reveal="" href="{prefix}insights/{a["slug"]}.html"><span class="vid-cat">{esc(a["kicker"])} · {esc(a["read"])}</span>'
+    return (f'<a class="ins-card" data-reveal="" href="{prefix}insights/{a["slug"]}.html">'
+            f'<div class="ins-media">{img(a["cover"][0], a["cover"][1], "(min-width: 761px) 600px, 92vw", prefix)}</div><span class="vid-cat">{esc(a["kicker"])} · {esc(a["read"])}</span>'
             f'<h3>{esc(a["seo_title"])}</h3><p>{esc(a["desc"])}</p><span class="ins-go">Read the guide {ARROW}</span></a>')
 
 
@@ -588,7 +589,7 @@ def article_page(a):
     plain_h1 = a["h1"].replace("<em>", "").replace("</em>", "")
     schema = {"@context": "https://schema.org", "@graph": [
         {"@type": "BlogPosting", "headline": a["seo_title"], "description": a["desc"], "url": SITE + path,
-         "datePublished": a["date"], "dateModified": a["date"], "image": SITE + "assets/og.jpg",
+         "datePublished": a["date"], "dateModified": a["date"], "image": f"{SITE}assets/{a['cover'][0]}-w1600.webp",
          "author": {"@type": "Person", "@id": SITE + "#person", "name": PROFILE["name"], "url": SITE},
          "publisher": {"@type": "Person", "name": PROFILE["name"], "url": SITE}, "mainEntityOfPage": SITE + path},
         {"@type": "BreadcrumbList", "itemListElement": [
@@ -597,7 +598,17 @@ def article_page(a):
             {"@type": "ListItem", "position": 3, "name": plain_h1, "item": SITE + path}]},
         faq_schema(a["faqs"]),
     ]}
-    body_html = "".join(f'<h2>{esc(t)}</h2>' + "".join(f"<p>{esc(x)}</p>" for x in ps) for t, ps in a["sections"])
+    def figs(n):
+        fs = a["figs"].get(n, [])
+        if not fs:
+            return ""
+        def one(key, cap):
+            phone = key.endswith("-m")
+            return (f'<figure class="art-fig{" phone" if phone else ""}">{img(key, cap, "200px" if phone else "(min-width: 1001px) 720px, 92vw", p)}'
+                    f'<figcaption>{esc(cap)}</figcaption></figure>')
+        return f'<div class="art-figs n{len(fs)}" data-reveal="">' + "".join(one(k, c) for k, c in fs) + "</div>"
+    body_html = "".join(f'<h2>{esc(t)}</h2>' + "".join(f"<p>{esc(x)}</p>" for x in ps) + figs(n)
+                        for n, (t, ps) in enumerate(a["sections"]))
     items = "".join(f"<li>{CHECK}<span>{esc(x)}</span></li>" for x in a["checklist"])
     projs = [x for x in PROJECTS if x["slug"] in a["projects"]]
     cards = "".join(work_card(x, p, i, len(projs)) for i, x in enumerate(projs))
@@ -613,6 +624,7 @@ def article_page(a):
 <h1>{a["h1"]}</h1>
 <p class="art-meta">By <a href="{h}#about">{esc(PROFILE["name"])}</a>, founder of Astra Nexora · <time datetime="{a["date"]}">{datetime.date.fromisoformat(a["date"]).strftime("%-d %b %Y")}</time> · {esc(a["read"])}</p>
 </div>
+<div class="wrap"><figure class="cs-cover art-cover">{img(a["cover"][0], a["cover"][1], "(min-width: 1001px) 1200px, 94vw", p, eager=True)}</figure></div>
 </section>
 
 <section class="sec cs-body">
@@ -640,7 +652,9 @@ def article_page(a):
 </main>
 
 {footer(p, h)}'''
-    return head(a["seo_title"], a["desc"], path, p, schema).replace('content="profile" property="og:type"', 'content="article" property="og:type"') + body
+    return (head(a["seo_title"], a["desc"], path, p, schema)
+            .replace('content="profile" property="og:type"', 'content="article" property="og:type"')
+            .replace(f'content="{SITE}assets/og.jpg" property="og:image"', f'content="{SITE}assets/{a["cover"][0]}-w1600.webp" property="og:image"')) + body
 
 
 def keyword_page(k):

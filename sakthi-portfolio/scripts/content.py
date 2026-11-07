@@ -733,3 +733,31 @@ ARTICLES = [
         ],
     },
 ]
+
+# Covers and in-article screenshots (all from real client websites); figures are keyed by section index
+ARTICLE_MEDIA = {
+    "seo-for-dental-clinics-tamil-nadu": {
+        "cover": ("blog/cover-dental-seo", "Akeela Dental Care dental implants page on desktop and mobile"),
+        "figs": {
+            1: [("blog/akeela-reviews", "Akeela Dental Care's patient reviews page puts real stories and ratings front and centre.")],
+            2: [("blog/akeela-implants", "A dedicated dental implants page for Akeela Dental Care."),
+                ("blog/akeela-rct", "A separate root canal treatment page, so each treatment can rank for its own searches.")],
+            3: [("work/akeelawa-1", "Akeela's booking form: four fields, then WhatsApp opens with the request filled in."),
+                ("work/akeelawa-m", "On mobile, Call and WhatsApp buttons stay on screen.")],
+            4: [("work/ankhor-1", "The Ankhor Dental Lab website after the on-page and technical SEO fixes.")],
+        },
+    },
+    "whatsapp-booking-automation-n8n": {
+        "cover": ("blog/cover-whatsapp-automation", "Ankhor Dental Lab scan booking page on desktop and mobile"),
+        "figs": {
+            1: [("work/akeelawa-1", "The Akeela Dental Care booking form on desktop."),
+                ("work/akeelawa-m", "The same form on mobile, with Call and WhatsApp buttons fixed at the bottom.")],
+            2: [("work/ankhorcase-2", "Ankhor's Book a Scan page: choose a day, choose a time, add clinic and case details."),
+                ("work/ankhorcase-m", "Slot booking on mobile, with free and booked times.")],
+            3: [("work/ankhorcase-3", "The four steps clinics see: book a slot, we confirm, we visit and scan, we make it.")],
+            5: [("work/ankhorcase-1", "Ankhor's chairside scanning service page, where every booking starts.")],
+        },
+    },
+}
+for _a in ARTICLES:
+    _a.update(ARTICLE_MEDIA[_a["slug"]])
