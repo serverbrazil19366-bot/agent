@@ -409,7 +409,11 @@ def home():
 <section aria-labelledby="insTitle" class="sec insights" id="insights">
 <div class="wrap">
 {sec_head("", "Insights", 'Guides from <em>real projects</em>', "What I've learned building SEO and automation for real businesses.", tid="insTitle")}
-<div class="ins-grid">{"".join(article_card(a, "") for a in ARTICLES)}</div>
+<div class="ins-bar" data-reveal="">
+<div class="ins-filters" role="group" aria-label="Filter guides">{ins_filters()}</div>
+<span class="ins-count">{len(ARTICLES)} case studies · {len(set(a["kicker"].split(" · ")[1] for a in ARTICLES))} clients</span>
+</div>
+<div class="ins-layout">{article_feature(ARTICLES[0], "")}<div class="ins-grid">{"".join(article_tile(a, "") for a in ARTICLES[1:])}</div></div>
 </div>
 </section>
 
@@ -628,6 +632,39 @@ def not_found():
 {footer(p, h)}'''
     return head(f"Page not found | {PROFILE['name']}", "Page not found.", "404.html", p, {"@context": "https://schema.org", "@type": "WebPage"}).replace(
         '<meta content="index, follow, max-image-preview:large" name="robots"/>', '<meta content="noindex" name="robots"/>') + body
+
+
+def _client(a):
+    return a["kicker"].split(" · ")[1]
+
+
+def _ctag(a):
+    return _client(a).split()[0].lower()
+
+
+def ins_filters():
+    clients = list(dict.fromkeys(_client(a) for a in ARTICLES))
+    return ('<button aria-pressed="true" class="ins-filter" data-f="all" type="button">All</button>'
+            + "".join(f'<button aria-pressed="false" class="ins-filter" data-f="{c.split()[0].lower()}" type="button">{esc(c)}</button>' for c in clients))
+
+
+def article_feature(a, prefix):
+    typ = a["kicker"].split(" · ")[0]
+    return (f'<a class="ins-feature" data-c="{_ctag(a)}" data-reveal="" href="{prefix}insights/{a["slug"]}.html">'
+            f'<div class="ins-media">{img(a["cover"][0], a["cover"][1], "(min-width: 1001px) 720px, 92vw", prefix)}<span class="ins-badge">Featured</span></div>'
+            f'<div class="ins-body"><div class="ins-tags"><span class="ins-client">{esc(_client(a))}</span><span>{esc(typ)}</span><span>{esc(a["read"])}</span></div>'
+            f'<h3>{esc(a["seo_title"])}</h3><p>{esc(a["desc"])}</p>'
+            f'<ul class="ins-points">{"".join(f"<li>{CHECK}<span>{esc(x)}</span></li>" for x in a["checklist"][:3])}</ul>'
+            f'<span class="ins-go">Read the case study {ARROW}</span></div></a>')
+
+
+def article_tile(a, prefix):
+    typ = a["kicker"].split(" · ")[0]
+    return (f'<a class="ins-tile" data-c="{_ctag(a)}" data-reveal="" href="{prefix}insights/{a["slug"]}.html"><div class="ins-tile-in">'
+            f'<div class="ins-media">{img(a["cover"][0], a["cover"][1], "(min-width: 1001px) 400px, 92vw", prefix)}</div>'
+            f'<div class="ins-body"><div class="ins-tags"><span class="ins-client">{esc(_client(a))}</span><span>{esc(typ)}</span></div>'
+            f'<h3>{esc(a["seo_title"].split(": ")[0])}</h3><p>{esc(a["desc"])}</p>'
+            f'<span class="ins-go">{esc(a["read"])} <i>Read {ARROW}</i></span></div></div></a>')
 
 
 def article_card(a, prefix):

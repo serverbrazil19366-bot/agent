@@ -12,7 +12,7 @@ const fine = matchMedia("(hover: hover) and (pointer: fine)").matches;
 const hasGsap = !!(window.gsap && window.ScrollTrigger);
 const animate = hasGsap;
 if (hasGsap) gsap.registerPlugin(ScrollTrigger);
-if (animate) document.querySelectorAll(".svc, .work-card, .vid, .quote, .xp, .edu, .cs-fig").forEach(el => el.removeAttribute("data-reveal"));
+if (animate) document.querySelectorAll(".svc, .work-card, .vid, .quote, .xp, .edu, .cs-fig, .ins-tile").forEach(el => el.removeAttribute("data-reveal"));
 
 /* ---------- always open at the top ---------- */
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
@@ -168,6 +168,16 @@ document.querySelectorAll(".vid-btn").forEach(b => b.addEventListener("click", (
 if (modal) {
     modal.addEventListener("click", e => { if (e.target === modal || e.target.closest(".vm-close")) closeVideo(); });
 }
+
+/* ---------- insights filter ---------- */
+document.querySelectorAll(".ins-filter").forEach(f => f.addEventListener("click", () => {
+    document.querySelectorAll(".ins-filter").forEach(x => x.setAttribute("aria-pressed", String(x === f)));
+    document.querySelectorAll(".ins-feature, .ins-tile").forEach(card => {
+        const show = f.dataset.f === "all" || card.dataset.c === f.dataset.f;
+        card.classList.toggle("ins-hide", !show);
+        if (show && !reduce) card.animate([{ opacity: 0, transform: "translateY(16px)" }, { opacity: 1, transform: "none" }], { duration: 500, easing: "cubic-bezier(.22,1,.36,1)" });
+    });
+}));
 
 /* ---------- design lightbox ---------- */
 const imgModal = document.getElementById("imgModal");
@@ -328,6 +338,7 @@ if (animate) {
     batch(".vid", { y: 70, autoAlpha: 0 });
     batch(".skill", { y: 40, autoAlpha: 0 });
     batch(".dz", { y: 80, rotate: 1.5, autoAlpha: 0 });
+    batch(".ins-tile", { y: 70, autoAlpha: 0 });
     gsap.utils.toArray(".quote").forEach((q, k) => gsap.fromTo(q, { x: k % 2 ? 80 : -80, autoAlpha: 0 }, {
         x: 0, autoAlpha: 1, duration: 1.2, ease: "expo.out", scrollTrigger: { trigger: q, start: "top 90%", once: true }
     }));
