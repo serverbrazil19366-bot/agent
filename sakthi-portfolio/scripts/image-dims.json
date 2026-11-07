@@ -207,14 +207,6 @@
   780,
   1688
  ],
- "blog/cover-dental-seo": [
-  1600,
-  900
- ],
- "blog/cover-whatsapp-automation": [
-  1600,
-  900
- ],
  "blog/ankhor-send-case": [
   1600,
   1000
@@ -235,7 +227,39 @@
   780,
   1688
  ],
- "blog/cover-dental-lab-portal": [
+ "blog/ankhor-zirconia": [
+  1600,
+  1000
+ ],
+ "blog/ankhor-technology": [
+  1600,
+  1000
+ ],
+ "blog/akeela-book": [
+  1600,
+  1000
+ ],
+ "blog/cover-akeela-website": [
+  1600,
+  900
+ ],
+ "blog/cover-akeela-booking": [
+  1600,
+  900
+ ],
+ "blog/cover-ankhor-website": [
+  1600,
+  900
+ ],
+ "blog/cover-ankhor-case-portal": [
+  1600,
+  900
+ ],
+ "blog/cover-ankhor-scan-booking": [
+  1600,
+  900
+ ],
+ "blog/cover-ankhor-referral": [
   1600,
   900
  ]

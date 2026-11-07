@@ -643,3 +643,8 @@ main { overflow-x: clip; }
     .art-figs.n2, .art-figs.n2:has(.phone) { grid-template-columns: 1fr; }
     .art-fig.phone { max-width: 240px; }
 }
+.ins-grid { grid-template-columns: repeat(3, 1fr); }
+.ins-card h3 { font-size: 22px; }
+.ins-card p { font-size: 14.5px; }
+@media (max-width: 1100px) { .ins-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 700px) { .ins-grid { grid-template-columns: 1fr; } }

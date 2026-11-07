@@ -138,9 +138,9 @@ PROJECTS = [
         "title": "Ankhor Dental Lab – Case Portal, Scan Booking & Automation",
         "tag": "auto",
         "category": "Portal, Dashboard & Automation",
-        "summary": "An online case portal and scan booking platform with dashboards, email and WhatsApp alerts, a mobile app and a Diwali referral program.",
+        "summary": "An online case portal and scan booking platform with dashboards, email and WhatsApp alerts and a mobile app.",
         "cover": "work/ankhorcase-2",
-        "gallery": ["blog/ankhor-send-case", "work/ankhorcase-1", "work/ankhorcase-m", "work/ankhorcase-3", "blog/ankhor-refer"],
+        "gallery": ["blog/ankhor-send-case", "work/ankhorcase-1", "work/ankhorcase-m", "work/ankhorcase-3"],
         "live": "https://ankhorlab.com/book-scan",
         "meta": [("Year", "2026"), ("Industry", "Dental laboratory"), ("Client", "Ankhor Dental Lab"), ("Role", "Planning, build & automation")],
         "sections": [
@@ -151,30 +151,55 @@ PROJECTS = [
             ("What I did", "Built the online case portal, where clinics send case details, a shade photo and STL, OBJ or "
              "PLY scans, with a dashboard for the team. Every new case triggers an email and WhatsApp notification, and "
              "a mobile app lets the team check cases on the go. Built the scan booking platform with live slots and its "
-             "own dashboard, and a Diwali Refer & Earn page with a dashboard to track referrals."),
+             "own dashboard."),
             ("Outcome", "Every case and scan booking lands in one place, the team hears about new cases instantly, "
-             "taken slots show as booked straight away, and referrals are tracked without spreadsheets."),
+             "and taken slots show as booked straight away."),
         ],
         "tools": ["n8n", "WhatsApp", "Email automation", "Dashboard", "Mobile app"],
+    },
+    {
+        "slug": "ankhor-referral-program",
+        "title": "Ankhor Dental Lab – Diwali Referral Program",
+        "tag": "auto",
+        "category": "Campaign Page, Dashboard & App",
+        "summary": "A Diwali Refer & Earn program for dentists: a campaign page with a live countdown, personal referral links and a dashboard and app to track referrals.",
+        "cover": "blog/ankhor-refer",
+        "gallery": ["blog/ankhor-refer-2", "blog/ankhor-refer-m"],
+        "live": "https://ankhorlab.com/refer/",
+        "meta": [("Year", "2026"), ("Industry", "Dental laboratory"), ("Client", "Ankhor Dental Lab"), ("Role", "Campaign, build & dashboard")],
+        "sections": [
+            ("The challenge", "Ankhor wanted more clinics to try the lab, and dentists trust recommendations from other "
+             "dentists more than ads."),
+            ("Strategy", "Run a time-limited Diwali referral offer with a clear reward, make sharing one tap on WhatsApp, "
+             "and track every referral automatically."),
+            ("What I did", "Built the Refer & Earn campaign page with the offer, a live countdown, a three-step "
+             "how-it-works section and FAQs; personal referral links with one-tap WhatsApp sharing; and a dashboard and "
+             "app to track referrals and rewards."),
+            ("Outcome", "A complete referral campaign the lab can run without spreadsheets: dentists share their link, "
+             "and the lab sees every referral and reward in one place."),
+        ],
+        "tools": ["Campaign page", "Dashboard", "Mobile app", "WhatsApp sharing"],
     },
     {
         "slug": "ankhor-dental-lab",
         "title": "Ankhor Dental Lab – Website & SEO",
         "tag": "seo",
         "category": "SEO & Website",
-        "summary": "Stronger search visibility through on-page SEO, technical fixes and a clearer website structure.",
+        "summary": "A new dental lab website with a full product catalogue, technology pages, SEO on every page and Send a Case everywhere.",
         "cover": "work/ankhor-1",
         "gallery": ["work/ankhor-2", "work/ankhor-m"],
         "live": "https://ankhorlab.com/",
-        "meta": [("Year", "2026"), ("Industry", "Dental laboratory"), ("Client", "Ankhor Dental Lab"), ("Role", "SEO & website")],
+        "meta": [("Year", "2026"), ("Industry", "Dental laboratory"), ("Client", "Ankhor Dental Lab"), ("Role", "Website & SEO")],
         "sections": [
-            ("The challenge", "Missing metadata, inconsistent headings, weak internal linking and indexing issues were "
-             "holding back search visibility for a long-established dental lab."),
-            ("Strategy", "Start with a full SEO audit, then fix the foundations: metadata, headings, internal links and "
-             "indexing, monitored through Google Search Console."),
-            ("What I did", "SEO audit, keyword research, metadata and on-page optimisation, image optimisation, site "
-             "structure improvements and Search Console monitoring."),
-            ("Outcome", "A stronger technical SEO foundation, a better organised website and cleaner indexing."),
+            ("The challenge", "Dentists look for very specific restorations, so the lab needed a website that shows "
+             "everything it makes, builds trust and makes sending a case easy."),
+            ("Strategy", "Build the site around a product catalogue with a page for each product, explain the lab's "
+             "digital workflow, do the SEO on every page and put Send a Case on every page."),
+            ("What I did", "Designed and built the website: services, technology and a product catalogue with categories, "
+             "search and a page for every product. Did the SEO: titles, descriptions, headings, internal links, image "
+             "optimisation, sitemap and Search Console."),
+            ("Outcome", "A complete dental lab website where every product can be found on its own, and every page leads "
+             "to sending a case."),
         ],
         "tools": ["WordPress", "Rank Math", "Search Console", "Google Analytics"],
     },
@@ -325,15 +350,17 @@ PROJECT_SEO = {
     "astra-nexora-website": ("Digital Marketing Agency Website – Astra Nexora Case Study",
                              "How S. Saktheeswaran planned and launched the Astra Nexora agency website: service pages, an SEO blog, structured data and a WhatsApp enquiry form."),
     "ankhor-case-booking-automation": ("Dental Lab Case Portal & Automation – Ankhor Case Study",
-                                       "An online case portal, scan booking platform, dashboards, email and WhatsApp alerts, a mobile app and a referral program for Ankhor Dental Lab."),
+                                       "An online case portal, scan booking platform, dashboards, email and WhatsApp alerts and a mobile app for Ankhor Dental Lab."),
     "ankhor-dental-lab": ("Dental Lab Website & SEO – Ankhor Dental Lab Case Study",
-                          "On-page SEO, technical fixes and a clearer website structure that improved search visibility for Ankhor Dental Lab."),
+                          "A new website for Ankhor Dental Lab with a full product catalogue, technology pages, SEO on every page and Send a Case everywhere."),
     "akeela-dental-care": ("Dental Clinic Website & SEO – Akeela Dental Care Case Study",
                            "A new website for Akeela Dental Care with a page for every treatment, full SEO and WhatsApp appointment booking."),
     "akeela-whatsapp-automation": ("WhatsApp Booking Automation for a Dental Clinic – Case Study",
                                    "A dental clinic booking flow where every appointment request arrives in WhatsApp with the patient's name, number and treatment, ready to confirm."),
     "guggulr-instagram": ("Instagram Creatives for a Gift Box Brand – Guggulr Case Study",
                           "Instagram content planning and product creatives designed in Canva for Guggulr, a premium gift box brand, keeping every post on-brand."),
+    "ankhor-referral-program": ("Diwali Referral Program Page & Dashboard – Ankhor Case Study",
+                                "A Diwali Refer & Earn campaign for Ankhor Dental Lab: a landing page with a countdown, personal referral links and a dashboard and app."),
     "google-business-profile": ("Google Business Profile Optimisation – Local SEO Case Study",
                                 "Local SEO work: optimising Google Business Profiles so nearby customers find accurate details, photos and reviews and choose the business."),
 }
@@ -488,9 +515,8 @@ _KW_MORE = {
             ("Technical SEO: fixing the foundations",
              "Google has to be able to crawl, understand and trust your website before it ranks it. I check indexing in "
              "Search Console, page speed and Core Web Vitals, broken links, duplicate or missing titles and descriptions, "
-             "heading structure, mobile layout and structured data. On the Ankhor Dental Lab website, the problems were "
-             "missing metadata, inconsistent headings, weak internal linking and indexing issues; fixing those gave the "
-             "site a much stronger technical base."),
+             "heading structure, mobile layout and structured data. On the websites I build, like Akeela Dental Care and "
+             "Ankhor Dental Lab, these are set up from day one."),
             ("On-page SEO and content",
              "Every important service needs its own page, written around what customers actually type into Google: the "
              "service, the problem and the area. I do the keyword research, then rewrite titles, headings and content so "
@@ -608,134 +634,272 @@ for _k in KEYWORD_PAGES:
     _k["tools"] = _m["tools"]
     _k["faqs"] = _k["faqs"] + _m["faqs"]
 
-# Articles under /insights/, one client each, written from Sakthi's own projects
+# Articles under /insights/: one piece of work each, written from Sakthi's own projects
 ARTICLES = [
     {
         "slug": "seo-for-dental-clinics-tamil-nadu",
-        "seo_title": "SEO for Dental Clinics in Tamil Nadu: A Practical Guide",
-        "desc": ("How a dental clinic in Tamil Nadu can get more patients from Google: treatment pages, Google Business "
-                 "Profile, reviews and WhatsApp booking, from my work on the Akeela Dental Care website."),
-        "h1": "SEO for dental clinics in <em>Tamil Nadu</em>",
-        "kicker": "Guide · Akeela Dental Care",
+        "seo_title": "Dental Clinic Website & SEO: Akeela Dental Care Case Study",
+        "desc": ("How I built the Akeela Dental Care website and did its SEO: a page for every treatment, on-page and "
+                 "technical SEO, reviews and tracking. A practical guide for dental clinics in Tamil Nadu."),
+        "h1": "Dental clinic website &amp; SEO: <em>Akeela Dental Care</em>",
+        "kicker": "Website & SEO · Akeela Dental Care",
         "date": "2026-11-07",
-        "read": "7 min read",
-        "intro": ("When someone has a toothache, they don't scroll through ten pages of Google. They search \"dentist near "
-                  "me\" or \"dental implants in T. Nagar\", look at the map, check the reviews and call. If your clinic "
-                  "isn't in that first view, that patient goes somewhere else. I built the Akeela Dental Care website, "
-                  "did its SEO and set up WhatsApp appointment booking. This guide covers what I focused on, and what "
-                  "any dental clinic in Tamil Nadu can apply."),
+        "read": "6 min read",
+        "intro": ("When someone needs a dentist, they search \"dental implants near me\" or \"root canal treatment in T. "
+                  "Nagar\", open the first few results and call. I built the Akeela Dental Care website and did its SEO "
+                  "so the clinic shows up for those searches and patients find a clear answer when they land. This is "
+                  "how the website was planned and what I did for SEO, so any dental clinic in Tamil Nadu can apply it."),
         "sections": [
-            ("1. Build the website around treatments",
-             ["Patients search for treatments, not for \"services\". Dental implants, root canal treatment, aligners, "
-              "orthodontics, cosmetic dentistry: on the Akeela website each one has its own page that explains the "
-              "problem, the treatment, what to expect and how to book, with the area in the page title.",
+            ("Planning the website around treatments",
+             ["Patients search for treatments, not for \"services\". So the website is built around them: dental "
+              "implants, root canal treatment, aligners, orthodontics, cosmetic dentistry and more, each with its own "
+              "page that explains the problem, the treatment, what to expect and how to book.",
               "A single \"Services\" page with ten bullet points can't rank for ten different searches. Ten focused pages "
-              "can, and they give patients a clear answer when they land."]),
-            ("2. On-page SEO on every page",
-             ["Every page gets a unique title and description written around what patients search, one clear H1, "
-              "readable headings, compressed images and internal links between related treatments. Structured data "
-              "tells Google the page belongs to a dental clinic and where it is."]),
-            ("3. Show real reviews",
-             ["Reviews are one of the strongest local ranking signals, and they are what patients read before they call. "
-              "Akeela has a dedicated patient reviews page with real stories and ratings. Ask every happy patient for a "
-              "Google review, make it easy with a short link or a QR code, and reply to every review politely."]),
-            ("4. Make booking effortless: WhatsApp",
-             ["Most dental searches happen on a phone. If booking means a long form and waiting for a call back, many "
-              "patients give up. For Akeela I built a short appointment form (name, phone, treatment and message) that "
-              "opens WhatsApp with the request already filled in, and call and WhatsApp buttons that stay on screen on "
-              "mobile.",
-              "Every appointment request now reaches the clinic on WhatsApp with the patient's details, ready to confirm "
-              "in one reply. Good SEO brings the visitor; easy booking turns them into a patient."]),
-            ("5. Complete your Google Business Profile",
-             ["For a clinic, the map pack often brings more calls than the website itself. Choose the right category, "
-              "add every treatment as a service, keep hours and the phone number correct, add real photos of the clinic "
-              "and team, and post updates regularly."]),
-            ("6. Keep your details the same everywhere",
-             ["Your clinic name, address and phone number should match exactly on your website, Google Business Profile "
-              "and every directory you are listed on. Small differences confuse Google about which listing is real."]),
-            ("7. Measure what matters",
-             ["Track calls, WhatsApp clicks and appointment requests, not just visitors. Google Search Console shows "
-              "which searches bring people to the site; Google Business Profile insights shows calls and direction "
-              "requests. Review them every month and do more of what brings patients in."]),
+              "can, and each one answers the patient's question directly."]),
+            ("A treatments hub that links everything",
+             ["A treatments overview page links every treatment page together, and each treatment page links back. "
+              "This helps patients move between related treatments and helps Google understand how the site fits "
+              "together."]),
+            ("On-page SEO on every page",
+             ["Every page has a unique title and description written around what patients search, with the treatment "
+              "and the area in it, one clear H1, readable headings, compressed images and internal links to related "
+              "treatments. Structured data tells Google this is a dental clinic and where it is."]),
+            ("Reviews that build trust",
+             ["Reviews are what patients read before they call, and they matter for local rankings too. The site has a "
+              "dedicated patient reviews page with real stories and ratings, and the clinic asks happy patients for "
+              "Google reviews."]),
+            ("Mobile first, with booking on every page",
+             ["Most dental searches happen on a phone, so every page is designed for mobile first, with call, WhatsApp "
+              "and Book Appointment buttons always within reach. Booking itself has its own system, which I've written "
+              "about separately."]),
+            ("Search Console and tracking",
+             ["Google Search Console is set up to watch indexing and see which searches bring visitors to each page. "
+              "Calls, WhatsApp clicks and appointment requests are what matter, so those are what we track and review."]),
         ],
-        "checklist": ["One page per treatment, with the area in the title", "Unique titles, descriptions and headings",
-                      "A real reviews page, and Google reviews every week", "WhatsApp booking with details pre-filled",
-                      "Call and WhatsApp buttons on every page", "Google Business Profile complete",
-                      "Calls and bookings tracked every month"],
-        "projects": ["akeela-dental-care", "akeela-whatsapp-automation"],
+        "checklist": ["One page per treatment", "A treatments hub linking every page",
+                      "Unique title and description with the treatment and area", "One H1 and clear headings",
+                      "Structured data for a dental clinic", "A real reviews page", "Search Console set up and checked"],
+        "projects": ["akeela-dental-care"],
         "faqs": [
             ("How long does SEO take for a dental clinic?",
-             "Google Business Profile improvements and reviews can bring more calls within weeks. Ranking treatment pages "
-             "on Google usually takes three to six months, depending on competition in your area."),
-            ("Is Google Ads better than SEO for a new clinic?",
-             "Ads bring calls immediately but stop when you stop paying. SEO and a strong Google Business Profile take "
-             "longer but keep working. Many new clinics run a small ads budget while SEO builds up."),
-            ("Do patients really book on WhatsApp?",
-             "Yes. Most patients already use WhatsApp every day, so a booking that opens a ready-made WhatsApp message "
-             "is easier for them than a long form or a phone call during busy hours."),
+             "Usually three to six months for treatment pages to rank well, depending on competition in your area. A "
+             "complete Google Business Profile and reviews can bring more calls sooner."),
+            ("Do I need a separate page for each treatment?",
+             "Yes, for the treatments you want patients to find you for. Each page can then rank for its own searches "
+             "and answer that patient's question properly."),
+        ],
+    },
+    {
+        "slug": "whatsapp-appointment-booking-dental-clinic",
+        "seo_title": "WhatsApp Appointment Booking for a Dental Clinic: Akeela Case Study",
+        "desc": ("How I set up WhatsApp appointment booking for Akeela Dental Care: a short form that opens WhatsApp "
+                 "with the request filled in, plus call and WhatsApp buttons on every page."),
+        "h1": "WhatsApp appointment booking for <em>Akeela Dental Care</em>",
+        "kicker": "Booking · Akeela Dental Care",
+        "date": "2026-11-07",
+        "read": "4 min read",
+        "intro": ("A dental clinic is busiest exactly when patients try to call. Phones ring during treatments, "
+                  "enquiries get missed and patients book somewhere else. For Akeela Dental Care I set up appointment "
+                  "booking on WhatsApp, the app patients already use every day, so every request reaches the clinic "
+                  "with the details it needs."),
+        "sections": [
+            ("The problem: missed calls and slow replies",
+             ["Patients called during busy clinic hours or sent enquiries that were easy to miss, so appointment "
+              "requests were slow to answer. Every missed call is a patient who might not call back."]),
+            ("A short form that opens WhatsApp",
+             ["The booking page asks only what the clinic needs: name, phone number, treatment and an optional message. "
+              "When the patient submits it, WhatsApp opens with the request already written; they just press send.",
+              "There's no app to download and no account to create, and the clinic gets every request in the same clear "
+              "format."]),
+            ("Call and WhatsApp buttons on every page",
+             ["On mobile, Call and WhatsApp buttons stay fixed at the bottom of the screen on every page, so a patient "
+              "reading about implants or root canal treatment can book the moment they decide."]),
+            ("The result",
+             ["Every appointment request reaches the clinic on WhatsApp with the patient's name, number and treatment, "
+              "so the team can confirm it in one reply."]),
+            ("What other clinics can copy",
+             ["Ask for as little as possible, use the channel patients already use, and make the booking button "
+              "impossible to miss on a phone. It's one of the cheapest changes a clinic can make, and one of the most "
+              "effective."]),
+        ],
+        "checklist": ["Ask only for name, phone, treatment and message", "Open WhatsApp with the message pre-filled",
+                      "Call and WhatsApp buttons fixed on mobile", "A Book Appointment button on every page",
+                      "Reply to every request quickly"],
+        "projects": ["akeela-whatsapp-automation"],
+        "faqs": [
+            ("Do I need the WhatsApp Business API for this?",
+             "No. A booking form that opens a pre-filled WhatsApp chat works with any WhatsApp number. Fully automatic "
+             "WhatsApp replies are what need the Business API."),
+            ("Will patients really book on WhatsApp?",
+             "Yes. Most patients already use WhatsApp every day, so sending a ready-made message is easier for them than "
+             "filling a long form or calling during busy hours."),
+        ],
+    },
+    {
+        "slug": "dental-lab-website-seo",
+        "seo_title": "Dental Lab Website & SEO: Ankhor Dental Lab Case Study",
+        "desc": ("How I built the Ankhor Dental Lab website and did its SEO: services, technology and a product catalogue "
+                 "with a page for every product, built so clinics can find the lab and send a case."),
+        "h1": "Dental lab website &amp; SEO: <em>Ankhor Dental Lab</em>",
+        "kicker": "Website & SEO · Ankhor Dental Lab",
+        "date": "2026-11-07",
+        "read": "5 min read",
+        "intro": ("A dental lab's customers are dentists, and they look for very specific things: zirconia, implant "
+                  "prostheses, dentures, digital workflows. I built the Ankhor Dental Lab website and did its SEO so "
+                  "dentists can find the right product, trust the lab and send a case in a few clicks."),
+        "sections": [
+            ("What the website needed to do",
+             ["Explain what the lab makes and how it works, show the technology behind it, and make sending a case the "
+              "obvious next step from every page."]),
+            ("A product catalogue with a page for every product",
+             ["The products section works like a catalogue: categories such as fixed, implant, removable, digital and "
+              "specialised, with search and a page for each product. Dentists can go straight to zirconia or a specific "
+              "implant prosthesis instead of reading one long list."]),
+            ("Technology and services pages",
+             ["A technology page shows the lab's fully digital workflow, from scanning and CAD/CAM design to milling, "
+              "printing and finishing, and the services pages explain what the lab offers. These pages build trust with "
+              "dentists comparing labs."]),
+            ("SEO for every page",
+             ["Every page has its own title and description, clear headings and internal links between related "
+              "products, and the site has a sitemap so Google can find all the product pages. Because each product has "
+              "its own page, each one can show up for its own searches."]),
+            ("Send a Case everywhere",
+             ["A Send a Case button sits in the header on every page, so a dentist who finds the right product can start "
+              "a case immediately. The case portal behind that button is a separate system, which I've written about on "
+              "its own."]),
+        ],
+        "checklist": ["Product catalogue with a page per product", "Categories and search for products",
+                      "Technology and services pages that build trust", "Unique titles and descriptions",
+                      "Sitemap covering every product page", "Send a Case on every page"],
+        "projects": ["ankhor-dental-lab"],
+        "faqs": [
+            ("Why does a dental lab need a page for each product?",
+             "Dentists search for specific restorations. A page for each product can show up for those searches and give "
+             "the dentist the details they need before sending a case."),
+            ("How do dentists contact the lab from the website?",
+             "Through the Send a Case button on every page, as well as call and WhatsApp links."),
         ],
     },
     {
         "slug": "dental-lab-case-portal-automation",
-        "seo_title": "Dental Lab Website, Case Portal & Automation: Ankhor Case Study",
-        "desc": ("How I built Ankhor Dental Lab's website, an online case portal with dashboard, email and WhatsApp "
-                 "alerts, a mobile app, a scan booking platform and a Diwali referral program."),
-        "h1": "Dental lab website, case portal &amp; <em>automation</em>",
-        "kicker": "Case study · Ankhor Dental Lab",
+        "seo_title": "Dental Lab Case Portal & Dashboard: Ankhor Case Study",
+        "desc": ("How I built Ankhor Dental Lab's online case portal: clinics send case details and scans, the team gets "
+                 "email and WhatsApp alerts, and every case is tracked in a dashboard and a mobile app."),
+        "h1": "Case portal &amp; dashboard for <em>Ankhor Dental Lab</em>",
+        "kicker": "Case portal · Ankhor Dental Lab",
         "date": "2026-11-07",
-        "read": "7 min read",
-        "intro": ("A dental lab runs on cases. Clinics send them, the lab confirms them, makes them and delivers them, and "
-                  "every step used to depend on calls and WhatsApp messages. For Ankhor Dental Lab I built the website "
-                  "and the systems around it: an online case portal with a dashboard, instant email and WhatsApp "
-                  "notifications, a mobile app to check cases, a scan booking platform and a Diwali referral program. "
-                  "Here's how each piece works."),
+        "read": "5 min read",
+        "intro": ("A dental lab runs on cases. Before this system, Ankhor received them through calls and scattered "
+                  "WhatsApp messages, and the team had no single place to see what had come in. I built an online case "
+                  "portal with a dashboard, instant email and WhatsApp notifications, and a mobile app so the team can "
+                  "check cases anywhere."),
         "sections": [
             ("The problem: cases scattered across calls and chats",
-             ["Clinics sent cases and booked scans through calls and scattered WhatsApp messages. The lab team had no "
-              "single place to see what was coming in, details had to be copied by hand, and every confirmation was "
-              "typed again and again."]),
-            ("The website and product catalogue",
-             ["First, a website that explains what the lab makes and makes it easy to start a case. It covers the lab's "
-              "services, technology and a full product range with a page for each product, so clinics can find the "
-              "right restoration and send a case from anywhere on the site."]),
-            ("An online portal to send cases",
-             ["Clinics send a case from the website: doctor and clinic details, case type and material, units, shade, a "
-              "shade photo and the scan files (STL, OBJ or PLY). Everything the lab needs arrives in one go, in the same "
-              "format every time."]),
+             ["Cases arrived by phone and WhatsApp, details had to be copied by hand, and nobody could see every open "
+              "case in one place."]),
+            ("Clinics send cases online",
+             ["The Send a Case form asks for everything the lab needs in one go: doctor and clinic details, case type and "
+              "material, number of units, shade, a shade photo and the scan files in STL, OBJ or PLY format. Every case "
+              "arrives complete and in the same format."]),
             ("Instant email and WhatsApp notifications",
-             ["As soon as a case is submitted, the lab is notified by email and WhatsApp with the case details. Nobody "
-              "has to keep checking an inbox or scroll through chats to find out what came in."]),
-            ("A dashboard and a mobile app to track cases",
-             ["Every case lands in one dashboard where the team can see what has arrived and track it. I also set up a "
-              "mobile app so the team can check cases from their phone, away from the desk."]),
-            ("A scan booking platform with its own dashboard",
-             ["For chairside intraoral scanning, clinics book a visit online: they pick a free day and time, add clinic "
-              "and case details, and the request is saved. Taken slots show as booked straight away, so two clinics "
-              "can't book the same visit, and the team manages every booking from a dashboard."]),
-            ("A Diwali referral program",
-             ["For Diwali I built a Refer & Earn page and its dashboard: dentists share their personal referral link, "
-              "and when three referred doctors send their first case they earn two free premium zirconia crowns. The "
-              "page has a countdown to the offer's end date, a simple how-it-works section and one-tap sharing on "
-              "WhatsApp; the dashboard tracks referrals."]),
-            ("What other labs and clinics can copy",
-             ["Start with the step that wastes the most time, usually receiving cases or bookings, and move it to one "
-              "online form with every detail you need. Then add instant notifications, then a dashboard. Keep clinics on "
-              "the channels they already use, like WhatsApp and email, and remove steps instead of adding software."]),
+             ["The moment a clinic submits a case, the lab gets an email and a WhatsApp notification with the details. "
+              "Nobody has to keep checking an inbox or scroll through chats."]),
+            ("One dashboard for every case",
+             ["Every case lands in a dashboard where the team can see what has arrived and track it, instead of "
+              "searching through messages."]),
+            ("A mobile app to check cases on the go",
+             ["The team can also check cases from a mobile app, so they stay on top of new work away from the desk."]),
         ],
-        "checklist": ["Website with a page for every product", "Online case form with scan upload",
-                      "Email and WhatsApp alert for every new case", "One dashboard for all cases",
-                      "Mobile app to check cases on the go", "Scan booking with live slots",
-                      "Referral program with its own page and dashboard"],
-        "projects": ["ankhor-case-booking-automation", "ankhor-dental-lab"],
+        "checklist": ["One online form with every case detail", "Scan upload: STL, OBJ, PLY",
+                      "Shade photo upload", "Email alert for every new case", "WhatsApp alert for every new case",
+                      "A dashboard for all cases", "A mobile app for the team"],
+        "projects": ["ankhor-case-booking-automation"],
         "faqs": [
-            ("Can clinics send scan files through the portal?",
-             "Yes. The case form accepts STL, OBJ and PLY scan files along with a shade photo and the case details."),
+            ("Can clinics upload scan files through the portal?",
+             "Yes. The case form accepts STL, OBJ and PLY scan files, along with a shade photo and the case details."),
             ("How does the lab know a new case has arrived?",
-             "The team gets an email and a WhatsApp notification as soon as a case is submitted, and the case appears "
-             "in the dashboard."),
-            ("Can this work for a dental clinic or another business?",
-             "Yes. The same pattern (one online form, instant notifications, a dashboard) works for any business that "
-             "receives orders, bookings or requests every day."),
+             "The team gets an email and a WhatsApp notification as soon as a case is submitted, and the case appears in "
+             "the dashboard and the app."),
+        ],
+    },
+    {
+        "slug": "dental-scan-booking-platform",
+        "seo_title": "Intraoral Scan Booking Platform & Dashboard: Ankhor Case Study",
+        "desc": ("How I built Ankhor Dental Lab's scan booking platform: clinics pick a free slot online, taken slots show "
+                 "as booked instantly, and the team manages every booking from a dashboard."),
+        "h1": "Scan booking platform for <em>Ankhor Dental Lab</em>",
+        "kicker": "Scan booking · Ankhor Dental Lab",
+        "date": "2026-11-07",
+        "read": "4 min read",
+        "intro": ("Ankhor offers chairside intraoral scanning: clinics without a scanner book a slot, and the lab's team "
+                  "comes to the clinic and scans the patient. Booking those visits by phone meant back-and-forth and "
+                  "double bookings, so I built an online scan booking platform with its own dashboard."),
+        "sections": [
+            ("Pick a day and time",
+             ["Clinics choose a free day and a free time slot on the Book a Scan page. Available and booked slots are "
+              "shown clearly, so there's no guessing."]),
+            ("Clinic and case details in one form",
+             ["The same page collects the clinic name, doctor, phone, email, address, number of cases, case type "
+              "(crown/bridge or implant), whether the scan body is ready and any notes. The team arrives knowing exactly "
+              "what to expect."]),
+            ("No double bookings",
+             ["As soon as a slot is booked it shows as taken, so two clinics can't book the same visit."]),
+            ("A dashboard for the team",
+             ["Every booking goes into a dashboard where the team manages the schedule, instead of tracking visits on "
+              "paper or in chats."]),
+            ("A clear four-step process",
+             ["The page explains the process in four steps: book a slot, the lab confirms, the team visits and scans, and "
+              "the lab makes the case. It also lists what to prepare before the visit and the pricing."]),
+        ],
+        "checklist": ["Free and booked slots shown clearly", "Clinic and case details in the same form",
+                      "Slots marked booked instantly", "A dashboard to manage visits", "Steps and preparation explained"],
+        "projects": ["ankhor-case-booking-automation"],
+        "faqs": [
+            ("Can two clinics book the same slot?",
+             "No. Once a slot is booked it shows as taken straight away."),
+            ("Can clinics book on a phone?",
+             "Yes. The booking page works on mobile, with the same day and time picker."),
+        ],
+    },
+    {
+        "slug": "dental-lab-referral-program",
+        "seo_title": "Diwali Referral Program Page, Dashboard & App: Ankhor Case Study",
+        "desc": ("How I built a Diwali Refer & Earn program for Ankhor Dental Lab: a campaign page, a referral dashboard "
+                 "and app, with personal referral links shared on WhatsApp."),
+        "h1": "Diwali referral program for <em>Ankhor Dental Lab</em>",
+        "kicker": "Referral program · Ankhor Dental Lab",
+        "date": "2026-11-07",
+        "read": "4 min read",
+        "intro": ("Dentists trust other dentists' recommendations more than any ad. For Diwali, Ankhor Dental Lab wanted to "
+                  "turn that into new clinics, so I built a Refer & Earn program: a campaign page, a referral dashboard "
+                  "and an app to track it all."),
+        "sections": [
+            ("The offer",
+             ["Refer three doctors and earn two free premium zirconia crowns, worth ₹5,000, on cases booked before "
+              "the offer ends. Referred dentists get a welcome offer on their first case, and there's a surprise reward "
+              "for the first referral."]),
+            ("A campaign page built to convert",
+             ["The Refer & Earn page leads with the reward, shows a live countdown to the end of the offer, explains how "
+              "it works in three simple steps and answers common questions. A Get My Referral Link button sits right at "
+              "the top."]),
+            ("Personal referral links, shared on WhatsApp",
+             ["Each dentist gets a personal referral link and can share it with friends on WhatsApp in one tap, which is "
+              "how dentists already talk to each other."]),
+            ("A dashboard and app to track referrals",
+             ["Every referral is tracked in a dashboard and app, so the lab can see who referred whom, which referred "
+              "dentists have sent their first case and who has earned a reward, without spreadsheets."]),
+            ("What any business can copy",
+             ["Make the reward clear and worth it, add a real deadline, make sharing one tap on the channel people "
+              "already use, and track every referral automatically so rewards are fair and on time."]),
+        ],
+        "checklist": ["A clear reward worth sharing", "A real deadline with a countdown", "Three simple steps",
+                      "Personal referral links", "One-tap WhatsApp sharing", "Dashboard and app to track referrals"],
+        "projects": ["ankhor-referral-program"],
+        "faqs": [
+            ("How do dentists share their referral link?",
+             "Each dentist gets a personal link and can share it on WhatsApp in one tap from the page."),
+            ("How are referrals tracked?",
+             "In a referral dashboard and app, which show each referral and when the referred dentist sends their first case."),
         ],
     },
 ]
@@ -743,25 +907,53 @@ ARTICLES = [
 # Covers and in-article screenshots (from each client's own website); figures are keyed by section index
 ARTICLE_MEDIA = {
     "seo-for-dental-clinics-tamil-nadu": {
-        "cover": ("blog/cover-dental-seo", "Akeela Dental Care website and WhatsApp booking page"),
+        "cover": ("blog/cover-akeela-website", "Akeela Dental Care website on desktop and mobile"),
         "figs": {
-            0: [("blog/akeela-implants", "The dental implants page on the Akeela Dental Care website."),
+            0: [("blog/akeela-implants", "The dental implants page."),
                 ("blog/akeela-rct", "A separate root canal treatment page, so each treatment can rank for its own searches.")],
             1: [("blog/akeela-treatments", "The treatments overview page links every treatment page together.")],
-            2: [("blog/akeela-reviews", "Akeela's patient reviews page puts real stories and ratings front and centre.")],
-            3: [("work/akeelawa-1", "The appointment form: a few fields, then WhatsApp opens with the request filled in."),
-                ("work/akeelawa-m", "On mobile, Call and WhatsApp buttons stay on screen.")],
+            3: [("blog/akeela-reviews", "The patient reviews page puts real stories and ratings front and centre.")],
+            4: [("work/akeela-1", "The home page on desktop."), ("work/akeela-m", "The home page on mobile, with Call and WhatsApp buttons.")],
+        },
+    },
+    "whatsapp-appointment-booking-dental-clinic": {
+        "cover": ("blog/cover-akeela-booking", "Akeela Dental Care appointment booking on desktop and mobile"),
+        "figs": {
+            1: [("work/akeelawa-1", "The appointment form: name, phone, treatment and message."),
+                ("work/akeelawa-m", "On mobile, with Call and WhatsApp buttons fixed at the bottom.")],
+            2: [("blog/akeela-book", "The booking page, with Book Appointment and WhatsApp buttons.")],
+        },
+    },
+    "dental-lab-website-seo": {
+        "cover": ("blog/cover-ankhor-website", "Ankhor Dental Lab website on desktop and mobile"),
+        "figs": {
+            0: [("work/ankhor-1", "The home page."), ("work/ankhor-m", "The home page on mobile.")],
+            1: [("blog/ankhor-products", "The product catalogue, with categories and search."),
+                ("blog/ankhor-zirconia", "A product page: metal-free zirconia restorations.")],
+            2: [("blog/ankhor-technology", "The technology page: a fully digital lab under one roof.")],
         },
     },
     "dental-lab-case-portal-automation": {
-        "cover": ("blog/cover-dental-lab-portal", "Ankhor Dental Lab case portal and scan booking pages"),
+        "cover": ("blog/cover-ankhor-case-portal", "Ankhor Dental Lab Send a Case portal"),
         "figs": {
-            1: [("blog/ankhor-products", "Ankhor's product range: every product has its own page.")],
-            2: [("blog/ankhor-send-case", "The Send a Case form: case details, shade photo and STL, OBJ or PLY scan upload.")],
-            5: [("work/ankhorcase-2", "The scan booking platform: choose a day, choose a time, add clinic and case details."),
+            1: [("blog/ankhor-send-case", "The Send a Case form: case details, shade photo and STL, OBJ or PLY scan upload.")],
+        },
+    },
+    "dental-scan-booking-platform": {
+        "cover": ("blog/cover-ankhor-scan-booking", "Ankhor Dental Lab scan booking on desktop and mobile"),
+        "figs": {
+            0: [("work/ankhorcase-2", "Choose a day, choose a time, then add clinic and case details."),
                 ("work/ankhorcase-m", "Slot booking on mobile, with free and booked times.")],
-            6: [("blog/ankhor-refer", "The Diwali Refer & Earn page with the reward and a countdown."),
-                ("blog/ankhor-refer-m", "The referral page on mobile.")],
+            4: [("work/ankhorcase-3", "Four simple steps, what to prepare and pricing."),
+                ("work/ankhorcase-1", "The chairside intraoral scanning service page.")],
+        },
+    },
+    "dental-lab-referral-program": {
+        "cover": ("blog/cover-ankhor-referral", "Ankhor Dental Lab Diwali Refer & Earn page"),
+        "figs": {
+            1: [("blog/ankhor-refer", "The Refer & Earn page with the reward and a live countdown."),
+                ("blog/ankhor-refer-m", "The campaign page on mobile.")],
+            2: [("blog/ankhor-refer-2", "Rewards for the referrer and a welcome offer for referred dentists, with WhatsApp sharing.")],
         },
     },
 }
