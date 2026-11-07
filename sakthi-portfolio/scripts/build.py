@@ -16,7 +16,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "scripts"))
-from content import (ABOUT, ARTICLES, BRING, DESIGNS, FAQS, KEYWORD_PAGES, PRINT, PROJECT_SEO, EDUCATION, EXPERIENCE, PROFILE, PROJECTS, RESULTS, SERVICES,  # noqa: E402
+from content import (ABOUT, ARTICLES, STORIES, BRING, DESIGNS, FAQS, KEYWORD_PAGES, PRINT, PROJECT_SEO, EDUCATION, EXPERIENCE, PROFILE, PROJECTS, RESULTS, SERVICES,  # noqa: E402
                      SKILL_TABS, SOFT_SKILLS, STATS, TESTIMONIALS, TICKER, TOOLS, VIDEOS)
 
 SITE = os.environ.get("PORTFOLIO_URL", "https://saktheeswaran.netlify.app/")
@@ -523,6 +523,59 @@ def work_page(pr, i):
 {sec_head("", "Product creatives", 'Posts I <em>designed</em>', "Product creatives designed in Canva and edited for the brand's Instagram.", tid="crTitle")}
 <ul class="cr-grid">{cards}</ul>
 </div></section>'''
+    st = STORIES.get(pr["slug"])
+    story = ""
+    if st:
+        gp, gs, gr = st["glance"]
+        glance = "".join(f'<li class="gl" data-reveal=""><span class="gl-ic">{svg(I[ic])}</span><small>{lab}</small><p>{esc(t)}</p></li>'
+                         for lab, t, ic in [("The problem", gp, "seo"), ("The solution", gs, "ai"), ("The result", gr, "check")])
+        paras = lambda ps: "".join(f"<p>{esc(x)}</p>" for x in ps)
+        def media(keys):
+            if not keys:
+                return ""
+            desk = [k for k in keys if not k.endswith("-m")]
+            ph = [k for k in keys if k.endswith("-m")]
+            cls = "pair" if len(desk) == 2 else ("with-phone" if desk and ph else ("phone-only" if ph else "single"))
+            out = "".join(f'<figure class="ft-shot">{img(k, pr["title"] + " screenshot", "(min-width: 1001px) 640px, 92vw", p)}</figure>' for k in desk)
+            out += "".join(f'<figure class="ft-phone">{img(k, pr["title"] + " on mobile", "220px", p)}</figure>' for k in ph)
+            return f'<div class="ft-media {cls}">{out}</div>'
+        feats = "".join(
+            f'<div class="ft{" no-media" if not ks else ""}" data-reveal=""><div class="ft-text"><span class="ft-n">{n:02d}</span>'
+            f'<h3>{esc(t)}</h3><p>{esc(d)}</p></div>{media(ks)}</div>'
+            for n, (t, d, ks) in enumerate(st["features"], 1))
+        results = "".join(f"<li>{CHECK}<span>{esc(x)}</span></li>" for x in st["results"])
+        ins = next((a for a in ARTICLES if a["slug"] == st["insight"]), None)
+        insight = (f'<section class="sec cs-insight"><div class="wrap">{article_card(ins, p)}</div></section>' if ins else "")
+        story = f'''<section class="sec cs-glance"><div class="wrap"><ul class="gl-grid">{glance}</ul></div></section>
+
+<section class="sec cs-body cs-story">
+<div class="wrap cs-in">
+<div class="cs-text">
+<div class="cs-row" data-reveal=""><h2><span>01</span>The challenge</h2>{paras(st["challenge"])}</div>
+<div class="cs-row" data-reveal=""><h2><span>02</span>My approach</h2>{paras(st["approach"])}</div>
+</div>
+<aside class="cs-side" data-reveal=""><h3>What I delivered</h3><ul class="kw-list">{"".join(f"<li>{CHECK}<span>{esc(x)}</span></li>" for x in st["services"])}</ul>
+<h3>Tools used</h3><ul class="chips">{"".join(f"<li>{esc(t)}</li>" for t in pr["tools"])}</ul>
+<h3>Want something similar?</h3><p>Tell me about your business and goals.</p>{btn("Chat on WhatsApp", WA, "btn-dark btn-sm", target=True)}</aside>
+</div>
+</section>
+
+<section class="sec cs-build">
+<div class="wrap">
+{sec_head("03", "What I built", 'The solution, <em>step by step</em>', tid="buildTitle")}
+<div class="ft-list">{feats}</div>
+</div>
+</section>
+
+<section class="sec cs-results">
+<div class="wrap res-in">
+<div>{sec_head("04", "The result", 'What <em>changed</em>', tid="resTitle")}</div>
+<ul class="res-list" data-reveal="">{results}</ul>
+</div>
+</section>
+'''
+        gallery = gallery.split("</section>", 1)[1] if gallery.startswith('<section class="sec cs-gallery">') else gallery
+        gallery = story + gallery + insight
     nxt = PROJECTS[(i + 1) % len(PROJECTS)]
     live = btn("Visit live site", pr["live"], "btn-accent", ARROW_UR, target=True) if pr["live"] else ""
     body = f'''{header(p, h)}
@@ -540,13 +593,13 @@ def work_page(pr, i):
 <div class="wrap"><figure class="cs-cover">{img(pr["cover"], pr["title"] + " screenshot", "(min-width: 1001px) 1200px, 94vw", p, eager=True)}</figure></div>
 </section>
 
-<section class="sec cs-body">
+{"" if st else f'''<section class="sec cs-body">
 <div class="wrap cs-in">
 <div class="cs-text">{secs}</div>
 <aside class="cs-side" data-reveal=""><h3>Tools used</h3><ul class="chips">{"".join(f"<li>{esc(t)}</li>" for t in pr["tools"])}</ul>
 <h3>Want something similar?</h3><p>Tell me about your business and goals.</p>{btn("Chat on WhatsApp", WA, "btn-dark btn-sm", target=True)}</aside>
 </div>
-</section>
+</section>'''}
 
 {gallery}
 

@@ -262,5 +262,29 @@
  "blog/cover-ankhor-referral": [
   1600,
   900
+ ],
+ "blog/astra-service": [
+  1600,
+  1000
+ ],
+ "blog/astra-blog": [
+  1600,
+  1000
+ ],
+ "blog/astra-post": [
+  1600,
+  1000
+ ],
+ "blog/astra-founder": [
+  1600,
+  1000
+ ],
+ "blog/astra-contact": [
+  1600,
+  1000
+ ],
+ "blog/astra-services-grid": [
+  1600,
+  1000
  ]
 }

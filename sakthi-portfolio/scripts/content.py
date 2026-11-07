@@ -959,3 +959,237 @@ ARTICLE_MEDIA = {
 }
 for _a in ARTICLES:
     _a.update(ARTICLE_MEDIA[_a["slug"]])
+
+# Detailed case-study story for every project: at-a-glance, challenge, approach, what was built (with screenshots),
+# results, services delivered and the matching insight article
+STORIES = {
+    "astra-nexora-website": {
+        "glance": ("A new agency needed a credible online home that explains eight services and turns visitors into enquiries.",
+                   "A fast custom website with a page per service, an SEO blog, a free audit offer and WhatsApp as the contact channel.",
+                   "A live, indexed agency website with 8 service pages, a blog and an enquiry form that opens WhatsApp."),
+        "challenge": ["Astra Nexora is my own agency, founded in 2025. A new agency has no reputation yet, so the website has "
+                      "to do the convincing: explain clearly what we do, look as professional as established agencies, and "
+                      "give a visitor a simple, low-risk first step.",
+                      "Template sites are slow and look like everyone else's, and fake case studies destroy trust the moment "
+                      "someone checks them. The site had to be fast, original and honest."],
+        "approach": ["One page for each of the eight services, so each can rank for its own searches and answer one question "
+                     "well. Honest concept projects instead of invented client results. A free website audit as the main "
+                     "offer, because it's easy to say yes to. And WhatsApp as the main contact channel, because that's where "
+                     "Indian business owners already are.",
+                     "SEO was planned from the start: structured data, a sitemap, a blog with practical guides, and both "
+                     "Google Search Console and Bing Webmaster Tools set up on day one."],
+        "features": [
+            ("Eight service pages", "Every service (SEO, social media, ads, content, websites, branding, email and AI "
+             "automation) has its own page with what's included, the process, FAQs and a clear call to action.",
+             ["blog/astra-services-grid", "blog/astra-service"]),
+            ("A blog that brings in search traffic", "Practical guides on local SEO, Google Business Profile, website audits, "
+             "SEO vs ads and AI search, each with key takeaways, FAQs and article schema.",
+             ["blog/astra-blog", "blog/astra-post"]),
+            ("A founder section that builds trust", "People buy from people. The founder section introduces who runs the "
+             "agency, with a short timeline and links to my portfolio and LinkedIn.",
+             ["blog/astra-founder"]),
+            ("Free audit + WhatsApp enquiry form", "The contact form collects the business details and opens WhatsApp with "
+             "everything filled in, so the enquiry arrives in one message and nothing is stored on a server.",
+             ["blog/astra-contact", "work/astra-m"]),
+        ],
+        "results": ["Live at astranexora.netlify.app with 8 service pages, project pages and a blog",
+                    "Structured data, sitemap, Google Search Console and Bing submission in place",
+                    "Every enquiry arrives on WhatsApp with the visitor's details filled in",
+                    "Fast custom build with smooth scroll animations, deployed on Netlify"],
+        "services": ["Strategy & content", "Website design & build", "SEO & structured data", "Blog & guides", "Deployment"],
+        "insight": None,
+    },
+    "akeela-dental-care": {
+        "glance": ("A dental clinic needed to be found by patients searching for treatments, and to make booking easy.",
+                   "A new website built around treatments, with full SEO and booking, calls and WhatsApp on every page.",
+                   "A complete clinic website where every treatment has its own page and every page leads to a booking."),
+        "challenge": ["Akeela Dental Care has served patients since 1994 and offers a wide range of treatments, from implants "
+                      "and root canals to aligners and cosmetic dentistry. Patients search for those treatments by name and "
+                      "area, and they decide within seconds whether a clinic looks trustworthy.",
+                      "The clinic needed a website that shows up for those searches, explains each treatment clearly and "
+                      "makes it effortless to book, especially on a phone."],
+        "approach": ["Build the website around treatments, with one dedicated page for each, linked together through a "
+                     "treatments overview. Do the SEO properly from the start on every page. Put reviews front and centre. "
+                     "And make booking, calls and WhatsApp reachable from every page, designed mobile first."],
+        "features": [
+            ("A page for every treatment", "Dental implants, root canal treatment, aligners, orthodontics, cosmetic "
+             "dentistry and more each have their own page explaining the problem, the treatment, what to expect and how "
+             "to book.", ["blog/akeela-implants", "blog/akeela-rct"]),
+            ("A treatments hub", "A treatments overview links every treatment page together, helping patients and Google "
+             "understand the full range of care.", ["blog/akeela-treatments"]),
+            ("Full on-page SEO", "Unique titles and descriptions with the treatment and area, one clear H1, structured "
+             "headings, compressed images, internal links, structured data and Google Search Console.", ["work/akeela-2"]),
+            ("Reviews and trust", "A dedicated patient reviews page with real stories and ratings, alongside the clinic's "
+             "history and experience.", ["blog/akeela-reviews"]),
+            ("Mobile first, booking everywhere", "Call, WhatsApp and Book Appointment buttons are always within reach, "
+             "with the booking flow built as its own system.", ["work/akeela-1", "work/akeela-m"]),
+        ],
+        "results": ["A complete clinic website with a dedicated page for each treatment",
+                    "SEO set up on every page from day one, with Search Console",
+                    "Reviews and clinic credentials visible where patients decide",
+                    "Booking, calls and WhatsApp one tap away on every page"],
+        "services": ["Website design & build", "Treatment page content", "On-page & technical SEO", "Search Console"],
+        "insight": "seo-for-dental-clinics-tamil-nadu",
+    },
+    "akeela-whatsapp-automation": {
+        "glance": ("Appointment requests were missed during busy clinic hours.",
+                   "A short booking form that opens WhatsApp with the request filled in, plus call and WhatsApp buttons on every page.",
+                   "Every request reaches the clinic on WhatsApp with the patient's details, ready to confirm in one reply."),
+        "challenge": ["A dental clinic is busiest exactly when patients try to call. Phones rang during treatments, enquiries "
+                      "got buried, and appointment requests were slow to answer. Every missed call is a patient who might "
+                      "book somewhere else."],
+        "approach": ["Use the app patients already use every day. Instead of a long form that waits for a call back, the "
+                     "booking asks for four things and hands the request straight to WhatsApp. No app to download, no "
+                     "account to create, and the clinic gets every request in the same clear format."],
+        "features": [
+            ("A four-field booking form", "Name, phone number, treatment and an optional message. That's all the clinic "
+             "needs to confirm an appointment.", ["work/akeelawa-1"]),
+            ("WhatsApp opens with the request filled in", "On submit, WhatsApp opens with the patient's details already "
+             "written. They just press send, and the clinic receives a complete request.", ["work/akeelawa-m"]),
+            ("Booking from every page", "A dedicated booking page, plus Book Appointment, Call and WhatsApp buttons that stay "
+             "on screen on mobile, so patients can book the moment they decide.", ["blog/akeela-book"]),
+        ],
+        "results": ["Every appointment request arrives on WhatsApp with name, number and treatment",
+                    "The team confirms bookings in one reply, without calling back",
+                    "No missed enquiries during busy clinic hours",
+                    "Nothing new for patients to install or learn"],
+        "services": ["Booking flow design", "WhatsApp integration", "Mobile UX"],
+        "insight": "whatsapp-appointment-booking-dental-clinic",
+    },
+    "ankhor-dental-lab": {
+        "glance": ("A dental lab needed a website that shows everything it makes and makes sending a case easy.",
+                   "A new website with a full product catalogue, technology pages, SEO on every page and Send a Case everywhere.",
+                   "A complete lab website where every product can be found on its own and every page leads to a case."),
+        "challenge": ["Ankhor Dental Lab's customers are dentists, and they look for very specific restorations: zirconia, "
+                      "implant prostheses, dentures, digital models. They compare labs on quality, technology and how easy "
+                      "they are to work with.",
+                      "The lab needed a website that presents its full range clearly, proves its digital workflow and turns "
+                      "a visiting dentist into a case."],
+        "approach": ["Build the site like a catalogue, with categories, search and a page for every product. Explain the "
+                     "lab's fully digital workflow on a technology page. Do the SEO on every page so each product can show "
+                     "up in search. And put Send a Case in the header of every page."],
+        "features": [
+            ("Home page that sets the standard", "A clear promise, the lab's history since 1994, key numbers and quick "
+             "routes to products and Send a Case.", ["work/ankhor-1", "work/ankhor-m"]),
+            ("A product catalogue", "Categories (fixed, implant, removable, digital, specialised), search and filters, so a "
+             "dentist can go straight to what they need.", ["blog/ankhor-products"]),
+            ("A page for every product", "Each product, like metal-free zirconia, has its own page with the options, "
+             "warranty and a call to action.", ["blog/ankhor-zirconia"]),
+            ("A technology page", "Scanning, CAD/CAM design, milling, printing and finishing under one roof, shown with the "
+             "lab's real machines and numbers.", ["blog/ankhor-technology"]),
+            ("SEO on every page", "Unique titles and descriptions, clear headings, internal links between related products, "
+             "image optimisation, a sitemap covering every product page and Search Console.", ["work/ankhor-2"]),
+        ],
+        "results": ["A full product catalogue with a page for every product",
+                    "Every page optimised for search, with a complete sitemap",
+                    "The lab's digital workflow presented clearly to dentists",
+                    "Send a Case available from every page"],
+        "services": ["Website design & build", "Product catalogue", "On-page & technical SEO", "Search Console"],
+        "insight": "dental-lab-website-seo",
+    },
+    "ankhor-case-booking-automation": {
+        "glance": ("Cases and scan bookings arrived through calls and scattered WhatsApp messages.",
+                   "An online case portal and a scan booking platform, each with a dashboard, plus instant email and WhatsApp alerts and a mobile app.",
+                   "Every case and booking lands in one place, and the team hears about new cases instantly."),
+        "challenge": ["A dental lab runs on cases. Ankhor received them by phone and WhatsApp, details had to be copied by "
+                      "hand, and nobody could see every open case in one place. Scan visits were booked over the phone too, "
+                      "which meant back-and-forth and the risk of double bookings."],
+        "approach": ["Move both workflows online. Clinics send cases through one form that collects every detail and the scan "
+                     "files; the team is alerted instantly by email and WhatsApp and tracks everything in a dashboard and a "
+                     "mobile app. Scan visits are booked on a platform with live slots and their own dashboard."],
+        "features": [
+            ("Send a Case portal", "Doctor and clinic details, case type and material, units, shade, a shade photo and STL, "
+             "OBJ or PLY scan files, all in one form, so every case arrives complete.", ["blog/ankhor-send-case"]),
+            ("Instant email and WhatsApp alerts", "The moment a case is submitted, the lab gets an email and a WhatsApp "
+             "notification with the details. Nobody has to keep checking inboxes or chats.", []),
+            ("Case dashboard and mobile app", "Every case lands in a dashboard where the team tracks it, and a mobile app lets "
+             "them check cases away from the desk.", []),
+            ("Scan booking with live slots", "Clinics pick a free day and time and add their case details. Booked slots show "
+             "as taken instantly, so there are no double bookings.", ["work/ankhorcase-2", "work/ankhorcase-m"]),
+            ("A clear process for clinics", "The booking page explains the four steps, what to prepare and the pricing, and "
+             "every booking goes into a dashboard for the team.", ["work/ankhorcase-3", "work/ankhorcase-1"]),
+        ],
+        "results": ["Every case arrives complete, with scan files, in the same format",
+                    "The team is notified by email and WhatsApp the moment a case comes in",
+                    "All cases tracked in one dashboard and a mobile app",
+                    "Scan visits booked online with no double bookings"],
+        "services": ["Portal & form build", "Dashboards", "Email & WhatsApp automation", "Mobile app", "Booking platform"],
+        "insight": "dental-lab-case-portal-automation",
+    },
+    "ankhor-referral-program": {
+        "glance": ("The lab wanted more dentists to try it, and dentists trust other dentists more than ads.",
+                   "A Diwali Refer & Earn campaign: a landing page with a countdown, personal referral links and a dashboard and app.",
+                   "A complete referral campaign the lab can run and track without spreadsheets."),
+        "challenge": ["Ankhor Dental Lab wanted to bring in new clinics during Diwali. Ads reach people, but a dentist is far "
+                      "more likely to try a lab their colleague recommends. The lab needed a way to turn happy dentists into "
+                      "referrers, and to track who referred whom so rewards are fair."],
+        "approach": ["A time-limited Diwali offer with a reward worth sharing, a campaign page built to convert, personal "
+                     "referral links that share to WhatsApp in one tap, and a dashboard and app that track every referral "
+                     "automatically."],
+        "features": [
+            ("A campaign page built to convert", "The reward up front (refer 3 doctors, get 2 free premium zirconia crowns), "
+             "a live countdown to the offer's end and a Get My Referral Link button.", ["blog/ankhor-refer", "blog/ankhor-refer-m"]),
+            ("Rewards on both sides", "A surprise reward for the first referral, the main reward for three, and a welcome "
+             "offer for every referred dentist, explained in three simple steps.", ["blog/ankhor-refer-2"]),
+            ("One-tap WhatsApp sharing", "Each dentist gets a personal referral link and shares it on WhatsApp, where "
+             "dentists already talk to each other.", []),
+            ("Referral dashboard and app", "Every referral is tracked: who referred whom, which referred dentists have sent "
+             "their first case and who has earned a reward.", []),
+        ],
+        "results": ["A live Diwali campaign page with countdown and FAQs",
+                    "Personal referral links shared on WhatsApp in one tap",
+                    "Referrals and rewards tracked in a dashboard and app",
+                    "No spreadsheets or manual tracking"],
+        "services": ["Campaign strategy", "Landing page", "Referral dashboard", "Mobile app"],
+        "insight": "dental-lab-referral-program",
+    },
+    "guggulr-instagram": {
+        "glance": ("A premium gift box brand's Instagram looked inconsistent from post to post.",
+                   "A planned content calendar and a recognisable creative style for every product post, designed in Canva.",
+                   "A consistent, premium feed of product creatives for the festive season."),
+        "challenge": ["Guggulr sells premium gift boxes, and buyers judge premium products by how they look. When every post "
+                      "looks different, the brand feels less premium and harder to remember."],
+        "approach": ["Plan the content around the festive season and each collection, then design every creative in one "
+                     "consistent style: rich festive settings, the product as the hero, elegant script names for each "
+                     "collection, the logo and a QR code in the same place every time."],
+        "features": [
+            ("Collection launches", "Each gift collection, like Trésor Céleste, Édition Velaris and Paon Royal, gets its own "
+             "named creative so buyers remember it.", ["work/guggulr-02", "work/guggulr-08"]),
+            ("Offer posts", "Festive offers like 10% off are built into the same style, so promotions still look premium.",
+             ["work/guggulr-07"]),
+            ("Collages and multi-view posts", "Collage layouts show a box from several angles or several boxes together.",
+             ["work/guggulr-10", "work/guggulr-04"]),
+            ("Seasonal greetings and hampers", "Christmas greetings and dry fruit hampers keep the feed active between launches.",
+             ["work/guggulr-13", "work/guggulr-11"]),
+        ],
+        "results": ["13 product creatives in one consistent, premium style",
+                    "Each collection launched with its own named post",
+                    "Offers presented without cheapening the brand",
+                    "Published on the brand's Instagram"],
+        "services": ["Content planning", "Creative design (Canva)", "Editing", "Instagram publishing"],
+        "insight": None,
+    },
+    "google-business-profile": {
+        "glance": ("Incomplete business profiles were costing local visibility on Google Search and Maps.",
+                   "Complete, accurate profiles with the right categories, services, photos and regular updates.",
+                   "Optimised listings that give nearby customers the right details and a reason to choose the business."),
+        "challenge": ["For local businesses, the Google Business Profile is often the first thing a customer sees, before the "
+                      "website. Missing hours, wrong categories, few photos and inconsistent details make a business look "
+                      "less trustworthy and rank lower on Maps."],
+        "approach": ["Audit each profile, fix every detail, choose the right primary and secondary categories, add every "
+                     "service, add real photos, and keep the profile active with updates. Then track calls, direction "
+                     "requests and website clicks from the profile's insights."],
+        "features": [
+            ("Profile audit", "Checked every field against the business's real details and the profiles of competitors "
+             "ranking above it.", []),
+            ("Categories and services", "Chose the right categories and listed every service so the profile matches more "
+             "searches.", []),
+            ("Photos and updates", "Added real visuals and regular posts so the profile looks active and trustworthy.", []),
+            ("Insights and reporting", "Tracked calls, direction requests and website clicks to see what's working.", []),
+        ],
+        "results": ["Complete, accurate business details", "The right categories and services listed",
+                    "Real photos and regular updates", "Performance tracked through profile insights"],
+        "services": ["Profile audit", "Local SEO", "Image management", "Reporting"],
+        "insight": None,
+    },
+}
