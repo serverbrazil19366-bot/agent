@@ -605,3 +605,131 @@ for _k in KEYWORD_PAGES:
     _k["process"] = _m["process"]
     _k["tools"] = _m["tools"]
     _k["faqs"] = _k["faqs"] + _m["faqs"]
+
+# Articles under /insights/, written from Sakthi's own projects
+ARTICLES = [
+    {
+        "slug": "seo-for-dental-clinics-tamil-nadu",
+        "seo_title": "SEO for Dental Clinics in Tamil Nadu: A Practical Guide",
+        "desc": ("How dental clinics in Tamil Nadu can get more patients from Google: Google Business Profile, local SEO, "
+                 "treatment pages, reviews and easy booking. A practical guide by S. Saktheeswaran."),
+        "h1": "SEO for dental clinics in <em>Tamil Nadu</em>",
+        "kicker": "Guide · Local SEO",
+        "date": "2026-11-07",
+        "read": "7 min read",
+        "intro": ("When someone has a toothache, they don't scroll through ten pages of Google. They search \"dentist near "
+                  "me\" or \"dental clinic in T. Nagar\", look at the map, check the reviews and call. If your clinic isn't "
+                  "in that first view, that patient goes somewhere else. This guide covers what I check and fix first "
+                  "when I work on SEO for dental clinics and labs in Tamil Nadu."),
+        "sections": [
+            ("1. Start with your Google Business Profile",
+             ["For a clinic, the map pack usually brings more calls than the website itself. Make sure your profile is "
+              "complete: the right primary category (Dentist or Dental clinic), every treatment you offer added as a "
+              "service, correct opening hours including holidays, and a phone number that is actually answered.",
+              "Add real photos of the clinic, the reception, the team and the equipment. Stock photos don't build trust. "
+              "Post an update every week or two: a new treatment, a festival greeting, a patient tip. An active profile "
+              "looks like an active clinic."]),
+            ("2. Collect reviews every week",
+             ["Reviews are one of the strongest local ranking signals, and they are what patients read before they call. "
+              "Ask every happy patient, and make it easy: a short link or a QR code at the reception. Reply to every "
+              "review, good or bad, politely and without sharing treatment details."]),
+            ("3. One page for each main treatment",
+             ["Patients search for treatments, not for \"services\". Dental implants, root canal treatment, braces and "
+              "aligners, wisdom tooth removal, kids' dentistry: each deserves its own page that explains the problem, the "
+              "treatment, what to expect and how to book. Put the area in the page title, for example \"Dental Implants "
+              "in T. Nagar, Chennai\".",
+              "A single \"Services\" page with ten bullet points can't rank for ten different searches. Ten focused pages "
+              "can."]),
+            ("4. Make booking effortless, especially on mobile",
+             ["Most dental searches happen on a phone. If booking means filling a long form and waiting for a call back, "
+              "many patients give up. For Akeela Dental Care I built a short booking form that opens WhatsApp with the "
+              "patient's name, number and treatment already filled in, plus call and WhatsApp buttons that stay on screen. "
+              "Every request now reaches the team ready to confirm in one reply.",
+              "Google notices when visitors find what they need and act on it. Good SEO and easy booking work together."]),
+            ("5. Fix the technical basics",
+             ["Check Google Search Console for pages that aren't indexed, make sure every page has a unique title and "
+              "description, use one clear H1 per page, compress large images and test the site on a real phone. On the "
+              "Ankhor Dental Lab website, missing metadata, inconsistent headings, weak internal links and indexing issues "
+              "were holding the site back; fixing those foundations came before anything else."]),
+            ("6. Keep your details the same everywhere",
+             ["Your clinic name, address and phone number should match exactly on your website, Google Business Profile, "
+              "Justdial, Practo, Facebook and anywhere else you are listed. Small differences confuse Google about which "
+              "listing is the real one."]),
+            ("7. Measure what matters",
+             ["Track calls, WhatsApp clicks and booking requests, not just visitors. Google Business Profile insights "
+              "shows calls and direction requests; GA4 can track button clicks and form submissions. Review it every "
+              "month and keep doing more of what brings patients in."]),
+        ],
+        "checklist": ["Google Business Profile complete, with real photos", "A review request at every visit",
+                      "One page per main treatment, with the area in the title", "WhatsApp and call buttons on every page",
+                      "No indexing errors in Search Console", "Same name, address and phone everywhere",
+                      "Calls and bookings tracked every month"],
+        "projects": ["akeela-whatsapp-automation", "ankhor-dental-lab", "google-business-profile"],
+        "faqs": [
+            ("How long does SEO take for a dental clinic?",
+             "Google Business Profile improvements and reviews can bring more calls within weeks. Ranking treatment pages "
+             "on Google usually takes three to six months, depending on competition in your area."),
+            ("Is Google Ads better than SEO for a new clinic?",
+             "Ads bring calls immediately but stop when you stop paying. SEO and a strong Google Business Profile take "
+             "longer but keep working. Most new clinics do best with a small ads budget while SEO builds up."),
+        ],
+    },
+    {
+        "slug": "whatsapp-booking-automation-n8n",
+        "seo_title": "WhatsApp Booking Automation with n8n: How I Built It for Clinics",
+        "desc": ("How I automated appointment and case bookings for a dental clinic and a dental lab using WhatsApp, n8n, "
+                 "email and a simple dashboard, and what any small business can copy."),
+        "h1": "WhatsApp booking automation with <em>n8n</em>",
+        "kicker": "Case study · Automation",
+        "date": "2026-11-07",
+        "read": "6 min read",
+        "intro": ("Most small businesses in India already run on WhatsApp. Patients message to book, clinics message to "
+                  "confirm, labs message to send case details. The problem isn't the tool, it's everything around it: "
+                  "messages that get missed in busy hours, details copied by hand, and the same confirmation typed again "
+                  "and again. Here's how I automated bookings for two dental businesses without asking anyone to learn "
+                  "new software."),
+        "sections": [
+            ("The problem: bookings scattered across calls and chats",
+             ["At Akeela Dental Care, patients called during busy clinic hours or sent enquiries that were easy to miss. "
+              "At Ankhor Dental Lab, clinics booked scans through calls and scattered WhatsApp messages, so the lab team "
+              "had no single place to see what was coming in, and every confirmation was typed by hand."]),
+            ("Step 1: a short form that opens WhatsApp",
+             ["The first win is simple. A booking form asks only what the team needs (name, phone, treatment or case "
+              "details) and, on submit, opens WhatsApp with the message already written. The patient or clinic just "
+              "presses send. No app to install, no account to create.",
+              "For Akeela, that's a four-field form plus call and WhatsApp buttons that stay on screen on mobile. Every "
+              "request now arrives with the patient's details, ready to confirm in one reply."]),
+            ("Step 2: live slots so nobody double-books",
+             ["For Ankhor's scan bookings, clinics pick a free day and time on the page. Once a slot is taken it shows as "
+              "booked straight away, so two clinics can't book the same visit and the team doesn't have to juggle "
+              "calendars over the phone."]),
+            ("Step 3: n8n connects everything behind the scenes",
+             ["When a booking is submitted, an n8n workflow takes over: it saves the booking, adds the case to the team "
+              "dashboard, sends an email and an app notification to the team, and sends a WhatsApp and email confirmation "
+              "to the clinic. Status updates follow the same route, so clinics hear back without anyone typing a message.",
+              "n8n is a workflow tool that connects forms, WhatsApp, email, Google Sheets and CRMs. Each step that used to "
+              "be manual becomes a node in the workflow."]),
+            ("Step 4: one dashboard for the team",
+             ["Instead of searching through chats, the team sees every booking and case in one place, with the details "
+              "the clinic entered. Nothing gets lost when someone is on leave or a phone is switched off."]),
+            ("What any small business can copy",
+             ["You don't need to automate everything at once. Start with a pre-filled WhatsApp booking form; it costs "
+              "almost nothing and removes the biggest source of missed enquiries. Then add notifications for your team, "
+              "then automatic confirmations, then a dashboard. Remove steps instead of adding software, and keep your "
+              "customers on the channel they already use."]),
+        ],
+        "checklist": ["Map how bookings arrive today and where they get lost", "Ask only for the details you really need",
+                      "Open WhatsApp with the message pre-filled", "Show booked slots instantly",
+                      "Notify the team by email or app", "Confirm automatically by WhatsApp and email",
+                      "Keep everything in one dashboard"],
+        "projects": ["akeela-whatsapp-automation", "ankhor-case-booking-automation"],
+        "faqs": [
+            ("Do I need the WhatsApp Business API for this?",
+             "Not for a pre-filled booking form; that works with any WhatsApp number. Sending fully automatic WhatsApp "
+             "messages from a workflow needs the WhatsApp Business API or an approved provider."),
+            ("Is n8n free?",
+             "n8n can be self-hosted for free, and it also has a paid cloud version. The right choice depends on how many "
+             "workflows you run and who will maintain them."),
+        ],
+    },
+]

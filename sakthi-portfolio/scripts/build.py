@@ -16,7 +16,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "scripts"))
-from content import (ABOUT, BRING, DESIGNS, FAQS, KEYWORD_PAGES, PRINT, PROJECT_SEO, EDUCATION, EXPERIENCE, PROFILE, PROJECTS, RESULTS, SERVICES,  # noqa: E402
+from content import (ABOUT, ARTICLES, BRING, DESIGNS, FAQS, KEYWORD_PAGES, PRINT, PROJECT_SEO, EDUCATION, EXPERIENCE, PROFILE, PROJECTS, RESULTS, SERVICES,  # noqa: E402
                      SKILL_TABS, SOFT_SKILLS, STATS, TESTIMONIALS, TICKER, TOOLS, VIDEOS)
 
 SITE = os.environ.get("PORTFOLIO_URL", "https://saktheeswaran.netlify.app/")
@@ -402,6 +402,14 @@ def home():
 <p class="sec-lead side" data-reveal="">End-to-end digital marketing tailored to your goals, from strategy to execution and reporting.</p>
 </div>
 <ul class="svc-grid">{services}</ul>
+<nav aria-label="Learn more" class="kw-more svc-more" data-reveal="">{"".join(f'<a href="{k["slug"]}.html">{esc(k["seo_title"].split(" | ")[0])} {ARROW_UR}</a>' for k in KEYWORD_PAGES)}</nav>
+</div>
+</section>
+
+<section aria-labelledby="insTitle" class="sec insights" id="insights">
+<div class="wrap">
+{sec_head("", "Insights", 'Guides from <em>real projects</em>', "What I've learned building SEO and automation for real businesses.", tid="insTitle")}
+<div class="ins-grid">{"".join(article_card(a, "") for a in ARTICLES)}</div>
 </div>
 </section>
 
@@ -569,6 +577,72 @@ def not_found():
         '<meta content="index, follow, max-image-preview:large" name="robots"/>', '<meta content="noindex" name="robots"/>') + body
 
 
+def article_card(a, prefix):
+    return (f'<a class="ins-card" data-reveal="" href="{prefix}insights/{a["slug"]}.html"><span class="vid-cat">{esc(a["kicker"])} · {esc(a["read"])}</span>'
+            f'<h3>{esc(a["seo_title"])}</h3><p>{esc(a["desc"])}</p><span class="ins-go">Read the guide {ARROW}</span></a>')
+
+
+def article_page(a):
+    p, h = "../", "../index.html"
+    path = f"insights/{a['slug']}.html"
+    plain_h1 = a["h1"].replace("<em>", "").replace("</em>", "")
+    schema = {"@context": "https://schema.org", "@graph": [
+        {"@type": "BlogPosting", "headline": a["seo_title"], "description": a["desc"], "url": SITE + path,
+         "datePublished": a["date"], "dateModified": a["date"], "image": SITE + "assets/og.jpg",
+         "author": {"@type": "Person", "@id": SITE + "#person", "name": PROFILE["name"], "url": SITE},
+         "publisher": {"@type": "Person", "name": PROFILE["name"], "url": SITE}, "mainEntityOfPage": SITE + path},
+        {"@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": SITE},
+            {"@type": "ListItem", "position": 2, "name": "Insights", "item": SITE + "#insights"},
+            {"@type": "ListItem", "position": 3, "name": plain_h1, "item": SITE + path}]},
+        faq_schema(a["faqs"]),
+    ]}
+    body_html = "".join(f'<h2>{esc(t)}</h2>' + "".join(f"<p>{esc(x)}</p>" for x in ps) for t, ps in a["sections"])
+    items = "".join(f"<li>{CHECK}<span>{esc(x)}</span></li>" for x in a["checklist"])
+    projs = [x for x in PROJECTS if x["slug"] in a["projects"]]
+    cards = "".join(work_card(x, p, i, len(projs)) for i, x in enumerate(projs))
+    others = "".join(f'<a href="../{k["slug"]}.html">{esc(k["seo_title"].split(" | ")[0])} {ARROW_UR}</a>' for k in KEYWORD_PAGES)
+    others += "".join(f'<a href="{o["slug"]}.html">{esc(o["seo_title"])} {ARROW_UR}</a>' for o in ARTICLES if o is not a)
+    body = f'''{header(p, h)}
+
+<main id="main">
+<section class="cs-hero kw-hero" id="top">
+<div class="wrap">
+<a class="back" href="{h}#insights">← All insights</a>
+<span class="kicker">{esc(a["kicker"])}</span>
+<h1>{a["h1"]}</h1>
+<p class="art-meta">By <a href="{h}#about">{esc(PROFILE["name"])}</a>, founder of Astra Nexora · <time datetime="{a["date"]}">{datetime.date.fromisoformat(a["date"]).strftime("%-d %b %Y")}</time> · {esc(a["read"])}</p>
+</div>
+</section>
+
+<section class="sec cs-body">
+<div class="wrap cs-in">
+<article class="art-body"><p class="art-lead">{esc(a["intro"])}</p>{body_html}</article>
+<aside class="cs-side" data-reveal=""><h3>Quick checklist</h3><ul class="kw-list">{items}</ul>
+<h3>Need help with this?</h3><p>I'm {esc(PROFILE["name"])} (Sakthi), founder of <a href="{PROFILE["agency"][1]}" rel="noopener" target="_blank">Astra Nexora</a>, based in Tamil Nadu.</p>{btn("Chat on WhatsApp", WA, "btn-dark btn-sm", target=True)}</aside>
+</div>
+</section>
+
+<section class="sec kw-work-sec">
+<div class="wrap">
+{sec_head("", "From the projects", 'The work behind <em>this guide</em>', tid="artWork")}
+<div class="work-grid kw-work{" three" if len(projs) == 3 else ""}">{cards}</div>
+</div>
+</section>
+
+<section class="sec faq">
+<div class="wrap faq-in">
+{sec_head("", "FAQ", 'Common <em>questions</em>', tid="artFaq")}
+{faq_list(a["faqs"])}
+<nav aria-label="Related pages" class="kw-more">{others}</nav>
+</div>
+</section>
+</main>
+
+{footer(p, h)}'''
+    return head(a["seo_title"], a["desc"], path, p, schema).replace('content="profile" property="og:type"', 'content="article" property="og:type"') + body
+
+
 def keyword_page(k):
     p, h = "", "index.html"
     path = f"{k['slug']}.html"
@@ -590,6 +664,7 @@ def keyword_page(k):
     projs = [x for x in PROJECTS if x["slug"] in k["projects"]]
     cards = "".join(work_card(x, p, i, len(projs)) for i, x in enumerate(projs))
     others = "".join(f'<a href="{o["slug"]}.html">{esc(o["seo_title"].split(" | ")[0])} {ARROW_UR}</a>' for o in KEYWORD_PAGES if o is not k)
+    others += "".join(f'<a href="insights/{a["slug"]}.html">{esc(a["seo_title"])} {ARROW_UR}</a>' for a in ARTICLES)
     body = f'''{header(p, h)}
 
 <main id="main">
@@ -650,6 +725,8 @@ LLMS = f"""# {PROFILE["name"]} (Sakthi)
 
 ## Pages
 """ + "".join(f"- [{k['seo_title'].split(' | ')[0]}]({SITE}{k['slug']}.html): {k['desc']}\n" for k in KEYWORD_PAGES) + """
+## Insights
+""" + "".join(f"- [{a['seo_title']}]({SITE}insights/{a['slug']}.html): {a['desc']}\n" for a in ARTICLES) + """
 ## Case studies
 """ + "".join(f"- [{x['title']}]({SITE}work/{x['slug']}.html): {x['summary']}\n" for x in PROJECTS)
 
@@ -664,9 +741,14 @@ def main():
     for k in KEYWORD_PAGES:
         with open(os.path.join(ROOT, f"{k['slug']}.html"), "w") as f:
             f.write(keyword_page(k))
+    os.makedirs(os.path.join(ROOT, "insights"), exist_ok=True)
+    for a in ARTICLES:
+        with open(os.path.join(ROOT, "insights", f"{a['slug']}.html"), "w") as f:
+            f.write(article_page(a))
     with open(os.path.join(ROOT, "404.html"), "w") as f:
         f.write(not_found())
-    urls = [""] + [f"{k['slug']}.html" for k in KEYWORD_PAGES] + [f"work/{x['slug']}.html" for x in PROJECTS]
+    urls = ([""] + [f"{k['slug']}.html" for k in KEYWORD_PAGES] + [f"insights/{a['slug']}.html" for a in ARTICLES]
+            + [f"work/{x['slug']}.html" for x in PROJECTS])
     today = datetime.date.today().isoformat()
     with open(os.path.join(ROOT, "sitemap.xml"), "w") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'

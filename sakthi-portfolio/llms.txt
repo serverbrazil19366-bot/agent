@@ -12,6 +12,10 @@
 - [Digital Marketing Expert in Tamil Nadu](https://saktheeswaran.netlify.app/digital-marketing-expert-tamil-nadu.html): S. Saktheeswaran (Sakthi) is a digital marketing expert in Tamil Nadu and founder of Astra Nexora: SEO, websites, Google and Meta ads, social media and automation.
 - [n8n & WhatsApp Automation Expert in India](https://saktheeswaran.netlify.app/marketing-automation-expert.html): n8n and WhatsApp automation for clinics and small businesses: booking flows, dashboards, email and app notifications. Built by S. Saktheeswaran, Tamil Nadu.
 
+## Insights
+- [SEO for Dental Clinics in Tamil Nadu: A Practical Guide](https://saktheeswaran.netlify.app/insights/seo-for-dental-clinics-tamil-nadu.html): How dental clinics in Tamil Nadu can get more patients from Google: Google Business Profile, local SEO, treatment pages, reviews and easy booking. A practical guide by S. Saktheeswaran.
+- [WhatsApp Booking Automation with n8n: How I Built It for Clinics](https://saktheeswaran.netlify.app/insights/whatsapp-booking-automation-n8n.html): How I automated appointment and case bookings for a dental clinic and a dental lab using WhatsApp, n8n, email and a simple dashboard, and what any small business can copy.
+
 ## Case studies
 - [Astra Nexora – Agency Website](https://saktheeswaran.netlify.app/work/astra-nexora-website.html): A fast, SEO-ready agency website with service pages, a blog and a WhatsApp enquiry form.
 - [Ankhor Dental Lab – Case Booking & Automation](https://saktheeswaran.netlify.app/work/ankhor-case-booking-automation.html): Online scan and case booking with a team dashboard, email and app notifications, and WhatsApp and email automation.
