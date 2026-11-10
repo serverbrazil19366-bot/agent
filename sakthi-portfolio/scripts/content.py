@@ -1193,3 +1193,45 @@ STORIES = {
         "insight": None,
     },
 }
+
+KEYWORD_PAGES.append({
+    "slug": "freelance-digital-marketer-tamil-nadu",
+    "nav": "Freelance digital marketer",
+    "seo_title": "Freelance Digital Marketer in Tamil Nadu | S Saktheeswaran",
+    "desc": ("Hire a freelance digital marketer in Tamil Nadu: S. Saktheeswaran (Sakthi) handles SEO, websites, Google and "
+             "Meta ads, social media and WhatsApp automation, hands-on."),
+    "kicker": "Freelance · Tamil Nadu",
+    "h1": "Freelance digital marketer in <em>Tamil Nadu</em>",
+    "lead": ("Need someone who will actually do the work, not just send reports? I'm Sakthi, a hands-on digital marketer "
+             "and founder of Astra Nexora, working with businesses across Tamil Nadu and India."),
+    "sections": [
+        ("Why hire a freelancer", "You work directly with the person doing the work. No account managers in between, "
+         "faster changes and one person who understands your whole business: website, Google, ads and follow-up."),
+        ("What I can take off your plate", "Building or fixing your website, getting you found on Google and Maps, running "
+         "Google and Meta ads with proper tracking, planning and designing social media content, and setting up WhatsApp "
+         "booking and automation so no enquiry is missed."),
+        ("Projects or monthly support", "Some clients hire me for one project, like a new website or an SEO audit. Others "
+         "want monthly help with SEO, ads and content. When the work needs a team, I bring it in through Astra Nexora."),
+        ("Real work you can check", "Every project on this site is real: dental clinic websites with treatment pages and "
+         "WhatsApp booking, a dental lab case portal and scan booking platform, a Diwali referral campaign and product "
+         "creatives for a gift brand."),
+    ],
+    "list_title": "What I offer",
+    "list": ["Website design and development", "SEO and local SEO", "Google Ads and Meta Ads",
+             "Social media content and posters", "WhatsApp and n8n automation", "GA4 and Search Console reporting"],
+    "projects": ["akeela-dental-care", "ankhor-case-booking-automation", "guggulr-instagram"],
+    "process": [
+        ("Chat", "Tell me about your business and goals on WhatsApp or a quick call."),
+        ("Audit", "I review your website, Google presence and competitors and suggest what to fix first."),
+        ("Do the work", "Clear scope, timeline and price, then I build, fix and launch."),
+        ("Report", "Simple updates on enquiries, calls and what's next."),
+    ],
+    "tools": ["WordPress", "Wix", "Framer", "Google Ads", "Meta Ads", "Search Console", "GA4", "n8n", "Canva"],
+    "faqs": [
+        ("Do you work as a freelancer or through your agency?",
+         "Both. Smaller projects I handle directly as a freelancer; bigger ones run through Astra Nexora, with me leading."),
+        ("Do you work with clients outside Tamil Nadu?", "Yes, with businesses across India, remotely over WhatsApp, email and calls."),
+        ("Are you available for full-time roles?", "Yes, I'm open to the right full-time opportunity as well as freelance projects."),
+        ("How do we start?", "Send me your website or Instagram on WhatsApp and I'll reply with the first things I'd fix."),
+    ],
+})

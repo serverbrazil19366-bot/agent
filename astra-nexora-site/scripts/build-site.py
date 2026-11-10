@@ -775,6 +775,15 @@ def facts_row(facts):
 
 
 def service_page(s, index):
+    gposts = [x for x in load_posts() if s["slug"] in x["services"]][:3]
+    guides = (f'''<section aria-labelledby="guidesTitle" class="sec work blog-latest">
+<div class="wrap">
+{heading("Guides", f'Learn more about <span class="hl">{esc(s["nav"])}.</span>', center=True, title_id="guidesTitle")}
+<div class="work-grid">
+{"".join(post_card(x, "../") for x in gposts)}
+</div>
+</div>
+</section>''' if gposts else "")
     p, home = "../", "../index.html"
     path = f"services/{s['slug']}.html"
     title = s.get("seo_title") or f"{s['title']} | Astra Nexora"
@@ -865,6 +874,8 @@ def service_page(s, index):
 </section>
 
 {faq_section(s["faqs"], f'Questions about <span class="hl">{esc(s["nav"])}.</span>')}
+
+{guides}
 
 <section aria-labelledby="relatedTitle" class="sec work">
 <div class="wrap">
@@ -1345,7 +1356,8 @@ def main():
     urls = [""] + ["blog/"] + [f"blog/{x['slug']}.html" for x in posts] + [f"services/{s['slug']}.html" for s in SERVICES] + [f"projects/{pr['slug']}.html" for pr in PROJECTS] + ["projects/seo-report.html"]
     with open(os.path.join(ROOT, "sitemap.xml"), "w") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
-        f.write("".join(f"  <url><loc>{SITE}{u}</loc></url>\n" for u in urls))
+        today = __import__("datetime").date.today().isoformat()
+        f.write("".join(f"  <url><loc>{SITE}{u}</loc><lastmod>{today}</lastmod></url>\n" for u in urls))
         f.write("</urlset>\n")
     with open(os.path.join(ROOT, "robots.txt"), "w") as f:
         f.write(f"User-agent: *\nAllow: /\n\nSitemap: {SITE}sitemap.xml\n")

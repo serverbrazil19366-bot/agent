@@ -263,7 +263,7 @@ def home():
     videos = "".join(
         f'''<li class="vid{" tall" if kind == "short" else ""}" data-reveal="">
 <button aria-label="Play: {attr(title)}" class="vid-btn" data-yt="{vid}" type="button">
-<img alt="" height="360" loading="lazy" src="assets/videos/{vid}.webp" width="480"/>
+<img alt="{attr(title)} video thumbnail" height="360" loading="lazy" src="assets/videos/{vid}.webp" width="480"/>
 <span class="vid-play">{svg(I["play"], "ic", "0")}</span>
 </button>
 <span class="vid-cat">{esc(cat)}</span><h3>{esc(title)}</h3><p>{esc(d)}</p>
@@ -769,6 +769,11 @@ def keyword_page(k):
     cards = "".join(work_card(x, p, i, len(projs)) for i, x in enumerate(projs))
     others = "".join(f'<a href="{o["slug"]}.html">{esc(o["seo_title"].split(" | ")[0])} {ARROW_UR}</a>' for o in KEYWORD_PAGES if o is not k)
     others += "".join(f'<a href="insights/{a["slug"]}.html">{esc(a["seo_title"])} {ARROW_UR}</a>' for a in ARTICLES)
+    ext = {"seo-expert-tamil-nadu": [("SEO services cost in India", "seo-services-cost-india"), ("Local SEO guide", "local-seo-guide")],
+           "digital-marketing-expert-tamil-nadu": [("How to choose a digital marketing agency", "digital-marketing-agency-tamil-nadu"), ("Digital marketing for dentists", "digital-marketing-for-dentists")],
+           "marketing-automation-expert": [("WhatsApp marketing & automation guide", "whatsapp-marketing-automation-small-business")],
+           "freelance-digital-marketer-tamil-nadu": [("Website design cost in Tamil Nadu", "website-design-cost-tamil-nadu"), ("Google Ads for small business", "google-ads-small-business-india")]}
+    others += "".join(f'<a href="{PROFILE["agency"][1]}blog/{u}.html" rel="noopener" target="_blank">{esc(t)} · Astra Nexora blog {ARROW_UR}</a>' for t, u in ext.get(k["slug"], []))
     body = f'''{header(p, h)}
 
 <main id="main">
