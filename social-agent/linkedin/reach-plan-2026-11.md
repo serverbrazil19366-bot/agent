@@ -13,7 +13,7 @@ Profile: Saktheeswaran S (personal). Replaces the earlier daily plan.
 
 1. **3 posts a week: Mon, Wed, Fri, 9:00–10:00 AM IST.** Posted by Sakthi from the LinkedIn app (Typefully's free quota is used up until 1 Dec, and being online at posting time matters more).
 2. **Personal, opinion or real story.** No generic tip lists.
-3. **Text-only, a real photo of Sakthi, or a real screenshot.** No AI-generated people or stock-style posters on these.
+3. **Posters stay simple and real:** bold text on a plain background, Sakthi's real photo, or real screenshots. No AI-generated people, fake dashboards or stock-style scenes.
 4. **Only real details.** Anything in [brackets] must be replaced with what really happened. If it didn't happen, skip that post or that line.
 5. **No links in the post. 0–3 hashtags.** Don't edit the post in the first hour.
 6. **No client brand names.** "A clinic I work with" is fine. Never mention Guggulr.
@@ -33,21 +33,29 @@ Reach starts with your own network. A small network means a small first audience
 
 | # | Date | Type | Post | Format |
 |---|------|------|------|--------|
-| 1 | Wed 11 Nov | Honest story | I posted every day for 10 days. Most posts got under 10 impressions. | Text only (or a real analytics screenshot) |
-| 2 | Fri 13 Nov | Opinion | Most small businesses don't have a marketing problem. They have a follow-up problem. | Text only |
+| 1 | Wed 11 Nov | Honest story | I posted every day for 10 days. Most posts got under 10 impressions. | Simple text poster (+ real analytics screenshot) |
+| 2 | Fri 13 Nov | Opinion | Most small businesses don't have a marketing problem. They have a follow-up problem. | Simple text poster |
 | 3 | Mon 16 Nov | Personal | Starting an agency young: what people said, and what I learned | Real photo of Sakthi working |
-| 4 | Wed 18 Nov | Relatable / humour | What clients say vs what they actually mean | Text only or simple text poster |
+| 4 | Wed 18 Nov | Relatable / humour | What clients say vs what they actually mean | Simple text poster |
 | 5 | Fri 20 Nov | Real work | Before and after: a clinic's WhatsApp enquiries | Real screenshots, names blurred |
 | 6 | Mon 23 Nov | Personal | A real day in a one-person agency | Real photo |
-| 7 | Wed 25 Nov | Honest story | The biggest mistake I made in my first year | Text only |
-| 8 | Fri 27 Nov | Opinion (Black Friday) | Discounts are training your customers to never pay full price | Text only |
+| 7 | Wed 25 Nov | Honest story | The biggest mistake I made in my first year | Simple text poster |
+| 8 | Fri 27 Nov | Opinion (Black Friday) | Discounts are training your customers to never pay full price | Simple text poster |
 | 9 | Mon 30 Nov | Honest recap | 3 weeks of changing how I post: the real numbers | Real analytics screenshot |
 
 ---
 
 ## 1 · Wed 11 Nov: I posted every day for 10 days
 
-Format: text only. If you want an image, use a real screenshot of your post analytics.
+Format: simple text poster. Best with your real analytics screenshot on it.
+
+Poster text:
+- I posted every day for 10 days.
+- **Most posts got under 10 impressions.**
+- What went wrong: generic tips · posters that looked like ads · scheduled and disappeared · more posts, not better posts
+- What I'm changing: 3 posts a week · real stories · I'll be here to reply
+- (Optional: put your real LinkedIn analytics screenshot on the poster)
+- Sakthi · Founder, Astra Nexora
 
 ```
 I posted on LinkedIn every day for 10 days.
@@ -81,7 +89,15 @@ If you've grown on LinkedIn: what's the one thing that actually made a differenc
 
 ## 2 · Fri 13 Nov: It's a follow-up problem
 
-Format: text only.
+Format: simple text poster.
+
+Poster text:
+- UNPOPULAR OPINION
+- Most small businesses don't have a marketing problem.
+- **They have a follow-up problem.**
+- A 9 PM WhatsApp answered the next afternoon · A missed call nobody returns · A quote sent, then silence · "I'll think about it", and nobody asks again
+- Fix the follow-up first. Then buy more traffic.
+- Sakthi · Founder, Astra Nexora
 
 ```
 Unpopular opinion:
@@ -113,6 +129,13 @@ Business owners, be honest: what's your average reply time?
 
 Format: a real photo of you at your desk or with your laptop. Fill every [bracket] with what really happened. Delete any line that isn't true for you.
 
+Poster text (on your real photo):
+- I started an agency at [your age].
+- **Here's what people told me.**
+- "[real comment 1]" · "[real comment 2]" · "[real comment 3]"
+- I've stopped apologising for it.
+- Sakthi · Founder, Astra Nexora
+
 ```
 I started Astra Nexora at [your age].
 
@@ -139,9 +162,9 @@ If you started something young: what's the comment you still remember?
 
 ## 4 · Wed 18 Nov: What clients say vs what they mean
 
-Format: text only. If you make a poster, keep it a plain two-column text table, no AI people.
+Format: simple text poster, a plain two-column table. No AI people.
 
-Poster text (optional):
+Poster text:
 - WHAT CLIENTS SAY vs WHAT THEY MEAN
 - "Just a small change" → Redo the whole page
 - "Can you make it pop?" → I'm not sure what I want, but not this
@@ -180,6 +203,14 @@ Freelancers and agency folks: add yours below 👇
 
 Format: real screenshots (before / after), with patient names and numbers blurred. Use only numbers you can see in the real data. No clinic name.
 
+Poster text (with your real before/after screenshots, names blurred):
+- BEFORE → AFTER
+- A clinic's WhatsApp enquiries
+- Before: [real problem, e.g. replies after hours]
+- After: [real change, e.g. instant reply + one booking sheet]
+- No new ads. Just faster replies. (use this line only if it's true)
+- Sakthi · Founder, Astra Nexora
+
 ```
 This is what a clinic's WhatsApp looked like before we fixed it.
 
@@ -207,6 +238,12 @@ Clinic owners: how do you handle WhatsApp enquiries today?
 
 Format: a real photo (desk, laptop, notebook, client call). Write your actual times and tasks.
 
+Poster text (on your real photo):
+- A REAL DAY IN A ONE-PERSON AGENCY
+- [time] · [task] · [time] · [task] · [time] · [task] · [time] · [task]
+- **Mostly, it's [your honest one-line summary].**
+- Sakthi · Founder, Astra Nexora
+
 ```
 What a day in a one-person agency actually looks like:
 
@@ -228,7 +265,13 @@ Solo founders: what does your day really look like?
 
 ## 7 · Wed 25 Nov: The biggest mistake I made in my first year
 
-Format: text only. Only post this with a real mistake.
+Format: simple text poster. Only post this with a real mistake.
+
+Poster text:
+- MY BIGGEST MISTAKE IN YEAR ONE
+- **[the mistake, in one line]**
+- What I do differently now: [real change] · [real change]
+- Sakthi · Founder, Astra Nexora
 
 ```
 The biggest mistake I made in my first year of business:
@@ -249,7 +292,15 @@ What's a mistake that taught you more than any course?
 
 ## 8 · Fri 27 Nov: Discounts and Black Friday
 
-Format: text only.
+Format: simple text poster.
+
+Poster text:
+- ~~50% OFF~~
+- **Every discount teaches your customers to wait.**
+- Give a reason to buy now, not a lower price:
+- → A bonus, not a discount · → Something extra for loyal customers · → A real deadline
+- Cut your price, and you cut your brand with it.
+- Sakthi · Founder, Astra Nexora
 
 ```
 Black Friday is here, and every brand is shouting "50% OFF".
@@ -274,6 +325,12 @@ Are you running a Black Friday offer this year, or skipping it?
 ## 9 · Mon 30 Nov: 3 weeks later, the real numbers
 
 Format: real analytics screenshot. Fill with real numbers on the day.
+
+Poster text (with your real analytics screenshot):
+- 3 WEEKS AGO: [real] impressions per post
+- **TODAY: [real] impressions per post**
+- What made the difference: [lesson 1] · [lesson 2] · [lesson 3]
+- Sakthi · Founder, Astra Nexora
 
 ```
 3 weeks ago I shared that my LinkedIn posts were getting fewer than 10 impressions.
