@@ -1,0 +1,1212 @@
+{
+  "name": "Astra Nexora — Maps Lead Audit & Outreach",
+  "nodes": [
+    {
+      "name": "Manual Test Run",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {},
+      "id": "65161735-bf5f-588c-884d-7587b48ef013"
+    },
+    {
+      "name": "Weekdays 10:30 IST",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        200
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 10 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "087aa112-4c66-54be-8096-b6f3ec8ca2b6"
+    },
+    {
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        100
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7b321c27-54d3-430b-8fc3-761f5d02f6c1",
+              "name": "search_query",
+              "value": "Dental clinics in Chennai, India",
+              "type": "string"
+            },
+            {
+              "id": "d39bf999-6750-418d-9ef7-5996e82c5189",
+              "name": "search_limit",
+              "value": 20,
+              "type": "number"
+            },
+            {
+              "id": "985dd1f3-6200-4537-a016-3b2390002211",
+              "name": "speed_threshold_s",
+              "value": 3,
+              "type": "number"
+            },
+            {
+              "id": "d58c6645-36d4-4e27-9c6f-aa4de67b619a",
+              "name": "sheet_id",
+              "value": "PASTE_YOUR_GOOGLE_SHEET_ID_HERE",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4c30d28d-9361-5aae-8e60-01b2bb318520"
+    },
+    {
+      "name": "Search Google Maps",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        100
+      ],
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "url": "https://api.app.outscraper.com/maps/search-v3",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{ $json.search_query }}"
+            },
+            {
+              "name": "limit",
+              "value": "={{ $json.search_limit }}"
+            },
+            {
+              "name": "language",
+              "value": "en"
+            },
+            {
+              "name": "region",
+              "value": "IN"
+            },
+            {
+              "name": "dropDuplicates",
+              "value": "true"
+            },
+            {
+              "name": "async",
+              "value": "false"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "id": "43207f92-f4f5-5549-9028-ccfac01b33b1"
+    },
+    {
+      "name": "Read Leads Log",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        660,
+        100
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Config').first().json.sheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Leads Log"
+        },
+        "options": {}
+      },
+      "id": "e6130448-708e-5053-894c-7ccaa43831fc"
+    },
+    {
+      "name": "Clean & Dedupe Leads",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        100
+      ],
+      "parameters": {
+        "jsCode": "// Code node \"Clean & Dedupe Leads\" (Run Once for All Items)\n// Flattens the Outscraper response, normalises fields, drops leads already in\n// the Leads Log sheet, and treats social/directory links as \"no website\".\nconst NOT_A_WEBSITE = [\n  'facebook.com', 'instagram.com', 'linkedin.com', 'twitter.com', 'x.com',\n  'youtube.com', 'wa.me', 'whatsapp.com', 'linktr.ee', 'justdial.com',\n  'practo.com', 'sulekha.com', 'indiamart.com', 'google.com', 'goo.gl',\n  'business.site', 'g.page', 'lybrate.com', 'clinicspots.com',\n];\n\nfunction toDomain(url) {\n  if (!url) return '';\n  const m = String(url).trim().toLowerCase()\n    .replace(/^[a-z]+:\\/\\//, '')\n    .replace(/^www\\./, '')\n    .match(/^([a-z0-9.-]+\\.[a-z]{2,})/);\n  return m ? m[1] : '';\n}\n\nfunction isRealSite(domain) {\n  return domain && !NOT_A_WEBSITE.some(d => domain === d || domain.endsWith('.' + d));\n}\n\nconst logRows = $('Read Leads Log').all().map(i => i.json);\nconst seenPlaces = new Set(logRows.map(r => r.place_id).filter(Boolean));\nconst seenDomains = new Set(logRows.map(r => r.domain).filter(Boolean));\n\nconst raw = $('Search Google Maps').first().json.data || [];\nconst places = raw.flat();\n\nconst out = [];\nconst batchDomains = new Set();\nfor (const p of places) {\n  if (!p || !p.name) continue;\n  if (p.business_status && p.business_status !== 'OPERATIONAL') continue;\n  const placeId = p.place_id || p.google_id || '';\n  if (placeId && seenPlaces.has(placeId)) continue;\n\n  let website = (p.site || p.website || '').trim();\n  let domain = toDomain(website);\n  let note = '';\n  if (website && !isRealSite(domain)) {\n    note = `listed link is not a real website (${domain})`;\n    website = '';\n    domain = '';\n  }\n  if (domain) {\n    if (seenDomains.has(domain) || batchDomains.has(domain)) continue;\n    batchDomains.add(domain);\n    if (!/^https?:\\/\\//i.test(website)) website = 'https://' + website;\n  }\n\n  out.push({\n    json: {\n      business_name: p.name,\n      website,\n      domain,\n      phone: p.phone || '',\n      address: p.full_address || p.address || '',\n      rating: p.rating ?? '',\n      reviews: p.reviews ?? '',\n      place_id: placeId,\n      note,\n    },\n  });\n}\nreturn out;\n"
+      },
+      "id": "7473f285-fee1-55f6-9bc8-108916226e53"
+    },
+    {
+      "name": "Has Website?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        100
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "8c2842ad-65f0-46a5-bc03-9478aa69e3d0",
+              "leftValue": "={{ $json.domain }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8270b6d4-5197-5bfd-8344-538098cb770b"
+    },
+    {
+      "name": "Log No Website",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1320,
+        300
+      ],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Config').first().json.sheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Leads Log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "date": "={{ $now.setZone('Asia/Kolkata').toFormat('yyyy-MM-dd HH:mm') }}",
+            "status": "no_website",
+            "business_name": "={{ $json.business_name ?? '' }}",
+            "website": "={{ $json.website ?? '' }}",
+            "domain": "={{ $json.domain ?? '' }}",
+            "phone": "={{ $json.phone ?? '' }}",
+            "address": "={{ $json.address ?? '' }}",
+            "rating": "={{ $json.rating ?? '' }}",
+            "place_id": "={{ $json.place_id ?? '' }}",
+            "speed_index": "={{ $json.speed_index ?? '' }}",
+            "perf_score": "={{ $json.perf_score ?? '' }}",
+            "contact_name": "={{ $json.contact_name ?? '' }}",
+            "email": "={{ $json.email ?? '' }}",
+            "email_position": "={{ $json.email_position ?? '' }}",
+            "note": "={{ $json.note ?? '' }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "business_name",
+              "displayName": "business_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "website",
+              "displayName": "website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "domain",
+              "displayName": "domain",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "address",
+              "displayName": "address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "rating",
+              "displayName": "rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "place_id",
+              "displayName": "place_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "speed_index",
+              "displayName": "speed_index",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "perf_score",
+              "displayName": "perf_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "contact_name",
+              "displayName": "contact_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email_position",
+              "displayName": "email_position",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "note",
+              "displayName": "note",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a7a9f7c9-1a13-5436-b46a-8f828d0aab87"
+    },
+    {
+      "name": "Loop Over Leads",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1320,
+        0
+      ],
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "dc56d6da-d600-53ca-8ffc-1118bd4419e5"
+    },
+    {
+      "name": "PageSpeed Audit (Mobile)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1540,
+        0
+      ],
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "url": "https://www.googleapis.com/pagespeedonline/v5/runPagespeed",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ $json.website }}"
+            },
+            {
+              "name": "category",
+              "value": "PERFORMANCE"
+            },
+            {
+              "name": "strategy",
+              "value": "MOBILE"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "onError": "continueRegularOutput",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 5000,
+      "id": "202346f6-ec31-596c-8f25-cc8bc13e6ad7"
+    },
+    {
+      "name": "Extract Speed Metrics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Code node \"Extract Speed Metrics\" (Run Once for Each Item)\n// Pulls Speed Index, LCP and the performance score out of the PageSpeed\n// response and decides whether the site is slow enough to email about.\nconst lead = $('Loop Over Leads').item.json;\nconst threshold = Number($('Config').first().json.speed_threshold_s) || 3;\nconst lh = $json.lighthouseResult;\n\nif (!lh || !lh.audits || !lh.audits['speed-index']) {\n  const reason = ($json.error && ($json.error.message || JSON.stringify($json.error))) || 'no Lighthouse result';\n  return { json: { ...lead, status: 'audit_failed', note: String(reason).slice(0, 200) } };\n}\n\nconst si = lh.audits['speed-index'];\nconst lcp = lh.audits['largest-contentful-paint'] || {};\nconst score = lh.categories && lh.categories.performance\n  ? Math.round(lh.categories.performance.score * 100) : '';\nconst speedIndexS = Math.round((si.numericValue / 1000) * 10) / 10;\n\nreturn {\n  json: {\n    ...lead,\n    speed_index: (si.displayValue || `${speedIndexS} s`).replace(/ /g, ' '),\n    speed_index_s: speedIndexS,\n    lcp: (lcp.displayValue || '').replace(/ /g, ' '),\n    perf_score: score,\n    status: speedIndexS > threshold ? 'slow' : 'fast',\n  },\n};\n",
+        "mode": "runOnceForEachItem"
+      },
+      "id": "534f846f-da03-578b-acfb-6352f5410fee"
+    },
+    {
+      "name": "Slow Site?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1980,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "ec8f27f4-c289-4c15-ad8e-3b59016f4735",
+              "leftValue": "={{ $json.status }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "rightValue": "slow"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "511c7777-45c9-5dcf-81e9-939856d546ed"
+    },
+    {
+      "name": "Find Owner Email (Hunter)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2200,
+        -100
+      ],
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "url": "https://api.hunter.io/v2/domain-search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "domain",
+              "value": "={{ $json.domain }}"
+            },
+            {
+              "name": "limit",
+              "value": "10"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "onError": "continueRegularOutput",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 5000,
+      "id": "6702ba25-e8c5-55f6-9919-1aeabbdc9d0d"
+    },
+    {
+      "name": "Pick Decision Maker",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2420,
+        -100
+      ],
+      "parameters": {
+        "jsCode": "// Code node \"Pick Decision Maker\" (Run Once for Each Item)\n// Chooses the best email from the Hunter.io domain search: an owner/founder/\n// doctor first, then any senior person, then a generic inbox like info@.\nconst lead = $('Extract Speed Metrics').item.json;\nconst emails = ($json.data && $json.data.emails) || [];\n\nconst TITLE = /(founder|co-?founder|ceo|owner|proprietor|director|managing|partner|chief|principal|doctor|\\bdr\\b|dentist|surgeon|md\\b)/i;\nconst usable = emails.filter(e => e.value && (!e.verification || e.verification.status !== 'invalid'));\nconst rank = e =>\n  (TITLE.test(e.position || '') ? 100 : 0) +\n  (e.seniority === 'executive' ? 50 : 0) +\n  (e.type === 'personal' ? 20 : 0) +\n  (e.verification && e.verification.status === 'valid' ? 10 : 0) +\n  (e.confidence || 0) / 10;\nusable.sort((a, b) => rank(b) - rank(a));\nconst best = usable[0];\n\n// Suggest a call day two working days from now (\"Thursday\", \"Monday\", ...)\nconst d = new Date();\nlet added = 0;\nwhile (added < 2) {\n  d.setDate(d.getDate() + 1);\n  if (d.getDay() !== 0 && d.getDay() !== 6) added++;\n}\nconst callDay = d.toLocaleDateString('en-IN', { weekday: 'long', timeZone: 'Asia/Kolkata' });\n\nif (!best) {\n  const err = $json.error ? ` (${$json.error.message || 'Hunter error'})` : '';\n  return { json: { ...lead, status: 'no_email', note: ('no email found on ' + lead.domain + err).slice(0, 200) } };\n}\n\nconst first = (best.first_name || '').trim();\nreturn {\n  json: {\n    ...lead,\n    email: best.value,\n    first_name: first,\n    greeting_name: first || 'there',\n    contact_name: [best.first_name, best.last_name].filter(Boolean).join(' '),\n    email_position: best.position || (best.type === 'generic' ? 'generic inbox' : ''),\n    call_day: callDay,\n    status: 'ready',\n  },\n};\n",
+        "mode": "runOnceForEachItem"
+      },
+      "id": "adf6727f-8cd7-50c3-81be-d5d6d2da2dad"
+    },
+    {
+      "name": "Email Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        -100
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "a8c0544a-3217-47cc-b363-7082d343e7a6",
+              "leftValue": "={{ $json.email }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e53da3a5-32e4-565b-acc1-d071a2c8e396"
+    },
+    {
+      "name": "Send Audit Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2860,
+        -200
+      ],
+      "webhookId": "223421c0-1e5b-44a2-917f-0dffd36d1653",
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "=Quick fix for {{ $json.business_name }}'s mobile conversion drop?",
+        "emailType": "html",
+        "message": "=<p>Hi {{ $json.greeting_name }},</p>\n\n<p>I was reviewing a few local businesses in Chennai and looked at your website ({{ $json.domain }}).</p>\n\n<p>I ran Google's own Lighthouse performance test on it, on mobile. Your page takes <strong>{{ $json.speed_index }}</strong> to visibly load (Speed Index), and its mobile performance score is <strong>{{ $json.perf_score }}/100</strong>. Anything above 3 seconds usually means a big share of mobile visitors leave before they see your page, which also wastes your local SEO effort.</p>\n\n<p>I run <strong>Astra Nexora</strong>, a conversion optimisation and automation agency here in Tamil Nadu. We fix exactly these technical leaks without big-agency budgets.</p>\n\n<p>I've written down a 2-step fix for this speed problem. Are you open to a quick 10-minute call on {{ $json.call_day }} to go through it?</p>\n\n<p>Best regards,<br>\n<strong>S. Saktheeswaran</strong><br>\nFounder &amp; CEO, Astra Nexora<br>\n<a href=\"https://astranexora.netlify.app\">astranexora.netlify.app</a> · <a href=\"https://saktheeswaran.netlify.app\">saktheeswaran.netlify.app</a></p>\n\n<p style=\"color:#888;font-size:12px\">You can check the result yourself at pagespeed.web.dev. If this isn't useful, just reply \"no\" and I won't email again.</p>\n",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "S. Saktheeswaran"
+        }
+      },
+      "id": "f0716bf5-c85b-5a03-b395-e0f6cb91f6c0"
+    },
+    {
+      "name": "Mark Sent",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3080,
+        -200
+      ],
+      "parameters": {
+        "jsCode": "// Code node \"Mark Sent\" (Run Once for Each Item)\n// The Gmail node returns only the message id, so restore the lead data.\nreturn {\n  json: {\n    ...$('Pick Decision Maker').item.json,\n    status: 'sent',\n    note: 'gmail id ' + ($json.id || ''),\n  },\n};\n",
+        "mode": "runOnceForEachItem"
+      },
+      "id": "9bb54a55-7d3d-5174-b800-9b232ba7df94"
+    },
+    {
+      "name": "Log Sent",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3300,
+        -200
+      ],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Config').first().json.sheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Leads Log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "date": "={{ $now.setZone('Asia/Kolkata').toFormat('yyyy-MM-dd HH:mm') }}",
+            "status": "={{ $json.status ?? '' }}",
+            "business_name": "={{ $json.business_name ?? '' }}",
+            "website": "={{ $json.website ?? '' }}",
+            "domain": "={{ $json.domain ?? '' }}",
+            "phone": "={{ $json.phone ?? '' }}",
+            "address": "={{ $json.address ?? '' }}",
+            "rating": "={{ $json.rating ?? '' }}",
+            "place_id": "={{ $json.place_id ?? '' }}",
+            "speed_index": "={{ $json.speed_index ?? '' }}",
+            "perf_score": "={{ $json.perf_score ?? '' }}",
+            "contact_name": "={{ $json.contact_name ?? '' }}",
+            "email": "={{ $json.email ?? '' }}",
+            "email_position": "={{ $json.email_position ?? '' }}",
+            "note": "={{ $json.note ?? '' }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "business_name",
+              "displayName": "business_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "website",
+              "displayName": "website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "domain",
+              "displayName": "domain",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "address",
+              "displayName": "address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "rating",
+              "displayName": "rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "place_id",
+              "displayName": "place_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "speed_index",
+              "displayName": "speed_index",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "perf_score",
+              "displayName": "perf_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "contact_name",
+              "displayName": "contact_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email_position",
+              "displayName": "email_position",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "note",
+              "displayName": "note",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "044161c8-3e30-5160-9cd2-087d76c05d3a"
+    },
+    {
+      "name": "Wait 2-3 min",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3520,
+        -200
+      ],
+      "webhookId": "93f9d60f-0ff1-4487-bf34-68af0c8e22dd",
+      "parameters": {
+        "amount": "={{ 120 + Math.floor(Math.random() * 61) }}",
+        "unit": "seconds"
+      },
+      "id": "108a95f5-826a-50d2-bb37-73d5f532ea33"
+    },
+    {
+      "name": "Log Skipped",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2860,
+        150
+      ],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Config').first().json.sheet_id }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Leads Log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "date": "={{ $now.setZone('Asia/Kolkata').toFormat('yyyy-MM-dd HH:mm') }}",
+            "status": "={{ $json.status ?? '' }}",
+            "business_name": "={{ $json.business_name ?? '' }}",
+            "website": "={{ $json.website ?? '' }}",
+            "domain": "={{ $json.domain ?? '' }}",
+            "phone": "={{ $json.phone ?? '' }}",
+            "address": "={{ $json.address ?? '' }}",
+            "rating": "={{ $json.rating ?? '' }}",
+            "place_id": "={{ $json.place_id ?? '' }}",
+            "speed_index": "={{ $json.speed_index ?? '' }}",
+            "perf_score": "={{ $json.perf_score ?? '' }}",
+            "contact_name": "={{ $json.contact_name ?? '' }}",
+            "email": "={{ $json.email ?? '' }}",
+            "email_position": "={{ $json.email_position ?? '' }}",
+            "note": "={{ $json.note ?? '' }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "business_name",
+              "displayName": "business_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "website",
+              "displayName": "website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "domain",
+              "displayName": "domain",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "address",
+              "displayName": "address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "rating",
+              "displayName": "rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "place_id",
+              "displayName": "place_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "speed_index",
+              "displayName": "speed_index",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "perf_score",
+              "displayName": "perf_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "contact_name",
+              "displayName": "contact_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email_position",
+              "displayName": "email_position",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "note",
+              "displayName": "note",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e7a590ae-1ff4-5584-b215-740552f45519"
+    }
+  ],
+  "connections": {
+    "Manual Test Run": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Weekdays 10:30 IST": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Search Google Maps",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Google Maps": {
+      "main": [
+        [
+          {
+            "node": "Read Leads Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Leads Log": {
+      "main": [
+        [
+          {
+            "node": "Clean & Dedupe Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean & Dedupe Leads": {
+      "main": [
+        [
+          {
+            "node": "Has Website?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Website?": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Leads",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log No Website",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Leads": {
+      "main": [
+        [],
+        [
+          {
+            "node": "PageSpeed Audit (Mobile)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PageSpeed Audit (Mobile)": {
+      "main": [
+        [
+          {
+            "node": "Extract Speed Metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Speed Metrics": {
+      "main": [
+        [
+          {
+            "node": "Slow Site?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slow Site?": {
+      "main": [
+        [
+          {
+            "node": "Find Owner Email (Hunter)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Skipped",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Owner Email (Hunter)": {
+      "main": [
+        [
+          {
+            "node": "Pick Decision Maker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pick Decision Maker": {
+      "main": [
+        [
+          {
+            "node": "Email Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Found?": {
+      "main": [
+        [
+          {
+            "node": "Send Audit Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Skipped",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Audit Email": {
+      "main": [
+        [
+          {
+            "node": "Mark Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Sent": {
+      "main": [
+        [
+          {
+            "node": "Log Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Sent": {
+      "main": [
+        [
+          {
+            "node": "Wait 2-3 min",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 2-3 min": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Skipped": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kolkata",
+    "saveManualExecutions": true
+  },
+  "pinData": {}
+}
