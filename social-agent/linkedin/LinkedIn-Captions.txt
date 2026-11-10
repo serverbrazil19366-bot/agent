@@ -1,0 +1,679 @@
+LINKEDIN CAPTIONS – copy and paste
+Saktheeswaran S · personal profile
+Each caption is between the ===== lines. Copy from the first line to the hashtags.
+
+==================================================
+1. Tue 10 Nov · Wix vs WordPress vs custom code
+==================================================
+
+"Should I build my website on Wix, WordPress, or get it custom coded?"
+
+I get asked this a lot. There's no single best answer, but there is a right answer for your business.
+
+Wix
+✓ Easiest to start, drag and drop
+✓ Hosting included in the monthly plan
+✗ Less control, harder to grow with complex needs
+
+WordPress
+✓ Very flexible, plugins for almost everything
+✓ Huge community, easy to find help
+✗ Needs hosting, updates and security care
+
+Custom code
+✓ Fastest and fully yours
+✓ Built exactly around your business
+✗ You need a developer for most changes
+
+The question that decides it:
+Who will update the site, and how often?
+
+Your team will edit it themselves → pick something easy, like Wix or WordPress
+A few updates a month → WordPress works well
+You need custom features built around your business → custom code
+
+Which one is your website on right now?
+
+#WebDesign #SmallBusiness #WordPress
+
+
+==================================================
+2. Wed 11 Nov · 3 ways to reply to Google reviews
+==================================================
+
+Most businesses reply "Thank you!" to every Google review.
+That's a missed chance.
+
+People reading your reviews are deciding whether to choose you. Your replies show them how you treat customers.
+
+Here are 3 simple templates:
+
+★★★★★ Good review
+"Thank you, [Name]! So glad the [service] went well. See you next time."
+→ Use their name and mention the service.
+
+★★★ Average review
+"Thanks for the honest feedback, [Name]. We're working on [issue]. Hope to serve you better on your next visit."
+→ Acknowledge the problem. Show you're fixing it.
+
+★ Bad review
+"We're sorry about this, [Name]. Please call us on [number] so we can make it right."
+→ Stay calm. Take the conversation offline.
+
+And one rule: reply within 48 hours, every time.
+
+Do you reply to your Google reviews?
+
+#GoogleReviews #LocalSEO #CustomerExperience
+
+
+==================================================
+3. Thu 12 Nov · The 7 parts of a service page that ranks (carousel)
+Carousel: upload 2026-11-12-sakthi-carousel.pdf as a Document
+==================================================
+
+Most service pages say what the business does.
+The ones that rank answer what the customer wants to know.
+
+Take a page like "Website Redesign in Chennai". Every service page that ranks and brings enquiries has the same 7 parts: 👇
+
+1. A headline with the exact service and area
+"Website Redesign in Chennai", not "Our Services"
+
+2. Who it's for, in the customer's words
+"My website looks outdated." "I'm not getting enquiries."
+
+3. What happens, step by step
+Discovery, planning, design, build, launch. Fear drops when people know what to expect.
+
+4. A price, a range, or what changes the price
+
+5. Proof
+Real reviews and before/after.
+
+6. FAQs from real calls
+"How long does it take?" "Can I update it myself?"
+
+7. One clear next step
+WhatsApp or call, visible without scrolling.
+
+Save this before you build your next page.
+
+Which of these is your website missing?
+
+#SEO #WebDesign #LocalSEO
+
+
+==================================================
+4. Fri 13 Nov · Behind the scenes: our AI social media assistant
+==================================================
+
+I run marketing for other businesses all day.
+Our own social media was always the first thing to slip.
+
+So I set up an AI assistant to handle the repetitive part.
+
+Here's how it works now:
+1. I decide the topic and make the poster
+2. The assistant writes a separate caption for Instagram, Facebook, X and LinkedIn
+3. It schedules everything at the right time for each platform
+4. I check it before anything goes live
+
+What it doesn't do: decide what we stand for, or post anything I haven't seen.
+
+The result: I spend my time on ideas and clients, not on copying captions between apps.
+
+Would you let AI write your business posts, or is that a line you won't cross?
+
+#AIAutomation #SocialMediaMarketing #SmallBusiness
+
+
+==================================================
+5. Sat 14 Nov · Children's Day: 3 business lessons from how kids learn
+==================================================
+
+Happy Children's Day 🎈
+
+Watch any child learn something new and you'll see three things most businesses forget:
+
+1. They ask "why?" until they get a real answer.
+Most marketing never asks why customers leave, or why they choose someone else.
+
+2. They fall, laugh and try again.
+A campaign that didn't work isn't a failure. It's data for the next one.
+
+3. They say exactly what they want, in simple words.
+If your website needs a paragraph to explain what you do, a child would do it in one line.
+
+Stay curious. Keep trying. Keep it simple.
+
+#ChildrensDay #SmallBusiness #Marketing
+
+
+==================================================
+6. Sun 15 Nov · 8 marketing terms in plain words (carousel)
+Carousel: upload 2026-11-15-sakthi-carousel.pdf as a Document
+==================================================
+
+Your agency's report says CTR, CPC, CPL and GBP.
+Here's what they actually mean, in plain words. 👇
+
+SEO: showing up on Google without paying for each click
+Local SEO: showing up for "near me" searches and on Google Maps
+GBP: your Google Business Profile, the listing on Search and Maps
+CTR: of everyone who saw you, how many clicked
+CPC: what you pay for each ad click
+CPL: what you pay for one enquiry
+Conversion rate: of every 100 visitors, how many call, book or buy
+Retargeting: ads shown to people who already visited your site
+
+If you only track one: CPL. Clicks are cheap. Enquiries pay the bills.
+
+Which term confused you the most when you first heard it?
+
+#DigitalMarketing #SmallBusiness #MarketingTips
+
+
+==================================================
+7. Mon 16 Nov · Google search vs ChatGPT
+==================================================
+
+More people now ask ChatGPT for recommendations instead of searching Google.
+
+Same question. Two very different answers.
+
+Google
+→ Shows a list of websites and a map
+→ For local results, it looks at relevance, distance and prominence
+→ Ads often sit at the top
+
+ChatGPT
+→ Gives one direct answer, often with a few names
+→ Tends to mention businesses that are described clearly and consistently across the web
+→ People click less, but trust the answer more
+
+The good news: the same basics help you on both.
+1. Accurate Google Business Profile and listings
+2. Real, recent reviews
+3. A website that clearly says what you do, where, and for whom
+
+Have you ever asked ChatGPT to recommend a local business?
+
+#AISearch #LocalSEO #DigitalMarketing
+
+
+==================================================
+8. Tue 17 Nov · 5 things that make a website slow
+==================================================
+
+"My website is slow because of the internet."
+
+Usually, it isn't. It's one of these 5 things:
+
+1. Huge images
+Photos uploaded straight from a phone can be several MB each.
+Fix: resize and compress them before uploading (WebP works well).
+
+2. Too many plugins and scripts
+Chat widgets, trackers, pop-ups, sliders. Each one adds weight.
+Fix: remove anything you don't actively use.
+
+3. Cheap, slow hosting
+The cheapest plan is often shared by hundreds of sites.
+Fix: pick hosting based on speed, not just price.
+
+4. No caching
+The server builds every page from scratch for every visitor.
+Fix: turn on caching (most hosts and WordPress plugins offer it).
+
+5. Auto-playing videos and heavy sliders
+They look nice and slow everything down, especially on mobile.
+Fix: use one strong image instead.
+
+Check your site for free on Google PageSpeed Insights. Test the mobile score.
+
+What's your website's mobile score?
+
+#WebsiteSpeed #WebDesign #SmallBusiness
+
+
+==================================================
+9. Wed 18 Nov · 7 questions to ask before hiring a marketing agency (carousel)
+Carousel: upload 2026-11-18-sakthi-carousel.pdf as a Document
+==================================================
+
+Most businesses choose a marketing agency based on price.
+Then they find out what wasn't included.
+
+Before you sign with anyone (including me), ask these 7 questions: 👇
+
+1. Who will actually do the work?
+2. What will you report, and how often?
+3. Which numbers will you measure? Enquiries, not just likes.
+4. Who owns the website, domain and ad accounts?
+5. What happens if we stop working together?
+6. Can I see similar work you've done?
+7. What's included in the price, and what's extra?
+
+A good agency will be happy to answer all 7.
+If they avoid one, that's your answer.
+
+Save this, and ask before you sign.
+
+Which question do you wish you'd asked earlier?
+
+#DigitalMarketing #SmallBusiness #MarketingAgency
+
+
+==================================================
+10. Thu 19 Nov · Ownership check
+==================================================
+
+If your agency disappeared tomorrow, could you still log in to your website?
+
+For many small businesses, the honest answer is no.
+
+Check these 7 today:
+☐ Domain registered in your name
+☐ Hosting account login
+☐ Website admin login
+☐ Google Business Profile, with you as the owner
+☐ Google Analytics and Search Console, with you as admin
+☐ Google and Meta ad accounts owned by you
+☐ A recent backup you can access
+
+Your agency should have access as a partner.
+You should own the accounts.
+
+It's not about trust. It's about not losing years of work over one email.
+
+Your business. Your access. Your control.
+
+How many of these 7 do you have?
+
+#SmallBusiness #WebsiteOwnership #DigitalMarketing
+
+
+==================================================
+11. Fri 20 Nov · ₹10,000 plan
+==================================================
+
+If a local business gave me ₹10,000 a month for marketing, this is where it would go:
+
+₹5,000: Google Search ads
+Only for high-intent searches nearby, like "[service] near me" or "[service] in [area]".
+
+₹3,000: website content
+2 new service pages or local SEO content a month. Ads stop when you stop paying; these keep working.
+
+₹2,000: retargeting ads
+Shown only to people who already visited the website. Small budget, warm audience.
+
+₹0: the essential free tools
+Google Business Profile updates, asking for reviews, WhatsApp Business quick replies.
+
+What's not on the list: boosting random posts for likes.
+
+After 30 days, look at the cost per enquiry for each part, and move money to what works.
+
+Strategy beats random posts.
+
+How would you split ₹10,000?
+
+#DigitalMarketing #SmallBusiness #MarketingBudget
+
+
+==================================================
+12. Sat 21 Nov · 18 free marketing tools
+==================================================
+
+You don't need a big budget to market a small business well.
+You need the right tools, and most of the good ones are free.
+
+Here are 18 I'd recommend, grouped by job: 👇
+
+Website & SEO
+Google Search Console · Google Analytics 4 · Ubersuggest
+
+Design & content
+Canva · CapCut · Pexels
+
+Social media
+Buffer · Meta Business Suite · Later
+
+Email & automation
+Mailchimp (free up to 250 contacts) · n8n (free when self-hosted) · Tally
+
+Analytics & insights
+Microsoft Clarity · PageSpeed Insights · Google Trends
+
+Productivity
+Notion · Trello · Google Drive
+
+All of these are free or have a free plan. Limits change, so check before you sign up.
+
+Don't try all 18 at once. Pick one from each group and use it properly for a month.
+
+Save this for later. Which tool would you add to the list?
+
+#MarketingTools #SmallBusiness #DigitalMarketing
+
+
+==================================================
+13. Sun 22 Nov · Instagram vs Google Business Profile
+==================================================
+
+Instagram or Google Business Profile: where should a local business focus first?
+
+Instagram
+→ People discover you while scrolling
+→ Shows your work and personality
+→ Builds trust over time
+
+Google Business Profile
+→ People find you when they're ready to buy
+→ Calls, directions and reviews in one tap
+→ Shows up on Google Maps and Search
+
+Instagram builds attention.
+Google Business Profile catches buyers.
+
+For most local businesses: start with Google, then grow with Instagram.
+
+Where do most of your customers find you today?
+
+#LocalSEO #InstagramMarketing #GoogleBusinessProfile
+
+
+==================================================
+14. Mon 23 Nov · The 3 searches every local business must rank for
+==================================================
+
+Every local business needs to show up for 3 kinds of search:
+
+1. "[service] near me"
+People who want you now, nearby.
+→ Comes mostly from your Google Business Profile: right category, address, hours and reviews.
+
+2. "[service] in [your area]"
+People who know where they want to go.
+→ Needs a page on your website for each area you serve. Adyar, T. Nagar, Anna Nagar, Velachery: one page each, not one page for all.
+
+3. "[service] cost in [your city]"
+People comparing before they decide.
+→ Needs a page that talks honestly about price, or what changes it.
+
+Most businesses only try for the first one.
+The other two are often easier to win.
+
+Good search = more customers.
+
+Which of the 3 does your business show up for today?
+
+#LocalSEO #SEO #SmallBusiness
+
+
+==================================================
+15. Tue 24 Nov · Happy Karthigai Deepam
+==================================================
+
+Happy Karthigai Deepam 🪔
+
+Today, homes across Tamil Nadu are lit with rows of small lamps. None of them is bright on its own. Together, they light up the whole street.
+
+And every one of them was lit from another lamp.
+
+That's how I think about work too. Small, steady effort, shared with others, goes further than any one big moment.
+
+Wishing you and your family light, peace and steady growth.
+
+And a happy Guru Nanak Jayanti to everyone celebrating today.
+
+— Sakthi
+
+#KarthigaiDeepam #HappyKarthigaiDeepam #GuruNanakJayanti
+
+
+==================================================
+16. Wed 25 Nov · 4 free WhatsApp Business features
+==================================================
+
+Your customers already message you on WhatsApp.
+Most shops use only a fraction of what WhatsApp Business can do.
+
+4 free features worth setting up today:
+
+1. Greeting message
+An automatic hello the first time someone messages you. They know they reached the right place.
+
+2. Away message
+A reply when you're closed: your hours, and when you'll get back to them. No more silent chats at night.
+
+3. Quick replies
+Save answers you type every day (prices, address, timings). Type "/" and send them in one tap.
+
+4. Catalogue
+Show your products or services with photos and prices, right inside the chat.
+
+All 4 are free and take about 20 minutes to set up.
+You'll find them in WhatsApp Business → Settings → Business tools.
+
+Which of these are you already using?
+
+#WhatsAppBusiness #SmallBusiness #CustomerExperience
+
+
+==================================================
+17. Thu 26 Nov · 10 checks before any website goes live (carousel)
+Carousel: upload 2026-11-26-sakthi-carousel.pdf as a Document
+==================================================
+
+Before any website goes live, it has to pass these 10 checks.
+
+Most of them take 2 minutes. Skipping them can cost months of lost enquiries. 👇
+
+1. Open it on a phone. Every page.
+2. Test the speed on PageSpeed Insights, mobile score first.
+3. Submit every form yourself. Check the enquiry actually arrives (and the spam folder).
+4. Tap the call and WhatsApp buttons. Right number?
+5. Padlock (https) on every page.
+6. Every page has its own title and description for Google.
+7. Google Analytics and Search Console set up before launch.
+8. Sitemap submitted in Search Console.
+9. Every link clicked. No broken pages, no leftover "Lorem ipsum".
+10. Name, address and phone match your Google Business Profile.
+
+The one that's skipped most often: number 3.
+A form that looks fine but never sends the enquiry is worse than no form at all.
+
+Save this for your next launch.
+
+#WebDesign #WebsiteLaunch #SmallBusiness
+
+
+==================================================
+18. Fri 27 Nov · Black Friday: discount or value?
+==================================================
+
+Black Friday is trending in India.
+Should your local business run a sale too?
+
+It depends on what kind of offer you run.
+
+A big discount
+→ Brings bargain hunters
+→ Cuts your margin
+→ Teaches customers to wait for the next sale
+
+A value offer
+→ Protects your price
+→ Gives people a reason to buy now
+→ Brings customers who come back
+
+Value offer ideas that work for local businesses:
+• A free add-on with the main service
+• A bundle at a slightly better price
+• A bonus only for existing customers
+
+If you do join in, don't just cut the price. Add a reason to buy now.
+
+Are you running a Black Friday offer this year?
+
+#BlackFriday #SmallBusiness #MarketingStrategy
+
+
+==================================================
+19. Sat 28 Nov · 5 design rules
+==================================================
+
+Most business posts fail in the first second.
+
+Not because the offer is bad. Because nobody could tell what it was.
+
+5 rules I follow for every post:
+
+1. One message per post
+Not your full service list. One idea. Keep it simple.
+
+2. Headline readable on a phone in 3 seconds
+Most people see your post on a small screen, while scrolling. Hook them fast.
+
+3. One clear action
+Call, WhatsApp, visit, book. Pick one and tell them what to do.
+
+4. The same brand colours every time
+People should recognise you before they read your name. Be consistent.
+
+5. Real photos over stock photos
+Your shop, your team, your work. People trust what looks real.
+
+If it needs explaining, it needs redesigning.
+
+Which rule do you break most often?
+
+#GraphicDesign #SocialMediaMarketing #SmallBusiness
+
+
+==================================================
+20. Sun 29 Nov · Myth: Google Ads will fix a slow month
+==================================================
+
+"It's a slow month. Let's run Google Ads."
+
+A slow month isn't always an ads problem.
+
+Ads bring more people to your door. They can't fix what happens after they arrive.
+More visitors ≠ more sales.
+
+Before you spend more on ads, check these 3:
+
+1. Are enquiries answered within an hour?
+A missed call or a late WhatsApp reply is a lost customer, ad or no ad.
+
+2. Does your landing page say what you do, where, and the price range?
+If people have to call to find out the basics, many won't.
+
+3. Do you know which calls and enquiries came from ads?
+Without tracking, you can't tell if the money worked.
+
+If all 3 are fine, ads can help.
+If not, more ads only mean more water poured into a leaking bucket.
+
+Fix the leak first. Then turn up the tap.
+
+What do you usually do in a slow month?
+
+#GoogleAds #DigitalMarketing #SmallBusiness
+
+
+==================================================
+21. Mon 30 Nov · Founder notes: 5 things nobody told me
+==================================================
+
+I run a digital marketing agency on my own.
+
+Here are 5 things nobody told me before I started:
+
+1. Clients don't buy marketing. They buy peace of mind.
+They don't want "SEO" or "ads". They want to stop worrying about where the next customer comes from.
+
+2. The hardest part isn't the work. It's saying no.
+To the wrong client, the wrong project, the "small extra change" that takes a whole day.
+
+3. Your own marketing always comes last.
+I build visibility for other businesses all day. My own page was always the first thing to slip.
+
+4. A clear report keeps a client longer than a big result they don't understand.
+If they can't see what changed, it didn't happen.
+
+5. A fast reply wins more work than a fancy portfolio.
+Most people hire whoever answers first and answers clearly.
+
+None of this was in any course I took.
+
+Founders and freelancers: which one hits closest to home? And what would you add?
+
+#Entrepreneurship #DigitalMarketing #FounderLessons
+
+
+==================================================
+22. Tue 1 Dec · 1-hour marketing plan
+==================================================
+
+December is the best month to plan next year's marketing.
+You don't need a 40-page plan. You need one hour and one page.
+
+15 minutes: look back
+What brought the most enquiries this year? What cost money and brought nothing?
+
+15 minutes: set one goal
+How many enquiries a month do you need? Start from that number.
+Example: 50 enquiries a month is about 2 a day.
+
+15 minutes: pick 2 channels and a monthly budget
+Only 2. Doing two well beats doing six badly.
+
+15 minutes: mark your 12 months
+Festivals, busy seasons, slow months. Plan one campaign for each slow month before it arrives.
+
+One page. One hour. A whole year clearer.
+
+Have you planned 2027 yet, or is it a January job?
+
+#MarketingPlan #SmallBusiness #DigitalMarketing
+
+
+==================================================
+23. Wed 2 Dec · Automation: what to automate first
+==================================================
+
+Most small businesses think automation means expensive AI tools.
+
+Don't start with fancy AI. Start with the tasks your team repeats every day.
+
+5 to automate first:
+
+1. The first reply to every WhatsApp enquiry
+An instant greeting, so no enquiry is missed and nobody waits without an answer.
+
+2. Appointment and payment reminders
+Fewer no-shows, fewer awkward follow-up calls.
+
+3. Asking for a Google review after the job
+A message after every completed job, sent the same day. More reviews, more trust.
+
+4. A website enquiry alert straight to your phone
+A new form enquiry reaches you instantly, not an inbox nobody checks.
+
+5. Scheduling social media posts
+Plan the week in one sitting and stay consistent without daily effort.
+
+Most of these can be set up with free or low-cost tools.
+
+Same tasks. Less time. More growth.
+Automate the repetitive. Keep the personal.
+
+Which task does your team repeat the most?
+
+#Automation #SmallBusiness #Productivity
+
