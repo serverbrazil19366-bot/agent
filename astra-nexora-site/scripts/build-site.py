@@ -536,6 +536,7 @@ def home_page(posts=()):
                 "foundingDate": "2025",
                 "foundingLocation": "Tamil Nadu, India",
                 "founder": {"@type": "Person", "@id": HOME["founder"]["portfolio"] + "#person", "name": HOME["founder"]["name"],
+                            "image": SITE + "assets/founder/s-saktheeswaran-founder-astra-nexora-w720.webp",
                             "alternateName": "Sakthi", "jobTitle": HOME["founder"]["role"], "url": HOME["founder"]["portfolio"],
                             "sameAs": [HOME["founder"]["portfolio"], HOME["founder"]["linkedin"]]},
                 "sameAs": [u for _, u in SOCIAL],
@@ -681,8 +682,8 @@ def home_page(posts=()):
 <div class="wrap founder-grid">
 <div class="founder-visual" data-reveal="">
 <span aria-hidden="true" class="fv-frame"></span>
-<div class="fv-photo img-wrap clip-reveal"><img alt="S. Saktheeswaran, Founder and Managing Director of Astra Nexora" class="lqip" decoding="async" height="900" loading="lazy" sizes="(min-width: 1001px) 460px, 90vw" src="assets/founder/sakthi-chair-w720.webp" srcset="assets/founder/sakthi-chair-w480.webp 480w, assets/founder/sakthi-chair-w720.webp 720w" width="720"/></div>
-<div class="fv-desk img-wrap"><img alt="Sakthi, founder of Astra Nexora" class="lqip" decoding="async" height="900" loading="lazy" sizes="220px" src="assets/founder/sakthi-desk-w480.webp" width="720"/></div>
+<div class="fv-photo img-wrap clip-reveal"><img alt="S. Saktheeswaran (Sakthi), Founder and Managing Director of Astra Nexora, digital marketing agency in Tamil Nadu" class="lqip" decoding="async" height="900" loading="lazy" sizes="(min-width: 1001px) 460px, 90vw" src="assets/founder/s-saktheeswaran-founder-astra-nexora-w720.webp" srcset="assets/founder/s-saktheeswaran-founder-astra-nexora-w480.webp 480w, assets/founder/s-saktheeswaran-founder-astra-nexora-w720.webp 720w" width="720"/></div>
+<div class="fv-desk img-wrap"><img alt="Saktheeswaran, founder and CEO of Astra Nexora" class="lqip" decoding="async" height="900" loading="lazy" sizes="220px" src="assets/founder/saktheeswaran-astra-nexora-ceo-w480.webp" width="720"/></div>
 <svg aria-hidden="true" class="fv-ring" viewbox="0 0 200 200"><defs><path d="M100 100m-78 0a78 78 0 1 1 156 0a78 78 0 1 1-156 0" id="ringPath"/></defs><text><textPath href="#ringPath">ASTRA NEXORA · NEXT ERA IN DIGITAL MARKETING ·</textPath></text></svg>
 <div class="fv-badge"><b>Since 2025</b><span>Founder &amp; MD</span></div>
 </div>
@@ -1280,7 +1281,7 @@ def post_page(post, posts):
 <h1 class="ph-title">{post["title"].replace("<em>", '<span class="hl">').replace("</em>", "</span>")}</h1>
 <p class="ph-lead">{esc(post["description"])}</p>
 <div class="ph-meta">
-<img alt="" class="ph-avatar" decoding="async" height="900" src="../assets/founder/sakthi-chair-w480.webp" width="720"/>
+<img alt="" class="ph-avatar" decoding="async" height="900" src="../assets/founder/s-saktheeswaran-founder-astra-nexora-w480.webp" width="720"/>
 <div><b>{esc(f["name"])}</b><span>{post["date_label"]} · {post["minutes"]} min read</span></div>
 </div>
 </div>
@@ -1304,7 +1305,7 @@ def post_page(post, posts):
 <div class="actions">{btn("Get my free audit", f"{home}#contact", "btn-white")}{btn("Chat on WhatsApp", WA, "btn-line", target=True)}</div>
 </div>
 <div class="author-box">
-<img alt="{esc(f["name"])}" decoding="async" height="900" loading="lazy" src="../assets/founder/sakthi-chair-w480.webp" width="720"/>
+<img alt="{esc(f["name"])}, founder of Astra Nexora" decoding="async" height="900" loading="lazy" src="../assets/founder/s-saktheeswaran-founder-astra-nexora-w480.webp" width="720"/>
 <div><small>Written by</small><h3>{esc(f["name"])}</h3><p>{esc(f["role"])}, Astra Nexora. Works on SEO, websites, branding and content for businesses across India.</p>
 <a href="{f["portfolio"]}" rel="noopener" target="_blank">Portfolio {ARROW}</a> <a href="{f["linkedin"]}" rel="noopener" target="_blank">LinkedIn {ARROW}</a></div>
 </div>

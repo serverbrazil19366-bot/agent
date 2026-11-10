@@ -222,7 +222,13 @@ def home():
         {"@type": "Person", "@id": SITE + "#person", "name": PROFILE["name"],
          "alternateName": ["Sakthi", "S Saktheeswaran", "Saktheeswaran S", "Saktheeswaran"],
          "description": "Founder & CEO of Astra Nexora and a digital marketing and SEO expert in Tamil Nadu, India.",
-         "jobTitle": "Founder & CEO, Astra Nexora", "url": SITE, "email": EMAIL, "image": SITE + "assets/img/sakthi-lean-w900.webp",
+         "jobTitle": "Founder & CEO, Astra Nexora", "url": SITE, "email": EMAIL, "image": [
+             {"@type": "ImageObject", "contentUrl": SITE + "assets/img/s-saktheeswaran-seo-expert-tamil-nadu-w900.webp", "width": 900, "height": 1125,
+              "name": "S. Saktheeswaran, Founder of Astra Nexora", "caption": "S. Saktheeswaran (Sakthi), Founder & CEO of Astra Nexora"},
+             {"@type": "ImageObject", "contentUrl": SITE + "assets/img/saktheeswaran-digital-marketing-expert-tamil-nadu-w1000.webp",
+              "name": "Saktheeswaran, digital marketing expert, Tamil Nadu", "caption": "Saktheeswaran, founder of Astra Nexora"},
+             {"@type": "ImageObject", "contentUrl": SITE + "assets/img/sakthi-saktheeswaran-astra-nexora-ceo-w800.webp",
+              "name": "Sakthi, CEO of Astra Nexora", "caption": "Sakthi (S. Saktheeswaran), CEO of Astra Nexora"}],
          "alumniOf": {"@type": "CollegeOrUniversity", "name": "Einstein College of Arts & Science, Tirunelveli"},
          "address": {"@type": "PostalAddress", "addressRegion": "Tamil Nadu", "addressCountry": "IN"},
          "sameAs": [u for _, u in PROFILE["social"]] + [PROFILE["agency"][1]],
@@ -320,7 +326,7 @@ def home():
 <span aria-hidden="true" class="hf-ring"></span>
 <span aria-hidden="true" class="hf-sun"></span>
 <span aria-hidden="true" class="hf-dots"></span>
-<div class="hf-cut">{img("img/sakthi-cut", PROFILE["name"] + ", founder of Astra Nexora", "(min-width: 901px) 440px, 80vw", p, eager=True)}</div>
+<div class="hf-cut">{img("img/s-saktheeswaran-founder-astra-nexora", "S. Saktheeswaran (Sakthi), Founder & CEO of Astra Nexora, digital marketing and SEO expert in Tamil Nadu", "(min-width: 901px) 440px, 80vw", p, eager=True)}</div>
 <svg aria-hidden="true" class="hv-badge" viewbox="0 0 200 200"><defs><path d="M100 100m-72 0a72 72 0 1 1 144 0a72 72 0 1 1-144 0" id="badgePath"/></defs><circle cx="100" cy="100" fill="currentColor" r="98"/><text><textPath href="#badgePath">SEO · AUTOMATION · WEBSITES · GROWTH ·</textPath></text><path class="hb-star" d="M100 74c2.6 15.4 10 22.8 25.4 25.4C110 102 102.6 109.4 100 124.8 97.4 109.4 90 102 74.6 99.4 90 96.8 97.4 89.4 100 74z"/></svg>
 <div class="hf-tag hf-tag-a"><b>SEO</b> &amp; Local SEO</div>
 <div class="hf-tag hf-tag-b"><b>n8n</b> AI Automation</div>
@@ -334,7 +340,7 @@ def home():
 <section aria-labelledby="aboutTitle" class="sec about" id="about">
 <div class="wrap about-in">
 <div class="about-photo" data-reveal="">
-<div class="ap-img">{img("img/sakthi-seated", PROFILE["name"] + " portrait", "(min-width: 1001px) 440px, 90vw", p)}</div>
+<div class="ap-img">{img("img/saktheeswaran-digital-marketing-expert-tamil-nadu", "Saktheeswaran, digital marketing expert and founder of Astra Nexora, Tamil Nadu", "(min-width: 1001px) 440px, 90vw", p)}</div>
 <div class="ap-badge"><b>2+</b><span>Years<br/>active</span></div>
 </div>
 <div class="about-copy">
@@ -462,7 +468,7 @@ def home():
 </div>
 <div class="contact-in">
 <div class="contact-info" data-reveal="">
-<div class="ci-photo">{img("img/sakthi-pockets", PROFILE["name"], "(min-width: 1001px) 480px, 90vw", p)}<span class="ci-tag"><i></i>Usually replies within a day</span></div>
+<div class="ci-photo">{img("img/sakthi-saktheeswaran-astra-nexora-ceo", "Sakthi (S. Saktheeswaran), CEO of Astra Nexora digital marketing agency", "(min-width: 1001px) 480px, 90vw", p)}<span class="ci-tag"><i></i>Usually replies within a day</span></div>
 <a class="big-mail" href="mailto:{EMAIL}">{EMAIL}</a>
 <ul class="info-list">
 <li>{svg(I["pin"])}<div><small>Location</small><b>{esc(PROFILE["location"])}</b></div></li>
@@ -492,7 +498,7 @@ def home():
 <div aria-hidden="true" class="vid-modal" id="vidModal"><div class="vm-box"><button aria-label="Close video" class="vm-close" type="button">✕</button><div class="vm-frame"></div></div></div>
 
 {footer(p, h)}'''
-    return head(title, desc, "", p, schema, preload="img/sakthi-cut-w629.webp") + body
+    return head(title, desc, "", p, schema, preload="img/s-saktheeswaran-founder-astra-nexora-w629.webp") + body
 
 
 def work_page(pr, i):
@@ -860,8 +866,13 @@ def main():
             + [f"work/{x['slug']}.html" for x in PROJECTS])
     today = datetime.date.today().isoformat()
     with open(os.path.join(ROOT, "sitemap.xml"), "w") as f:
-        f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-                + "".join(f"  <url><loc>{SITE}{u}</loc><lastmod>{today}</lastmod></url>\n" for u in urls) + "</urlset>\n")
+        imgs = [("s-saktheeswaran-founder-astra-nexora-w629", "S. Saktheeswaran, Founder and CEO of Astra Nexora"),
+                ("s-saktheeswaran-seo-expert-tamil-nadu-w900", "S. Saktheeswaran, SEO and digital marketing expert, Tamil Nadu"),
+                ("saktheeswaran-digital-marketing-expert-tamil-nadu-w1000", "Saktheeswaran, digital marketing expert and founder of Astra Nexora"),
+                ("sakthi-saktheeswaran-astra-nexora-ceo-w800", "Sakthi (S. Saktheeswaran), CEO of Astra Nexora")]
+        home_imgs = "".join(f"<image:image><image:loc>{SITE}assets/img/{n}.webp</image:loc><image:title>{t}</image:title></image:image>" for n, t in imgs)
+        f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n'
+                + "".join(f"  <url><loc>{SITE}{u}</loc><lastmod>{today}</lastmod>{home_imgs if u == '' else ''}</url>\n" for u in urls) + "</urlset>\n")
     with open(os.path.join(ROOT, "llms.txt"), "w") as f:
         f.write(LLMS)
     with open(os.path.join(ROOT, "robots.txt"), "w") as f:
