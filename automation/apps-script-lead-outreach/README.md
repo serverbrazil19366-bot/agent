@@ -13,15 +13,16 @@ The same pipeline as `../n8n-lead-audit-outreach`, but it runs on Google's serve
 
 ## Setup (about 20 minutes, one time)
 
-### A. Google Cloud API key (free)
-1. Go to <https://console.cloud.google.com/> → create a project, e.g. `astra-outreach`.
-2. **APIs & Services → Library**. Enable **Places API (New)** and **PageSpeed Insights API**.
-3. **APIs & Services → Credentials → Create credentials → API key**. Copy the key.
-   Click *Restrict key* → *API restrictions* → tick only those 2 APIs → Save.
-4. Places needs a billing account (a card) even when you stay inside the free allowance. Google gives 1,000 free Places searches a month; this script uses about 3 a day, so about 66 a month.
-   **To guarantee ₹0:** go to **APIs & Services → Places API (New) → Quotas**, find **Text Search requests per day**, and set it to **10**. Google then blocks request number 11 instead of charging for it.
+### A. Google Cloud API key (free, **no card**)
+1. Go to <https://console.cloud.google.com/>. Ignore the "$300 free trial" button.
+2. **Select a project → New project** → `astra-outreach` → Create.
+3. Search **PageSpeed Insights API** → **Enable**. This API needs no billing.
+4. **APIs & Services → Credentials → Create credentials → API key**. Copy the key.
+   *Edit → API restrictions → Restrict key → tick only PageSpeed Insights API → Save.*
 
-   *No card?* Skip Places entirely. Paste leads into the sheet yourself (business_name, website, status `new`), copied from Google Maps. Everything else still runs automatically.
+Leads: by default (`USE_PLACES: false`) **you paste them** into the `Leads` tab. Put business_name in column C, website in column D, and leave status empty.
+Collect them from Google Maps, or ask Claude to put together a list. Each run turns pasted rows into `new` or `no_website` and skips duplicates.
+*(Optional, needs a card: set `USE_PLACES: true`, enable Places API (New), and cap its quota at 10/day to fetch leads automatically.)*
 
 ### B. The sheet and script
 1. Create a new Google Sheet, e.g. **Astra Nexora Leads**.
@@ -31,7 +32,7 @@ The same pipeline as `../n8n-lead-audit-outreach`, but it runs on Google's serve
 5. Go back to the sheet and refresh. An **Astra Outreach** menu appears.
 
 ### C. Test, then go live
-1. **Astra Outreach → Find leads now**. Rows appear in the `Leads` tab.
+1. Paste 5 test leads (name + website) into the `Leads` tab.
 2. **Astra Outreach → Process next lead now**, two or three times. Each click audits leads until one email is ready.
 3. `SEND_MODE` is `'draft'` by default, so check **Gmail → Drafts**. Read 3–5 of them.
 4. When you're happy with them, change `SEND_MODE` to `'send'` and save. From then on it runs itself:

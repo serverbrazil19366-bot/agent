@@ -10,9 +10,14 @@
  */
 
 const CONFIG = {
-  // One Google Cloud API key with BOTH "Places API (New)" and
-  // "PageSpeed Insights API" enabled.
+  // Google Cloud API key with "PageSpeed Insights API" enabled. Needs NO billing / card.
   GOOGLE_API_KEY: 'PASTE_YOUR_API_KEY_HERE',
+
+  // false = no card needed: you paste leads into the sheet (business_name + website)
+  //         and everything else is automatic.
+  // true  = also search Google Places automatically every morning (needs a billing
+  //         account on the Cloud project + "Places API (New)" enabled on the key).
+  USE_PLACES: false,
 
   // One area is searched per day, in rotation. Places returns at most 60
   // results per search, so several small areas give far more leads than one city.
@@ -40,7 +45,7 @@ const SHEET = 'Leads';
 const COLS = ['added_on', 'status', 'business_name', 'website', 'domain', 'phone', 'address',
   'rating', 'place_id', 'speed_index', 'perf_score', 'lcp', 'email', 'email_found_on',
   'contacted_on', 'note'];
-// status: new | no_website | fast | audit_failed | no_email | drafted | sent | opted_out | replied
+// status: (empty = just pasted) | new | duplicate | no_website | fast | audit_failed | no_email | drafted | sent | opted_out | replied
 
 const NOT_A_WEBSITE = ['facebook.com', 'instagram.com', 'linkedin.com', 'twitter.com', 'x.com',
   'youtube.com', 'wa.me', 'whatsapp.com', 'linktr.ee', 'justdial.com', 'practo.com', 'sulekha.com',
@@ -62,9 +67,10 @@ function setup() {
   sh.setFrozenRows(1);
 
   ScriptApp.getProjectTriggers().forEach(t => ScriptApp.deleteTrigger(t));
-  ScriptApp.newTrigger('findLeads').timeBased().everyDays(1).atHour(9).create();
+  if (CONFIG.USE_PLACES) ScriptApp.newTrigger('findLeads').timeBased().everyDays(1).atHour(9).create();
   ScriptApp.newTrigger('processNext').timeBased().everyMinutes(10).create();
-  SpreadsheetApp.getUi().alert('Setup done. Leads are searched daily around 9 AM; ' +
+  SpreadsheetApp.getUi().alert('Setup done. ' + (CONFIG.USE_PLACES ? 'Leads are searched daily around 9 AM; ' :
+    'Paste leads (business_name + website) into the Leads tab; ') +
     'emails go out every 10 min between ' + CONFIG.WORK_HOURS.join(':00–') + ':00, Mon–Fri. ' +
     'Mode: ' + CONFIG.SEND_MODE.toUpperCase());
 }
@@ -77,7 +83,13 @@ function onOpen() {
     .addItem('Setup / reset triggers', 'setup')
     .addToUi();
 }
-function findLeadsNow() { findLeads(true); }
+function findLeadsNow() {
+  if (!CONFIG.USE_PLACES) {
+    SpreadsheetApp.getUi().alert('USE_PLACES is false. Paste leads into the Leads tab: business_name in column C, website in column D. Leave status empty.');
+    return;
+  }
+  findLeads(true);
+}
 function processNextNow() { processNext(true); }
 
 // ───────────────────────────── 1. find leads ─────────────────────────────
@@ -155,6 +167,7 @@ function processNext(manual) {
     const doneToday = rows.filter(r => String(r.contacted_on).indexOf(today) === 0).length;
     if (doneToday >= CONFIG.EMAILS_PER_DAY) return;
     if (CONFIG.SEND_MODE === 'send' && MailApp.getRemainingDailyQuota() < 1) return;
+    prepareManualRows_(sh, rows);
     const contacted = new Set(rows.filter(r => r.email && ['sent', 'drafted', 'opted_out', 'replied'].indexOf(r.status) >= 0)
       .map(r => String(r.email).toLowerCase()));
 
@@ -169,6 +182,23 @@ function processNext(manual) {
   } finally {
     lock.releaseLock();
   }
+}
+
+/** Rows you pasted by hand (empty status) become 'new' / 'no_website', deduped by domain. */
+function prepareManualRows_(sh, rows) {
+  const seen = new Set(rows.filter(r => r.status && r.domain).map(r => r.domain));
+  rows.forEach(r => {
+    if (r.status || !(r.business_name || r.website)) return;
+    let domain = toDomain(r.website);
+    if (domain && !isRealSite(domain)) { r.note = appendNote_(r.note, 'listed link is ' + domain); domain = ''; r.website = ''; }
+    r.domain = domain;
+    if (domain && !/^https?:\/\//i.test(r.website)) r.website = 'https://' + r.website.trim();
+    r.added_on = r.added_on || today_();
+    if (!domain) r.status = 'no_website';
+    else if (seen.has(domain)) { r.status = 'duplicate'; }
+    else { r.status = 'new'; seen.add(domain); }
+    writeRow_(sh, r);
+  });
 }
 
 /** Returns true if an email was sent or drafted. Mutates r. */
