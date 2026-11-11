@@ -874,12 +874,26 @@ function doGet(e) {
       'In Apps Script, run <b>appLink</b>: it emails you the full link. Open that email on your phone and tap it.</p>');
   try {
     if (p.api === 'data') return out(dashboardData_());
+    if (p.api === 'page') return out({ html: p.view === 'mobile' ? dashboardHtml_(dashboardData_()) : desktopHtml_(desktopData_()) });
     if (p.view === 'desktop') return HtmlService.createHtmlOutput(desktopHtml_(desktopData_()))
       .setTitle('Astra Leads: Daily dashboard').addMetaTag('viewport', 'width=device-width, initial-scale=1');
     if (p.api === 'mark') { markLead(p.row, p.status); return out({ ok: true }); }
   } catch (err) { return out({ error: err.message }); }
   return HtmlService.createHtmlOutput(dashboardHtml_(dashboardData_()))
     .setTitle('Astra Leads').addMetaTag('viewport', 'width=device-width, initial-scale=1');
+}
+
+/** Buttons on the dashboard when it's opened from the Netlify page (outside script.google.com).
+ *  Body: {"t": key, "fn": "markLead" | "sendFromDashboard", "args": [...]} sent as text/plain. */
+function doPost(e) {
+  const out = obj => ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+  let req = {};
+  try { req = JSON.parse((e && e.postData && e.postData.contents) || '{}'); } catch (err) { return out({ error: 'bad request' }); }
+  if (!req.t || req.t !== appToken_()) return out({ error: 'not paired' });
+  const fns = { markLead: markLead, sendFromDashboard: sendFromDashboard };
+  if (!fns[req.fn]) return out({ error: 'unknown action' });
+  try { return out({ ok: true, result: fns[req.fn].apply(null, req.args || []) }); }
+  catch (err) { return out({ error: err.message }); }
 }
 
 /** Called from the dashboard buttons. */
