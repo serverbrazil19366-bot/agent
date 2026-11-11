@@ -56,6 +56,10 @@ const CONFIG = {
   SENDER_NAME: 'S. Saktheeswaran',
   AGENCY_SITE: 'https://astranexora.netlify.app',
   PERSONAL_SITE: 'https://saktheeswaran.netlify.app',
+  // Proof of past work, linked in every email. Set to '' to leave it out.
+  PORTFOLIO_URL: 'https://saktheeswaran.netlify.app/#work',
+  CASE_STUDY_NAME: 'Akeela Dental Care',     // a dental client to mention by name
+  CASE_STUDY_URL: 'https://saktheeswaran.netlify.app/work/akeela-dental-care.html',
 };
 
 const SHEET = 'Leads';
@@ -341,6 +345,9 @@ function emailCopy(r, cfg) {
     "Google's own research found that more than half of mobile visitors leave if a page takes over 3 seconds, " +
     'so some of those patients go straight back and pick the next clinic.</p>' +
     '<p>You can see the result yourself here: <a href="' + report + '">Google PageSpeed report for ' + esc_(r.domain) + '</a></p>' +
+    (cfg.CASE_STUDY_URL ? '<p>I built the website and SEO for <a href="' + cfg.CASE_STUDY_URL + '">' + esc_(cfg.CASE_STUDY_NAME) +
+      '</a>, a dental clinic in Chennai' + (cfg.PORTFOLIO_URL ? ', and you can see my other projects <a href="' +
+      cfg.PORTFOLIO_URL + '">here</a>' : '') + '.</p>' : '') +
     '<p>I\'ve noted ' + (fixes >= 2 ? '2 simple fixes' : 'a simple fix') + ' for your site. ' +
     'Shall I send ' + (fixes >= 2 ? 'them' : 'it') + ' over? It\'s free. Just reply "yes".</p>' +
     '<p>' + esc_(cfg.SENDER_NAME) + '<br>Astra Nexora, ' + esc_(r.city || cfg.CITY_FOR_EMAIL) +
@@ -358,12 +365,13 @@ function followupCopy(r, cfg) {
     "<p>Just checking you saw my note about " + esc_(name) + "'s website taking about " +
     esc_(String(r.speed_index || '').replace(/\s*s$/, '')) + ' seconds to show up on mobile.</p>' +
     '<p>The fixes are quick and I\'m happy to share them free. Reply "yes" and I\'ll send them today.</p>' +
-    '<p>' + esc_(cfg.SENDER_NAME) + '<br>Astra Nexora</p>';
+    '<p>' + esc_(cfg.SENDER_NAME) + '<br>Astra Nexora' +
+    (cfg.PORTFOLIO_URL ? '<br>My work: ' + cfg.PORTFOLIO_URL.replace(/^https?:\/\//, '') : '') + '</p>';
   return { subject, html };
 }
 
 function htmlToText(html) {
-  return html.replace(/<a href="([^"]+)">[^<]*<\/a>/g, '$1').replace(/<br>/g, '\n').replace(/<\/p>/g, '\n\n')
+  return html.replace(/<a href="([^"]+)">([^<]*)<\/a>/g, (m, url, txt) => txt === 'here' ? 'here: ' + url : txt + ' (' + url + ')').replace(/<br>/g, '\n').replace(/<\/p>/g, '\n\n')
     .replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"').trim();
 }
