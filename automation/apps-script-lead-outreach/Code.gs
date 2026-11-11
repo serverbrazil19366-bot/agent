@@ -67,11 +67,12 @@ const CONFIG = {
 const SHEET = 'Leads';
 const COLS = ['added_on', 'status', 'business_name', 'website', 'domain', 'phone', 'address',
   'rating', 'place_id', 'speed_index', 'perf_score', 'lcp', 'email', 'email_found_on',
-  'contacted_on', 'note', 'city', 'top_fixes', 'thread_ids', 'followup_on', 'pitch', 'whatsapp'];
+  'contacted_on', 'note', 'city', 'top_fixes', 'thread_ids', 'followup_on', 'pitch', 'whatsapp', 'wa_sent_on'];
 // pitch: 'speed' (has a slow website) | 'website' (no website: offer to build one)
 // whatsapp: one-click wa.me link with the message already typed, for you to send by hand
 // status: (empty = just pasted) | new | duplicate | no_website | fast | audit_failed | no_email | drafted | sent |
-//         followed_up | replied (set automatically when they answer) | bounced | opted_out
+//         followed_up | replied (set automatically when they answer) | bounced | opted_out |
+//         call_booked | won | lost (set by you, from the phone dashboard or by typing)
 
 const NOT_A_WEBSITE = ['facebook.com', 'instagram.com', 'linkedin.com', 'twitter.com', 'x.com',
   'youtube.com', 'wa.me', 'whatsapp.com', 'linktr.ee', 'justdial.com', 'practo.com', 'sulekha.com',
@@ -95,6 +96,7 @@ function setup() {
   ScriptApp.getProjectTriggers().forEach(t => ScriptApp.deleteTrigger(t));
   if (CONFIG.LEAD_SOURCE !== 'manual') ScriptApp.newTrigger('findLeads').timeBased().everyDays(1).atHour(9).create();
   ScriptApp.newTrigger('processNext').timeBased().everyMinutes(10).create();
+  ScriptApp.newTrigger('dailyDigest').timeBased().everyDays(1).atHour(18).nearMinute(30).create();
   // toast, not alert: an alert blocks until someone clicks OK in the sheet and
   // the run times out when setup is started from the script editor.
   const msg = 'Setup done. ' + (CONFIG.LEAD_SOURCE !== 'manual' ? 'Leads (' + CONFIG.LEAD_SOURCE + ') are searched daily around 9 AM; ' :
@@ -644,3 +646,189 @@ function callDay_() {
 }
 function esc_(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 function log_(msg) { console.log(msg); }
+
+
+// ─────────────────────── 3. phone dashboard & daily digest ───────────────────────
+// Deploy → New deployment → Web app → Execute as: Me, Who has access: Only myself.
+// Open the URL on your phone and "Add to Home Screen". Same Google account as the sheet.
+
+function doGet() {
+  return HtmlService.createHtmlOutput(dashboardHtml_(dashboardData_()))
+    .setTitle('Astra Leads')
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1')
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.DEFAULT);
+}
+
+/** Called from the dashboard buttons. */
+function markLead(row, status) {
+  const allowed = ['call_booked', 'won', 'lost', 'opted_out', 'replied'];
+  if (allowed.indexOf(status) < 0) throw new Error('bad status');
+  const sh = sheet_();
+  row = Number(row);
+  if (!(row >= 2 && row <= sh.getLastRow())) throw new Error('bad row');
+  const r = readRows_(sh).filter(x => x._row === row)[0];
+  r.status = status;
+  r.note = appendNote_(r.note, status + ' ' + today_());
+  writeRow_(sh, r);
+  return true;
+}
+
+function markWhatsAppSent(row) {
+  const sh = sheet_();
+  row = Number(row);
+  if (!(row >= 2 && row <= sh.getLastRow())) throw new Error('bad row');
+  const r = readRows_(sh).filter(x => x._row === row)[0];
+  r.wa_sent_on = Utilities.formatDate(new Date(), 'Asia/Kolkata', 'yyyy-MM-dd HH:mm');
+  writeRow_(sh, r);
+  return true;
+}
+
+function dashboardData_() {
+  const rows = readRows_(sheet_());
+  let me = '';
+  try { me = Session.getActiveUser().getEmail(); } catch (e) {}
+  return summarize(rows, today_(), me, CONFIG.EMAILS_PER_DAY);
+}
+
+/** Pure: sheet rows → numbers and lists for the dashboard and the digest. */
+function summarize(rows, today, me, perDay) {
+  const day = d => String(d || '').slice(0, 10);
+  const weekAgo = new Date(new Date(today + 'T00:00:00Z').getTime() - 6 * 864e5).toISOString().slice(0, 10);
+  const contacted = rows.filter(r => r.contacted_on);
+  const answered = ['replied', 'call_booked', 'won', 'lost'];
+  const byStatus = {};
+  rows.forEach(r => { const k = r.status || 'pasted'; byStatus[k] = (byStatus[k] || 0) + 1; });
+  const gmail = r => {
+    const ids = String(r.thread_ids || '').split(',').filter(Boolean);
+    return ids.length ? 'https://mail.google.com/mail/?authuser=' + encodeURIComponent(me) + '#all/' + ids[ids.length - 1] : '';
+  };
+  const card = r => ({ row: r._row, name: r.business_name || r.domain, city: r.city, email: r.email, phone: r.phone,
+    pitch: r.pitch, status: r.status, when: r.contacted_on, wa: r.whatsapp, gmail: gmail(r), fixes: r.top_fixes,
+    website: r.website });
+  return {
+    today,
+    perDay,
+    sentToday: rows.filter(r => day(r.contacted_on) === today || day(r.followup_on) === today).length,
+    sentWeek: contacted.filter(r => day(r.contacted_on) >= weekAgo).length,
+    contacted: contacted.length,
+    answered: contacted.filter(r => answered.indexOf(r.status) >= 0).length,
+    won: byStatus.won || 0,
+    calls: byStatus.call_booked || 0,
+    waiting: rows.filter(r => r.status === 'new' || (!r.status && (r.business_name || r.website))).length,
+    byStatus,
+    replies: rows.filter(r => r.status === 'replied').map(card),
+    calls_list: rows.filter(r => r.status === 'call_booked').map(card),
+    whatsapp: rows.filter(r => r.whatsapp && !r.wa_sent_on &&
+      (r.status === 'no_website' || ((r.status === 'sent' || r.status === 'followed_up') && day(r.contacted_on) < today)))
+      .slice(0, 25).map(card),
+    recent: contacted.slice().sort((a, b) => String(b.contacted_on).localeCompare(String(a.contacted_on))).slice(0, 12).map(card),
+  };
+}
+
+/** Evening email to yourself: the day's numbers and who to answer. */
+function dailyDigest() {
+  if (isWeekend_()) return;
+  const d = dashboardData_();
+  const me = Session.getActiveUser().getEmail();
+  if (!me) return;
+  let url = '';
+  try { url = ScriptApp.getService().getUrl() || ''; } catch (e) {}
+  const li = a => a.map(c => '<li><b>' + esc_(c.name) + '</b> (' + esc_(c.city || '') + ')' +
+    (c.gmail ? ' · <a href="' + c.gmail + '">open email</a>' : '') + '</li>').join('');
+  const html =
+    '<h2 style="margin:0 0 8px">Astra Outreach: ' + d.today + '</h2>' +
+    '<p>Sent today: <b>' + d.sentToday + '</b> / ' + d.perDay + ' · This week: <b>' + d.sentWeek + '</b> · ' +
+    'Replies so far: <b>' + d.answered + '</b> of ' + d.contacted + ' · Leads waiting: <b>' + d.waiting + '</b></p>' +
+    (d.replies.length ? '<h3>Reply to these (' + d.replies.length + ')</h3><ul>' + li(d.replies) + '</ul>' : '<p>No new replies today.</p>') +
+    (d.calls_list.length ? '<h3>Calls booked</h3><ul>' + li(d.calls_list) + '</ul>' : '') +
+    '<p>WhatsApp messages ready to send: <b>' + d.whatsapp.length + '</b></p>' +
+    (url ? '<p><a href="' + url + '">Open the dashboard</a></p>' : '');
+  MailApp.sendEmail({ to: me, subject: 'Astra Outreach: ' + d.sentToday + ' sent, ' + d.replies.length + ' to reply',
+    htmlBody: html, name: 'Astra Outreach' });
+}
+
+function dashboardHtml_(data) {
+  const json = JSON.stringify(data).replace(/</g, '\\u003c');
+  return `<!doctype html><html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0f172a">
+<title>Astra Leads</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--ink:#0f172a;--mute:#64748b;--line:#e5e7eb;--accent:#4f46e5;--good:#059669;--warn:#d97706;--bad:#dc2626;--wa:#16a34a}
+@media (prefers-color-scheme:dark){:root{--bg:#0b1020;--card:#141a2e;--ink:#e5e7eb;--mute:#94a3b8;--line:#243049;--accent:#818cf8;--good:#34d399;--warn:#fbbf24;--bad:#f87171;--wa:#22c55e}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+header{padding:18px 16px 6px}h1{margin:0;font-size:22px}header p{margin:2px 0 0;color:var(--mute);font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px 16px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.stat b{display:block;font-size:24px}.stat span{color:var(--mute);font-size:12px}
+.bar{height:6px;background:var(--line);border-radius:3px;margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;background:var(--accent)}
+nav{display:flex;gap:6px;padding:8px 16px;overflow-x:auto;position:sticky;top:0;background:var(--bg);z-index:2}
+nav button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 12px;font-size:14px;white-space:nowrap}
+nav button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+section{padding:4px 16px 24px}.empty{color:var(--mute);text-align:center;padding:24px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0}
+.item h3{margin:0;font-size:16px}.meta{color:var(--mute);font-size:13px;margin-top:2px;word-break:break-word}
+.fix{font-size:13px;margin-top:6px}.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.btn{flex:1 1 auto;text-align:center;text-decoration:none;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:14px;color:var(--ink);background:transparent;cursor:pointer}
+.btn.wa{background:var(--wa);border-color:var(--wa);color:#fff}.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.good{color:var(--good);border-color:var(--good)}.btn.bad{color:var(--bad);border-color:var(--bad)}
+.pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--mute);margin-left:6px;vertical-align:middle}
+.done{opacity:.45}
+.counts{display:grid;grid-template-columns:1fr auto;gap:6px 12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+</style></head><body>
+<header><h1>Astra Leads</h1><p id="sub"></p></header>
+<div class="stats" id="stats"></div>
+<nav id="tabs"></nav>
+<section id="list"></section>
+<script>
+var D = ${json};
+var TABS = [['replies','Reply ('+D.replies.length+')'],['whatsapp','WhatsApp ('+D.whatsapp.length+')'],
+  ['calls','Calls ('+D.calls_list.length+')'],['recent','Recent'],['pipeline','Pipeline']];
+var cur = D.replies.length ? 'replies' : 'whatsapp';
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function stat(n,l,extra){return '<div class="stat"><b>'+n+'</b><span>'+l+'</span>'+(extra||'')+'</div>';}
+function render(){
+  document.getElementById('sub').textContent = D.today + ' · updates when you reopen';
+  var pct = Math.min(100, Math.round(100*D.sentToday/Math.max(1,D.perDay)));
+  var rate = D.contacted ? Math.round(100*D.answered/D.contacted) : 0;
+  document.getElementById('stats').innerHTML =
+    stat(D.sentToday+' / '+D.perDay,'Emails today','<div class="bar"><i style="width:'+pct+'%"></i></div>') +
+    stat(D.sentWeek,'Sent this week') + stat(D.answered+' <small style="font-size:13px">('+rate+'%)</small>','Replies') +
+    stat(D.calls+' · '+D.won,'Calls booked · Won') + stat(D.waiting,'Leads waiting') +
+    stat(D.byStatus.no_website||0,'No website (build pitch)');
+  document.getElementById('tabs').innerHTML = TABS.map(function(t){
+    return '<button class="'+(t[0]===cur?'on':'')+'" onclick="cur=\\''+t[0]+'\\';render()">'+t[1]+'</button>';}).join('');
+  var L = document.getElementById('list');
+  if (cur==='pipeline'){
+    var keys = Object.keys(D.byStatus).sort(function(a,b){return D.byStatus[b]-D.byStatus[a];});
+    L.innerHTML = '<div class="counts">'+keys.map(function(k){return '<span>'+esc(k)+'</span><b>'+D.byStatus[k]+'</b>';}).join('')+'</div>';
+    return;
+  }
+  var items = cur==='replies'?D.replies:cur==='whatsapp'?D.whatsapp:cur==='calls'?D.calls_list:D.recent;
+  if (!items.length){ L.innerHTML = '<p class="empty">'+(cur==='replies'?'No replies waiting. 🎉':'Nothing here right now.')+'</p>'; return; }
+  L.innerHTML = items.map(function(c,i){
+    var h = '<div class="item" id="it'+cur+i+'"><h3>'+esc(c.name)+'<span class="pill">'+esc(c.pitch==='website'?'website build':(c.pitch||c.status))+'</span></h3>'+
+      '<div class="meta">'+esc([c.city,c.email,c.phone].filter(Boolean).join(' · '))+'</div>';
+    if (c.when) h += '<div class="meta">Emailed '+esc(c.when)+' · '+esc(c.status)+'</div>';
+    if (cur==='replies' && c.fixes) h += '<div class="fix"><b>Fixes to send:</b> '+esc(c.fixes)+'</div>';
+    h += '<div class="row">';
+    if (cur==='replies'||cur==='calls'||cur==='recent'){
+      if (c.gmail) h += '<a class="btn pri" target="_blank" href="'+esc(c.gmail)+'">Open email</a>';
+      if (c.wa) h += '<a class="btn wa" target="_blank" href="'+esc(c.wa)+'">WhatsApp</a>';
+      if (c.phone) h += '<a class="btn" href="tel:'+esc(String(c.phone).split(/[;,]/)[0].replace(/[^+\\d]/g,''))+'">Call</a>';
+    }
+    if (cur==='replies') h += '<button class="btn good" onclick="mark('+c.row+',\\'call_booked\\','+i+')">Call booked</button>'+
+      '<button class="btn bad" onclick="mark('+c.row+',\\'lost\\','+i+')">Not interested</button>';
+    if (cur==='calls') h += '<button class="btn good" onclick="mark('+c.row+',\\'won\\','+i+')">Won 🎉</button>'+
+      '<button class="btn bad" onclick="mark('+c.row+',\\'lost\\','+i+')">Lost</button>';
+    if (cur==='whatsapp') h += '<a class="btn wa" target="_blank" href="'+esc(c.wa)+'" onclick="wa('+c.row+','+i+')">Open WhatsApp</a>'+
+      (c.website?'<a class="btn" target="_blank" href="'+esc(c.website)+'">Site</a>':'');
+    return h+'</div></div>';
+  }).join('');
+}
+function fade(i){var el=document.getElementById('it'+cur+i); if(el) el.className+=' done';}
+function mark(row,status,i){ fade(i); google.script.run.withFailureHandler(function(e){alert('Could not save: '+e.message);}).markLead(row,status); }
+function wa(row,i){ setTimeout(function(){fade(i);},300); google.script.run.markWhatsAppSent(row); }
+render();
+</script></body></html>`;
+}
