@@ -69,10 +69,14 @@ function setup() {
   ScriptApp.getProjectTriggers().forEach(t => ScriptApp.deleteTrigger(t));
   if (CONFIG.USE_PLACES) ScriptApp.newTrigger('findLeads').timeBased().everyDays(1).atHour(9).create();
   ScriptApp.newTrigger('processNext').timeBased().everyMinutes(10).create();
-  SpreadsheetApp.getUi().alert('Setup done. ' + (CONFIG.USE_PLACES ? 'Leads are searched daily around 9 AM; ' :
+  // toast, not alert: an alert blocks until someone clicks OK in the sheet and
+  // the run times out when setup is started from the script editor.
+  const msg = 'Setup done. ' + (CONFIG.USE_PLACES ? 'Leads are searched daily around 9 AM; ' :
     'Paste leads (business_name + website) into the Leads tab; ') +
     'emails go out every 10 min between ' + CONFIG.WORK_HOURS.join(':00–') + ':00, Mon–Fri. ' +
-    'Mode: ' + CONFIG.SEND_MODE.toUpperCase());
+    'Mode: ' + CONFIG.SEND_MODE.toUpperCase();
+  ss.toast(msg, 'Astra Outreach', 15);
+  console.log(msg);
 }
 
 function onOpen() {
