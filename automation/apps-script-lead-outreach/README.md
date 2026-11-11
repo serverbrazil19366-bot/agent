@@ -4,7 +4,7 @@ The same pipeline as `../n8n-lead-audit-outreach`, but it runs on Google's serve
 
 | Step | n8n version | Free version |
 |---|---|---|
-| Find leads | Outscraper (paid after 500/mo) | **Google Places API (New)**, with a daily quota cap so it can never bill |
+| Find leads | Outscraper (paid after 500/mo) | **OpenStreetMap**: free, no key. Google Places can be added optionally (needs a card) |
 | Speed audit | PageSpeed API | **PageSpeed API** (free, no billing) |
 | Owner email | Hunter.io (25 free/mo) | **Reads the clinic's own website** (home, /contact, /about), so it's unlimited |
 | Send | Gmail node | **GmailApp**, built in (100 recipients/day on free Gmail) |
@@ -20,9 +20,8 @@ The same pipeline as `../n8n-lead-audit-outreach`, but it runs on Google's serve
 4. **APIs & Services → Credentials → Create credentials → API key**. Copy the key.
    *Edit → API restrictions → Restrict key → tick only PageSpeed Insights API → Save.*
 
-Leads: by default (`USE_PLACES: false`) **you paste them** into the `Leads` tab. Put business_name in column C, website in column D, and leave status empty.
-Collect them from Google Maps, or ask Claude to put together a list. Each run turns pasted rows into `new` or `no_website` and skips duplicates.
-*(Optional, needs a card: set `USE_PLACES: true`, enable Places API (New), and cap its quota at 10/day to fetch leads automatically.)*
+**Leads come in automatically** (`LEAD_SOURCE: 'osm'`, the default). Every weekday at about 9 AM the script searches OpenStreetMap, which is free and needs no key or card, for dentists in the next city in `OSM_CITIES`. It adds each clinic's name, website, phone and address, plus an email when OpenStreetMap has one. OpenStreetMap lists fewer clinics than Google Maps, so you can still paste extra leads by hand (business_name in column C, website in column D, status empty). Pasted rows are processed the same way.
+*(Other options: `'places'` uses Google Places, which needs a card; cap its quota at 10/day. `'manual'` means pasted leads only.)*
 
 ### B. The sheet and script
 1. Create a new Google Sheet, e.g. **Astra Nexora Leads**.

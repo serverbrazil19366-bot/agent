@@ -13,14 +13,29 @@ const CONFIG = {
   // Google Cloud API key with "PageSpeed Insights API" enabled. Needs NO billing / card.
   GOOGLE_API_KEY: 'PASTE_YOUR_API_KEY_HERE',
 
-  // false = no card needed: you paste leads into the sheet (business_name + website)
-  //         and everything else is automatic.
-  // true  = also search Google Places automatically every morning (needs a billing
-  //         account on the Cloud project + "Places API (New)" enabled on the key).
-  USE_PLACES: false,
+  // Where new leads come from, every weekday at ~9 AM:
+  //   'osm'    = OpenStreetMap: free, no key, no card. One city per day, in rotation.
+  //   'places' = Google Places: best data, but needs a billing account (card).
+  //   'manual' = you paste business_name + website into the Leads tab yourself.
+  // Rows you paste by hand are always processed too, whatever the source.
+  LEAD_SOURCE: 'osm',
 
-  // One area is searched per day, in rotation. Places returns at most 60
-  // results per search, so several small areas give far more leads than one city.
+  // OpenStreetMap: what to look for, and where. bbox = south,west,north,east.
+  OSM_TAGS: ['amenity=dentist', 'healthcare=dentist'],
+  OSM_CITIES: [
+    { name: 'Chennai', bbox: '12.80,80.05,13.25,80.35' },
+    { name: 'Coimbatore', bbox: '10.90,76.85,11.15,77.10' },
+    { name: 'Madurai', bbox: '9.85,78.03,10.00,78.20' },
+    { name: 'Tiruchirappalli', bbox: '10.70,78.60,10.90,78.80' },
+    { name: 'Salem', bbox: '11.58,78.07,11.73,78.23' },
+    { name: 'Puducherry', bbox: '11.87,79.76,11.99,79.86' },
+    { name: 'Vellore', bbox: '12.87,79.07,12.99,79.19' },
+    { name: 'Tirunelveli', bbox: '8.66,77.65,8.78,77.78' },
+    { name: 'Erode', bbox: '11.30,77.66,11.39,77.77' },
+    { name: 'Thanjavur', bbox: '10.74,79.08,10.83,79.18' },
+  ],
+
+  // Google Places only: one area is searched per day, in rotation.
   BUSINESS_TYPE: 'Dental clinic',
   AREAS: [
     'T. Nagar, Chennai', 'Adyar, Chennai', 'Anna Nagar, Chennai', 'Velachery, Chennai',
@@ -28,7 +43,7 @@ const CONFIG = {
     'Kodambakkam, Chennai', 'Ashok Nagar, Chennai', 'Chromepet, Chennai', 'OMR, Chennai',
     'Perambur, Chennai', 'Vadapalani, Chennai', 'Besant Nagar, Chennai', 'Guindy, Chennai',
   ],
-  CITY_FOR_EMAIL: 'Chennai',
+  CITY_FOR_EMAIL: 'Chennai',   // used when a lead has no city (e.g. pasted by hand)
 
   EMAILS_PER_DAY: 20,        // hard cap; consumer Gmail allows 100 recipients/day
   SPEED_THRESHOLD_S: 3,      // only email sites slower than this (Speed Index, mobile)
@@ -44,7 +59,7 @@ const CONFIG = {
 const SHEET = 'Leads';
 const COLS = ['added_on', 'status', 'business_name', 'website', 'domain', 'phone', 'address',
   'rating', 'place_id', 'speed_index', 'perf_score', 'lcp', 'email', 'email_found_on',
-  'contacted_on', 'note'];
+  'contacted_on', 'note', 'city'];
 // status: (empty = just pasted) | new | duplicate | no_website | fast | audit_failed | no_email | drafted | sent | opted_out | replied
 
 const NOT_A_WEBSITE = ['facebook.com', 'instagram.com', 'linkedin.com', 'twitter.com', 'x.com',
@@ -67,11 +82,11 @@ function setup() {
   sh.setFrozenRows(1);
 
   ScriptApp.getProjectTriggers().forEach(t => ScriptApp.deleteTrigger(t));
-  if (CONFIG.USE_PLACES) ScriptApp.newTrigger('findLeads').timeBased().everyDays(1).atHour(9).create();
+  if (CONFIG.LEAD_SOURCE !== 'manual') ScriptApp.newTrigger('findLeads').timeBased().everyDays(1).atHour(9).create();
   ScriptApp.newTrigger('processNext').timeBased().everyMinutes(10).create();
   // toast, not alert: an alert blocks until someone clicks OK in the sheet and
   // the run times out when setup is started from the script editor.
-  const msg = 'Setup done. ' + (CONFIG.USE_PLACES ? 'Leads are searched daily around 9 AM; ' :
+  const msg = 'Setup done. ' + (CONFIG.LEAD_SOURCE !== 'manual' ? 'Leads (' + CONFIG.LEAD_SOURCE + ') are searched daily around 9 AM; ' :
     'Paste leads (business_name + website) into the Leads tab; ') +
     'emails go out every 10 min between ' + CONFIG.WORK_HOURS.join(':00–') + ':00, Mon–Fri. ' +
     'Mode: ' + CONFIG.SEND_MODE.toUpperCase();
@@ -88,8 +103,8 @@ function onOpen() {
     .addToUi();
 }
 function findLeadsNow() {
-  if (!CONFIG.USE_PLACES) {
-    SpreadsheetApp.getUi().alert('USE_PLACES is false. Paste leads into the Leads tab: business_name in column C, website in column D. Leave status empty.');
+  if (CONFIG.LEAD_SOURCE === 'manual') {
+    SpreadsheetApp.getUi().alert('LEAD_SOURCE is manual. Paste leads into the Leads tab: business_name in column C, website in column D. Leave status empty.');
     return;
   }
   findLeads(true);
@@ -100,38 +115,74 @@ function processNextNow() { processNext(true); }
 
 function findLeads(manual) {
   if (!manual && isWeekend_()) return;
+  if (CONFIG.LEAD_SOURCE === 'manual') return;
   const props = PropertiesService.getScriptProperties();
   const idx = Number(props.getProperty('areaIndex') || 0);
-  const area = CONFIG.AREAS[idx % CONFIG.AREAS.length];
   props.setProperty('areaIndex', String(idx + 1));
 
+  let found, label;
+  if (CONFIG.LEAD_SOURCE === 'places') {
+    const area = CONFIG.AREAS[idx % CONFIG.AREAS.length];
+    label = area;
+    found = searchPlaces_(CONFIG.BUSINESS_TYPE + ' in ' + area)
+      .filter(p => !p.businessStatus || p.businessStatus === 'OPERATIONAL')
+      .map(p => ({ id: p.id, name: (p.displayName && p.displayName.text) || '', website: p.websiteUri || '',
+        phone: p.nationalPhoneNumber || '', address: p.formattedAddress || '', rating: p.rating || '',
+        email: '', city: area.split(',').pop().trim() }));
+  } else {
+    const city = CONFIG.OSM_CITIES[idx % CONFIG.OSM_CITIES.length];
+    label = city.name + ' (OpenStreetMap)';
+    found = osmToLeads(searchOsm_(city.bbox).elements || [], city.name);
+  }
+
+  const added = addLeads_(found, 'source: ' + label);
+  const msg = 'Find leads: ' + label + ' → ' + found.length + ' found, ' + added + ' new';
+  log_(msg);
+  if (manual) { try { SpreadsheetApp.getActive().toast(msg, 'Astra Outreach', 10); } catch (e) {} }
+}
+
+/** Appends leads that aren't in the sheet yet (by place id or website domain). Returns how many. */
+function addLeads_(leads, note) {
   const sh = sheet_();
   const rows = readRows_(sh);
   const seenPlaces = new Set(rows.map(r => r.place_id).filter(String));
   const seenDomains = new Set(rows.map(r => r.domain).filter(String));
-
-  const places = searchPlaces_(CONFIG.BUSINESS_TYPE + ' in ' + area);
   const now = today_();
   const add = [];
-  places.forEach(p => {
-    if (!p.id || seenPlaces.has(p.id)) return;
-    if (p.businessStatus && p.businessStatus !== 'OPERATIONAL') return;
-    let website = (p.websiteUri || '').trim();
+  leads.forEach(p => {
+    if (!p.id || !p.name || seenPlaces.has(p.id)) return;
+    let website = String(p.website || '').trim();
     let domain = toDomain(website);
-    let note = 'area: ' + area;
-    if (website && !isRealSite(domain)) { note += '; listed link is ' + domain; website = ''; domain = ''; }
+    let n = note;
+    if (website && !isRealSite(domain)) { n += '; listed link is ' + domain; website = ''; domain = ''; }
     if (domain && seenDomains.has(domain)) return;
-    if (domain) seenDomains.add(domain);
+    if (domain) { seenDomains.add(domain); if (!/^https?:\/\//i.test(website)) website = 'https://' + website; }
     seenPlaces.add(p.id);
     add.push(rowFrom_({
-      added_on: now, status: domain ? 'new' : 'no_website',
-      business_name: (p.displayName && p.displayName.text) || '',
-      website, domain, phone: p.nationalPhoneNumber || '', address: p.formattedAddress || '',
-      rating: p.rating || '', place_id: p.id, note,
+      added_on: now, status: domain ? 'new' : 'no_website', business_name: p.name,
+      website, domain, phone: p.phone, address: p.address, rating: p.rating, place_id: p.id,
+      email: p.email, email_found_on: p.email ? 'OpenStreetMap' : '', note: n, city: p.city,
     }));
   });
   if (add.length) sh.getRange(sh.getLastRow() + 1, 1, add.length, COLS.length).setValues(add);
-  log_('findLeads: ' + area + ' → ' + places.length + ' found, ' + add.length + ' new');
+  return add.length;
+}
+
+function searchOsm_(bbox) {
+  const parts = CONFIG.OSM_TAGS.map(t => { const kv = t.split('='); return 'nwr["' + kv[0] + '"="' + kv[1] + '"](' + bbox + ');'; });
+  const query = '[out:json][timeout:90];(' + parts.join('') + ');out tags center;';
+  const mirrors = ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter',
+    'https://overpass.private.coffee/api/interpreter'];
+  const errors = [];
+  for (const url of mirrors) {
+    try {
+      const res = UrlFetchApp.fetch(url, { method: 'post', payload: { data: query }, muteHttpExceptions: true,
+        headers: { Accept: 'application/json' } });
+      if (res.getResponseCode() === 200) return JSON.parse(res.getContentText());
+      errors.push(url + ' ' + res.getResponseCode());
+    } catch (e) { errors.push(url + ' ' + e.message); }
+  }
+  throw new Error('OpenStreetMap search failed: ' + errors.join(' | '));
 }
 
 function searchPlaces_(query) {
@@ -212,7 +263,9 @@ function handleLead_(r, contacted) {
   r.speed_index = audit.speedIndex; r.perf_score = audit.score; r.lcp = audit.lcp;
   if (audit.speedIndexS <= CONFIG.SPEED_THRESHOLD_S) { r.status = 'fast'; return false; }
 
-  const found = findEmailOnSite_(r.website, r.domain);
+  let found = findEmailOnSite_(r.website, r.domain);
+  // fall back to an email that came with the lead (e.g. listed on OpenStreetMap)
+  if (!found && r.email && /@/.test(r.email)) found = { email: r.email.trim(), page: r.email_found_on || 'lead source' };
   if (!found) { r.status = 'no_email'; return false; }
   if (contacted.has(found.email.toLowerCase())) { r.status = 'no_email'; r.note = appendNote_(r.note, 'email already contacted via another listing'); return false; }
   r.email = found.email; r.email_found_on = found.page;
@@ -265,7 +318,7 @@ function buildEmail_(r) {
   const subject = 'Quick fix for ' + r.business_name + "'s mobile conversion drop?";
   const html =
     '<p>' + esc_(CONFIG.GREETING) + ',</p>' +
-    '<p>I was reviewing a few local clinics in ' + esc_(CONFIG.CITY_FOR_EMAIL) + ' and looked at your website (' + esc_(r.domain) + ').</p>' +
+    '<p>I was reviewing a few local clinics in ' + esc_(r.city || CONFIG.CITY_FOR_EMAIL) + ' and looked at your website (' + esc_(r.domain) + ').</p>' +
     "<p>I ran Google's own Lighthouse performance test on it, on mobile. Your page takes <strong>" + esc_(r.speed_index) +
     '</strong> to visibly load (Speed Index), and its mobile performance score is <strong>' + esc_(r.perf_score) + '/100</strong>. ' +
     'Anything above 3 seconds usually means a big share of mobile visitors leave before they see your page, which also wastes your local SEO effort.</p>' +
@@ -283,6 +336,25 @@ function buildEmail_(r) {
 }
 
 // ─────────────────────── pure helpers (unit-tested) ───────────────────────
+
+/** Overpass (OpenStreetMap) elements → lead objects. */
+function osmToLeads(elements, city) {
+  return elements.filter(e => e.tags && e.tags.name).map(e => {
+    const t = e.tags;
+    const addr = [t['addr:housenumber'], t['addr:street'], t['addr:suburb'] || t['addr:district'],
+      t['addr:city'] || city, t['addr:postcode']].filter(Boolean).join(', ');
+    return {
+      id: 'osm:' + e.type + '/' + e.id,
+      name: t.name,
+      website: t.website || t['contact:website'] || t.url || '',
+      phone: t.phone || t['contact:phone'] || t['contact:mobile'] || '',
+      address: addr,
+      rating: '',
+      email: (t.email || t['contact:email'] || '').split(';')[0].trim(),
+      city: t['addr:city'] || city,
+    };
+  });
+}
 
 function toDomain(url) {
   if (!url) return '';
