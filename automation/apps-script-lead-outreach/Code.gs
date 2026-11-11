@@ -348,7 +348,8 @@ function emailCopy(r, cfg) {
     (cfg.CASE_STUDY_URL ? '<p>I built the website and SEO for <a href="' + cfg.CASE_STUDY_URL + '">' + esc_(cfg.CASE_STUDY_NAME) +
       '</a>, a dental clinic in Chennai' + (cfg.PORTFOLIO_URL ? ', and you can see my other projects <a href="' +
       cfg.PORTFOLIO_URL + '">here</a>' : '') + '.</p>'
-      : cfg.PORTFOLIO_URL ? '<p>You can see my work <a href="' + cfg.PORTFOLIO_URL + '">here</a>.</p>' : '') +
+      : cfg.PORTFOLIO_URL ? '<p>You can see my projects <a href="' + cfg.PORTFOLIO_URL + '">here</a>' +
+        (cfg.PERSONAL_SITE ? ', and my full profile on <a href="' + cfg.PERSONAL_SITE + '">my portfolio</a>' : '') + '.</p>' : '') +
     '<p>I\'ve noted ' + (fixes >= 2 ? '2 simple fixes' : 'a simple fix') + ' for your site. ' +
     'Shall I send ' + (fixes >= 2 ? 'them' : 'it') + ' over? It\'s free. Just reply "yes".</p>' +
     '<p>' + esc_(cfg.SENDER_NAME) + '<br>Astra Nexora, ' + esc_(r.city || cfg.CITY_FOR_EMAIL) +
@@ -367,12 +368,13 @@ function followupCopy(r, cfg) {
     esc_(String(r.speed_index || '').replace(/\s*s$/, '')) + ' seconds to show up on mobile.</p>' +
     '<p>The fixes are quick and I\'m happy to share them free. Reply "yes" and I\'ll send them today.</p>' +
     '<p>' + esc_(cfg.SENDER_NAME) + '<br>Astra Nexora' +
-    (cfg.PORTFOLIO_URL ? '<br>My work: ' + cfg.PORTFOLIO_URL.replace(/^https?:\/\//, '') : '') + '</p>';
+    (cfg.PORTFOLIO_URL ? '<br>Projects: ' + cfg.PORTFOLIO_URL.replace(/^https?:\/\//, '') : '') +
+    (cfg.PERSONAL_SITE ? '<br>Portfolio: ' + cfg.PERSONAL_SITE.replace(/^https?:\/\//, '') : '') + '</p>';
   return { subject, html };
 }
 
 function htmlToText(html) {
-  return html.replace(/<a href="([^"]+)">([^<]*)<\/a>/g, (m, url, txt) => txt === 'here' ? 'here: ' + url : txt + ' (' + url + ')').replace(/<br>/g, '\n').replace(/<\/p>/g, '\n\n')
+  return html.replace(/<a href="([^"]+)">([^<]*)<\/a>/g, (m, url, txt) => txt === 'here' ? 'here (' + url + ')' : txt + ' (' + url + ')').replace(/<br>/g, '\n').replace(/<\/p>/g, '\n\n')
     .replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"').trim();
 }
