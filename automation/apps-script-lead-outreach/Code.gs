@@ -60,6 +60,7 @@ const CONFIG = {
   WEBSITE_PITCH: true,       // clinics with NO website: email a "let me build your website" pitch (if they have an email)
 
   SENDER_NAME: 'S. Saktheeswaran',
+  SENDER_EMAIL: 'astranexora.connect@gmail.com',  // emails only go out when the script runs as this account
   AGENCY_SITE: 'https://astranexora.netlify.app',
   PERSONAL_SITE: 'https://saktheeswaran.netlify.app',
   // Proof of past work, linked in every email. Set to '' to leave it out.
@@ -72,7 +73,7 @@ const SHEET = 'Leads';
 const COLS = ['added_on', 'status', 'business_name', 'website', 'domain', 'phone', 'address',
   'rating', 'place_id', 'speed_index', 'perf_score', 'lcp', 'email', 'email_found_on',
   'contacted_on', 'note', 'city', 'top_fixes', 'thread_ids', 'followup_on', 'pitch', 'whatsapp', 'wa_sent_on',
-  'sent_text', 'reply_text', 'replied_on'];
+  'sent_text', 'reply_text', 'replied_on', 'answered_on'];
 // pitch: 'speed' (has a slow website) | 'website' (no website: offer to build one)
 // whatsapp: one-click wa.me link with the message already typed, for you to send by hand
 // status: (empty = just pasted) | new | duplicate | no_website | fast | audit_failed | no_email | drafted | sent |
@@ -163,6 +164,7 @@ function findLeads(manual) {
 
   const added = addLeads_(found, 'source: ' + label);
   const msg = 'Find leads: ' + label + ' → ' + found.length + ' found, ' + added + ' new';
+  props.setProperty('lastFind', Utilities.formatDate(new Date(), 'Asia/Kolkata', 'yyyy-MM-dd HH:mm') + ' · ' + label + ': ' + added + ' new');
   log_(msg);
   if (manual) { try { SpreadsheetApp.getActive().toast(msg, 'Astra Outreach', 10); } catch (e) {} }
 }
@@ -241,6 +243,7 @@ function processNext(manual) {
   if (!lock.tryLock(1000)) return;
   try {
     const started = Date.now();
+    PropertiesService.getScriptProperties().setProperty('lastRun', Utilities.formatDate(new Date(), 'Asia/Kolkata', 'yyyy-MM-dd HH:mm'));
     const sh = sheet_();
     const rows = readRows_(sh);
     const today = today_();
@@ -318,7 +321,18 @@ function handleNoSite_(r, contacted) {
   return true;
 }
 
+/** Stops sending if the script is running under a different Google account. */
+function checkSender_() {
+  if (!CONFIG.SENDER_EMAIL) return;
+  const me = String(Session.getEffectiveUser().getEmail() || '').toLowerCase();
+  if (me && me !== CONFIG.SENDER_EMAIL.toLowerCase()) {
+    throw new Error('This script is running as ' + me + ', not ' + CONFIG.SENDER_EMAIL + '. No email was sent. ' +
+      'Open the Apps Script project while signed in as ' + CONFIG.SENDER_EMAIL + ' and run setup again.');
+  }
+}
+
 function deliver_(r, mail, contacted) {
+  checkSender_();
   const draft = GmailApp.createDraft(r.email, mail.subject, mail.text, { htmlBody: mail.html, name: CONFIG.SENDER_NAME });
   if (CONFIG.SEND_MODE === 'send') {
     const msg = draft.send();
@@ -498,6 +512,7 @@ function sendOneFollowup_(sh, rows) {
     if (r.status !== 'sent' || !r.email || !r.contacted_on) continue;
     const sentAt = new Date(String(r.contacted_on).replace(' ', 'T') + ':00+05:30').getTime();
     if (!(sentAt < cutoff)) continue;
+    checkSender_();
     const m = followupCopy(r, CONFIG);
     const msg = GmailApp.createDraft(r.email, m.subject, htmlToText(m.html), { htmlBody: m.html, name: CONFIG.SENDER_NAME }).send();
     r.thread_ids = [r.thread_ids, msg.getThread().getId()].filter(Boolean).join(',');
@@ -513,38 +528,86 @@ function sendOneFollowup_(sh, rows) {
 /** Marks rows 'replied' (or 'bounced'), saves the conversation, and pings your phone.
  *  One Gmail search per run, so it's cheap enough to run every 10 minutes. */
 function checkReplies_(sh, rows) {
+  const live = ['sent', 'followed_up', 'replied', 'call_booked'];
   const watch = {};
   rows.forEach(r => {
-    if ((r.status !== 'sent' && r.status !== 'followed_up') || !r.thread_ids) return;
+    if (live.indexOf(r.status) < 0 || !r.thread_ids) return;
     String(r.thread_ids).split(',').forEach(id => { if (id) watch[id] = r; });
   });
   if (!Object.keys(watch).length) return;
   const me = String(Session.getEffectiveUser().getEmail() || '').toLowerCase();
+  const fmt = d => Utilities.formatDate(d, 'Asia/Kolkata', 'yyyy-MM-dd HH:mm');
   const threads = GmailApp.search('newer_than:4d -from:me', 0, 100);
   threads.forEach(t => {
     const r = watch[t.getId()];
-    if (!r || (r.status !== 'sent' && r.status !== 'followed_up')) return;
+    if (!r || live.indexOf(r.status) < 0) return;
     const msgs = t.getMessages();
     const ours = msgs.filter(m => me && m.getFrom().toLowerCase().indexOf(me) >= 0);
     const theirs = msgs.filter(m => ours.indexOf(m) < 0);
     if (!theirs.length) return;
     const last = theirs[theirs.length - 1];
+    const when = fmt(last.getDate());
+    const seen = [r.replied_on, r.answered_on].filter(Boolean).sort().pop() || '';
+    const isNew = (r.status === 'sent' || r.status === 'followed_up') || when > seen;
+    if (!isNew || when === r.replied_on) return;
     const bounced = /mailer-daemon|postmaster/i.test(last.getFrom());
-    r.status = bounced ? 'bounced' : 'replied';
-    r.replied_on = Utilities.formatDate(last.getDate(), 'Asia/Kolkata', 'yyyy-MM-dd HH:mm');
+    if (r.status === 'sent' || r.status === 'followed_up') r.status = bounced ? 'bounced' : 'replied';
+    r.replied_on = when;
     r.reply_text = stripQuoted(last.getPlainBody()).slice(0, 3000);
     if (!r.sent_text && ours.length) r.sent_text = stripQuoted(ours[0].getPlainBody()).slice(0, 3000);
-    r.note = appendNote_(r.note, r.status + ' ' + today_());
+    r.note = appendNote_(r.note, (bounced ? 'bounced ' : 'reply ') + today_());
     writeRow_(sh, r);
     if (!bounced) {
       try {
         const label = GmailApp.getUserLabelByName('Astra Lead Reply') || GmailApp.createLabel('Astra Lead Reply');
         t.addLabel(label); t.markImportant(); t.moveToInbox(); last.star();
       } catch (e) {}
+      notify_('Reply from ' + (r.business_name || r.domain), (r.city ? r.city + ' · ' : '') + 'Tap to read it.');
     }
-    if (!bounced) notify_('Reply from ' + (r.business_name || r.domain),
-      (r.city ? r.city + ' · ' : '') + 'Tap to read it.');
   });
+}
+
+/** Send an email from the dashboard: a reply in the same Gmail thread if they've written,
+ *  otherwise a new email. Records it on the lead. */
+function sendFromDashboard(row, to, subject, body) {
+  const sh = sheet_();
+  row = Number(row);
+  if (!(row >= 2 && row <= sh.getLastRow())) throw new Error('bad row');
+  body = String(body || '').trim();
+  to = String(to || '').trim();
+  if (!body) throw new Error('The message is empty.');
+  const hole = body.match(/\[[^\]]{2,40}\]/);
+  if (hole) throw new Error('Fill in ' + hole[0] + ' before sending.');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) throw new Error('Add a valid email address.');
+  checkSender_();
+  const r = readRows_(sh).filter(x => x._row === row)[0];
+  const me = String(Session.getEffectiveUser().getEmail() || '').toLowerCase();
+  const html = '<div>' + esc_(body).replace(/\n/g, '<br>') + '</div>';
+  const opts = { htmlBody: html, name: CONFIG.SENDER_NAME };
+  let their = null;
+  String(r.thread_ids || '').split(',').filter(Boolean).reverse().some(id => {
+    let t; try { t = GmailApp.getThreadById(id); } catch (e) { return false; }
+    if (!t) return false;
+    const msgs = t.getMessages().filter(m => !(me && m.getFrom().toLowerCase().indexOf(me) >= 0));
+    if (msgs.length) { their = msgs[msgs.length - 1]; return true; }
+    return false;
+  });
+  const now = Utilities.formatDate(new Date(), 'Asia/Kolkata', 'yyyy-MM-dd HH:mm');
+  if (their && (!r.email || to.toLowerCase() === String(r.email).toLowerCase())) {
+    their.reply(body, opts);
+  } else {
+    const subj = String(subject || '').trim() || ('About ' + (r.business_name || r.domain) + "'s website");
+    const msg = GmailApp.createDraft(to, subj, body, opts).send();
+    r.thread_ids = [r.thread_ids, msg.getThread().getId()].filter(Boolean).join(',');
+    if (['', 'new', 'no_website', 'no_email', 'fast', 'audit_failed', 'duplicate'].indexOf(r.status) >= 0) {
+      r.status = 'sent'; r.contacted_on = r.contacted_on || now; r.pitch = r.pitch || (r.website ? 'speed' : 'website');
+    }
+  }
+  r.email = r.email || to;
+  r.sent_text = ((r.sent_text ? r.sent_text + '\n\n' : '') + '--- You · ' + now + ' ---\n' + body).slice(-6000);
+  r.answered_on = now;
+  writeRow_(sh, r);
+  return { ok: true, at: now };
 }
 
 /** Private pairing token shared by this script and your phone app. */
@@ -691,6 +754,73 @@ function pickEmail(emails, domain) {
   return pool.sort((a, b) => rank(a) - rank(b))[0] || '';
 }
 
+// ─────────────────── reply templates (run in the dashboards too) ───────────────────
+var FIX_WORDS = {
+  'Properly size images': 'Your photos are much larger than a phone screen needs. Resizing and compressing them makes the page load faster without any visible change.',
+  'Serve images in next-gen formats': 'Saving the photos in a modern format (WebP) makes them about a third of the size, with the same quality.',
+  'Efficiently encode images': 'Compressing the photos properly cuts their size without any visible change.',
+  'Defer offscreen images': 'Photos further down the page can load only when the visitor scrolls to them, so the top of the page appears first.',
+  'Eliminate render-blocking resources': 'Some style and script files have to download before anything shows on screen. Loading them later lets patients see the page straight away.',
+  'Reduce unused JavaScript': 'The site loads code it never uses on this page. Removing it means less to download on a phone connection.',
+  'Reduce unused CSS': 'The site loads styling for features it does not use. Trimming it speeds up the first view.',
+  'Reduce initial server response time': 'The hosting server is slow to answer. Better hosting or page caching fixes this.',
+  'Avoid multiple page redirects': 'The address jumps through several redirects before the page loads. Pointing it straight to the final page saves time.',
+  'Enable text compression': 'Turning on compression on the server makes every page smaller to download.',
+  'Minify JavaScript': 'Shrinking the code files makes them faster to download.',
+  'Minify CSS': 'Shrinking the style files makes them faster to download.',
+  'Preconnect to required origins': 'Telling the browser early about outside services (fonts, maps) saves time on every visit.',
+  'Avoid enormous network payloads': 'The page is very heavy for a phone. Cutting large photos, videos and scripts brings it down.'
+};
+function astraFix(f) {
+  var m = String(f).match(/^(.*?)\s*\(~([\d.]+) s\)$/), title = m ? m[1] : String(f), save = m ? m[2] : '';
+  return (FIX_WORDS[title] || title + '.') + (save ? ' (Google estimates this saves about ' + save + ' seconds.)' : '');
+}
+function astraTemplates(l, S) {
+  var name = l.name || 'your clinic';
+  var d1 = (S.days && S.days[0]) || 'Monday', d2 = (S.days && S.days[1]) || 'Tuesday';
+  var sig = '\n\nBest regards,\n' + S.sender + '\nAstra Nexora, ' + S.location + (S.phone ? '\n' + S.phone : '') + (S.projects ? '\nMy work: ' + S.projects : '');
+  var fixes = String(l.fixes || '').split(' | ').filter(Boolean);
+  var site = l.pitch ? l.pitch === 'website' : !l.domain;
+  var list = [];
+  if (!site) list.push({ id: 'fixes', label: 'Send the fixes', body:
+    'Hi Doctor,\n\nThank you for getting back to me. Here ' + (fixes.length > 1 ? 'are the ' + fixes.length + ' fixes' : 'is the fix') + ' for ' + name + "'s website:\n\n" +
+    (fixes.length ? fixes.map(function (f, i) { return (i + 1) + '. ' + astraFix(f); }).join('\n\n') : '1. [describe the fix]') +
+    '\n\nTogether these should bring the mobile load time down noticeably. Your web developer can make these changes, or my team can do it for you in 2 to 3 days.' +
+    '\n\nWould a quick 10-minute call on ' + d1 + ' or ' + d2 + ' work to go through it?' + sig });
+  if (site) list.push({ id: 'sample', label: 'Yes to a sample design', body:
+    'Hi Doctor,\n\nThank you! I will put together a sample homepage design for ' + name + ' and send it to you within 2 days.' +
+    '\n\nSo it looks like your clinic, could you share:\n- your clinic logo, if you have one\n- the main treatments you offer\n- 2 or 3 photos of the clinic or the team' +
+    '\n\nYou can simply reply to this email with them.' + sig });
+  list.push({ id: 'price', label: 'Answer a price question', body:
+    'Hi Doctor,\n\nThank you for asking.\n\n' +
+    (site ? 'A complete website for ' + name + ', with treatment pages, WhatsApp booking, Google Maps directions and basic Google SEO, costs [your price], one time. Hosting and domain for the first year are [included / extra].'
+          : 'Fixing the speed issues on ' + name + "'s website costs [your price], one time. That includes the fixes above, testing on mobile, and a before-and-after Google report.") +
+    '\n\nShall we do a quick 10-minute call on ' + d1 + ' or ' + d2 + ' so I can understand exactly what you need?' + sig });
+  list.push({ id: 'call', label: 'Book a call', body:
+    'Hi Doctor,\n\nThank you. Shall we do a quick 10-minute call so I can understand what you need? I am free on ' + d1 + ' or ' + d2 +
+    ', anytime between 11 am and 6 pm.\n\nPlease let me know a time that works for you, or share the best number to reach you.' + sig });
+  list.push({ id: 'close', label: 'Polite close (not interested)', body:
+    'Hi Doctor,\n\nThank you for letting me know. No problem at all, and I will not send any more emails.\n\nIf you ever want help with ' + name +
+    "'s website later, just reply to this email. Wishing you and the team all the best." + sig });
+  list.push({ id: 'blank', label: 'Write my own', body: 'Hi Doctor,\n\n' + sig });
+  return list;
+}
+function astraPick(l, list) {
+  var t = String(l.reply || '');
+  var want = /\b(price|cost|charges?|how much|rate|fees?|budget|quote)\b/i.test(t) ? 'price'
+    : /^\s*no\b|not interested|don'?t (email|contact)|unsubscribe|remove me|stop/i.test(t) ? 'close'
+    : /\b(call|phone|talk|meet|number)\b/i.test(t) && !/\byes\b/i.test(t) ? 'call'
+    : (l.pitch ? l.pitch === 'website' : !l.domain) ? 'sample' : 'fixes';
+  for (var i = 0; i < list.length; i++) if (list[i].id === want) return i;
+  return 0;
+}
+
+/** The template functions as browser source, so both dashboards use the same text. */
+function templateJs_() {
+  return 'var FIX_WORDS = ' + JSON.stringify(FIX_WORDS) + ';\n' + astraFix.toString() + '\n' +
+    astraTemplates.toString() + '\n' + astraPick.toString() + '\n';
+}
+
 // ───────────────────────────── sheet helpers ─────────────────────────────
 
 function sheet_() {
@@ -783,6 +913,19 @@ function dashboardData_() {
   return summarize(rows, today_(), me, CONFIG.EMAILS_PER_DAY);
 }
 
+/** What the reply templates need: who you are and two call days. Pure. */
+function tplSettings_(today) {
+  const days = [];
+  const d = new Date(today + 'T12:00:00Z');
+  while (days.length < 2) {
+    d.setUTCDate(d.getUTCDate() + 1);
+    const w = d.getUTCDay();
+    if (w !== 0 && w !== 6) days.push(['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][w]);
+  }
+  return { sender: CONFIG.SENDER_NAME, location: CONFIG.AGENCY_LOCATION, phone: CONFIG.SIGNATURE_PHONE,
+    projects: CONFIG.PORTFOLIO_URL, days: days };
+}
+
 /** Pure: sheet rows → numbers and lists for the dashboard and the digest. */
 function summarize(rows, today, me, perDay) {
   const day = d => String(d || '').slice(0, 10);
@@ -797,7 +940,8 @@ function summarize(rows, today, me, perDay) {
   };
   const card = r => ({ row: r._row, name: r.business_name || r.domain, city: r.city, email: r.email, phone: r.phone,
     pitch: r.pitch, status: r.status, when: r.contacted_on, gmail: gmail(r), fixes: r.top_fixes, website: r.website,
-    sent: r.sent_text, reply: r.reply_text, replied_on: r.replied_on });
+    sent: r.sent_text, reply: r.reply_text, replied_on: r.replied_on, answered_on: r.answered_on, domain: r.domain });
+  const waitingAnswer = r => !r.answered_on || (!!r.replied_on && r.answered_on < r.replied_on);
   const byReply = (a, b) => String(b.replied_on || b.contacted_on).localeCompare(String(a.replied_on || a.contacted_on));
   return {
     today,
@@ -810,8 +954,11 @@ function summarize(rows, today, me, perDay) {
     calls: byStatus.call_booked || 0,
     waiting: rows.filter(r => r.status === 'new' || (!r.status && (r.business_name || r.website))).length,
     byStatus,
-    replies: rows.filter(r => r.status === 'replied').sort(byReply).map(card),
+    replies: rows.filter(r => (r.status === 'replied' && waitingAnswer(r)) ||
+      (r.status === 'call_booked' && r.answered_on && r.replied_on > r.answered_on)).sort(byReply).map(card),
+    talking: rows.filter(r => r.status === 'replied' && !waitingAnswer(r)).sort(byReply).map(card),
     calls_list: rows.filter(r => r.status === 'call_booked').sort(byReply).map(card),
+    tpl: tplSettings_(today),
     recent: contacted.slice().sort((a, b) => String(b.contacted_on).localeCompare(String(a.contacted_on))).slice(0, 15).map(card),
   };
 }
@@ -869,6 +1016,9 @@ details{margin-top:10px}summary{color:var(--accent);font-size:14px;cursor:pointe
 .btn.good{color:var(--good);border-color:var(--good)}.btn.bad{color:var(--bad);border-color:var(--bad)}
 .pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--mute);margin-left:6px;vertical-align:middle}
 .done{opacity:.45}
+.comp{margin-top:10px;display:none}.comp.on{display:block}
+.comp select,.comp textarea,.comp input{width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:9px;font:inherit;margin-top:6px}
+.comp textarea{min-height:240px;line-height:1.45}
 .counts{display:grid;grid-template-columns:1fr auto;gap:6px 12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
 </style></head><body>
 <header><h1>Astra Leads</h1><p id="sub"></p></header>
@@ -876,6 +1026,7 @@ details{margin-top:10px}summary{color:var(--accent);font-size:14px;cursor:pointe
 <nav id="tabs"></nav>
 <section id="list"></section>
 <script>
+${templateJs_()}
 var D = ${json};
 var TABS = [['replies','Replies ('+D.replies.length+')'],['calls','Calls ('+D.calls_list.length+')'],['recent','Sent'],['pipeline','Pipeline']];
 var cur = 'replies';
@@ -916,13 +1067,30 @@ function render(){
     h += '<div class="row">';
     if (c.gmail) h += '<a class="btn pri" target="_blank" href="'+esc(c.gmail)+'">'+(cur==='recent'?'Open email':'Reply in Gmail')+'</a>';
     if (c.phone && cur!=='recent') h += '<a class="btn" href="tel:'+esc(String(c.phone).split(/[;,]/)[0].replace(/[^+\\d]/g,''))+'">Call</a>';
+    if (cur==='replies') h += '<button class="btn pri" onclick="compose('+i+')">✉ Reply</button>';
     if (cur==='replies') h += '<button class="btn good" onclick="mark('+c.row+',\\'call_booked\\','+i+')">Call booked</button>'+
       '<button class="btn bad" onclick="mark('+c.row+',\\'lost\\','+i+')">Not interested</button>';
     if (cur==='calls') h += '<button class="btn good" onclick="mark('+c.row+',\\'won\\','+i+')">Won 🎉</button>'+
       '<button class="btn bad" onclick="mark('+c.row+',\\'lost\\','+i+')">Lost</button>';
-    return h+'</div></div>';
+    h += '</div>';
+    if (cur==='replies') h += '<div class="comp" id="comp'+i+'"></div>';
+    return h+'</div>';
   }).join('');
 }
+var TPLS={};
+function compose(i){var c=D.replies[i],box=document.getElementById('comp'+i);
+  if(box.className.indexOf('on')>=0){box.className='comp';return;}
+  var L=astraTemplates(c,D.tpl);TPLS[i]=L;var pick=astraPick(c,L);
+  box.innerHTML='<input id="to'+i+'" value="'+esc(c.email||'')+'">'+
+    '<select onchange="document.getElementById(\\'tx'+i+'\\').value=TPLS['+i+'][this.value].body">'+
+    L.map(function(t,k){return '<option value="'+k+'"'+(k===pick?' selected':'')+'>'+esc(t.label)+'</option>';}).join('')+'</select>'+
+    '<textarea id="tx'+i+'">'+esc(L[pick].body)+'</textarea>'+
+    '<div class="row"><button class="btn pri" id="sb'+i+'" onclick="sendIt('+i+')">Send</button></div>';
+  box.className='comp on';}
+function sendIt(i){var c=D.replies[i],b=document.getElementById('sb'+i),to=document.getElementById('to'+i).value,body=document.getElementById('tx'+i).value;
+  if(!confirm('Send this reply to '+to+'?'))return;b.disabled=true;b.textContent='Sending…';
+  google.script.run.withSuccessHandler(function(r){b.textContent='Sent ✓';var el=document.getElementById('it'+cur+i);if(el)el.className+=' done';})
+   .withFailureHandler(function(e){b.disabled=false;b.textContent='Send';alert('Not sent: '+e.message);}).sendFromDashboard(c.row,to,'',body);}
 function mark(row,status,i){ var el=document.getElementById('it'+cur+i); if(el) el.className+=' done';
   google.script.run.withFailureHandler(function(e){alert('Could not save: '+e.message);}).markLead(row,status); }
 render();
@@ -936,7 +1104,17 @@ function desktopData_() {
   const rows = readRows_(sheet_());
   let me = '';
   try { me = Session.getEffectiveUser().getEmail(); } catch (e) {}
-  return desktopSummary(rows, today_(), me, CONFIG);
+  const d = desktopSummary(rows, today_(), me, CONFIG);
+  const props = PropertiesService.getScriptProperties();
+  let triggers = 0, left = '';
+  try { triggers = ScriptApp.getProjectTriggers().length; } catch (e) {}
+  try { left = MailApp.getRemainingDailyQuota(); } catch (e) {}
+  const idx = Number(props.getProperty('areaIndex') || 0);
+  d.health = { lastRun: props.getProperty('lastRun') || '', lastFind: props.getProperty('lastFind') || '',
+    nextCity: CONFIG.LEAD_SOURCE === 'osm' ? CONFIG.OSM_CITIES[idx % CONFIG.OSM_CITIES.length].name :
+      CONFIG.LEAD_SOURCE === 'places' ? CONFIG.AREAS[idx % CONFIG.AREAS.length] : 'manual',
+    triggers, gmailLeft: left };
+  return d;
 }
 
 /** Pure: everything the laptop dashboard shows. */
@@ -979,13 +1157,42 @@ function desktopSummary(rows, today, me, cfg) {
     website: r.website, domain: r.domain, email: r.email, phone: r.phone, address: r.address,
     speed: r.speed_index, score: r.perf_score, lcp: r.lcp, fixes: r.top_fixes,
     added: r.added_on, emailed: r.contacted_on, followup: r.followup_on, replied: r.replied_on,
-    reply: r.reply_text, sent: r.sent_text, note: r.note, gmail: gmail(r),
+    reply: r.reply_text, sent: r.sent_text, note: r.note, gmail: gmail(r), answered: r.answered_on,
     report: r.website ? 'https://pagespeed.web.dev/analysis?url=' + encodeURIComponent(r.website) + '&form_factor=mobile' : '' }));
+  const fmtT = v => String(v || '').slice(11, 16);
+  const events = [];
+  rows.forEach(r => {
+    const n = r.business_name || r.domain;
+    if (day(r.contacted_on) === today) events.push({ t: fmtT(r.contacted_on), k: 'Email sent', n, p: r.pitch });
+    if (day(r.followup_on) === today) events.push({ t: fmtT(r.followup_on), k: 'Follow-up sent', n, p: r.pitch });
+    if (day(r.replied_on) === today) events.push({ t: fmtT(r.replied_on), k: r.status === 'bounced' ? 'Bounced' : 'Reply received', n, p: r.pitch });
+    if (day(r.answered_on) === today) events.push({ t: fmtT(r.answered_on), k: 'You replied', n, p: r.pitch });
+  });
+  events.sort((a, b) => b.t.localeCompare(a.t));
+  const addedToday = rows.filter(r => day(r.added_on) === today).length;
+  const pitches = ['speed', 'website'].map(p => {
+    const em = rows.filter(r => r.pitch === p && r.contacted_on);
+    const rep = em.filter(r => ['replied', 'call_booked', 'won', 'lost'].indexOf(r.status) >= 0).length;
+    return { pitch: p, emailed: em.length, replied: rep, rate: em.length ? Math.round(100 * rep / em.length) : 0,
+      calls: em.filter(r => r.status === 'call_booked' || r.status === 'won').length, won: em.filter(r => r.status === 'won').length };
+  });
+  const speeds = rows.map(r => parseFloat(r.speed_index)).filter(v => v > 0);
+  const fixCount = {};
+  rows.forEach(r => String(r.top_fixes || '').split(' | ').filter(Boolean).forEach(f => {
+    const t = f.replace(/\s*\(~[\d.]+ s\)$/, ''); fixCount[t] = (fixCount[t] || 0) + 1; }));
+  const speed = { audited: speeds.length, avg: speeds.length ? Math.round(10 * speeds.reduce((a, b) => a + b, 0) / speeds.length) / 10 : 0,
+    slow: speeds.filter(v => v > cfg.SPEED_THRESHOLD_S).length,
+    fixes: Object.keys(fixCount).map(k => [k, fixCount[k]]).sort((a, b) => b[1] - a[1]).slice(0, 5) };
+  const followList = rows.filter(r => r.status === 'sent' && day(r.contacted_on)).map(r => ({ n: r.business_name || r.domain,
+    emailed: r.contacted_on, due: day(r.contacted_on) <= cutoff })).sort((a, b) => String(a.emailed).localeCompare(String(b.emailed))).slice(0, 8);
+  const queue = rows.filter(r => r.status === 'new' || (r.status === 'no_website' && !r.pitch && /@/.test(r.email || '')))
+    .slice(0, 8).map(r => ({ n: r.business_name || r.domain, c: r.city, p: r.status === 'new' ? 'speed audit' : 'website pitch' }));
   return Object.assign(base, {
+    events, addedToday, pitches, speed, followList, queue,
     daily, funnel, leads,
     cities: Object.keys(cities).map(k => cities[k]).sort((a, b) => b.leads - a.leads),
     followupsDue: rows.filter(r => r.status === 'sent' && day(r.contacted_on) && day(r.contacted_on) <= cutoff).length,
-    settings: { mode: cfg.SEND_MODE, perDay: cfg.EMAILS_PER_DAY, hours: cfg.WORK_HOURS.join(':00–') + ':00',
+    settings: { from: cfg.SENDER_EMAIL, mode: cfg.SEND_MODE, perDay: cfg.EMAILS_PER_DAY, hours: cfg.WORK_HOURS.join(':00–') + ':00',
       source: cfg.LEAD_SOURCE, followupDays: cfg.FOLLOWUP_AFTER_DAYS, threshold: cfg.SPEED_THRESHOLD_S },
   });
 }
@@ -1035,14 +1242,32 @@ tbody tr{cursor:pointer}tbody tr:hover{background:var(--grid)}
 .drawer.open{transform:none}.drawer h3{margin:0 0 4px;font-size:18px}
 dl{display:grid;grid-template-columns:110px 1fr;gap:6px 12px;margin:14px 0}dt{color:var(--mute)}dd{margin:0;word-break:break-word}
 details summary{cursor:pointer;color:var(--accent)}
+.tl{list-style:none;margin:0;padding:0;max-height:260px;overflow:auto}.tl li{display:grid;grid-template-columns:46px 1fr;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)}
+.tl time{color:var(--mute);font-variant-numeric:tabular-nums}.tl .k{color:var(--mute);font-size:12px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px}.kv dt{color:var(--mute)}.kv dd{margin:0}
+.ok{color:var(--good)}.warn{color:var(--bad)}
+.compose{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}.compose h4{margin:0 0 8px}
+.compose label{display:block;color:var(--mute);font-size:12px;margin:8px 0 4px}
+.compose input,.compose select,.compose textarea{width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:9px;padding:8px 10px;font:inherit}
+.compose textarea{min-height:260px;resize:vertical;line-height:1.5}
+.compose .note{color:var(--mute);font-size:12px;margin-top:6px}
 </style></head><body>
 <header><div><h1>Astra Leads</h1><div class="sub" id="sub"></div></div><div class="sp"></div>
 <a class="btn" href="javascript:location.reload()">↻ Refresh</a></header>
 <main>
   <div class="kpis" id="kpis"></div>
+  <div class="grid3" style="grid-template-columns:1fr 1fr 1fr">
+    <div class="card"><h2>Today</h2><div class="hint" id="todayHint">What happened today</div><ul class="tl" id="today"></ul></div>
+    <div class="card"><h2>Coming up</h2><div class="hint">Follow-ups and the next leads in the queue</div><div id="coming"></div></div>
+    <div class="card"><h2>System</h2><div class="hint">Is everything running?</div><dl class="kv" id="health"></dl></div>
+  </div>
   <div class="grid2">
     <div class="card"><h2>Emails sent: last 14 days</h2><div class="hint">First emails, with follow-ups stacked on top. Daily limit shown as a dashed line.</div><div id="daily"></div></div>
     <div class="card"><h2>Funnel</h2><div class="hint">From lead found to client won</div><div class="fun" id="funnel"></div></div>
+  </div>
+  <div class="grid2" style="grid-template-columns:1fr 1fr">
+    <div class="card"><h2>Pitch performance</h2><div class="hint">Which email gets more replies</div><table id="pitches"></table></div>
+    <div class="card"><h2>Website speed insights</h2><div class="hint">From the clinics you've audited</div><div id="speedbox"></div></div>
   </div>
   <div class="grid3">
     <div class="card needs"><h2>Needs you today</h2><div class="hint">Replies to answer and calls you've booked</div><div id="needs" style="max-height:560px;overflow:auto"></div></div>
@@ -1055,6 +1280,7 @@ details summary{cursor:pointer;color:var(--accent)}
 </main>
 <aside class="drawer" id="drawer"></aside><div class="tip" id="tip"></div>
 <script>
+${templateJs_()}
 var D = ${json};
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 var tip=document.getElementById('tip');
@@ -1070,7 +1296,7 @@ document.getElementById('kpis').innerHTML=kpi(D.replies.length,'Replies to answe
 // daily chart (stacked: first + follow-ups), single scale
 (function(){var W=640,H=220,L=28,B=26,T=10,n=D.daily.length,max=Math.max(D.perDay,1);
  D.daily.forEach(function(d){max=Math.max(max,d.first+d.followups);});
- max=Math.ceil(max*1.15);
+ max=Math.max(5,Math.ceil(max*1.1/5)*5);
  var bw=(W-L)/n,s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="Emails sent per day">';
  for(var g=0;g<=4;g++){var v=Math.round(max*g/4),y=H-B-(H-B-T)*v/max;s+='<line x1="'+L+'" x2="'+W+'" y1="'+y+'" y2="'+y+'" stroke="var(--grid)"/><text x="'+(L-6)+'" y="'+(y+4)+'" text-anchor="end">'+v+'</text>';}
  var ly=H-B-(H-B-T)*D.perDay/max;s+='<line x1="'+L+'" x2="'+W+'" y1="'+ly+'" y2="'+ly+'" stroke="var(--mute)" stroke-dasharray="4 4"/><text x="'+W+'" y="'+(ly-4)+'" text-anchor="end">limit '+D.perDay+'</text>';
@@ -1081,6 +1307,24 @@ document.getElementById('kpis').innerHTML=kpi(D.replies.length,'Replies to answe
   if(i%2===n%2||i===n-1)s+='<text x="'+(x+w/2)+'" y="'+(H-8)+'" text-anchor="middle">'+d.day.slice(5)+'</text>';});
  var el=document.getElementById('daily');el.innerHTML=s+'</svg><div class="mute" style="font-size:12px;margin-top:6px"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--accent)"></span> First emails &nbsp; <span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--accent2)"></span> Follow-ups</div>';
  el.querySelectorAll('.hit').forEach(function(r){r.addEventListener('mousemove',function(e){var d=D.daily[r.dataset.i];showTip(e,'<b>'+d.day+'</b><br>First emails: '+d.first+'<br>Follow-ups: '+d.followups);});r.addEventListener('mouseleave',hideTip);});})();
+// today, coming up, system
+(function(){var ul=document.getElementById('today');document.getElementById('todayHint').textContent=D.addedToday?D.addedToday+' new leads added today':'What happened today';
+ ul.innerHTML=D.events.length?D.events.map(function(e){return '<li><time>'+esc(e.t)+'</time><div><b>'+esc(e.n)+'</b><div class="k">'+esc(e.k)+(e.p?' · '+esc(e.p):'')+'</div></div></li>';}).join(''):'<li class="empty" style="display:block">Nothing yet today.</li>';
+ var c='';c+='<b style="font-size:13px">Follow-ups</b>'+(D.followList.length?'<ul class="tl" style="max-height:120px">'+D.followList.map(function(f){return '<li><time>'+esc(String(f.emailed).slice(5,10))+'</time><div>'+esc(f.n)+'<div class="k">'+(f.due?'due now':'emailed '+esc(f.emailed))+'</div></div></li>';}).join('')+'</ul>':'<div class="empty" style="padding:6px 0">None waiting.</div>');
+ c+='<b style="font-size:13px;display:block;margin-top:10px">Next in queue</b>'+(D.queue.length?'<ul class="tl" style="max-height:120px">'+D.queue.map(function(q){return '<li><time>·</time><div>'+esc(q.n)+'<div class="k">'+esc(q.c||'')+' · '+esc(q.p)+'</div></div></li>';}).join('')+'</ul>':'<div class="empty" style="padding:6px 0">Queue empty: the next city is searched at 9 AM.</div>');
+ document.getElementById('coming').innerHTML=c;
+ var H=D.health||{};function row(k,v){return '<dt>'+k+'</dt><dd>'+v+'</dd>';}
+ var ran=H.lastRun?'<span class="ok">●</span> '+esc(H.lastRun):'<span class="warn">● never</span>';
+ document.getElementById('health').innerHTML=row('Last run',ran)+row('Triggers',H.triggers>=3?'<span class="ok">'+H.triggers+' active</span>':'<span class="warn">'+(H.triggers||0)+' (run setup)</span>')+
+  row('Last lead search',esc(H.lastFind||'not yet'))+row('Next city',esc(H.nextCity||''))+row('Gmail sends left today',esc(H.gmailLeft))+
+  row('Sending from',esc(D.settings.from||''))+row('Mode','<b>'+esc(D.settings.mode)+'</b>');})();
+// pitch performance + speed insights
+document.getElementById('pitches').innerHTML='<thead><tr><th>Pitch</th><th class="num">Emailed</th><th class="num">Replied</th><th class="num">Reply rate</th><th class="num">Calls</th><th class="num">Won</th></tr></thead><tbody>'+
+ D.pitches.map(function(p){return '<tr style="cursor:default"><td>'+(p.pitch==='speed'?'Speed fix':'Website build')+'</td><td class="num">'+p.emailed+'</td><td class="num">'+p.replied+'</td><td class="num"><b>'+p.rate+'%</b></td><td class="num">'+p.calls+'</td><td class="num">'+p.won+'</td></tr>';}).join('')+'</tbody>';
+(function(){var s=D.speed,el=document.getElementById('speedbox');if(!s.audited){el.innerHTML='<div class="empty">No audits yet.</div>';return;}
+ var top=s.fixes.length?s.fixes[0][1]:1;
+ el.innerHTML='<div class="kpis" style="grid-template-columns:repeat(3,1fr);margin-bottom:12px"><div class="kpi"><b>'+s.audited+'</b><span>Sites audited</span></div><div class="kpi"><b>'+s.avg+' s</b><span>Average mobile load</span></div><div class="kpi"><b>'+Math.round(100*s.slow/s.audited)+'%</b><span>Slower than '+D.settings.threshold+' s</span></div></div>'+
+  '<b style="font-size:13px">Most common problems</b><div class="fun" style="grid-template-columns:1fr 120px 30px;margin-top:8px">'+s.fixes.map(function(f){return '<span>'+esc(f[0])+'</span><div class="bar"><i style="width:'+Math.round(100*f[1]/top)+'%"></i></div><b>'+f[1]+'</b>';}).join('')+'</div>';})();
 // funnel
 (function(){var top=Math.max(1,D.funnel[0][1]);document.getElementById('funnel').innerHTML=D.funnel.map(function(f){
  return '<span>'+esc(f[0])+'</span><div class="bar"><i style="width:'+Math.max(f[1]?2:0,Math.round(100*f[1]/top))+'%"></i></div><b>'+f[1]+'</b>';}).join('');})();
@@ -1092,7 +1336,7 @@ document.getElementById('kpis').innerHTML=kpi(D.replies.length,'Replies to answe
   (c.reply?'<div class="msg them"><small>They replied · '+esc(c.replied_on||'')+'</small>'+esc(c.reply)+'</div>':'')+
   (c.sent?'<details style="margin-top:6px"><summary>What you sent</summary><div class="msg us"><small>You · '+esc(c.when||'')+'</small>'+esc(c.sent)+'</div></details>':'')+
   (c.fixes&&c.pitch!=='website'?'<div style="margin-top:6px"><b>Fixes to send:</b> '+esc(c.fixes)+'</div>':'')+
-  '<div class="row">'+(c.gmail?'<a class="btn pri" target="_blank" href="'+esc(c.gmail)+'">Reply in Gmail</a>':'')+
+  '<div class="row"><button class="btn pri" onclick="openLead('+c.row+',true)">✉ Write reply</button>'+(c.gmail?'<a class="btn" target="_blank" href="'+esc(c.gmail)+'">Open in Gmail</a>':'')+
   (c.status==='replied'?'<button class="btn good" onclick="mark('+c.row+',\\'call_booked\\',this)">Call booked</button><button class="btn bad" onclick="mark('+c.row+',\\'lost\\',this)">Not interested</button>':
    '<button class="btn good" onclick="mark('+c.row+',\\'won\\',this)">Won 🎉</button><button class="btn bad" onclick="mark('+c.row+',\\'lost\\',this)">Lost</button>')+'</div></div>';}).join('');})();
 // cities
@@ -1114,11 +1358,11 @@ function draw(){var q=document.getElementById('q').value.toLowerCase(),city=docu
   (rows.length?rows.slice(0,500).map(function(l){return '<tr data-row="'+l.row+'"><td><b>'+esc(l.name)+'</b><div class="mute" style="font-size:12px">'+esc(l.domain||'no website')+'</div></td><td>'+esc(l.city)+'</td><td><span class="st '+esc(l.status)+'">'+esc(l.status.replace('_',' '))+'</span></td><td>'+esc(l.pitch||'')+'</td><td>'+esc(l.speed||'')+'</td><td>'+esc(l.email||'')+'</td><td>'+esc(String(l.phone||'').split(';')[0])+'</td><td>'+esc(l.emailed||'')+'</td><td>'+esc(l.replied||'')+'</td></tr>';}).join(''):
   '<tr><td colspan="9" class="empty">No leads match.</td></tr>')+'</tbody>';
  document.querySelectorAll('#leads th').forEach(function(th){th.onclick=function(){if(sortKey===th.dataset.k)sortDir=-sortDir;else{sortKey=th.dataset.k;sortDir=1;}draw();};});
- document.querySelectorAll('#leads tbody tr[data-row]').forEach(function(tr){tr.onclick=function(){open(+tr.dataset.row);};});}
+ document.querySelectorAll('#leads tbody tr[data-row]').forEach(function(tr){tr.onclick=function(){openLead(+tr.dataset.row);};});}
 document.getElementById('q').oninput=draw;document.getElementById('city').onchange=draw;chips();draw();
 // drawer
 var dr=document.getElementById('drawer');
-function open(row){var l=D.leads.filter(function(x){return x.row===row;})[0];if(!l)return;
+function openLead(row,focusCompose){var l=D.leads.filter(function(x){return x.row===row;})[0];if(!l)return;
  function f(k,v){return v?'<dt>'+k+'</dt><dd>'+v+'</dd>':'';}
  dr.innerHTML='<button class="btn" style="float:right" onclick="dr.classList.remove(\\'open\\')">Close ✕</button><h3>'+esc(l.name)+'</h3><span class="st '+esc(l.status)+'">'+esc(l.status.replace('_',' '))+'</span>'+
   '<dl>'+f('City',esc(l.city))+f('Website',l.website?'<a target="_blank" href="'+esc(l.website)+'">'+esc(l.domain)+'</a>':'')+f('Email',esc(l.email))+f('Phone',esc(l.phone))+f('Address',esc(l.address))+
@@ -1128,8 +1372,33 @@ function open(row){var l=D.leads.filter(function(x){return x.row===row;})[0];if(
   (l.sent?'<div class="msg us"><small>You sent · '+esc(l.emailed)+'</small>'+esc(l.sent)+'</div>':'')+
   '<div class="row">'+(l.gmail?'<a class="btn pri" target="_blank" href="'+esc(l.gmail)+'">Open in Gmail</a>':'')+(l.report?'<a class="btn" target="_blank" href="'+esc(l.report)+'">PageSpeed report</a>':'')+'</div>'+
   '<div class="row"><button class="btn good" onclick="mark('+l.row+',\\'call_booked\\',this)">Call booked</button><button class="btn good" onclick="mark('+l.row+',\\'won\\',this)">Won</button>'+
-  '<button class="btn bad" onclick="mark('+l.row+',\\'lost\\',this)">Lost</button><button class="btn bad" onclick="mark('+l.row+',\\'opted_out\\',this)">Opted out</button></div>';
- dr.classList.add('open');}
+  '<button class="btn bad" onclick="mark('+l.row+',\\'lost\\',this)">Lost</button><button class="btn bad" onclick="mark('+l.row+',\\'opted_out\\',this)">Opted out</button></div>'+
+  composer(l);
+ dr.classList.add('open');wireComposer(l);
+ if(focusCompose){var ta=document.getElementById('cBody');if(ta){ta.scrollIntoView({block:'center'});ta.focus();}}}
+var TPL=[];
+function composer(l){TPL=astraTemplates(l,D.tpl);var pick=astraPick(l,TPL);var inThread=!!l.reply;
+ var subj=l.emailed?'Re: Question about '+l.name+"'s website":(l.domain?'Question about '+l.name+"'s website":'A website for '+l.name);
+ return '<div class="compose"><h4>'+(inThread?'Reply to '+esc(l.name):'Send an email to '+esc(l.name))+'</h4>'+
+  (l.answered?'<div class="note">You last wrote to them on '+esc(l.answered)+'.</div>':'')+
+  '<label>To</label><input id="cTo" value="'+esc(l.email||'')+'" placeholder="doctor@clinic.com">'+
+  (inThread?'':'<label>Subject</label><input id="cSubj" value="'+esc(subj)+'">')+
+  '<label>Template</label><select id="cTpl">'+TPL.map(function(t,i){return '<option value="'+i+'"'+(i===pick?' selected':'')+'>'+esc(t.label)+'</option>';}).join('')+'</select>'+
+  '<label>Message (edit anything before sending)</label><textarea id="cBody">'+esc(TPL[pick].body)+'</textarea>'+
+  '<div class="row"><button class="btn pri" id="cSend">Send from '+esc(D.settings.from||'Gmail')+'</button></div>'+
+  '<div class="note">'+(inThread?'Goes as a reply in the same Gmail thread.':'Goes as a new email.')+' Anything in [square brackets] must be filled in first.</div></div>';}
+function wireComposer(l){var sel=document.getElementById('cTpl');if(!sel)return;
+ sel.onchange=function(){var ta=document.getElementById('cBody');if(ta.dataset.edited&&!confirm('Replace your edits with this template?')){return;}ta.value=TPL[+sel.value].body;ta.dataset.edited='';};
+ document.getElementById('cBody').oninput=function(){this.dataset.edited='1';};
+ document.getElementById('cSend').onclick=function(){var b=this,to=document.getElementById('cTo').value.trim(),body=document.getElementById('cBody').value,
+  sj=document.getElementById('cSubj');var hole=body.match(/\\[[^\\]]{2,40}\\]/);
+  if(hole){alert('Fill in '+hole[0]+' first.');return;} if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(to)){alert('Add a valid email address.');return;}
+  if(!confirm('Send this email to '+to+'?'))return;b.disabled=true;b.textContent='Sending…';
+  google.script.run.withSuccessHandler(function(res){b.textContent='Sent ✓ '+res.at;l.answered=res.at;l.email=l.email||to;
+    l.sent=(l.sent?l.sent+'\\n\\n':'')+'--- You · '+res.at+' ---\\n'+body;if(['new','no_website','no_email','fast','audit_failed','pasted'].indexOf(l.status)>=0){l.status='sent';l.emailed=l.emailed||res.at;}
+    D.replies=D.replies.filter(function(x){return x.row!==l.row;});draw();})
+   .withFailureHandler(function(e){b.disabled=false;b.textContent='Send';alert('Not sent: '+e.message);})
+   .sendFromDashboard(l.row,to,sj?sj.value:'',body);};}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')dr.classList.remove('open');});
 function mark(row,status,btn){btn.disabled=true;btn.textContent='Saving…';
  google.script.run.withSuccessHandler(function(){btn.textContent='Saved ✓';var l=D.leads.filter(function(x){return x.row===row;})[0];if(l)l.status=status;draw();})
