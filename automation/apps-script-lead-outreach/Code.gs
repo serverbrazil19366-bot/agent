@@ -123,6 +123,12 @@ function processNextNow() { processNext(true); }
 function findLeads(manual) {
   if (!manual && isWeekend_()) return;
   if (CONFIG.LEAD_SOURCE === 'manual') return;
+  // Use up the leads already in the sheet first. Search again only when fewer than
+  // one day's worth of unprocessed leads is left, so the daily emails never run dry.
+  if (!manual) {
+    const pending = readRows_(sheet_()).filter(r => r.status === 'new' || (!r.status && (r.business_name || r.website))).length;
+    if (pending >= CONFIG.EMAILS_PER_DAY) { log_('Find leads skipped: ' + pending + ' leads still waiting'); return; }
+  }
   const props = PropertiesService.getScriptProperties();
   const idx = Number(props.getProperty('areaIndex') || 0);
   props.setProperty('areaIndex', String(idx + 1));
