@@ -44,6 +44,7 @@ const CONFIG = {
     'Perambur, Chennai', 'Vadapalani, Chennai', 'Besant Nagar, Chennai', 'Guindy, Chennai',
   ],
   CITY_FOR_EMAIL: 'Chennai',   // used when a lead has no city (e.g. pasted by hand)
+  AGENCY_LOCATION: 'Chennai',  // where Astra Nexora is, shown in your signature
 
   EMAILS_PER_DAY: 20,        // hard cap; consumer Gmail allows 100 recipients/day
   SPEED_THRESHOLD_S: 3,      // only email sites slower than this (Speed Index, mobile)
@@ -52,6 +53,7 @@ const CONFIG = {
   GREETING: 'Hi Doctor',     // the website rarely shows the owner's name, so keep it general
   FOLLOWUP_AFTER_DAYS: 3,    // one short follow-up if they haven't replied; 0 = never
   SIGNATURE_PHONE: '',       // optional, e.g. '+91 98xxx xxxxx'; shown under your name
+  WEBSITE_PITCH: true,       // clinics with NO website: email a "let me build your website" pitch (if they have an email)
 
   SENDER_NAME: 'S. Saktheeswaran',
   AGENCY_SITE: 'https://astranexora.netlify.app',
@@ -65,7 +67,9 @@ const CONFIG = {
 const SHEET = 'Leads';
 const COLS = ['added_on', 'status', 'business_name', 'website', 'domain', 'phone', 'address',
   'rating', 'place_id', 'speed_index', 'perf_score', 'lcp', 'email', 'email_found_on',
-  'contacted_on', 'note', 'city', 'top_fixes', 'thread_ids', 'followup_on'];
+  'contacted_on', 'note', 'city', 'top_fixes', 'thread_ids', 'followup_on', 'pitch', 'whatsapp'];
+// pitch: 'speed' (has a slow website) | 'website' (no website: offer to build one)
+// whatsapp: one-click wa.me link with the message already typed, for you to send by hand
 // status: (empty = just pasted) | new | duplicate | no_website | fast | audit_failed | no_email | drafted | sent |
 //         followed_up | replied (set automatically when they answer) | bounced | opted_out
 
@@ -105,6 +109,7 @@ function onOpen() {
   SpreadsheetApp.getUi().createMenu('Astra Outreach')
     .addItem('Find leads now', 'findLeadsNow')
     .addItem('Process next lead now', 'processNextNow')
+    .addItem('Fill WhatsApp links', 'fillWhatsAppLinks')
     .addSeparator()
     .addItem('Setup / reset triggers', 'setup')
     .addToUi();
@@ -242,11 +247,13 @@ function processNext(manual) {
     const contacted = new Set(rows.filter(r => r.email && ['sent', 'drafted', 'followed_up', 'opted_out', 'replied', 'bounced'].indexOf(r.status) >= 0)
       .map(r => String(r.email).toLowerCase()));
 
-    // Work through 'new' rows until one email goes out or ~4 min pass (limit is 6).
+    // Work through leads until one email goes out or ~4 min pass (limit is 6).
     for (const r of rows) {
-      if (r.status !== 'new') continue;
       if (Date.now() - started > 4 * 60 * 1000) break;
-      const contactedNow = handleLead_(r, contacted);
+      let contactedNow = false;
+      if (r.status === 'new') contactedNow = handleLead_(r, contacted);
+      else if (r.status === 'no_website' && !r.pitch && CONFIG.WEBSITE_PITCH) contactedNow = handleNoSite_(r, contacted);
+      else continue;
       writeRow_(sh, r);
       if (contactedNow) break;
     }
@@ -287,7 +294,23 @@ function handleLead_(r, contacted) {
   if (contacted.has(found.email.toLowerCase())) { r.status = 'no_email'; r.note = appendNote_(r.note, 'email already contacted via another listing'); return false; }
   r.email = found.email; r.email_found_on = found.page;
 
-  const mail = buildEmail_(r);
+  r.pitch = 'speed';
+  deliver_(r, buildEmail_(r), contacted);
+  return true;
+}
+
+/** Clinic without a website: pitch building one, if we have an email for them. */
+function handleNoSite_(r, contacted) {
+  r.pitch = 'website';
+  r.whatsapp = r.whatsapp || whatsappLink(r.phone, whatsappText(r, CONFIG));
+  const email = String(r.email || '').trim();
+  if (!/@/.test(email) || contacted.has(email.toLowerCase())) return false;  // phone / WhatsApp only
+  const m = websitePitchCopy(r, CONFIG);
+  deliver_(r, { subject: m.subject, html: m.html, text: htmlToText(m.html) }, contacted);
+  return true;
+}
+
+function deliver_(r, mail, contacted) {
   const draft = GmailApp.createDraft(r.email, mail.subject, mail.text, { htmlBody: mail.html, name: CONFIG.SENDER_NAME });
   if (CONFIG.SEND_MODE === 'send') {
     const msg = draft.send();
@@ -297,8 +320,24 @@ function handleLead_(r, contacted) {
     r.status = 'drafted';
   }
   r.contacted_on = Utilities.formatDate(new Date(), 'Asia/Kolkata', 'yyyy-MM-dd HH:mm');
-  contacted.add(r.email.toLowerCase());
-  return true;
+  r.whatsapp = whatsappLink(r.phone, whatsappText(r, CONFIG));
+  contacted.add(String(r.email).toLowerCase());
+}
+
+/** One-off: add WhatsApp links to rows that have a phone number but no link yet. */
+function fillWhatsAppLinks() {
+  const sh = sheet_();
+  let n = 0;
+  readRows_(sh).forEach(r => {
+    if (r.whatsapp || !r.phone) return;
+    if (['no_website', 'sent', 'followed_up', 'drafted'].indexOf(r.status) < 0) return;
+    if (r.status === 'no_website') r.pitch = r.pitch || 'website';
+    const link = whatsappLink(r.phone, whatsappText(r, CONFIG));
+    if (!link) return;
+    r.whatsapp = link; writeRow_(sh, r); n++;
+  });
+  log_('WhatsApp links added: ' + n);
+  try { SpreadsheetApp.getActive().toast('WhatsApp links added: ' + n, 'Astra Outreach', 10); } catch (e) {}
 }
 
 function pageSpeed_(url) {
@@ -358,7 +397,7 @@ function emailCopy(r, cfg) {
         (cfg.PERSONAL_SITE ? ', and my full profile on <a href="' + cfg.PERSONAL_SITE + '">my portfolio</a>' : '') + '.</p>' : '') +
     '<p>I\'ve noted ' + (fixes >= 2 ? '2 simple fixes' : 'a simple fix') + ' for your site. ' +
     'Shall I send ' + (fixes >= 2 ? 'them' : 'it') + ' over? It\'s free. Just reply "yes".</p>' +
-    '<p>' + esc_(cfg.SENDER_NAME) + '<br>Astra Nexora, ' + esc_(r.city || cfg.CITY_FOR_EMAIL) +
+    '<p>' + esc_(cfg.SENDER_NAME) + '<br>Astra Nexora, ' + esc_(cfg.AGENCY_LOCATION) +
     (cfg.SIGNATURE_PHONE ? '<br>' + esc_(cfg.SIGNATURE_PHONE) : '') + '<br>' +
     cfg.AGENCY_SITE.replace(/^https?:\/\//, '') + '</p>' +
     '<p style="color:#888;font-size:12px">P.S. If this isn\'t relevant, reply "no" and I won\'t email again.</p>';
@@ -367,6 +406,15 @@ function emailCopy(r, cfg) {
 
 function followupCopy(r, cfg) {
   const name = r.business_name || r.domain;
+  if (r.pitch === 'website') {
+    return { subject: 'Re: A website for ' + name, html:
+      '<p>' + esc_(cfg.GREETING) + ',</p>' +
+      '<p>Just checking you saw my note about a website for ' + esc_(name) + '. I\'m happy to put together a free ' +
+      'sample design so you can see how it would look. Reply "yes" and I\'ll send it.</p>' +
+      '<p>' + esc_(cfg.SENDER_NAME) + '<br>Astra Nexora' +
+      (cfg.PORTFOLIO_URL ? '<br>Projects: ' + cfg.PORTFOLIO_URL.replace(/^https?:\/\//, '') : '') +
+      (cfg.PERSONAL_SITE ? '<br>Portfolio: ' + cfg.PERSONAL_SITE.replace(/^https?:\/\//, '') : '') + '</p>' };
+  }
   const subject = 'Re: Question about ' + name + "'s website";
   const html =
     '<p>' + esc_(cfg.GREETING) + ',</p>' +
@@ -377,6 +425,54 @@ function followupCopy(r, cfg) {
     (cfg.PORTFOLIO_URL ? '<br>Projects: ' + cfg.PORTFOLIO_URL.replace(/^https?:\/\//, '') : '') +
     (cfg.PERSONAL_SITE ? '<br>Portfolio: ' + cfg.PERSONAL_SITE.replace(/^https?:\/\//, '') : '') + '</p>';
   return { subject, html };
+}
+
+/** First email for a clinic that has no website. */
+function websitePitchCopy(r, cfg) {
+  const name = r.business_name;
+  const city = r.city || cfg.CITY_FOR_EMAIL;
+  const subject = 'A website for ' + name;
+  const html =
+    '<p>' + esc_(cfg.GREETING) + ',</p>' +
+    '<p>I came across ' + esc_(name) + ' while looking at dental clinics in ' + esc_(city) +
+    ", and noticed it doesn't have a website yet.</p>" +
+    '<p>Most patients now check a clinic online before they call. Without a website they only see a name and a ' +
+    'phone number, and many choose a clinic they can learn more about: the doctor, the treatments, photos and reviews.</p>' +
+    '<p>I build simple, fast websites for clinics, with WhatsApp booking, Google Maps directions and treatment pages, ' +
+    'so new patients can find and trust you before they call.</p>' +
+    (cfg.PORTFOLIO_URL ? '<p>You can see my projects <a href="' + cfg.PORTFOLIO_URL + '">here</a>' +
+      (cfg.PERSONAL_SITE ? ', and my full profile on <a href="' + cfg.PERSONAL_SITE + '">my portfolio</a>' : '') + '.</p>' : '') +
+    '<p>Shall I put together a free sample design for ' + esc_(name) + '? Just reply "yes".</p>' +
+    '<p>' + esc_(cfg.SENDER_NAME) + '<br>Astra Nexora, ' + esc_(cfg.AGENCY_LOCATION) +
+    (cfg.SIGNATURE_PHONE ? '<br>' + esc_(cfg.SIGNATURE_PHONE) : '') + '<br>' +
+    cfg.AGENCY_SITE.replace(/^https?:\/\//, '') + '</p>' +
+    '<p style="color:#888;font-size:12px">P.S. If this isn\'t relevant, reply "no" and I won\'t email again.</p>';
+  return { subject, html };
+}
+
+/** The WhatsApp message for this lead (you send it yourself from the link). */
+function whatsappText(r, cfg) {
+  const name = r.business_name || r.domain;
+  const who = 'Hello Doctor, I\'m ' + cfg.SENDER_NAME.replace(/^S\.\s*/, '') + ' from Astra Nexora, ' + cfg.AGENCY_LOCATION + '. ';
+  const work = cfg.PORTFOLIO_URL ? ' You can see my work here: ' + cfg.PORTFOLIO_URL : '';
+  if (r.pitch === 'website' || !r.website) {
+    return who + 'I noticed ' + name + " doesn't have a website yet. I build simple clinic websites with WhatsApp " +
+      'booking and Google Maps, so new patients can find and trust you before they call. ' +
+      'Shall I share a free sample design for ' + name + '?' + work;
+  }
+  return who + 'I emailed you about ' + name + "'s website taking about " +
+    String(r.speed_index || '').replace(/\s*s$/, '') + ' seconds to load on mobile, which loses patients who search on ' +
+    'their phone. I\'ve noted 2 quick fixes. Shall I share them here? It\'s free.' + work;
+}
+
+/** wa.me link for an Indian number; '' if the number can't be used. */
+function whatsappLink(phone, text) {
+  let d = String(phone || '').split(/[;,/]/)[0].replace(/\D/g, '');
+  if (d.length === 11 && d[0] === '0') d = d.slice(1);
+  if (d.length === 10) d = '91' + d;
+  if (!(d.length === 12 && d.indexOf('91') === 0)) return '';
+  if (!/^91[6-9]/.test(d)) return '';   // Indian mobiles start with 6-9; landlines have no WhatsApp
+  return 'https://wa.me/' + d + '?text=' + encodeURIComponent(text);
 }
 
 function htmlToText(html) {
