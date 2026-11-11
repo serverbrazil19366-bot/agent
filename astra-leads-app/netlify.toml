@@ -1,0 +1,11 @@
+# Astra Leads: phone app (PWA) for the lead outreach Apps Script.
+# Netlify site settings: Base directory = astra-leads-app. Nothing to build.
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+    Service-Worker-Allowed = "/"

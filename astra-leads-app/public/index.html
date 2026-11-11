@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Astra Leads</title>
+<meta name="theme-color" content="#0f172a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Astra Leads">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" href="/icons/icon-192.png">
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--ink:#0f172a;--mute:#64748b;--line:#e5e7eb;--accent:#4f46e5;--good:#059669;--bad:#dc2626;--them:#eef2ff;--us:#f1f5f9;--top:#0f172a}
+@media (prefers-color-scheme:dark){:root{--bg:#0b1020;--card:#141a2e;--ink:#e5e7eb;--mute:#94a3b8;--line:#243049;--accent:#818cf8;--good:#34d399;--bad:#f87171;--them:#1e2550;--us:#1a2238;--top:#0b1020}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+header{background:var(--top);color:#fff;padding:calc(14px + env(safe-area-inset-top)) 16px 14px;display:flex;align-items:center;gap:12px}
+header img{width:34px;height:34px;border-radius:9px}
+header h1{margin:0;font-size:19px;flex:1}
+header small{display:block;font-weight:400;font-size:12px;opacity:.7}
+header button{background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:10px;padding:8px 10px;font-size:14px}
+.banner{margin:12px 16px 0;padding:12px;border-radius:12px;background:var(--card);border:1px solid var(--accent);font-size:14px}
+.banner .btn{margin-top:8px;width:100%}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:12px 16px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.stat b{display:block;font-size:24px}.stat span{color:var(--mute);font-size:12px}.stat.hot{border-color:var(--accent)}
+.bar{height:6px;background:var(--line);border-radius:3px;margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;background:var(--accent)}
+nav{display:flex;gap:6px;padding:8px 16px;overflow-x:auto;position:sticky;top:0;background:var(--bg);z-index:2}
+nav button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 12px;font-size:14px;white-space:nowrap}
+nav button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+section{padding:4px 16px calc(28px + env(safe-area-inset-bottom))}
+.empty{color:var(--mute);text-align:center;padding:24px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0}
+.item h3{margin:0;font-size:16px}.meta{color:var(--mute);font-size:13px;margin-top:2px;word-break:break-word}
+.msg{border-radius:12px;padding:10px 12px;margin-top:10px;font-size:14px;white-space:pre-wrap;word-break:break-word}
+.msg.them{background:var(--them)}.msg.us{background:var(--us)}
+.msg small{display:block;color:var(--mute);font-size:12px;margin-bottom:4px;white-space:normal}
+details{margin-top:10px}summary{color:var(--accent);font-size:14px;cursor:pointer}
+.fix{font-size:13px;margin-top:8px}.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.btn{flex:1 1 auto;text-align:center;text-decoration:none;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:14px;color:var(--ink);background:transparent;cursor:pointer;font-family:inherit}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.good{color:var(--good);border-color:var(--good)}.btn.bad{color:var(--bad);border-color:var(--bad)}
+.pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--mute);margin-left:6px;vertical-align:middle}
+.done{opacity:.45}
+.counts{display:grid;grid-template-columns:1fr auto;gap:6px 12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.center{padding:40px 24px;text-align:center}.center p{color:var(--mute)}
+</style>
+</head>
+<body>
+<header>
+  <img src="/icons/icon-192.png" alt="">
+  <h1>Astra Leads<small id="sub">Loading…</small></h1>
+  <button id="refresh" aria-label="Refresh">↻</button>
+</header>
+<div id="banner"></div>
+<main id="app"></main>
+
+<script>
+(function () {
+  var KEY = 'astra-leads-config';
+  function load() { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; } }
+  function save(c) { try { localStorage.setItem(KEY, JSON.stringify(c)); } catch (e) {} }
+
+  // Pairing link from Apps Script: /#url=<web app url>&t=<token>
+  var h = new URLSearchParams(location.hash.slice(1));
+  if (h.get('url') && h.get('t')) {
+    save({ url: h.get('url'), t: h.get('t') });
+    history.replaceState(null, '', location.pathname);
+  }
+  window.addEventListener('hashchange', function () { if (/url=.*t=/.test(location.hash)) location.reload(); });
+  var cfg = load();
+  var D = null, cur = new URLSearchParams(location.search).get('tab') || 'replies';
+  var app = document.getElementById('app');
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function api(params) {
+    var q = Object.keys(params).map(function (k) { return k + '=' + encodeURIComponent(params[k]); }).join('&');
+    return fetch(cfg.url + '?' + q + '&t=' + encodeURIComponent(cfg.t), { redirect: 'follow' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { if (j && j.error) throw new Error(j.error); return j; });
+  }
+
+  if (!cfg) {
+    document.getElementById('sub').textContent = 'Not paired yet';
+    app.innerHTML = '<div class="center"><h2>Pair this phone</h2><p>In Apps Script, run <b>appLink</b> and open the link it prints, on this phone. ' +
+      'It connects the app to your Leads sheet. You only do this once.</p></div>';
+    return;
+  }
+
+  function stat(n, l, extra, cls) { return '<div class="stat ' + (cls || '') + '"><b>' + n + '</b><span>' + l + '</span>' + (extra || '') + '</div>'; }
+  function msg(cls, label, text) { return text ? '<div class="msg ' + cls + '"><small>' + esc(label) + '</small>' + esc(text) + '</div>' : ''; }
+
+  function render() {
+    if (!D) return;
+    var pct = Math.min(100, Math.round(100 * D.sentToday / Math.max(1, D.perDay)));
+    var rate = D.contacted ? Math.round(100 * D.answered / D.contacted) : 0;
+    var tabs = [['replies', 'Replies (' + D.replies.length + ')'], ['calls', 'Calls (' + D.calls_list.length + ')'], ['recent', 'Sent'], ['pipeline', 'Pipeline']];
+    var html = '<div class="stats">' +
+      stat(D.replies.length, 'Replies to answer', '', D.replies.length ? 'hot' : '') +
+      stat(D.sentToday + ' / ' + D.perDay, 'Emails today', '<div class="bar"><i style="width:' + pct + '%"></i></div>') +
+      stat(D.answered + ' <small style="font-size:13px">(' + rate + '%)</small>', 'Replied, all time') +
+      stat(D.calls + ' · ' + D.won, 'Calls booked · Won') +
+      stat(D.sentWeek, 'Sent this week') + stat(D.waiting, 'Leads waiting') + '</div>';
+    html += '<nav>' + tabs.map(function (t) { return '<button data-tab="' + t[0] + '" class="' + (t[0] === cur ? 'on' : '') + '">' + t[1] + '</button>'; }).join('') + '</nav><section>';
+
+    if (cur === 'pipeline') {
+      var keys = Object.keys(D.byStatus).sort(function (a, b) { return D.byStatus[b] - D.byStatus[a]; });
+      html += '<div class="counts">' + keys.map(function (k) { return '<span>' + esc(k) + '</span><b>' + D.byStatus[k] + '</b>'; }).join('') + '</div>';
+    } else {
+      var items = cur === 'replies' ? D.replies : cur === 'calls' ? D.calls_list : D.recent;
+      if (!items.length) html += '<p class="empty">' + (cur === 'replies' ? 'No replies waiting. You\'ll get an alert when one comes in.' : 'Nothing here right now.') + '</p>';
+      items.forEach(function (c, i) {
+        html += '<div class="item" id="it' + i + '"><h3>' + esc(c.name) + '<span class="pill">' + esc(c.pitch === 'website' ? 'website build' : (c.pitch || '')) + '</span></h3>' +
+          '<div class="meta">' + esc([c.city, c.email, c.phone].filter(Boolean).join(' · ')) + '</div>';
+        if (cur === 'recent') {
+          html += '<div class="meta">Emailed ' + esc(c.when) + ' · ' + esc(c.status) + '</div>';
+        } else {
+          html += c.reply ? msg('them', 'They replied · ' + (c.replied_on || ''), c.reply) : '<div class="meta">Replied: open the email to read it.</div>';
+        }
+        if (c.sent) html += '<details><summary>What you sent</summary>' + msg('us', 'You · ' + (c.when || ''), c.sent) + '</details>';
+        if (cur !== 'recent' && c.fixes && c.pitch !== 'website') html += '<div class="fix"><b>Fixes to send:</b> ' + esc(c.fixes) + '</div>';
+        html += '<div class="row">';
+        if (c.gmail) html += '<a class="btn pri" target="_blank" rel="noopener" href="' + esc(c.gmail) + '">' + (cur === 'recent' ? 'Open email' : 'Reply in Gmail') + '</a>';
+        if (c.phone && cur !== 'recent') html += '<a class="btn" href="tel:' + esc(String(c.phone).split(/[;,]/)[0].replace(/[^+\d]/g, '')) + '">Call</a>';
+        if (cur === 'replies') html += '<button class="btn good" data-mark="call_booked" data-row="' + c.row + '" data-i="' + i + '">Call booked</button>' +
+          '<button class="btn bad" data-mark="lost" data-row="' + c.row + '" data-i="' + i + '">Not interested</button>';
+        if (cur === 'calls') html += '<button class="btn good" data-mark="won" data-row="' + c.row + '" data-i="' + i + '">Won 🎉</button>' +
+          '<button class="btn bad" data-mark="lost" data-row="' + c.row + '" data-i="' + i + '">Lost</button>';
+        html += '</div></div>';
+      });
+    }
+    app.innerHTML = html + '</section>';
+  }
+
+  app.addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    if (b.dataset.tab) { cur = b.dataset.tab; render(); return; }
+    if (b.dataset.mark) {
+      var card = document.getElementById('it' + b.dataset.i);
+      if (card) card.classList.add('done');
+      api({ api: 'mark', row: b.dataset.row, status: b.dataset.mark }).then(refresh)
+        .catch(function (err) { if (card) card.classList.remove('done'); alert('Could not save: ' + err.message); });
+    }
+  });
+
+  function refresh() {
+    document.getElementById('sub').textContent = 'Updating…';
+    return api({ api: 'data' }).then(function (d) {
+      D = d; render();
+      document.getElementById('sub').textContent = 'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }).catch(function (err) {
+      document.getElementById('sub').textContent = 'Could not load';
+      if (!D) app.innerHTML = '<div class="center"><h2>Can\'t reach your sheet</h2><p>' + esc(err.message) +
+        '</p><p>Check the web app is deployed with access "Anyone", then open the pairing link from <b>appLink</b> again.</p></div>';
+    });
+  }
+  document.getElementById('refresh').onclick = refresh;
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) refresh(); });
+  refresh();
+
+  // ── push alerts ──
+  var banner = document.getElementById('banner');
+  function b64(s) { s = (s + '===='.slice((s.length % 4) || 4)).replace(/-/g, '+').replace(/_/g, '/'); var r = atob(s), a = new Uint8Array(r.length); for (var i = 0; i < r.length; i++) a[i] = r.charCodeAt(i); return a; }
+  function showBanner(html) { banner.innerHTML = '<div class="banner">' + html + '</div>'; }
+  var standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  var ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').then(function (reg) {
+      navigator.serviceWorker.addEventListener('message', function (e) { if (e.data === 'refresh') refresh(); });
+      if (ios && !standalone) { showBanner('To get reply alerts on iPhone: tap <b>Share ⬆</b> → <b>Add to Home Screen</b>, then open Astra Leads from your home screen.'); return; }
+      if (!('PushManager' in window) || !('Notification' in window)) return;
+      reg.pushManager.getSubscription().then(function (sub) {
+        if (sub && Notification.permission === 'granted') { sendSub(sub, true); return; }
+        if (Notification.permission === 'denied') { showBanner('Alerts are blocked. Allow notifications for Astra Leads in your phone settings.'); return; }
+        showBanner('Get an alert on this phone when a doctor replies.<button class="btn pri" id="enable">Turn on reply alerts</button>');
+        document.getElementById('enable').onclick = function () {
+          Notification.requestPermission().then(function (p) {
+            if (p !== 'granted') { showBanner('Alerts not allowed. You can still check replies here.'); return; }
+            fetch('/api/vapid').then(function (r) { return r.json(); }).then(function (k) {
+              return reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(k.publicKey) });
+            }).then(function (s) { sendSub(s, false); })
+              .catch(function (err) { showBanner('Could not turn on alerts: ' + esc(err.message)); });
+          });
+        };
+      });
+    });
+  }
+  function sendSub(sub, quiet) {
+    fetch('/api/subscribe', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ t: cfg.t, subscription: sub }) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (j.ok) { banner.innerHTML = quiet ? '' : '<div class="banner">✅ Reply alerts are on for this phone.</div>'; if (!quiet) setTimeout(function () { banner.innerHTML = ''; }, 4000); }
+        else showBanner('Could not turn on alerts: ' + esc(j.error || 'unknown error'));
+      }).catch(function () {});
+  }
+})();
+</script>
+</body>
+</html>

@@ -53,7 +53,7 @@ const CONFIG = {
   GREETING: 'Hi Doctor',     // the website rarely shows the owner's name, so keep it general
   FOLLOWUP_AFTER_DAYS: 3,    // one short follow-up if they haven't replied; 0 = never
   SIGNATURE_PHONE: '',       // optional, e.g. '+91 98xxx xxxxx'; shown under your name
-  NTFY_TOPIC: '',            // phone alerts for replies via the free ntfy app; '' = setup makes a private one
+  APP_URL: 'https://astra-leads.netlify.app',  // the Astra Leads phone app (sends reply alerts)
   WHATSAPP_LINKS: false,     // true = also make one-click wa.me links in the sheet
   WEBSITE_PITCH: true,       // clinics with NO website: email a "let me build your website" pitch (if they have an email)
 
@@ -99,8 +99,7 @@ function setup() {
   ScriptApp.getProjectTriggers().forEach(t => ScriptApp.deleteTrigger(t));
   if (CONFIG.LEAD_SOURCE !== 'manual') ScriptApp.newTrigger('findLeads').timeBased().everyDays(1).atHour(9).create();
   ScriptApp.newTrigger('processNext').timeBased().everyMinutes(10).create();
-  const topic = ntfyTopic_();
-  console.log('Phone alerts: install the free "ntfy" app and subscribe to this topic: ' + topic);
+  appToken_();
   ScriptApp.newTrigger('dailyDigest').timeBased().everyDays(1).atHour(18).nearMinute(30).create();
   // toast, not alert: an alert blocks until someone clicks OK in the sheet and
   // the run times out when setup is started from the script editor.
@@ -536,33 +535,41 @@ function checkReplies_(sh, rows) {
     r.note = appendNote_(r.note, r.status + ' ' + today_());
     writeRow_(sh, r);
     if (!bounced) notify_('Reply from ' + (r.business_name || r.domain),
-      (r.city ? r.city + ' · ' : '') + 'Tap to read it in your dashboard.', t.getId());
+      (r.city ? r.city + ' · ' : '') + 'Tap to read it.');
   });
 }
 
-function ntfyTopic_() {
-  if (CONFIG.NTFY_TOPIC) return CONFIG.NTFY_TOPIC;
+/** Private pairing token shared by this script and your phone app. */
+function appToken_() {
   const props = PropertiesService.getScriptProperties();
-  let t = props.getProperty('ntfyTopic');
-  if (!t) { t = 'astra-' + Utilities.getUuid().replace(/-/g, '').slice(0, 16); props.setProperty('ntfyTopic', t); }
+  let t = props.getProperty('appToken');
+  if (!t) { t = Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, ''); props.setProperty('appToken', t); }
   return t;
 }
 
-/** Push notification to your phone through ntfy.sh (free app, no account). */
-function notify_(title, message, threadId) {
-  let click = '';
-  try { click = ScriptApp.getService().getUrl() || ''; } catch (e) {}
-  if (!click && threadId) click = 'https://mail.google.com/mail/#all/' + threadId;
+/** Push alert to the Astra Leads app on your phone. */
+function notify_(title, message) {
+  if (!CONFIG.APP_URL) return;
   try {
-    UrlFetchApp.fetch('https://ntfy.sh/', { method: 'post', contentType: 'application/json', muteHttpExceptions: true,
-      payload: JSON.stringify({ topic: ntfyTopic_(), title: title, message: message, tags: ['bell'], priority: 4, click: click }) });
-  } catch (e) { console.log('notify failed: ' + e.message); }
+    const res = UrlFetchApp.fetch(CONFIG.APP_URL.replace(/\/$/, '') + '/api/notify', { method: 'post',
+      contentType: 'application/json', muteHttpExceptions: true,
+      payload: JSON.stringify({ t: appToken_(), title: title, body: message }) });
+    console.log('Alert: ' + res.getResponseCode() + ' ' + res.getContentText().slice(0, 120));
+  } catch (e) { console.log('Alert failed: ' + e.message); }
+}
+
+/** Run after deploying the web app: prints the link to open once on your phone. */
+function appLink() {
+  const url = ScriptApp.getService().getUrl();
+  if (!url) throw new Error('Deploy the web app first: Deploy → New deployment → Web app (access: Anyone).');
+  const link = CONFIG.APP_URL.replace(/\/$/, '') + '/#url=' + encodeURIComponent(url) + '&t=' + appToken_();
+  console.log('Open this link on your phone (once): ' + link);
+  return link;
 }
 
 /** Run once from the editor to check that alerts reach your phone. */
 function testNotification() {
-  notify_('Astra Outreach test', 'Phone alerts are working. Topic: ' + ntfyTopic_(), '');
-  console.log('Sent a test alert to topic ' + ntfyTopic_());
+  notify_('Astra Leads test', 'Reply alerts are working.');
 }
 
 // ─────────────────────── pure helpers (unit-tested) ───────────────────────
@@ -704,14 +711,22 @@ function log_(msg) { console.log(msg); }
 
 
 // ─────────────────────── 3. phone dashboard & daily digest ───────────────────────
-// Deploy → New deployment → Web app → Execute as: Me, Who has access: Only myself.
-// Open the URL on your phone and "Add to Home Screen". Same Google account as the sheet.
+// Deploy → New deployment → Web app → Execute as: Me, Who has access: Anyone.
+// Every request must carry your private pairing token, so the data stays yours.
+// Then run appLink() and open the printed link once on your phone (Astra Leads app).
 
-function doGet() {
+function doGet(e) {
+  const p = (e && e.parameter) || {};
+  const ok = p.t && p.t === PropertiesService.getScriptProperties().getProperty('appToken');
+  const out = obj => ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+  if (!ok) return p.api ? out({ error: 'not paired: open the link from appLink again' }) :
+    HtmlService.createHtmlOutput('<p style="font:16px sans-serif;padding:24px">Open Astra Leads from your phone app.</p>');
+  try {
+    if (p.api === 'data') return out(dashboardData_());
+    if (p.api === 'mark') { markLead(p.row, p.status); return out({ ok: true }); }
+  } catch (err) { return out({ error: err.message }); }
   return HtmlService.createHtmlOutput(dashboardHtml_(dashboardData_()))
-    .setTitle('Astra Leads')
-    .addMetaTag('viewport', 'width=device-width, initial-scale=1')
-    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.DEFAULT);
+    .setTitle('Astra Leads').addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
 
 /** Called from the dashboard buttons. */
@@ -741,7 +756,7 @@ function markWhatsAppSent(row) {
 function dashboardData_() {
   const rows = readRows_(sheet_());
   let me = '';
-  try { me = Session.getActiveUser().getEmail(); } catch (e) {}
+  try { me = Session.getEffectiveUser().getEmail(); } catch (e) {}
   return summarize(rows, today_(), me, CONFIG.EMAILS_PER_DAY);
 }
 
