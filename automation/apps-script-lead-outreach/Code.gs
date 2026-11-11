@@ -54,6 +54,7 @@ const CONFIG = {
   FOLLOWUP_AFTER_DAYS: 3,    // one short follow-up if they haven't replied; 0 = never
   SIGNATURE_PHONE: '',       // optional, e.g. '+91 98xxx xxxxx'; shown under your name
   APP_URL: 'https://astra-leads.netlify.app',  // the Astra Leads phone app (sends reply alerts)
+  WEB_APP_URL: '',           // paste the "Web app URL" (ends in /exec) from Deploy → New deployment
   WHATSAPP_LINKS: false,     // true = also make one-click wa.me links in the sheet
   WEBSITE_PITCH: true,       // clinics with NO website: email a "let me build your website" pitch (if they have an email)
 
@@ -560,8 +561,10 @@ function notify_(title, message) {
 
 /** Run after deploying the web app: prints the link to open once on your phone. */
 function appLink() {
-  const url = ScriptApp.getService().getUrl();
-  if (!url) throw new Error('Deploy the web app first: Deploy → New deployment → Web app (access: Anyone).');
+  let url = CONFIG.WEB_APP_URL;
+  if (!url) { try { url = ScriptApp.getService().getUrl(); } catch (e) {} }
+  if (!url || !/\/exec$/.test(url)) throw new Error('Deploy → New deployment → Web app (access: Anyone), ' +
+    'then paste the Web app URL (ends in /exec) into WEB_APP_URL at the top, save, and run appLink again.');
   const link = CONFIG.APP_URL.replace(/\/$/, '') + '/#url=' + encodeURIComponent(url) + '&t=' + appToken_();
   console.log('Open this link on your phone (once): ' + link);
   return link;
