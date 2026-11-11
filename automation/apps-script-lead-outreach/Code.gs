@@ -744,6 +744,8 @@ function doGet(e) {
       'In Apps Script, run <b>appLink</b>: it emails you the full link. Open that email on your phone and tap it.</p>');
   try {
     if (p.api === 'data') return out(dashboardData_());
+    if (p.view === 'desktop') return HtmlService.createHtmlOutput(desktopHtml_(desktopData_()))
+      .setTitle('Astra Leads: Daily dashboard').addMetaTag('viewport', 'width=device-width, initial-scale=1');
     if (p.api === 'mark') { markLead(p.row, p.status); return out({ ok: true }); }
   } catch (err) { return out({ error: err.message }); }
   return HtmlService.createHtmlOutput(dashboardHtml_(dashboardData_()))
@@ -924,5 +926,214 @@ function render(){
 function mark(row,status,i){ var el=document.getElementById('it'+cur+i); if(el) el.className+=' done';
   google.script.run.withFailureHandler(function(e){alert('Could not save: '+e.message);}).markLead(row,status); }
 render();
+</script></body></html>`;
+}
+
+
+// ─────────────────────── 4. laptop daily dashboard (?view=desktop) ───────────────────────
+
+function desktopData_() {
+  const rows = readRows_(sheet_());
+  let me = '';
+  try { me = Session.getEffectiveUser().getEmail(); } catch (e) {}
+  return desktopSummary(rows, today_(), me, CONFIG);
+}
+
+/** Pure: everything the laptop dashboard shows. */
+function desktopSummary(rows, today, me, cfg) {
+  const base = summarize(rows, today, me, cfg.EMAILS_PER_DAY);
+  const day = d => String(d || '').slice(0, 10);
+  const days = [];
+  for (let i = 13; i >= 0; i--) days.push(new Date(new Date(today + 'T00:00:00Z').getTime() - i * 864e5).toISOString().slice(0, 10));
+  const daily = days.map(d => ({ day: d,
+    first: rows.filter(r => day(r.contacted_on) === d).length,
+    followups: rows.filter(r => day(r.followup_on) === d).length }));
+  const cities = {};
+  rows.forEach(r => {
+    const c = r.city || 'Unknown';
+    const x = cities[c] || (cities[c] = { city: c, leads: 0, website: 0, emailed: 0, replied: 0, noSite: 0 });
+    x.leads++;
+    if (r.domain) x.website++;
+    if (r.status === 'no_website') x.noSite++;
+    if (r.contacted_on) x.emailed++;
+    if (['replied', 'call_booked', 'won', 'lost'].indexOf(r.status) >= 0) x.replied++;
+  });
+  const has = st => rows.filter(r => st.indexOf(r.status) >= 0).length;
+  const audited = rows.filter(r => r.speed_index || r.status === 'fast' || r.status === 'audit_failed').length;
+  const funnel = [
+    ['Leads found', rows.length],
+    ['Have a website', rows.filter(r => r.domain).length],
+    ['Audited', audited],
+    ['Emailed', rows.filter(r => r.contacted_on).length],
+    ['Replied', has(['replied', 'call_booked', 'won', 'lost'])],
+    ['Call booked', has(['call_booked', 'won'])],
+    ['Won', has(['won'])],
+  ];
+  const cutoff = new Date(new Date(today + 'T00:00:00Z').getTime() - (cfg.FOLLOWUP_AFTER_DAYS || 3) * 864e5).toISOString().slice(0, 10);
+  const gmail = r => {
+    const ids = String(r.thread_ids || '').split(',').filter(Boolean);
+    return ids.length ? 'https://mail.google.com/mail/?authuser=' + encodeURIComponent(me) + '#all/' + ids[ids.length - 1] : '';
+  };
+  const leads = rows.filter(r => r.business_name || r.website).map(r => ({
+    row: r._row, name: r.business_name || r.domain, city: r.city, status: r.status || 'pasted', pitch: r.pitch,
+    website: r.website, domain: r.domain, email: r.email, phone: r.phone, address: r.address,
+    speed: r.speed_index, score: r.perf_score, lcp: r.lcp, fixes: r.top_fixes,
+    added: r.added_on, emailed: r.contacted_on, followup: r.followup_on, replied: r.replied_on,
+    reply: r.reply_text, sent: r.sent_text, note: r.note, gmail: gmail(r),
+    report: r.website ? 'https://pagespeed.web.dev/analysis?url=' + encodeURIComponent(r.website) + '&form_factor=mobile' : '' }));
+  return Object.assign(base, {
+    daily, funnel, leads,
+    cities: Object.keys(cities).map(k => cities[k]).sort((a, b) => b.leads - a.leads),
+    followupsDue: rows.filter(r => r.status === 'sent' && day(r.contacted_on) && day(r.contacted_on) <= cutoff).length,
+    settings: { mode: cfg.SEND_MODE, perDay: cfg.EMAILS_PER_DAY, hours: cfg.WORK_HOURS.join(':00–') + ':00',
+      source: cfg.LEAD_SOURCE, followupDays: cfg.FOLLOWUP_AFTER_DAYS, threshold: cfg.SPEED_THRESHOLD_S },
+  });
+}
+
+function desktopHtml_(data) {
+  const json = JSON.stringify(data).replace(/</g, '\\u003c');
+  return `<!doctype html><html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Astra Leads: Daily dashboard</title>
+<style>
+:root{--bg:#f5f6fa;--card:#fff;--ink:#0f172a;--ink2:#334155;--mute:#64748b;--line:#e5e7eb;--grid:#eef0f4;--accent:#4f46e5;--accent2:#c7d2fe;--good:#047857;--bad:#b91c1c;--them:#eef2ff;--us:#f1f5f9;--chip:#f1f5f9}
+@media (prefers-color-scheme:dark){:root{--bg:#0b1020;--card:#121933;--ink:#e5e7eb;--ink2:#cbd5e1;--mute:#94a3b8;--line:#243049;--grid:#1c2440;--accent:#818cf8;--accent2:#3730a3;--good:#34d399;--bad:#f87171;--them:#1e2550;--us:#1a2238;--chip:#1a2238}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+header{display:flex;align-items:center;gap:16px;padding:18px 24px;border-bottom:1px solid var(--line);background:var(--card);position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:20px}header .sub{color:var(--mute);font-size:13px}header .sp{flex:1}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:9px;padding:7px 12px;font:inherit;cursor:pointer;text-decoration:none;display:inline-block}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}.btn.good{color:var(--good);border-color:var(--good)}.btn.bad{color:var(--bad);border-color:var(--bad)}
+main{max-width:1400px;margin:0 auto;padding:20px 24px 40px;display:grid;gap:16px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.kpi b{display:block;font-size:26px;letter-spacing:-.02em}.kpi span{color:var(--mute);font-size:12px}.kpi.hot{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.grid2{display:grid;grid-template-columns:1.4fr 1fr;gap:16px}.grid3{display:grid;grid-template-columns:1.2fr 1fr;gap:16px}
+@media (max-width:980px){.grid2,.grid3{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}
+.card h2{margin:0 0 4px;font-size:15px}.card .hint{color:var(--mute);font-size:12px;margin-bottom:12px}
+svg text{fill:var(--mute);font-size:11px}
+.tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--card);padding:6px 9px;border-radius:8px;font-size:12px;display:none;z-index:20}
+.fun{display:grid;grid-template-columns:120px 1fr 48px;gap:8px 10px;align-items:center}
+.fun .bar{height:14px;background:var(--grid);border-radius:4px;overflow:hidden}.fun .bar i{display:block;height:100%;background:var(--accent);border-radius:0 4px 4px 0}
+.fun b{text-align:right}.fun span{color:var(--ink2)}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--mute);font-weight:600;font-size:12px;white-space:nowrap;cursor:pointer;user-select:none}td.num,th.num{text-align:right}
+tbody tr{cursor:pointer}tbody tr:hover{background:var(--grid)}
+.st{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;background:var(--chip);color:var(--ink2);white-space:nowrap}
+.st.replied,.st.call_booked{background:var(--accent);color:#fff}.st.won{background:var(--good);color:#fff}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.tools input,.tools select{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:9px;padding:7px 10px;font:inherit}
+.tools input{flex:1;min-width:200px}.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink2);border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.tablewrap{overflow:auto;max-height:620px}
+.needs .item{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.msg{border-radius:10px;padding:9px 11px;margin-top:8px;white-space:pre-wrap;word-break:break-word}.msg.them{background:var(--them)}.msg.us{background:var(--us)}
+.msg small{display:block;color:var(--mute);font-size:11px;margin-bottom:3px;white-space:normal}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.mute{color:var(--mute)}.empty{color:var(--mute);padding:16px 0}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(520px,100%);background:var(--card);border-left:1px solid var(--line);box-shadow:-10px 0 30px rgba(0,0,0,.15);padding:20px;overflow:auto;transform:translateX(100%);transition:transform .2s;z-index:10}
+.drawer.open{transform:none}.drawer h3{margin:0 0 4px;font-size:18px}
+dl{display:grid;grid-template-columns:110px 1fr;gap:6px 12px;margin:14px 0}dt{color:var(--mute)}dd{margin:0;word-break:break-word}
+details summary{cursor:pointer;color:var(--accent)}
+</style></head><body>
+<header><div><h1>Astra Leads</h1><div class="sub" id="sub"></div></div><div class="sp"></div>
+<a class="btn" href="javascript:location.reload()">↻ Refresh</a></header>
+<main>
+  <div class="kpis" id="kpis"></div>
+  <div class="grid2">
+    <div class="card"><h2>Emails sent: last 14 days</h2><div class="hint">First emails, with follow-ups stacked on top. Daily limit shown as a dashed line.</div><div id="daily"></div></div>
+    <div class="card"><h2>Funnel</h2><div class="hint">From lead found to client won</div><div class="fun" id="funnel"></div></div>
+  </div>
+  <div class="grid3">
+    <div class="card needs"><h2>Needs you today</h2><div class="hint">Replies to answer and calls you've booked</div><div id="needs" style="max-height:560px;overflow:auto"></div></div>
+    <div class="card"><h2>By city</h2><div class="hint">Where your leads are</div><div class="tablewrap" style="max-height:360px"><table id="cities"></table></div></div>
+  </div>
+  <div class="card"><h2>All leads</h2><div class="hint">Click a lead to see everything about it</div>
+    <div class="tools"><input id="q" placeholder="Search name, email, phone, website…"><select id="city"></select><div class="chips" id="chips"></div></div>
+    <div class="tablewrap"><table id="leads"></table></div></div>
+  <div class="card mute" id="settings"></div>
+</main>
+<aside class="drawer" id="drawer"></aside><div class="tip" id="tip"></div>
+<script>
+var D = ${json};
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+var tip=document.getElementById('tip');
+function showTip(e,html){tip.innerHTML=html;tip.style.display='block';tip.style.left=Math.min(e.clientX+12,innerWidth-200)+'px';tip.style.top=(e.clientY+12)+'px';}
+function hideTip(){tip.style.display='none';}
+document.getElementById('sub').textContent='Daily dashboard · '+D.today+' · updated '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+// KPIs
+var rate=D.contacted?Math.round(100*D.answered/D.contacted):0;
+function kpi(n,l,hot){return '<div class="kpi'+(hot?' hot':'')+'"><b>'+n+'</b><span>'+l+'</span></div>';}
+document.getElementById('kpis').innerHTML=kpi(D.replies.length,'Replies to answer',D.replies.length)+kpi(D.sentToday+' / '+D.perDay,'Emails today')+
+  kpi(D.sentWeek,'Sent this week')+kpi(D.contacted,'Emailed, all time')+kpi(D.answered+' ('+rate+'%)','Replied')+
+  kpi(D.calls,'Calls booked')+kpi(D.won,'Won')+kpi(D.waiting,'Leads waiting')+kpi(D.followupsDue,'Follow-ups due')+kpi(D.byStatus.no_website||0,'No website (call list)');
+// daily chart (stacked: first + follow-ups), single scale
+(function(){var W=640,H=220,L=28,B=26,T=10,n=D.daily.length,max=Math.max(D.perDay,1);
+ D.daily.forEach(function(d){max=Math.max(max,d.first+d.followups);});
+ max=Math.ceil(max*1.15);
+ var bw=(W-L)/n,s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="Emails sent per day">';
+ for(var g=0;g<=4;g++){var v=Math.round(max*g/4),y=H-B-(H-B-T)*v/max;s+='<line x1="'+L+'" x2="'+W+'" y1="'+y+'" y2="'+y+'" stroke="var(--grid)"/><text x="'+(L-6)+'" y="'+(y+4)+'" text-anchor="end">'+v+'</text>';}
+ var ly=H-B-(H-B-T)*D.perDay/max;s+='<line x1="'+L+'" x2="'+W+'" y1="'+ly+'" y2="'+ly+'" stroke="var(--mute)" stroke-dasharray="4 4"/><text x="'+W+'" y="'+(ly-4)+'" text-anchor="end">limit '+D.perDay+'</text>';
+ D.daily.forEach(function(d,i){var x=L+i*bw+bw*0.2,w=bw*0.6,h1=(H-B-T)*d.first/max,h2=(H-B-T)*d.followups/max,y1=H-B-h1;
+  if(d.first)s+='<rect x="'+x+'" y="'+y1+'" width="'+w+'" height="'+h1+'" rx="'+(d.followups?0:4)+'" fill="var(--accent)"/>';
+  if(d.followups)s+='<rect x="'+x+'" y="'+(y1-h2-2)+'" width="'+w+'" height="'+h2+'" rx="4" fill="var(--accent2)"/>';
+  s+='<rect class="hit" data-i="'+i+'" x="'+(L+i*bw)+'" y="'+T+'" width="'+bw+'" height="'+(H-B-T)+'" fill="transparent"/>';
+  if(i%2===n%2||i===n-1)s+='<text x="'+(x+w/2)+'" y="'+(H-8)+'" text-anchor="middle">'+d.day.slice(5)+'</text>';});
+ var el=document.getElementById('daily');el.innerHTML=s+'</svg><div class="mute" style="font-size:12px;margin-top:6px"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--accent)"></span> First emails &nbsp; <span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--accent2)"></span> Follow-ups</div>';
+ el.querySelectorAll('.hit').forEach(function(r){r.addEventListener('mousemove',function(e){var d=D.daily[r.dataset.i];showTip(e,'<b>'+d.day+'</b><br>First emails: '+d.first+'<br>Follow-ups: '+d.followups);});r.addEventListener('mouseleave',hideTip);});})();
+// funnel
+(function(){var top=Math.max(1,D.funnel[0][1]);document.getElementById('funnel').innerHTML=D.funnel.map(function(f){
+ return '<span>'+esc(f[0])+'</span><div class="bar"><i style="width:'+Math.max(f[1]?2:0,Math.round(100*f[1]/top))+'%"></i></div><b>'+f[1]+'</b>';}).join('');})();
+// needs you
+(function(){var list=D.replies.concat(D.calls_list);var el=document.getElementById('needs');
+ if(!list.length){el.innerHTML='<div class="empty">Nothing waiting. New replies show up here (and in Gmail, starred).</div>';return;}
+ el.innerHTML=list.map(function(c){return '<div class="item"><b>'+esc(c.name)+'</b> <span class="st '+esc(c.status)+'">'+esc(c.status.replace('_',' '))+'</span>'+
+  '<div class="mute">'+esc([c.city,c.email,c.phone].filter(Boolean).join(' · '))+'</div>'+
+  (c.reply?'<div class="msg them"><small>They replied · '+esc(c.replied_on||'')+'</small>'+esc(c.reply)+'</div>':'')+
+  (c.sent?'<details style="margin-top:6px"><summary>What you sent</summary><div class="msg us"><small>You · '+esc(c.when||'')+'</small>'+esc(c.sent)+'</div></details>':'')+
+  (c.fixes&&c.pitch!=='website'?'<div style="margin-top:6px"><b>Fixes to send:</b> '+esc(c.fixes)+'</div>':'')+
+  '<div class="row">'+(c.gmail?'<a class="btn pri" target="_blank" href="'+esc(c.gmail)+'">Reply in Gmail</a>':'')+
+  (c.status==='replied'?'<button class="btn good" onclick="mark('+c.row+',\\'call_booked\\',this)">Call booked</button><button class="btn bad" onclick="mark('+c.row+',\\'lost\\',this)">Not interested</button>':
+   '<button class="btn good" onclick="mark('+c.row+',\\'won\\',this)">Won 🎉</button><button class="btn bad" onclick="mark('+c.row+',\\'lost\\',this)">Lost</button>')+'</div></div>';}).join('');})();
+// cities
+document.getElementById('cities').innerHTML='<thead><tr><th>City</th><th class="num">Leads</th><th class="num">Website</th><th class="num">No site</th><th class="num">Emailed</th><th class="num">Replied</th></tr></thead><tbody>'+
+ D.cities.map(function(c){return '<tr data-city="'+esc(c.city)+'"><td>'+esc(c.city)+'</td><td class="num">'+c.leads+'</td><td class="num">'+c.website+'</td><td class="num">'+c.noSite+'</td><td class="num">'+c.emailed+'</td><td class="num">'+c.replied+'</td></tr>';}).join('')+'</tbody>';
+document.querySelectorAll('#cities tbody tr').forEach(function(tr){tr.onclick=function(){document.getElementById('city').value=tr.dataset.city;draw();document.getElementById('leads').scrollIntoView({behavior:'smooth'});};});
+// leads table
+var fStatus='all',sortKey='emailed',sortDir=-1;
+var statuses=['all'].concat(Object.keys(D.byStatus).sort(function(a,b){return D.byStatus[b]-D.byStatus[a];}));
+document.getElementById('city').innerHTML='<option value="">All cities</option>'+D.cities.map(function(c){return '<option>'+esc(c.city)+'</option>';}).join('');
+function chips(){document.getElementById('chips').innerHTML=statuses.map(function(s){return '<button class="chip'+(s===fStatus?' on':'')+'" data-s="'+esc(s)+'">'+esc(s.replace('_',' '))+(s==='all'?'':' '+D.byStatus[s])+'</button>';}).join('');
+ document.querySelectorAll('.chip').forEach(function(b){b.onclick=function(){fStatus=b.dataset.s;chips();draw();};});}
+var cols=[['name','Clinic'],['city','City'],['status','Status'],['pitch','Pitch'],['speed','Speed'],['email','Email'],['phone','Phone'],['emailed','Emailed'],['replied','Replied']];
+function draw(){var q=document.getElementById('q').value.toLowerCase(),city=document.getElementById('city').value;
+ var rows=D.leads.filter(function(l){return (fStatus==='all'||l.status===fStatus)&&(!city||l.city===city)&&
+  (!q||[l.name,l.email,l.phone,l.website,l.city].join(' ').toLowerCase().indexOf(q)>=0);});
+ rows.sort(function(a,b){var x=String(a[sortKey]||''),y=String(b[sortKey]||'');if(sortKey==='speed'){x=parseFloat(x)||0;y=parseFloat(y)||0;return (x-y)*sortDir;}return x.localeCompare(y)*sortDir;});
+ document.getElementById('leads').innerHTML='<thead><tr>'+cols.map(function(c){return '<th data-k="'+c[0]+'">'+c[1]+(sortKey===c[0]?(sortDir>0?' ▲':' ▼'):'')+'</th>';}).join('')+'</tr></thead><tbody>'+
+  (rows.length?rows.slice(0,500).map(function(l){return '<tr data-row="'+l.row+'"><td><b>'+esc(l.name)+'</b><div class="mute" style="font-size:12px">'+esc(l.domain||'no website')+'</div></td><td>'+esc(l.city)+'</td><td><span class="st '+esc(l.status)+'">'+esc(l.status.replace('_',' '))+'</span></td><td>'+esc(l.pitch||'')+'</td><td>'+esc(l.speed||'')+'</td><td>'+esc(l.email||'')+'</td><td>'+esc(String(l.phone||'').split(';')[0])+'</td><td>'+esc(l.emailed||'')+'</td><td>'+esc(l.replied||'')+'</td></tr>';}).join(''):
+  '<tr><td colspan="9" class="empty">No leads match.</td></tr>')+'</tbody>';
+ document.querySelectorAll('#leads th').forEach(function(th){th.onclick=function(){if(sortKey===th.dataset.k)sortDir=-sortDir;else{sortKey=th.dataset.k;sortDir=1;}draw();};});
+ document.querySelectorAll('#leads tbody tr[data-row]').forEach(function(tr){tr.onclick=function(){open(+tr.dataset.row);};});}
+document.getElementById('q').oninput=draw;document.getElementById('city').onchange=draw;chips();draw();
+// drawer
+var dr=document.getElementById('drawer');
+function open(row){var l=D.leads.filter(function(x){return x.row===row;})[0];if(!l)return;
+ function f(k,v){return v?'<dt>'+k+'</dt><dd>'+v+'</dd>':'';}
+ dr.innerHTML='<button class="btn" style="float:right" onclick="dr.classList.remove(\\'open\\')">Close ✕</button><h3>'+esc(l.name)+'</h3><span class="st '+esc(l.status)+'">'+esc(l.status.replace('_',' '))+'</span>'+
+  '<dl>'+f('City',esc(l.city))+f('Website',l.website?'<a target="_blank" href="'+esc(l.website)+'">'+esc(l.domain)+'</a>':'')+f('Email',esc(l.email))+f('Phone',esc(l.phone))+f('Address',esc(l.address))+
+  f('Pitch',esc(l.pitch))+f('Speed',l.speed?esc(l.speed)+(l.score?' · score '+esc(l.score)+'/100':'')+(l.lcp?' · LCP '+esc(l.lcp):''):'')+f('Fixes',esc(l.fixes))+
+  f('Added',esc(l.added))+f('Emailed',esc(l.emailed))+f('Follow-up',esc(l.followup))+f('Replied',esc(l.replied))+f('Notes',esc(l.note))+'</dl>'+
+  (l.reply?'<div class="msg them"><small>They replied · '+esc(l.replied)+'</small>'+esc(l.reply)+'</div>':'')+
+  (l.sent?'<div class="msg us"><small>You sent · '+esc(l.emailed)+'</small>'+esc(l.sent)+'</div>':'')+
+  '<div class="row">'+(l.gmail?'<a class="btn pri" target="_blank" href="'+esc(l.gmail)+'">Open in Gmail</a>':'')+(l.report?'<a class="btn" target="_blank" href="'+esc(l.report)+'">PageSpeed report</a>':'')+'</div>'+
+  '<div class="row"><button class="btn good" onclick="mark('+l.row+',\\'call_booked\\',this)">Call booked</button><button class="btn good" onclick="mark('+l.row+',\\'won\\',this)">Won</button>'+
+  '<button class="btn bad" onclick="mark('+l.row+',\\'lost\\',this)">Lost</button><button class="btn bad" onclick="mark('+l.row+',\\'opted_out\\',this)">Opted out</button></div>';
+ dr.classList.add('open');}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')dr.classList.remove('open');});
+function mark(row,status,btn){btn.disabled=true;btn.textContent='Saving…';
+ google.script.run.withSuccessHandler(function(){btn.textContent='Saved ✓';var l=D.leads.filter(function(x){return x.row===row;})[0];if(l)l.status=status;draw();})
+  .withFailureHandler(function(e){btn.disabled=false;btn.textContent='Retry';alert('Could not save: '+e.message);}).markLead(row,status);}
+var S=D.settings;document.getElementById('settings').innerHTML='Settings: mode <b>'+esc(S.mode)+'</b> · up to <b>'+S.perDay+'</b> emails/day, '+esc(S.hours)+' Mon–Fri · leads from <b>'+esc(S.source)+'</b> · follow-up after <b>'+S.followupDays+'</b> days · speed threshold <b>'+S.threshold+' s</b>';
 </script></body></html>`;
 }
