@@ -58,8 +58,8 @@ const CONFIG = {
   PERSONAL_SITE: 'https://saktheeswaran.netlify.app',
   // Proof of past work, linked in every email. Set to '' to leave it out.
   PORTFOLIO_URL: 'https://saktheeswaran.netlify.app/#work',
-  CASE_STUDY_NAME: 'Akeela Dental Care',     // a dental client to mention by name
-  CASE_STUDY_URL: 'https://saktheeswaran.netlify.app/work/akeela-dental-care.html',
+  CASE_STUDY_NAME: '',       // optional: a client to mention by name (only with their OK)
+  CASE_STUDY_URL: '',
 };
 
 const SHEET = 'Leads';
@@ -347,7 +347,8 @@ function emailCopy(r, cfg) {
     '<p>You can see the result yourself here: <a href="' + report + '">Google PageSpeed report for ' + esc_(r.domain) + '</a></p>' +
     (cfg.CASE_STUDY_URL ? '<p>I built the website and SEO for <a href="' + cfg.CASE_STUDY_URL + '">' + esc_(cfg.CASE_STUDY_NAME) +
       '</a>, a dental clinic in Chennai' + (cfg.PORTFOLIO_URL ? ', and you can see my other projects <a href="' +
-      cfg.PORTFOLIO_URL + '">here</a>' : '') + '.</p>' : '') +
+      cfg.PORTFOLIO_URL + '">here</a>' : '') + '.</p>'
+      : cfg.PORTFOLIO_URL ? '<p>You can see my work <a href="' + cfg.PORTFOLIO_URL + '">here</a>.</p>' : '') +
     '<p>I\'ve noted ' + (fixes >= 2 ? '2 simple fixes' : 'a simple fix') + ' for your site. ' +
     'Shall I send ' + (fixes >= 2 ? 'them' : 'it') + ' over? It\'s free. Just reply "yes".</p>' +
     '<p>' + esc_(cfg.SENDER_NAME) + '<br>Astra Nexora, ' + esc_(r.city || cfg.CITY_FOR_EMAIL) +
