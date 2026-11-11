@@ -53,7 +53,7 @@ const CONFIG = {
   GREETING: 'Hi Doctor',     // the website rarely shows the owner's name, so keep it general
   FOLLOWUP_AFTER_DAYS: 3,    // one short follow-up if they haven't replied; 0 = never
   SIGNATURE_PHONE: '',       // optional, e.g. '+91 98xxx xxxxx'; shown under your name
-  APP_URL: 'https://astra-leads.netlify.app',  // the Astra Leads phone app (sends reply alerts)
+  APP_URL: '',               // optional separate phone app with push alerts (see astra-leads-app); '' = not used
   WEB_APP_URL: '',           // paste the "Web app URL" (ends in /exec) from Deploy → New deployment
   WHATSAPP_LINKS: false,     // true = also make one-click wa.me links in the sheet
   WEBSITE_PITCH: true,       // clinics with NO website: email a "let me build your website" pitch (if they have an email)
@@ -535,6 +535,12 @@ function checkReplies_(sh, rows) {
     if (!r.sent_text && ours.length) r.sent_text = stripQuoted(ours[0].getPlainBody()).slice(0, 3000);
     r.note = appendNote_(r.note, r.status + ' ' + today_());
     writeRow_(sh, r);
+    if (!bounced) {
+      try {
+        const label = GmailApp.getUserLabelByName('Astra Lead Reply') || GmailApp.createLabel('Astra Lead Reply');
+        t.addLabel(label); t.markImportant(); t.moveToInbox(); last.star();
+      } catch (e) {}
+    }
     if (!bounced) notify_('Reply from ' + (r.business_name || r.domain),
       (r.city ? r.city + ' · ' : '') + 'Tap to read it.');
   });
@@ -565,8 +571,9 @@ function appLink() {
   if (!url) { try { url = ScriptApp.getService().getUrl(); } catch (e) {} }
   if (!url || !/\/exec$/.test(url)) throw new Error('Deploy → New deployment → Web app (access: Anyone), ' +
     'then paste the Web app URL (ends in /exec) into WEB_APP_URL at the top, save, and run appLink again.');
-  const link = CONFIG.APP_URL.replace(/\/$/, '') + '/#url=' + encodeURIComponent(url) + '&t=' + appToken_();
-  console.log('Open this link on your phone (once): ' + link);
+  const link = CONFIG.APP_URL ? CONFIG.APP_URL.replace(/\/$/, '') + '/#url=' + encodeURIComponent(url) + '&t=' + appToken_()
+    : url + '?t=' + appToken_();
+  console.log('Your Astra Leads app link (open on phone or laptop, then Add to Home Screen): ' + link);
   return link;
 }
 
