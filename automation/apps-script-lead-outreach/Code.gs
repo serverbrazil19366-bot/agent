@@ -54,6 +54,7 @@ const CONFIG = {
   FOLLOWUP_AFTER_DAYS: 3,    // one short follow-up if they haven't replied; 0 = never
   SIGNATURE_PHONE: '',       // optional, e.g. '+91 98xxx xxxxx'; shown under your name
   APP_URL: '',               // optional separate phone app with push alerts (see astra-leads-app); '' = not used
+  ACCESS_KEY: '',            // optional fixed private key for the app link (else one is generated)
   WEB_APP_URL: '',           // paste the "Web app URL" (ends in /exec) from Deploy → New deployment
   WHATSAPP_LINKS: false,     // true = also make one-click wa.me links in the sheet
   WEBSITE_PITCH: true,       // clinics with NO website: email a "let me build your website" pitch (if they have an email)
@@ -548,6 +549,7 @@ function checkReplies_(sh, rows) {
 
 /** Private pairing token shared by this script and your phone app. */
 function appToken_() {
+  if (CONFIG.ACCESS_KEY) return CONFIG.ACCESS_KEY;
   const props = PropertiesService.getScriptProperties();
   let t = props.getProperty('appToken');
   if (!t) { t = Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, ''); props.setProperty('appToken', t); }
@@ -735,7 +737,7 @@ function log_(msg) { console.log(msg); }
 
 function doGet(e) {
   const p = (e && e.parameter) || {};
-  const ok = p.t && p.t === PropertiesService.getScriptProperties().getProperty('appToken');
+  const ok = p.t && p.t === appToken_();
   const out = obj => ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
   if (!ok) return p.api ? out({ error: 'not paired: open the link from appLink again' }) :
     HtmlService.createHtmlOutput('<p style="font:16px sans-serif;padding:24px">This link is missing your private key. ' +
