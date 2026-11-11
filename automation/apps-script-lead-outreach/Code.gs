@@ -574,6 +574,14 @@ function appLink() {
   const link = CONFIG.APP_URL ? CONFIG.APP_URL.replace(/\/$/, '') + '/#url=' + encodeURIComponent(url) + '&t=' + appToken_()
     : url + '?t=' + appToken_();
   console.log('Your Astra Leads app link (open on phone or laptop, then Add to Home Screen): ' + link);
+  const me = Session.getEffectiveUser().getEmail();
+  if (me) {
+    MailApp.sendEmail({ to: me, subject: 'Your Astra Leads app link', name: 'Astra Outreach', htmlBody:
+      '<p>Open this on your phone, then add it to your home screen:</p>' +
+      '<p style="font-size:18px"><a href="' + link + '"><b>Open Astra Leads</b></a></p>' +
+      '<p style="color:#888;font-size:12px">This link contains your private key. Don\'t share or forward it.</p>' });
+    console.log('Also emailed to ' + me + '. Open that email on your phone and tap "Open Astra Leads".');
+  }
   return link;
 }
 
@@ -730,7 +738,8 @@ function doGet(e) {
   const ok = p.t && p.t === PropertiesService.getScriptProperties().getProperty('appToken');
   const out = obj => ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
   if (!ok) return p.api ? out({ error: 'not paired: open the link from appLink again' }) :
-    HtmlService.createHtmlOutput('<p style="font:16px sans-serif;padding:24px">Open Astra Leads from your phone app.</p>');
+    HtmlService.createHtmlOutput('<p style="font:16px sans-serif;padding:24px">This link is missing your private key. ' +
+      'In Apps Script, run <b>appLink</b>: it emails you the full link. Open that email on your phone and tap it.</p>');
   try {
     if (p.api === 'data') return out(dashboardData_());
     if (p.api === 'mark') { markLead(p.row, p.status); return out({ ok: true }); }
