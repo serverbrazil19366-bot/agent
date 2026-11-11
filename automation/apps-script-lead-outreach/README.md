@@ -39,6 +39,9 @@ The same pipeline as `../n8n-lead-audit-outreach`, but it runs on Google's serve
    - every 10 minutes, 10 AM–6 PM, Mon–Fri: at most 1 email, and at most 20 a day
 
 ## Daily use
+- **The email** is short and about patients, not tech. It gives the seconds, Google's "half of mobile visitors leave after 3 s" finding, a link to the public PageSpeed report so they can check it themselves, and a one-word call to action: reply "yes" and you send the 2 fixes. The fixes are already in the `top_fixes` column.
+- **Follow-up:** after `FOLLOWUP_AFTER_DAYS` (3) days with no reply, one short follow-up is sent. This counts toward the daily cap.
+- **Replies are detected automatically:** the status becomes `replied` (or `bounced`). Reply to "yes" with the 2 fixes from `top_fixes`, then offer a 10-minute call.
 - **Replies:** when someone replies "no", change that row's status to `opted_out`. For a positive reply, use `replied`. That email address is never contacted again.
 - **`no_website` rows** are your list for the website-design offer, with their phone numbers.
 - **`no_email` rows:** the site has no email on it. Call or WhatsApp them instead; the phone number is in the row.

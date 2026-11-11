@@ -50,6 +50,8 @@ const CONFIG = {
   SEND_MODE: 'draft',        // 'draft' = Gmail drafts for you to review. Change to 'send' when happy.
   WORK_HOURS: [10, 18],      // IST; emails only go out inside these hours, Mon–Fri
   GREETING: 'Hi Doctor',     // the website rarely shows the owner's name, so keep it general
+  FOLLOWUP_AFTER_DAYS: 3,    // one short follow-up if they haven't replied; 0 = never
+  SIGNATURE_PHONE: '',       // optional, e.g. '+91 98xxx xxxxx'; shown under your name
 
   SENDER_NAME: 'S. Saktheeswaran',
   AGENCY_SITE: 'https://astranexora.netlify.app',
@@ -59,8 +61,9 @@ const CONFIG = {
 const SHEET = 'Leads';
 const COLS = ['added_on', 'status', 'business_name', 'website', 'domain', 'phone', 'address',
   'rating', 'place_id', 'speed_index', 'perf_score', 'lcp', 'email', 'email_found_on',
-  'contacted_on', 'note', 'city'];
-// status: (empty = just pasted) | new | duplicate | no_website | fast | audit_failed | no_email | drafted | sent | opted_out | replied
+  'contacted_on', 'note', 'city', 'top_fixes', 'thread_ids', 'followup_on'];
+// status: (empty = just pasted) | new | duplicate | no_website | fast | audit_failed | no_email | drafted | sent |
+//         followed_up | replied (set automatically when they answer) | bounced | opted_out
 
 const NOT_A_WEBSITE = ['facebook.com', 'instagram.com', 'linkedin.com', 'twitter.com', 'x.com',
   'youtube.com', 'wa.me', 'whatsapp.com', 'linktr.ee', 'justdial.com', 'practo.com', 'sulekha.com',
@@ -219,11 +222,14 @@ function processNext(manual) {
     const sh = sheet_();
     const rows = readRows_(sh);
     const today = today_();
-    const doneToday = rows.filter(r => String(r.contacted_on).indexOf(today) === 0).length;
+    checkReplies_(sh, rows);
+    const doneToday = rows.filter(r => String(r.contacted_on).indexOf(today) === 0 ||
+      String(r.followup_on).indexOf(today) === 0).length;
     if (doneToday >= CONFIG.EMAILS_PER_DAY) return;
     if (CONFIG.SEND_MODE === 'send' && MailApp.getRemainingDailyQuota() < 1) return;
+    if (sendOneFollowup_(sh, rows)) return;   // follow-ups first, one email per run
     prepareManualRows_(sh, rows);
-    const contacted = new Set(rows.filter(r => r.email && ['sent', 'drafted', 'opted_out', 'replied'].indexOf(r.status) >= 0)
+    const contacted = new Set(rows.filter(r => r.email && ['sent', 'drafted', 'followed_up', 'opted_out', 'replied', 'bounced'].indexOf(r.status) >= 0)
       .map(r => String(r.email).toLowerCase()));
 
     // Work through 'new' rows until one email goes out or ~4 min pass (limit is 6).
@@ -261,6 +267,7 @@ function handleLead_(r, contacted) {
   const audit = pageSpeed_(r.website);
   if (audit.error) { r.status = 'audit_failed'; r.note = appendNote_(r.note, audit.error); return false; }
   r.speed_index = audit.speedIndex; r.perf_score = audit.score; r.lcp = audit.lcp;
+  r.top_fixes = (audit.fixes || []).join(' | ');
   if (audit.speedIndexS <= CONFIG.SPEED_THRESHOLD_S) { r.status = 'fast'; return false; }
 
   let found = findEmailOnSite_(r.website, r.domain);
@@ -271,11 +278,12 @@ function handleLead_(r, contacted) {
   r.email = found.email; r.email_found_on = found.page;
 
   const mail = buildEmail_(r);
+  const draft = GmailApp.createDraft(r.email, mail.subject, mail.text, { htmlBody: mail.html, name: CONFIG.SENDER_NAME });
   if (CONFIG.SEND_MODE === 'send') {
-    GmailApp.sendEmail(r.email, mail.subject, mail.text, { htmlBody: mail.html, name: CONFIG.SENDER_NAME });
+    const msg = draft.send();
+    r.thread_ids = msg.getThread().getId();
     r.status = 'sent';
   } else {
-    GmailApp.createDraft(r.email, mail.subject, mail.text, { htmlBody: mail.html, name: CONFIG.SENDER_NAME });
     r.status = 'drafted';
   }
   r.contacted_on = Utilities.formatDate(new Date(), 'Asia/Kolkata', 'yyyy-MM-dd HH:mm');
@@ -314,25 +322,90 @@ function findEmailOnSite_(website, domain) {
 }
 
 function buildEmail_(r) {
-  const callDay = callDay_();
-  const subject = 'Quick fix for ' + r.business_name + "'s mobile conversion drop?";
+  const m = emailCopy(r, CONFIG);
+  return { subject: m.subject, html: m.html, text: htmlToText(m.html) };
+}
+
+/** Short, patient-focused first email. Pure, so it can be unit-tested. */
+function emailCopy(r, cfg) {
+  const name = r.business_name || r.domain;
+  const secs = String(r.speed_index || '').replace(/\s*s$/, '');
+  const report = 'https://pagespeed.web.dev/analysis?url=' + encodeURIComponent(r.website) + '&form_factor=mobile';
+  const fixes = String(r.top_fixes || '').split(' | ').filter(Boolean).length;
+  const subject = 'Question about ' + name + "'s website";
   const html =
-    '<p>' + esc_(CONFIG.GREETING) + ',</p>' +
-    '<p>I was reviewing a few local clinics in ' + esc_(r.city || CONFIG.CITY_FOR_EMAIL) + ' and looked at your website (' + esc_(r.domain) + ').</p>' +
-    "<p>I ran Google's own Lighthouse performance test on it, on mobile. Your page takes <strong>" + esc_(r.speed_index) +
-    '</strong> to visibly load (Speed Index), and its mobile performance score is <strong>' + esc_(r.perf_score) + '/100</strong>. ' +
-    'Anything above 3 seconds usually means a big share of mobile visitors leave before they see your page, which also wastes your local SEO effort.</p>' +
-    '<p>I run <strong>Astra Nexora</strong>, a conversion optimisation and automation agency here in Tamil Nadu. ' +
-    'We fix exactly these technical leaks without big-agency budgets.</p>' +
-    "<p>I've written down a 2-step fix for this speed problem. Are you open to a quick 10-minute call on " + callDay + ' to go through it?</p>' +
-    '<p>Best regards,<br><strong>' + esc_(CONFIG.SENDER_NAME) + '</strong><br>Founder &amp; CEO, Astra Nexora<br>' +
-    '<a href="' + CONFIG.AGENCY_SITE + '">' + CONFIG.AGENCY_SITE.replace(/^https?:\/\//, '') + '</a> · ' +
-    '<a href="' + CONFIG.PERSONAL_SITE + '">' + CONFIG.PERSONAL_SITE.replace(/^https?:\/\//, '') + '</a></p>' +
-    '<p style="color:#888;font-size:12px">You can check the result yourself at pagespeed.web.dev. ' +
-    'If this isn\'t useful, just reply "no" and I won\'t email again.</p>';
-  const text = html.replace(/<br>/g, '\n').replace(/<\/p>/g, '\n\n').replace(/<[^>]+>/g, '')
-    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').trim();
-  return { subject, html, text };
+    '<p>' + esc_(cfg.GREETING) + ',</p>' +
+    "<p>I ran " + esc_(name) + "'s website through Google's mobile speed test today. On a typical phone connection, " +
+    'it takes about <b>' + esc_(secs) + ' seconds</b> before the page shows up.</p>' +
+    '<p>Most patients search "dentist near me" on their phone and tap the first two or three clinics. ' +
+    "Google's own research found that more than half of mobile visitors leave if a page takes over 3 seconds, " +
+    'so some of those patients go straight back and pick the next clinic.</p>' +
+    '<p>You can see the result yourself here: <a href="' + report + '">Google PageSpeed report for ' + esc_(r.domain) + '</a></p>' +
+    '<p>I\'ve noted ' + (fixes >= 2 ? '2 simple fixes' : 'a simple fix') + ' for your site. ' +
+    'Shall I send ' + (fixes >= 2 ? 'them' : 'it') + ' over? It\'s free. Just reply "yes".</p>' +
+    '<p>' + esc_(cfg.SENDER_NAME) + '<br>Astra Nexora, ' + esc_(r.city || cfg.CITY_FOR_EMAIL) +
+    (cfg.SIGNATURE_PHONE ? '<br>' + esc_(cfg.SIGNATURE_PHONE) : '') + '<br>' +
+    cfg.AGENCY_SITE.replace(/^https?:\/\//, '') + '</p>' +
+    '<p style="color:#888;font-size:12px">P.S. If this isn\'t relevant, reply "no" and I won\'t email again.</p>';
+  return { subject, html };
+}
+
+function followupCopy(r, cfg) {
+  const name = r.business_name || r.domain;
+  const subject = 'Re: Question about ' + name + "'s website";
+  const html =
+    '<p>' + esc_(cfg.GREETING) + ',</p>' +
+    "<p>Just checking you saw my note about " + esc_(name) + "'s website taking about " +
+    esc_(String(r.speed_index || '').replace(/\s*s$/, '')) + ' seconds to show up on mobile.</p>' +
+    '<p>The fixes are quick and I\'m happy to share them free. Reply "yes" and I\'ll send them today.</p>' +
+    '<p>' + esc_(cfg.SENDER_NAME) + '<br>Astra Nexora</p>';
+  return { subject, html };
+}
+
+function htmlToText(html) {
+  return html.replace(/<a href="([^"]+)">[^<]*<\/a>/g, '$1').replace(/<br>/g, '\n').replace(/<\/p>/g, '\n\n')
+    .replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"').trim();
+}
+
+/** Sends at most one follow-up per run. Returns true if one went out. */
+function sendOneFollowup_(sh, rows) {
+  if (CONFIG.SEND_MODE !== 'send' || !(CONFIG.FOLLOWUP_AFTER_DAYS > 0)) return false;
+  const cutoff = Date.now() - CONFIG.FOLLOWUP_AFTER_DAYS * 24 * 3600 * 1000;
+  for (const r of rows) {
+    if (r.status !== 'sent' || !r.email || !r.contacted_on) continue;
+    const sentAt = new Date(String(r.contacted_on).replace(' ', 'T') + ':00+05:30').getTime();
+    if (!(sentAt < cutoff)) continue;
+    const m = followupCopy(r, CONFIG);
+    const msg = GmailApp.createDraft(r.email, m.subject, htmlToText(m.html), { htmlBody: m.html, name: CONFIG.SENDER_NAME }).send();
+    r.thread_ids = [r.thread_ids, msg.getThread().getId()].filter(Boolean).join(',');
+    r.status = 'followed_up';
+    r.followup_on = Utilities.formatDate(new Date(), 'Asia/Kolkata', 'yyyy-MM-dd HH:mm');
+    writeRow_(sh, r);
+    return true;
+  }
+  return false;
+}
+
+/** Marks rows 'replied' (or 'bounced') when someone other than you wrote in the thread. */
+function checkReplies_(sh, rows) {
+  const me = Session.getActiveUser().getEmail().toLowerCase();
+  rows.forEach(r => {
+    if ((r.status !== 'sent' && r.status !== 'followed_up') || !r.thread_ids) return;
+    let status = '';
+    String(r.thread_ids).split(',').forEach(id => {
+      let thread;
+      try { thread = GmailApp.getThreadById(id); } catch (e) { return; }
+      if (!thread) return;
+      thread.getMessages().forEach(m => {
+        const from = m.getFrom().toLowerCase();
+        if (me && from.indexOf(me) >= 0) return;
+        if (/mailer-daemon|postmaster/.test(from)) { status = status || 'bounced'; return; }
+        status = 'replied';
+      });
+    });
+    if (status) { r.status = status; r.note = appendNote_(r.note, status + ' ' + today_()); writeRow_(sh, r); }
+  });
 }
 
 // ─────────────────────── pure helpers (unit-tested) ───────────────────────
@@ -381,6 +454,11 @@ function parsePageSpeed(json) {
     speedIndex: nb(si.displayValue) || s + ' s',
     lcp: nb(lcp.displayValue),
     score: lh.categories && lh.categories.performance ? Math.round(lh.categories.performance.score * 100) : '',
+    fixes: Object.keys(lh.audits).map(k => lh.audits[k])
+      .filter(a => a.details && a.details.type === 'opportunity' && a.details.overallSavingsMs > 300)
+      .sort((x, y) => y.details.overallSavingsMs - x.details.overallSavingsMs)
+      .slice(0, 2)
+      .map(a => a.title + ' (~' + (Math.round(a.details.overallSavingsMs / 100) / 10) + ' s)'),
   };
 }
 
