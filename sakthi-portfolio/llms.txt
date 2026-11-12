@@ -23,7 +23,6 @@
 
 ## Case studies
 - [Astra Nexora – Agency Website](https://saktheeswaran.netlify.app/work/astra-nexora-website.html): A fast, SEO-ready agency website with service pages, a blog and a WhatsApp enquiry form.
-- [Astra Nexora – Automated Lead Outreach System](https://saktheeswaran.netlify.app/work/astra-lead-outreach-automation.html): A system that finds potential clients, analyses each client's website, checks its speed and sends a personal email, then tracks every reply, on its own and at zero running cost.
 - [Ankhor Dental Lab – Case Portal, Scan Booking & Automation](https://saktheeswaran.netlify.app/work/ankhor-case-booking-automation.html): An online case portal and scan booking platform with dashboards, email and WhatsApp alerts and a mobile app.
 - [Ankhor Dental Lab – Diwali Referral Program](https://saktheeswaran.netlify.app/work/ankhor-referral-program.html): A Diwali Refer & Earn program for dentists: a campaign page with a live countdown, personal referral links and a dashboard and app to track referrals.
 - [Ankhor Dental Lab – Website & SEO](https://saktheeswaran.netlify.app/work/ankhor-dental-lab.html): A new dental lab website with a full product catalogue, technology pages, SEO on every page and Send a Case everywhere.

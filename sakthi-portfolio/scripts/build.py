@@ -263,16 +263,9 @@ def home():
     filters = "".join(f'<button aria-pressed="{"true" if k == "all" else "false"}" class="filter" data-filter="{k}" type="button">{n}</button>'
                       for k, n in [("all", "All"), ("web", "Websites"), ("seo", "SEO"), ("auto", "Automation"), ("social", "Social")])
     works = "\n".join(work_card(x, p, i) for i, x in enumerate(PROJECTS))
-    def svc_card(k, sv):
-        t, d, ic = sv[:3]
-        link = sv[3] if len(sv) > 3 else ""
-        more = f'<a class="svc-link" href="{link}">See the system I built {ARROW_UR}</a>' if link else ""
-        return (f'<li class="svc{" svc-wide" if link else ""}" data-reveal=""><span class="svc-ic">{svg(I[ic])}</span>'
-                f'<div class="svc-body"><span class="svc-new">New</span><h3>{esc(t)}</h3><p>{esc(d)}</p>{more}</div>'
-                f'<span aria-hidden="true" class="svc-n">{k:02d}</span></li>' if link else
-                f'<li class="svc" data-reveal=""><span class="svc-ic">{svg(I[ic])}</span><h3>{esc(t)}</h3><p>{esc(d)}</p>'
-                f'<span aria-hidden="true" class="svc-n">{k:02d}</span></li>')
-    services = "".join(svc_card(k, sv) for k, sv in enumerate(SERVICES, 1))
+    services = "".join(
+        f'<li class="svc" data-reveal=""><span class="svc-ic">{svg(I[ic])}</span><h3>{esc(t)}</h3><p>{esc(d)}</p><span aria-hidden="true" class="svc-n">{k:02d}</span></li>'
+        for k, (t, d, ic) in enumerate(SERVICES, 1))
     videos = "".join(
         f'''<li class="vid{" tall" if kind == "short" else ""}" data-reveal="">
 <button aria-label="Play: {attr(title)}" class="vid-btn" data-yt="{vid}" type="button">
@@ -304,7 +297,7 @@ def home():
     results = "".join(f'<li><b>{esc(n)}</b><span>{esc(t)}</span></li>' for n, t in [STATS[2]] + RESULTS)
     hero_stats = "".join(f'<li><b>{esc(n)}</b><span>{esc(t)}</span></li>' for n, t in STATS)
     BIG_MARQUEE = "".join("<span>Let's work together</span><i>✦</i>" for _ in range(4))
-    options = "".join(f'<option>{esc(t)}</option>' for t, *_ in SERVICES) + "<option>Job opportunity</option><option>Something else</option>"
+    options = "".join(f'<option>{esc(t)}</option>' for t, _, _ in SERVICES) + "<option>Job opportunity</option><option>Something else</option>"
 
     body = f'''{header(p, h)}
 
