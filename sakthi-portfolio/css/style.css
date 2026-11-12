@@ -778,3 +778,15 @@ main { overflow-x: clip; }
     .ins-tile-in h3 { font-size: 30px; }
 }
 .ins-tile-in { display: flex; flex-direction: column; height: 100%; }
+
+/* ---------- featured service (full width, links to a case study) ---------- */
+.svc.svc-wide { grid-column: 1 / -1; display: grid; grid-template-columns: auto 1fr; gap: 0 26px; align-items: start; background: var(--dark); border-color: var(--dark); }
+.svc-wide .svc-ic { margin-bottom: 0; background: rgba(255, 77, 28, .16); }
+.svc-wide h3 { color: #F5F1EA; }
+.svc-wide p { color: #B9B9C6; max-width: 640px; }
+.svc-wide .svc-n { color: rgba(255, 255, 255, .06); }
+.svc-new { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: rgba(255, 77, 28, .14); border-radius: 999px; padding: 3px 10px; margin-bottom: 10px; }
+.svc-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; color: var(--accent); font-weight: 600; text-decoration: none; }
+.svc-link .ic { width: 16px; height: 16px; }
+.svc-link:hover { text-decoration: underline; }
+@media (max-width: 640px) { .svc.svc-wide { grid-template-columns: 1fr; } .svc-wide .svc-ic { margin-bottom: 20px; } }
