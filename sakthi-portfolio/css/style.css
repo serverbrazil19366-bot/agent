@@ -784,3 +784,5 @@ main { overflow-x: clip; }
 .work-card.full .wc-body { justify-content: center; padding: 40px; }
 .work-card.full h3 { font-size: clamp(28px, 2.6vw, 38px); }
 @media (max-width: 1100px) { .work-card.full { grid-column: span 6; grid-template-columns: 1fr; } }
+@media (min-width: 1101px) { .svc-grid > .svc:last-child:nth-child(3n+1) { grid-column: 1 / -1; } }
+@media (min-width: 701px) and (max-width: 1100px) { .svc-grid > .svc:last-child:nth-child(odd) { grid-column: 1 / -1; } }

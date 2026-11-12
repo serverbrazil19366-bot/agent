@@ -106,6 +106,7 @@ SERVICES = [
     ("Google & Meta Ads", "Campaign setup and execution with tracking that shows what each rupee brings.", "strategy"),
     ("Social Media & Content", "Content planning, posters, reels and videos that keep brands consistent.", "social"),
     ("Analytics & Reporting", "GA4 and Search Console set-up, conversion tracking and clear monthly reports.", "content"),
+    ("Lead Generation Automation", "A system that finds your ideal clients, sends each one a personal email, follows up once and tracks every reply on a dashboard, at zero running cost.", "lead"),
 ]
 
 # Projects. tag drives the filter: web, seo, auto, social.
@@ -513,7 +514,7 @@ KEYWORD_PAGES = [
         "list": ["Booking forms that open WhatsApp with the details filled in", "n8n workflows connecting forms, email, sheets and CRMs",
                  "Team dashboards for incoming requests", "Email and app notifications for new bookings",
                  "Automatic confirmations and status updates", "Lead capture and follow-up sequences"],
-        "projects": ["akeela-whatsapp-automation", "ankhor-case-booking-automation"],
+        "projects": ["astra-nexora-lead-outreach-system", "akeela-whatsapp-automation", "ankhor-case-booking-automation"],
         "faqs": [
             ("What is n8n?",
              "n8n is a workflow automation tool. It connects apps like forms, WhatsApp, email, Google Sheets and CRMs, "

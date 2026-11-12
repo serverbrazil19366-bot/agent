@@ -40,6 +40,7 @@ SERVICE_TAGLINES = {
     "branding": "Identities and personal brands",
     "email-lead-generation": "Funnels, email and nurturing",
     "ai-automation": "Chatbots, n8n and WhatsApp",
+    "lead-generation-automation": "Find and email new clients on autopilot",
 }
 SERVICE_BY_SLUG = {s["slug"]: s for s in SERVICES}
 
@@ -67,6 +68,7 @@ ICON_PATHS = {
     "branding": '<path d="M12 3 4 8.5 12 21l8-12.5z"/><path d="M4 8.5h16M9 8.5 12 21l3-12.5"/>',
     "email-lead-generation": '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7 8.5 6 8.5-6"/>',
     "ai-automation": '<path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><rect x="7" y="7" width="10" height="10" rx="2.5"/><path d="M10 12h4M12 10v4"/>',
+    "lead-generation-automation": '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/><path d="m15.5 8.5 4-4M17 4.5h2.5V7"/>',
 }
 
 
@@ -578,7 +580,7 @@ def home_page(posts=()):
 
     work = dashboard_card(p) + "\n" + "\n".join(
         work_card(f"projects/{pr['slug']}.html", img(pr["hero"], pr["hero_alt"], "(min-width: 1001px) 400px, 94vw", p),
-                  pr["category"], "Concept", pr["title"], pr["summary"])
+                  pr["category"], "Case study" if pr.get("real") else "Concept", pr["title"], pr["summary"])
         for pr in PROJECTS)
 
     f = HOME["founder"]
@@ -650,7 +652,7 @@ def home_page(posts=()):
 <div aria-hidden="true" class="floaters"><i class="f1"></i><i class="f2"></i><i class="f3"></i><i class="f4"></i></div>
 <div aria-hidden="true" class="svc-bg img-wrap">{img("pexels-577210", "", "40vw", p)}</div>
 <div class="wrap">
-{heading("Services", 'Expand your digital <span class="hl">presence with us.</span>', "Eight services, planned together by one team. Pick one, or let us run the whole system.", center=True, title_id="servicesTitle")}
+{heading("Services", 'Expand your digital <span class="hl">presence with us.</span>', "Nine services, planned together by one team. Pick one, or let us run the whole system.", center=True, title_id="servicesTitle")}
 <div class="svc-grid">
 {cards}
 </div>
@@ -716,7 +718,7 @@ def home_page(posts=()):
 <section aria-labelledby="workTitle" class="sec work" id="work">
 <div aria-hidden="true" class="floaters"><i class="f1"></i><i class="f2"></i><i class="f3"></i><i class="f4"></i></div>
 <div class="wrap">
-{heading("Our work", 'Projects built <span class="hl">to deliver.</span>', "A live reporting demo and concept projects that show how we think. Client case studies are added as clients approve them.", center=True, title_id="workTitle")}
+{heading("Our work", 'Projects built <span class="hl">to deliver.</span>', "Our own lead outreach system, a live reporting demo and concept projects that show how we think. Client case studies are added as clients approve them.", center=True, title_id="workTitle")}
 <div class="work-grid">
 {work}
 </div>
@@ -903,13 +905,14 @@ def service_page(s, index):
 def project_page(pr, index):
     p, home = "../", "../index.html"
     path = f"projects/{pr['slug']}.html"
-    title = f"{pr['title']} — Concept Project | Astra Nexora"
+    real = pr.get("real", False)
+    title = f"{pr['title']} — {'Case Study' if real else 'Concept Project'} | Astra Nexora"
     svc = SERVICE_BY_SLUG[pr["related"]]
 
     schema = {
         "@context": "https://schema.org",
         "@graph": [
-            {"@type": "CreativeWork", "name": pr["title"], "description": pr["summary"], "genre": "Concept project",
+            {"@type": "CreativeWork", "name": pr["title"], "description": pr["summary"], "genre": "Case study" if real else "Concept project",
              "creator": {"@type": "Organization", "name": "Astra Nexora", "url": SITE}},
             breadcrumb_schema([("Home", ""), ("Work", "#work"), (pr["title"], path)]),
         ],
@@ -918,11 +921,20 @@ def project_page(pr, index):
     hero = page_hero(
         home,
         [("Home", home), ("Work", f"{home}#work"), (pr["title"], None)],
-        f"Concept project · {esc(pr['category'])}", f'<span class="ln"><span class="box">{esc(pr["title"])}</span></span>', esc(pr["summary"]),
+        f"{'Case study' if real else 'Concept project'} · {esc(pr['category'])}", f'<span class="ln"><span class="box">{esc(pr["title"])}</span></span>', esc(pr["summary"]),
         btn("Start a similar project", f"{home}#contact", "btn-white") + btn(f"See {svc['nav']}", f"../services/{svc['slug']}.html", "btn-white"),
         img(pr["hero"], pr["hero_alt"], "(min-width: 1001px) 55vw, 100vw", p, eager=True))
 
     deliver = "".join(f"<li>{CHECK}{esc(d)}</li>" for d in pr["deliverables"])
+    gallery = ""
+    if pr.get("gallery"):
+        figs = "".join(f'<figure class="pg-fig" data-reveal=""><div class="img-wrap img-reveal">{img(k, c, "(min-width: 1001px) 1100px, 94vw", p)}</div><figcaption>{esc(c)}</figcaption></figure>' for k, c in pr["gallery"])
+        gallery = f'''<section aria-labelledby="shotsTitle" class="sec services">
+<div class="wrap">
+{heading("Inside the system", 'Real <span class="hl">screenshots.</span>', "From the live system. Business names, emails and phone numbers are masked.", center=True, title_id="shotsTitle")}
+<div class="pg-list">{figs}</div>
+</div>
+</section>'''
     goals = "\n".join(f'<li class="pr-item" data-reveal=""><span class="pr-n">{i:02d}</span><h3>{esc(g)}</h3></li>' for i, g in enumerate(pr["goals"], 1))
     nxt = PROJECTS[index % len(PROJECTS)]
 
@@ -934,7 +946,7 @@ def project_page(pr, index):
 
 {facts_row(pr["meta"])}
 
-<div class="wrap note-wrap"><p class="concept-note"><strong>Concept project.</strong> This shows how we would approach this kind of brief. It is not a client case study and has no client results.</p></div>
+{"" if real else '<div class="wrap note-wrap"><p class="concept-note"><strong>Concept project.</strong> This shows how we would approach this kind of brief. It is not a client case study and has no client results.</p></div>'}
 
 <section aria-labelledby="challengeTitle" class="sec brief">
 <div class="wrap">
@@ -950,7 +962,7 @@ def project_page(pr, index):
 
 <section aria-labelledby="approachTitle" class="sec services">
 <div class="wrap">
-{heading("Our approach", 'How we\'d <span class="hl">solve it.</span>', "Four steps, each with a clear outcome before the next one starts.", center=True, title_id="approachTitle")}
+{heading("Our approach", 'How we <span class="hl">solved it.</span>' if real else 'How we\'d <span class="hl">solve it.</span>', "Four steps, each with a clear outcome before the next one starts.", center=True, title_id="approachTitle")}
 <ol class="step-grid">
 {step_cards(pr["approach"])}
 </ol>
@@ -959,25 +971,27 @@ def project_page(pr, index):
 
 <section aria-labelledby="deliverTitle" class="sec deliver">
 <div class="wrap deliver-grid">
-{heading("Scope", 'What we\'d <span class="hl">deliver.</span>', f"Part of our {esc(svc['title'])} service.", title_id="deliverTitle", light=True)}
+{heading("Scope", 'What we <span class="hl">built.</span>' if real else 'What we\'d <span class="hl">deliver.</span>', f"Part of our {esc(svc['title'])} service.", title_id="deliverTitle", light=True)}
 <ul class="deliver-list" data-reveal="">{deliver}</ul>
 </div>
 </section>
 
 <section aria-labelledby="goalsTitle" class="sec principles">
 <div class="wrap">
-{heading("Success measures", 'What success <span class="hl">looks like.</span>', "The goals we'd set and report against for a project like this.", center=True, title_id="goalsTitle")}
+{heading("Results", 'Early <span class="hl">results.</span>', "From the first two days after launch in November 2026.", center=True, title_id="goalsTitle") if real else heading("Success measures", 'What success <span class="hl">looks like.</span>', "The goals we'd set and report against for a project like this.", center=True, title_id="goalsTitle")}
 <ul class="pr-grid two">
 {goals}
 </ul>
 </div>
 </section>
 
+{gallery}
+
 <section aria-labelledby="nextTitle" class="sec work">
 <div class="wrap">
 {heading("Next project", 'Keep <span class="hl">exploring.</span>', center=True, title_id="nextTitle")}
 <div class="work-grid one">
-{work_card(f"{nxt['slug']}.html", img(nxt["hero"], nxt["hero_alt"], "(min-width: 1001px) 600px, 94vw", p), nxt["category"], "Concept", nxt["title"], nxt["summary"])}
+{work_card(f"{nxt['slug']}.html", img(nxt["hero"], nxt["hero_alt"], "(min-width: 1001px) 600px, 94vw", p), nxt["category"], "Case study" if nxt.get("real") else "Concept", nxt["title"], nxt["summary"])}
 </div>
 </div>
 </section>
@@ -1028,7 +1042,7 @@ def llms_txt(posts=()):
     ]
     lines += [f"- [{s['title']}]({SITE}services/{s['slug']}.html): {SERVICE_TAGLINES[s['slug']]}" for s in SERVICES]
     lines += ["", "## Work", f"- [SEO report dashboard (sample data)]({SITE}projects/seo-report.html)"]
-    lines += [f"- [{pr['title']} (concept project)]({SITE}projects/{pr['slug']}.html)" for pr in PROJECTS]
+    lines += [f"- [{pr['title']} ({'case study' if pr.get('real') else 'concept project'})]({SITE}projects/{pr['slug']}.html)" for pr in PROJECTS]
     if posts:
         lines += ["", "## Blog"] + [f"- [{strip_tags(x['title'])}]({SITE}blog/{x['slug']}.html): {x['description']}" for x in posts]
     lines += ["", "## Contact", f"- Website: {SITE}", f"- Email: {EMAIL}", f"- WhatsApp: {WA}",
