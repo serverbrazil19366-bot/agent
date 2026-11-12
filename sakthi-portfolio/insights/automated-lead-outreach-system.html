@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Automated Lead Outreach System with Google Apps Script: Case Study</title>
+<meta content="How I built a zero-cost lead outreach system for Astra Nexora: OpenStreetMap lead search, PageSpeed audits, personal Gmail emails, one follow-up, reply tracking and dashboards." name="description"/>
+<meta content="index, follow, max-image-preview:large" name="robots"/>
+<link href="https://saktheeswaran.netlify.app/insights/automated-lead-outreach-system.html" rel="canonical"/>
+<meta content="#F5F1EA" name="theme-color"/>
+<meta content="article" property="og:type"/>
+<meta content="Automated Lead Outreach System with Google Apps Script: Case Study" property="og:title"/>
+<meta content="How I built a zero-cost lead outreach system for Astra Nexora: OpenStreetMap lead search, PageSpeed audits, personal Gmail emails, one follow-up, reply tracking and dashboards." property="og:description"/>
+<meta content="https://saktheeswaran.netlify.app/insights/automated-lead-outreach-system.html" property="og:url"/>
+<meta content="https://saktheeswaran.netlify.app/assets/blog/cover-lead-outreach-w1600.webp" property="og:image"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<link href="../assets/favicon-32.png" rel="icon" sizes="32x32" type="image/png"/>
+<link href="../assets/favicon.png" rel="icon" sizes="48x48" type="image/png"/>
+<link href="../assets/favicon-192.png" rel="icon" sizes="192x192" type="image/png"/>
+<link href="../assets/apple-touch-icon.png" rel="apple-touch-icon"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Phudu:wght@600;700;800;900&amp;family=Instrument+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="../css/style.css?v=cce1dc1b3f" rel="stylesheet"/>
+<script>(function(d){d.classList.add("js");if("scrollRestoration"in history)history.scrollRestoration="manual";try{var t=localStorage.getItem("theme");if(t==="dark"||(!t&&matchMedia("(prefers-color-scheme: dark)").matches))d.setAttribute("data-theme","dark");}catch(e){}})(document.documentElement);</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "BlogPosting",
+   "headline": "Automated Lead Outreach System with Google Apps Script: Case Study",
+   "description": "How I built a zero-cost lead outreach system for Astra Nexora: OpenStreetMap lead search, PageSpeed audits, personal Gmail emails, one follow-up, reply tracking and dashboards.",
+   "url": "https://saktheeswaran.netlify.app/insights/automated-lead-outreach-system.html",
+   "datePublished": "2026-11-12",
+   "dateModified": "2026-11-12",
+   "image": "https://saktheeswaran.netlify.app/assets/blog/cover-lead-outreach-w1600.webp",
+   "author": {
+    "@type": "Person",
+    "@id": "https://saktheeswaran.netlify.app/#person",
+    "name": "S. Saktheeswaran",
+    "url": "https://saktheeswaran.netlify.app/"
+   },
+   "publisher": {
+    "@type": "Person",
+    "name": "S. Saktheeswaran",
+    "url": "https://saktheeswaran.netlify.app/"
+   },
+   "mainEntityOfPage": "https://saktheeswaran.netlify.app/insights/automated-lead-outreach-system.html"
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "Home",
+     "item": "https://saktheeswaran.netlify.app/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "Insights",
+     "item": "https://saktheeswaran.netlify.app/#insights"
+    },
+    {
+     "@type": "ListItem",
+     "position": 3,
+     "name": "Automated lead outreach system for Astra Nexora",
+     "item": "https://saktheeswaran.netlify.app/insights/automated-lead-outreach-system.html"
+    }
+   ]
+  },
+  {
+   "@type": "FAQPage",
+   "mainEntity": [
+    {
+     "@type": "Question",
+     "name": "Does this system send spam?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "No. It sends a few personal emails a day, each about the business's own website, with one follow-up and an easy opt-out. Anyone who says no is never emailed again."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "What does it cost to run?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Nothing. It runs on free Google Apps Script, Gmail, Sheets, the PageSpeed Insights API, OpenStreetMap and Netlify allowances."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Can it work for other businesses?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes. The search, the checks and the email wording change for each business; the pipeline and dashboards stay the same."
+     }
+    }
+   ]
+  }
+ ]
+}
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header" id="header">
+<div class="wrap header-in">
+<a aria-label="S. Saktheeswaran home" class="logo" href="../index.html#top">SAKTHI<i>.</i></a>
+<nav aria-label="Main" class="nav"><a href="../index.html#about">About</a><a href="../index.html#skills">Skills</a><a href="../index.html#experience">Experience</a><a href="../index.html#work">Work</a><a href="../index.html#services">Services</a><a href="../index.html#videos">Videos</a><a href="../index.html#design">Design</a><a href="../index.html#contact">Contact</a></nav>
+<div class="h-tools">
+<button aria-label="Switch colour theme" class="theme-btn" type="button"><svg aria-hidden="true" class="ic moon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg><svg aria-hidden="true" class="ic sun" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+<a class="btn btn-dark btn-sm hire" href="../index.html#contact"><span>Hire Me</span><svg aria-hidden="true" class="ic arrow" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+<button aria-controls="menu" aria-expanded="false" aria-label="Open menu" class="burger" type="button"><span></span><span></span></button>
+</div>
+</div>
+<nav aria-label="Mobile" class="menu" id="menu"><a href="../index.html#about">About</a><a href="../index.html#skills">Skills</a><a href="../index.html#experience">Experience</a><a href="../index.html#work">Work</a><a href="../index.html#services">Services</a><a href="../index.html#videos">Videos</a><a href="../index.html#design">Design</a><a href="../index.html#contact">Contact</a><div class="menu-foot"><a class="btn btn-accent" href="../index.html#contact"><span>Hire Me</span><svg aria-hidden="true" class="ic arrow" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><div class="socials"><a aria-label="LinkedIn" href="https://www.linkedin.com/in/saktheeswaran-digital-marketing-expert/" rel="noopener" target="_blank"><svg aria-hidden="true" class="ic" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M8 10.5V16M8 7.8h.01M11.5 16v-5.5M11.5 13c0-1.6 1-2.6 2.3-2.6s2.2.9 2.2 2.6v3"/></svg></a><a aria-label="Instagram" href="https://www.instagram.com/itx_sakthi_77_/" rel="noopener" target="_blank"><svg aria-hidden="true" class="ic" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17 7h.01"/></svg></a><a aria-label="WhatsApp" href="https://wa.me/918838417707" rel="noopener" target="_blank"><svg aria-hidden="true" class="ic" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-2-2l.8-1-1-2z"/></svg></a><a aria-label="Email" href="mailto:saktheesw2005@gmail.com"><svg aria-hidden="true" class="ic" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 7 8.5 6 8.5-6"/></svg></a></div></div></nav>
+</header>
+
+<main id="main">
+<section class="cs-hero kw-hero" id="top">
+<div class="wrap">
+<a class="back" href="../index.html#insights">← All insights</a>
+<span class="kicker">Lead generation · Astra Nexora</span>
+<h1>Automated lead outreach system for <em>Astra Nexora</em></h1>
+<p class="art-meta">By <a href="../index.html#about">S. Saktheeswaran</a>, founder of Astra Nexora · <time datetime="2026-11-12">12 Nov 2026</time> · 7 min read</p>
+</div>
+<div class="wrap"><figure class="cs-cover art-cover"><img alt="Astra Leads dashboard on laptop and phone" decoding="async" height="900" fetchpriority="high" sizes="(min-width: 1001px) 1200px, 94vw" src="../assets/blog/cover-lead-outreach-w1600.webp" srcset="../assets/blog/cover-lead-outreach-w800.webp 800w, ../assets/blog/cover-lead-outreach-w1600.webp 1600w" width="1600"/></figure></div>
+</section>
+
+<section class="sec cs-body">
+<div class="wrap cs-in">
+<article class="art-body"><p class="art-lead">Finding new clients is the job every agency founder puts off. For each potential client I had to find the business, check its website, run a speed test, dig out an email address and write something that didn't read like spam: 15 to 20 minutes each. So I built a system that does the research for me and leaves the conversation to me. It runs every weekday, on its own, and costs nothing to run. Here's how it works.</p><h2>The rule: automate the research, not the relationship</h2><p>Mass emails don't work. Business owners ignore generic pitches, and sending lots of identical emails gets a Gmail account flagged as spam. So the system only automates the slow, repetitive parts: searching, testing, finding the email and writing a first draft. Every reply comes back to me, and I decide what to send.</p><p>Four principles: personal (every email is about the client's own website), honest (fast websites are skipped and every email links to the public Google report), slow (at most 10 emails a day, one every 10 minutes, weekdays only) and polite (one follow-up, an easy opt-out, and no means no).</p><h2>Step 1: find potential clients</h2><p>Each weekday at about 9 AM the system searches the next city on its list for the target type of business using OpenStreetMap's free Overpass API. It saves the name, website, phone, address and city to a Google Sheet, skips duplicates, and only searches when fewer than a day's worth of leads are waiting. Businesses without a website are kept with a no_website status: they're leads for a website build. Google Places is an optional upgrade for richer data.</p><div class="art-figs n1" data-reveal=""><figure class="art-fig"><img alt="The Leads sheet: one row per business with status, speed results and contact date. Details masked." decoding="async" height="1000" loading="lazy" sizes="(min-width: 1001px) 720px, 92vw" src="../assets/work/outreach-leads-sheet-w1600.webp" srcset="../assets/work/outreach-leads-sheet-w800.webp 800w, ../assets/work/outreach-leads-sheet-w1600.webp 1600w" width="1600"/><figcaption>The Leads sheet: one row per business with status, speed results and contact date. Details masked.</figcaption></figure></div><h2>Step 2: analyse the website</h2><p>Every website is tested with the Google PageSpeed Insights API in mobile mode, because that's how most customers first visit a business. The system saves the Speed Index, the performance score, Largest Contentful Paint and the two fixes Google estimates would save the most time. If the site loads in 3 seconds or less, it's marked fast and nobody gets an email about a problem they don't have.</p><h2>Step 3: find the right email address</h2><p>The script reads the business's own home, contact and about pages and collects every address it finds. It decodes emails hidden from bots, prefers addresses on the business's own domain, ranks owner, info and contact addresses higher, and ignores the web designer's email in the footer, image file names that look like emails and noreply addresses. No email? The lead stays in the sheet with its phone number for a call.</p><h2>Step 4: a personal email, and one follow-up</h2><p>Slow websites get an email with the real load time and score, one line on what slow pages cost in customers, a link to the public Google report and an offer of the two fixes for free. Businesses without a website get an offer to build one with links to my projects. The only ask is a one-word reply. If nobody answers in three days, one short follow-up goes out in the same thread, and then the business is left alone.</p><div class="art-figs n1" data-reveal=""><figure class="art-fig"><img alt="A real first email sent by the system (the no-website version). Business details masked." decoding="async" height="1000" loading="lazy" sizes="(min-width: 1001px) 720px, 92vw" src="../assets/work/outreach-email-w1600.webp" srcset="../assets/work/outreach-email-w800.webp 800w, ../assets/work/outreach-email-w1600.webp 1600w" width="1600"/><figcaption>A real first email sent by the system (the no-website version). Business details masked.</figcaption></figure></div><h2>Step 5: catch every reply</h2><p>Every 10 minutes the system runs one Gmail search across its conversations. A reply marks the lead as replied, saves the text, stars the email, labels it so the Gmail app notifies me, and moves it to the top of the dashboard. Bounces are marked and never retried.</p><h2>Step 6: dashboards and template replies</h2><p>A private dashboard shows today's numbers, what's coming up, system health, emails per day and the funnel from lead to client, on a laptop and as an app-like view on the phone. Opening a lead shows every detail and a reply box with the right template already filled in: send the fixes, sample design, price, book a call or a polite close. I edit and send it from the agency's Gmail in the same conversation.</p><div class="art-figs n2" data-reveal=""><figure class="art-fig"><img alt="The laptop dashboard: today&#x27;s numbers, what&#x27;s coming up, system health and the funnel." decoding="async" height="1000" loading="lazy" sizes="(min-width: 1001px) 720px, 92vw" src="../assets/work/outreach-dashboard-w1600.webp" srcset="../assets/work/outreach-dashboard-w800.webp 800w, ../assets/work/outreach-dashboard-w1600.webp 1600w" width="1600"/><figcaption>The laptop dashboard: today's numbers, what's coming up, system health and the funnel.</figcaption></figure><figure class="art-fig phone"><img alt="The phone view, added to the home screen like an app." decoding="async" height="1192" loading="lazy" sizes="200px" src="../assets/work/outreach-m-w700.webp" srcset="../assets/work/outreach-m-w390.webp 390w, ../assets/work/outreach-m-w700.webp 700w" width="700"/><figcaption>The phone view, added to the home screen like an app.</figcaption></figure></div><h2>The tech, and why it costs nothing</h2><p>Google Apps Script runs all the logic on a schedule, Google Sheets is the database (one row per business, 27 columns), Gmail sends and receives, PageSpeed Insights does the audit, OpenStreetMap finds the leads and a small Netlify page hosts the dashboard. Everything fits in free allowances: a few minutes of script time a day and 10 to 20 emails against Gmail's 100.</p><div class="art-figs n1" data-reveal=""><figure class="art-fig"><img alt="The full pipeline: steps 1 to 6 run on their own; replies and the pipeline are where I take over." decoding="async" height="1000" loading="lazy" sizes="(min-width: 1001px) 720px, 92vw" src="../assets/work/outreach-flow-w1600.webp" srcset="../assets/work/outreach-flow-w800.webp 800w, ../assets/work/outreach-flow-w1600.webp 1600w" width="1600"/><figcaption>The full pipeline: steps 1 to 6 run on their own; replies and the pipeline are where I take over.</figcaption></figure></div><h2>Early results and what's next</h2><p>The system went live in November 2026. In its first two days it found 205 businesses in three cities, analysed 8 websites and sent 5 personal emails. All 7 websites that could be tested were slower than 3 seconds on mobile, with an average of 5.5 seconds. Next: Google Places for better lead data, more website checks (WhatsApp button, booking form, basic SEO), testing two versions of the first email, and raising the limit to 20 a day.</p></article>
+<aside class="cs-side" data-reveal=""><h3>Quick checklist</h3><ul class="kw-list"><li><svg aria-hidden="true" class="ic check" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>Automate research, keep replies human</span></li><li><svg aria-hidden="true" class="ic check" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>Skip prospects without a real problem</span></li><li><svg aria-hidden="true" class="ic check" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>Personalise every email with real data</span></li><li><svg aria-hidden="true" class="ic check" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>At most 10 emails a day, spaced out</span></li><li><svg aria-hidden="true" class="ic check" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>One follow-up and an easy opt-out</span></li><li><svg aria-hidden="true" class="ic check" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>Catch and label every reply</span></li><li><svg aria-hidden="true" class="ic check" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>Track the funnel on a dashboard</span></li></ul>
+<h3>Need help with this?</h3><p>I'm S. Saktheeswaran (Sakthi), founder of <a href="https://astranexora.netlify.app/" rel="noopener" target="_blank">Astra Nexora</a>, based in Tamil Nadu.</p><a class="btn btn-dark btn-sm" href="https://wa.me/918838417707" rel="noopener" target="_blank"><span>Chat on WhatsApp</span><svg aria-hidden="true" class="ic arrow" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></aside>
+</div>
+</section>
+
+<section class="sec kw-work-sec">
+<div class="wrap">
+<div class="sec-head" data-reveal="">
+<span aria-hidden="true" class="sec-num"></span>
+<span class="kicker">From the projects</span>
+<h2 id="artWork">The work behind <em>this guide</em></h2>
+
+</div>
+<div class="work-grid kw-work"><a class="work-card wide" data-reveal="" data-tag="auto" href="../work/astra-nexora-lead-outreach-system.html">
+<div class="wc-media"><img alt="Astra Nexora – Automated Lead Outreach System project screenshot" decoding="async" height="900" loading="lazy" sizes="(min-width: 1001px) 640px, 92vw" src="../assets/blog/cover-lead-outreach-w1600.webp" srcset="../assets/blog/cover-lead-outreach-w800.webp 800w, ../assets/blog/cover-lead-outreach-w1600.webp 1600w" width="1600"/><span class="wc-go"><svg aria-hidden="true" class="ic arrow" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div>
+<div class="wc-body">
+<span class="wc-cat">Lead Generation Automation</span>
+<h3>Astra Nexora – Automated Lead Outreach System</h3>
+<p>A system that finds potential clients, checks each website's speed, sends a personal email, follows up once and catches every reply, every weekday, at zero running cost.</p>
+<ul class="chips"><li>Google Apps Script</li><li>Google Sheets</li><li>Gmail</li></ul>
+</div>
+</a></div>
+</div>
+</section>
+
+<section class="sec faq">
+<div class="wrap faq-in">
+<div class="sec-head" data-reveal="">
+<span aria-hidden="true" class="sec-num"></span>
+<span class="kicker">FAQ</span>
+<h2 id="artFaq">Common <em>questions</em></h2>
+
+</div>
+<div class="faq-list"><details class="faq-item" data-reveal=""><summary>Does this system send spam?<span aria-hidden="true">+</span></summary><p>No. It sends a few personal emails a day, each about the business's own website, with one follow-up and an easy opt-out. Anyone who says no is never emailed again.</p></details><details class="faq-item" data-reveal=""><summary>What does it cost to run?<span aria-hidden="true">+</span></summary><p>Nothing. It runs on free Google Apps Script, Gmail, Sheets, the PageSpeed Insights API, OpenStreetMap and Netlify allowances.</p></details><details class="faq-item" data-reveal=""><summary>Can it work for other businesses?<span aria-hidden="true">+</span></summary><p>Yes. The search, the checks and the email wording change for each business; the pipeline and dashboards stay the same.</p></details></div>
+<nav aria-label="Related pages" class="kw-more"><a href="../seo-expert-tamil-nadu.html">SEO Expert in Tamil Nadu <svg aria-hidden="true" class="ic arrow" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></a><a href="../digital-marketing-expert-tamil-nadu.html">Digital Marketing Expert in Tamil Nadu <svg aria-hidden="true" class="ic arrow" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></a><a href="../marketing-automation-expert.html">n8n &amp; WhatsApp Automation Expert in India <svg aria-hidden="true" class="ic arrow" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></a><a href="../freelance-digital-marketer-tamil-nadu.html">Freelance Digital Marketer in Tamil Nadu <svg aria-hidden="true" class="ic arrow" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></a><a href="seo-for-dental-clinics-tamil-nadu.html">Dental Clinic Website &amp; SEO: Akeela Dental Care Case Study <svg aria-hidden="true" class="ic arrow" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></a><a href="whatsapp-appointment-booking-dental-clinic.html">WhatsApp Appointment Booking for a Dental Clinic: Akeela Case Study <svg aria-hidden="true" class="ic arrow" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></a><a href="dental-lab-website-seo.html">Dental Lab Website &amp; SEO: Ankhor Dental Lab Case Study <svg aria-hidden="true" class="ic arrow" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></a><a href="dental-lab-case-portal-automation.html">Dental Lab Case Portal &amp; Dashboard: Ankhor Case Study <svg aria-hidden="true" class="ic arrow" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></a><a href="dental-scan-booking-platform.html">Intraoral Scan Booking Platform &amp; Dashboard: Ankhor Case Study <svg aria-hidden="true" class="ic arrow" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></a><a href="dental-lab-referral-program.html">Diwali Referral Program Page, Dashboard &amp; App: Ankhor Case Study <svg aria-hidden="true" class="ic arrow" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></a></nav>
+</div>
+</section>
+</main>
+
+<footer class="footer">
+<div class="wrap foot-in">
+<a class="logo" href="../index.html#top">SAKTHI<i>.</i></a>
+<nav aria-label="Footer"><a href="../index.html#about">About</a><a href="../index.html#work">Work</a><a href="../index.html#services">Services</a><a href="../index.html#videos">Videos</a><a href="../index.html#contact">Contact</a></nav>
+<div class="socials"><a aria-label="LinkedIn" href="https://www.linkedin.com/in/saktheeswaran-digital-marketing-expert/" rel="noopener" target="_blank"><svg aria-hidden="true" class="ic" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M8 10.5V16M8 7.8h.01M11.5 16v-5.5M11.5 13c0-1.6 1-2.6 2.3-2.6s2.2.9 2.2 2.6v3"/></svg></a><a aria-label="Instagram" href="https://www.instagram.com/itx_sakthi_77_/" rel="noopener" target="_blank"><svg aria-hidden="true" class="ic" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17 7h.01"/></svg></a><a aria-label="WhatsApp" href="https://wa.me/918838417707" rel="noopener" target="_blank"><svg aria-hidden="true" class="ic" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-2-2l.8-1-1-2z"/></svg></a><a aria-label="Email" href="mailto:saktheesw2005@gmail.com"><svg aria-hidden="true" class="ic" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 7 8.5 6 8.5-6"/></svg></a></div>
+</div>
+<nav aria-label="Services" class="wrap foot-kw"><a href="../seo-expert-tamil-nadu.html">SEO Expert in Tamil Nadu</a><a href="../digital-marketing-expert-tamil-nadu.html">Digital Marketing Expert in Tamil Nadu</a><a href="../marketing-automation-expert.html">n8n &amp; WhatsApp Automation Expert in India</a><a href="../freelance-digital-marketer-tamil-nadu.html">Freelance Digital Marketer in Tamil Nadu</a></nav>
+<div class="wrap foot-bottom">
+<span>© 2026 S. Saktheeswaran. All rights reserved.</span>
+<span>Founder of <a href="https://astranexora.netlify.app/" rel="noopener" target="_blank">Astra Nexora</a></span>
+</div>
+</footer>
+<a aria-label="Chat on WhatsApp" class="wa-float" href="https://wa.me/918838417707" rel="noopener" target="_blank"><svg aria-hidden="true" class="ic" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-2-2l.8-1-1-2z"/></svg></a>
+<script defer src="../js/vendor/gsap.min.js"></script>
+<script defer src="../js/vendor/ScrollTrigger.min.js"></script>
+<script defer src="../js/vendor/lenis.min.js"></script>
+<script defer src="../js/main.js?v=395940ed5c"></script>
+</body>
+</html>

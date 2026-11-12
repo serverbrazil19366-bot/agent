@@ -111,6 +111,24 @@ SERVICES = [
 # Projects. tag drives the filter: web, seo, auto, social.
 PROJECTS = [
     {
+        "slug": "astra-nexora-lead-outreach-system",
+        "title": "Astra Nexora – Automated Lead Outreach System",
+        "tag": "auto",
+        "category": "Lead Generation Automation",
+        "summary": "A system that finds potential clients, checks each website's speed, sends a personal email, follows up once and catches every reply, every weekday, at zero running cost.",
+        "cover": "blog/cover-lead-outreach",
+        "gallery": [],
+        "live": "",
+        "meta": [("Year", "2026"), ("Industry", "Digital marketing agency"), ("Client", "Astra Nexora (my own agency)"), ("Role", "Design, build & automation")],
+        "sections": [
+            ("The challenge", "Finding potential clients, checking each website and writing every email by hand took 15 to 20 minutes per client, so outreach kept losing out to client work."),
+            ("Strategy", "Automate the research, not the relationship: the system does the searching, testing and first draft, and every reply comes back to me."),
+            ("What I did", "Built the full pipeline in Google Apps Script with Google Sheets, Gmail, the PageSpeed Insights API and OpenStreetMap, plus laptop and phone dashboards."),
+            ("Outcome", "Lead research to a personalised email in under a minute per client, every weekday, on its own, at zero running cost."),
+        ],
+        "tools": ["Google Apps Script", "Google Sheets", "Gmail", "PageSpeed Insights API", "OpenStreetMap", "Netlify"],
+    },
+    {
         "slug": "astra-nexora-website",
         "title": "Astra Nexora – Agency Website",
         "tag": "web",
@@ -347,6 +365,8 @@ TESTIMONIALS = [
 
 # Search titles and descriptions for the case studies (the on-page title stays as above)
 PROJECT_SEO = {
+    "astra-nexora-lead-outreach-system": ("Automated Lead Outreach System – Astra Nexora Case Study",
+                                          "How S. Saktheeswaran built an automated lead outreach system: lead search, website speed audits, personal emails, follow-ups, reply tracking and dashboards at zero cost."),
     "astra-nexora-website": ("Digital Marketing Agency Website – Astra Nexora Case Study",
                              "How S. Saktheeswaran planned and launched the Astra Nexora agency website: service pages, an SEO blog, structured data and a WhatsApp enquiry form."),
     "ankhor-case-booking-automation": ("Dental Lab Case Portal & Automation – Ankhor Case Study",
@@ -1234,4 +1254,138 @@ KEYWORD_PAGES.append({
         ("Are you available for full-time roles?", "Yes, I'm open to the right full-time opportunity as well as freelance projects."),
         ("How do we start?", "Send me your website or Instagram on WhatsApp and I'll reply with the first things I'd fix."),
     ],
+})
+
+STORIES["astra-nexora-lead-outreach-system"] = {
+    "glance": ("Finding clients, checking each website and writing every email by hand took 15 to 20 minutes per client, so outreach kept losing out to client work.",
+               "A system that finds businesses, tests each website's speed, finds the right email and sends a personal message, follows up once and catches every reply.",
+               "Lead research to a personalised email in under a minute per client, every weekday, on its own, at zero running cost."),
+    "challenge": ["Outreach is how an agency finds new clients, but doing it properly is slow. For every potential client I had to "
+                  "find the business and its website, open it on a phone, run a speed test, look for an email address, write an "
+                  "email about what I actually found, and remember to follow up and track who replied. That's 15 to 20 minutes "
+                  "per client, so with client work every day, outreach was always the first thing to drop.",
+                  "Mass emails weren't an option either. A business owner ignores a generic \"we do websites\" email, and sending "
+                  "lots of identical emails gets a Gmail account flagged as spam, which would hurt the agency's real email too."],
+    "approach": ["Automate the research, not the relationship. The slow, repetitive parts (searching, testing, finding the email, "
+                 "writing the first draft) are done by the system. The conversation stays human: every reply comes back to me, "
+                 "and I decide what to send.",
+                 "Four rules shaped it. Personal: every email is about the client's own website, its real load time and the fixes "
+                 "Google suggests. Honest: fast websites are skipped, and every email links to the public Google report. Slow: at "
+                 "most 10 emails a day, one every 10 minutes, weekdays 10 AM to 6 PM. Polite: one follow-up only, an easy opt-out "
+                 "in every email, and anyone who says no is never contacted again."],
+    "features": [
+        ("Find potential clients", "Each weekday morning the system searches the next city on its list for the target type of "
+         "business using OpenStreetMap, which is free and needs no API key, and saves the name, website, phone and address to a "
+         "Google Sheet. Duplicates are skipped, businesses without a website are kept for a different pitch, and leads can also "
+         "be added by hand.", ["work/outreach-leads-sheet"]),
+        ("Analyse the website", "Every website is tested with the Google PageSpeed Insights API in mobile mode. The system saves "
+         "the Speed Index, the 0 to 100 performance score, Largest Contentful Paint and the two fixes Google estimates would save "
+         "the most time. Websites that load in 3 seconds or less are marked fast and skipped.", []),
+        ("Find the right email", "The system reads the business's own home, contact and about pages, decodes addresses hidden "
+         "from bots, prefers addresses on the business's own domain, and ignores the web designer's email in the footer and "
+         "noreply addresses. If none is found, the lead is kept for a phone call instead.", []),
+        ("A personal email, written for each business", "Slow websites get a short email with the real load time and score, a "
+         "link to the public Google report and an offer of the two fixes for free. Businesses without a website get an offer to "
+         "build one, with links to my projects. The only ask is a one-word reply: yes.", ["work/outreach-email"]),
+        ("One follow-up, then catch every reply", "If there's no reply in three days, one short follow-up goes out in the same "
+         "conversation. Every 10 minutes the system checks Gmail for replies and bounces, stars and labels them so the phone "
+         "notifies me, and moves them to the top of the dashboard.", []),
+        ("Laptop and phone dashboards", "The same private link opens a full dashboard on a laptop (today's numbers, what's coming "
+         "up, system health, emails per day and the funnel from lead to client) and a compact app-like view on the phone with "
+         "Replies, Calls, Sent and Pipeline tabs.", ["work/outreach-dashboard", "work/outreach-m"]),
+        ("Every lead, searchable", "All leads in one table: search by name, email, phone or website, filter by city and status, "
+         "sort any column, and open a lead to see every detail.", ["work/outreach-all-leads"]),
+        ("Template replies", "When a client replies, the right answer is already drafted: send the fixes, sample design, price, "
+         "book a call or a polite close. I read it, edit if needed and send it from the agency's Gmail in the same conversation. "
+         "Anything in square brackets must be filled in before it can go.", ["work/outreach-reply"]),
+    ],
+    "results": ["Went live in November 2026: 205 businesses found in three cities in the first two days",
+                "8 websites analysed and 5 personal emails sent in the first two days, all within the daily limit",
+                "All 7 websites that could be tested were slower than 3 seconds on mobile, averaging 5.5 seconds",
+                "Under a minute per lead from research to email, at ₹0 a month to run"],
+    "services": ["System design", "Google Apps Script build", "Email copy & templates", "Dashboards (laptop & phone)", "Sending rules & privacy"],
+    "insight": "automated-lead-outreach-system",
+}
+
+ARTICLES.insert(0, {
+    "slug": "automated-lead-outreach-system",
+    "seo_title": "Automated Lead Outreach System with Google Apps Script: Case Study",
+    "desc": ("How I built a zero-cost lead outreach system for Astra Nexora: OpenStreetMap lead search, PageSpeed audits, "
+             "personal Gmail emails, one follow-up, reply tracking and dashboards."),
+    "h1": "Automated lead outreach system for <em>Astra Nexora</em>",
+    "kicker": "Lead generation · Astra Nexora",
+    "date": "2026-11-12",
+    "read": "7 min read",
+    "intro": ("Finding new clients is the job every agency founder puts off. For each potential client I had to find the business, "
+              "check its website, run a speed test, dig out an email address and write something that didn't read like spam: 15 to "
+              "20 minutes each. So I built a system that does the research for me and leaves the conversation to me. It runs every "
+              "weekday, on its own, and costs nothing to run. Here's how it works."),
+    "sections": [
+        ("The rule: automate the research, not the relationship",
+         ["Mass emails don't work. Business owners ignore generic pitches, and sending lots of identical emails gets a Gmail "
+          "account flagged as spam. So the system only automates the slow, repetitive parts: searching, testing, finding the "
+          "email and writing a first draft. Every reply comes back to me, and I decide what to send.",
+          "Four principles: personal (every email is about the client's own website), honest (fast websites are skipped and "
+          "every email links to the public Google report), slow (at most 10 emails a day, one every 10 minutes, weekdays only) "
+          "and polite (one follow-up, an easy opt-out, and no means no)."]),
+        ("Step 1: find potential clients",
+         ["Each weekday at about 9 AM the system searches the next city on its list for the target type of business using "
+          "OpenStreetMap's free Overpass API. It saves the name, website, phone, address and city to a Google Sheet, skips "
+          "duplicates, and only searches when fewer than a day's worth of leads are waiting. Businesses without a website are "
+          "kept with a no_website status: they're leads for a website build. Google Places is an optional upgrade for richer data."]),
+        ("Step 2: analyse the website",
+         ["Every website is tested with the Google PageSpeed Insights API in mobile mode, because that's how most customers first "
+          "visit a business. The system saves the Speed Index, the performance score, Largest Contentful Paint and the two fixes "
+          "Google estimates would save the most time. If the site loads in 3 seconds or less, it's marked fast and nobody gets "
+          "an email about a problem they don't have."]),
+        ("Step 3: find the right email address",
+         ["The script reads the business's own home, contact and about pages and collects every address it finds. It decodes "
+          "emails hidden from bots, prefers addresses on the business's own domain, ranks owner, info and contact addresses "
+          "higher, and ignores the web designer's email in the footer, image file names that look like emails and noreply "
+          "addresses. No email? The lead stays in the sheet with its phone number for a call."]),
+        ("Step 4: a personal email, and one follow-up",
+         ["Slow websites get an email with the real load time and score, one line on what slow pages cost in customers, a link "
+          "to the public Google report and an offer of the two fixes for free. Businesses without a website get an offer to "
+          "build one with links to my projects. The only ask is a one-word reply. If nobody answers in three days, one short "
+          "follow-up goes out in the same thread, and then the business is left alone."]),
+        ("Step 5: catch every reply",
+         ["Every 10 minutes the system runs one Gmail search across its conversations. A reply marks the lead as replied, saves "
+          "the text, stars the email, labels it so the Gmail app notifies me, and moves it to the top of the dashboard. Bounces "
+          "are marked and never retried."]),
+        ("Step 6: dashboards and template replies",
+         ["A private dashboard shows today's numbers, what's coming up, system health, emails per day and the funnel from lead to "
+          "client, on a laptop and as an app-like view on the phone. Opening a lead shows every detail and a reply box with the "
+          "right template already filled in: send the fixes, sample design, price, book a call or a polite close. I edit and "
+          "send it from the agency's Gmail in the same conversation."]),
+        ("The tech, and why it costs nothing",
+         ["Google Apps Script runs all the logic on a schedule, Google Sheets is the database (one row per business, 27 columns), "
+          "Gmail sends and receives, PageSpeed Insights does the audit, OpenStreetMap finds the leads and a small Netlify page "
+          "hosts the dashboard. Everything fits in free allowances: a few minutes of script time a day and 10 to 20 emails "
+          "against Gmail's 100."]),
+        ("Early results and what's next",
+         ["The system went live in November 2026. In its first two days it found 205 businesses in three cities, analysed 8 "
+          "websites and sent 5 personal emails. All 7 websites that could be tested were slower than 3 seconds on mobile, with "
+          "an average of 5.5 seconds. Next: Google Places for better lead data, more website checks (WhatsApp button, booking "
+          "form, basic SEO), testing two versions of the first email, and raising the limit to 20 a day."]),
+    ],
+    "checklist": ["Automate research, keep replies human", "Skip prospects without a real problem",
+                  "Personalise every email with real data", "At most 10 emails a day, spaced out",
+                  "One follow-up and an easy opt-out", "Catch and label every reply", "Track the funnel on a dashboard"],
+    "projects": ["astra-nexora-lead-outreach-system"],
+    "faqs": [
+        ("Does this system send spam?",
+         "No. It sends a few personal emails a day, each about the business's own website, with one follow-up and an easy opt-out. Anyone who says no is never emailed again."),
+        ("What does it cost to run?",
+         "Nothing. It runs on free Google Apps Script, Gmail, Sheets, the PageSpeed Insights API, OpenStreetMap and Netlify allowances."),
+        ("Can it work for other businesses?",
+         "Yes. The search, the checks and the email wording change for each business; the pipeline and dashboards stay the same."),
+    ],
+    "cover": ("blog/cover-lead-outreach", "Astra Leads dashboard on laptop and phone"),
+    "figs": {
+        1: [("work/outreach-leads-sheet", "The Leads sheet: one row per business with status, speed results and contact date. Details masked.")],
+        4: [("work/outreach-email", "A real first email sent by the system (the no-website version). Business details masked.")],
+        6: [("work/outreach-dashboard", "The laptop dashboard: today's numbers, what's coming up, system health and the funnel."),
+            ("work/outreach-m", "The phone view, added to the home screen like an app.")],
+        7: [("work/outreach-flow", "The full pipeline: steps 1 to 6 run on their own; replies and the pipeline are where I take over.")],
+    },
 })

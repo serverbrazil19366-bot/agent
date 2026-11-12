@@ -14,6 +14,7 @@
 - [Freelance Digital Marketer in Tamil Nadu](https://saktheeswaran.netlify.app/freelance-digital-marketer-tamil-nadu.html): Hire a freelance digital marketer in Tamil Nadu: S. Saktheeswaran (Sakthi) handles SEO, websites, Google and Meta ads, social media and WhatsApp automation, hands-on.
 
 ## Insights
+- [Automated Lead Outreach System with Google Apps Script: Case Study](https://saktheeswaran.netlify.app/insights/automated-lead-outreach-system.html): How I built a zero-cost lead outreach system for Astra Nexora: OpenStreetMap lead search, PageSpeed audits, personal Gmail emails, one follow-up, reply tracking and dashboards.
 - [Dental Clinic Website & SEO: Akeela Dental Care Case Study](https://saktheeswaran.netlify.app/insights/seo-for-dental-clinics-tamil-nadu.html): How I built the Akeela Dental Care website and did its SEO: a page for every treatment, on-page and technical SEO, reviews and tracking. A practical guide for dental clinics in Tamil Nadu.
 - [WhatsApp Appointment Booking for a Dental Clinic: Akeela Case Study](https://saktheeswaran.netlify.app/insights/whatsapp-appointment-booking-dental-clinic.html): How I set up WhatsApp appointment booking for Akeela Dental Care: a short form that opens WhatsApp with the request filled in, plus call and WhatsApp buttons on every page.
 - [Dental Lab Website & SEO: Ankhor Dental Lab Case Study](https://saktheeswaran.netlify.app/insights/dental-lab-website-seo.html): How I built the Ankhor Dental Lab website and did its SEO: services, technology and a product catalogue with a page for every product, built so clinics can find the lab and send a case.
@@ -22,6 +23,7 @@
 - [Diwali Referral Program Page, Dashboard & App: Ankhor Case Study](https://saktheeswaran.netlify.app/insights/dental-lab-referral-program.html): How I built a Diwali Refer & Earn program for Ankhor Dental Lab: a campaign page, a referral dashboard and app, with personal referral links shared on WhatsApp.
 
 ## Case studies
+- [Astra Nexora – Automated Lead Outreach System](https://saktheeswaran.netlify.app/work/astra-nexora-lead-outreach-system.html): A system that finds potential clients, checks each website's speed, sends a personal email, follows up once and catches every reply, every weekday, at zero running cost.
 - [Astra Nexora – Agency Website](https://saktheeswaran.netlify.app/work/astra-nexora-website.html): A fast, SEO-ready agency website with service pages, a blog and a WhatsApp enquiry form.
 - [Ankhor Dental Lab – Case Portal, Scan Booking & Automation](https://saktheeswaran.netlify.app/work/ankhor-case-booking-automation.html): An online case portal and scan booking platform with dashboards, email and WhatsApp alerts and a mobile app.
 - [Ankhor Dental Lab – Diwali Referral Program](https://saktheeswaran.netlify.app/work/ankhor-referral-program.html): A Diwali Refer & Earn program for dentists: a campaign page with a live countdown, personal referral links and a dashboard and app to track referrals.

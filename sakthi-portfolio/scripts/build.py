@@ -201,8 +201,11 @@ def faq_list(faqs):
 
 def work_card(p, prefix, i, n=None):
     n = n or len(PROJECTS)
-    wide = i < 2 or ((n - 2) % 3 == 2 and i >= n - 2)
-    return f'''<a class="work-card{" wide" if wide else ""}" data-reveal="" data-tag="{p["tag"]}" href="{prefix}work/{p["slug"]}.html">
+    if (n - 2) % 3 == 1:
+        cls = " full" if i == 0 else (" wide" if i < 3 else "")
+    else:
+        cls = " wide" if i < 2 or ((n - 2) % 3 == 2 and i >= n - 2) else ""
+    return f'''<a class="work-card{cls}" data-reveal="" data-tag="{p["tag"]}" href="{prefix}work/{p["slug"]}.html">
 <div class="wc-media">{img(p["cover"], p["title"] + " project screenshot", "(min-width: 1001px) 640px, 92vw", prefix)}<span class="wc-go">{ARROW_UR}</span></div>
 <div class="wc-body">
 <span class="wc-cat">{esc(p["category"])}</span>

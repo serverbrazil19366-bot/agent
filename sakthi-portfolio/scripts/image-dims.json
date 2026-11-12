@@ -302,5 +302,37 @@
  "img/s-saktheeswaran-seo-expert-tamil-nadu": [
   900,
   1125
+ ],
+ "work/outreach-flow": [
+  1600,
+  1000
+ ],
+ "work/outreach-leads-sheet": [
+  1600,
+  1000
+ ],
+ "work/outreach-email": [
+  1600,
+  1000
+ ],
+ "work/outreach-dashboard": [
+  1600,
+  1000
+ ],
+ "work/outreach-all-leads": [
+  1600,
+  1000
+ ],
+ "work/outreach-m": [
+  700,
+  1192
+ ],
+ "work/outreach-reply": [
+  1600,
+  1000
+ ],
+ "blog/cover-lead-outreach": [
+  1600,
+  900
  ]
 }

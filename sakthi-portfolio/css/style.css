@@ -778,3 +778,9 @@ main { overflow-x: clip; }
     .ins-tile-in h3 { font-size: 30px; }
 }
 .ins-tile-in { display: flex; flex-direction: column; height: 100%; }
+.work-card.full { grid-column: span 6; display: grid; grid-template-columns: 1.3fr 1fr; }
+.work-card.full .wc-media { height: 100%; }
+.work-card.full .wc-media img { height: 100%; object-fit: cover; }
+.work-card.full .wc-body { justify-content: center; padding: 40px; }
+.work-card.full h3 { font-size: clamp(28px, 2.6vw, 38px); }
+@media (max-width: 1100px) { .work-card.full { grid-column: span 6; grid-template-columns: 1fr; } }
