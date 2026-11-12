@@ -141,19 +141,19 @@ PROJECTS = [
         "title": "Astra Nexora – Automated Lead Outreach System",
         "tag": "auto",
         "category": "Lead Generation Automation",
-        "summary": "A system that finds clinics, audits their websites, writes each one a personal email and tracks every reply, on its own and at zero running cost.",
+        "summary": "A system that finds potential clients, analyses each client's website, checks its speed and sends a personal email, then tracks every reply, on its own and at zero running cost.",
         "cover": "work/leadauto-1",
         "gallery": [],
         "live": "",
-        "meta": [("Year", "2026"), ("Industry", "B2B outreach to clinics"), ("Client", "Astra Nexora (my agency)"), ("Role", "System design & build")],
+        "meta": [("Year", "2026"), ("Industry", "Any business (B2B outreach)"), ("Client", "Astra Nexora (my agency)"), ("Role", "System design & build")],
         "sections": [
-            ("The challenge", "Finding clinics, checking each website and writing every email by hand took 15 to 20 minutes "
-             "per clinic, so outreach kept getting pushed aside by client work."),
-            ("Strategy", "Automate the research and the first email, keep every email personal to the clinic's own website, "
+            ("The challenge", "Finding potential clients, checking each website and writing every email by hand took 15 to "
+             "20 minutes per client, so outreach kept getting pushed aside by client work."),
+            ("Strategy", "Automate the research and the first email, keep every email personal to the client's own website, "
              "and put every reply in one dashboard."),
             ("What I did", "Built the whole pipeline in Google Apps Script: lead search, Google PageSpeed audits, email "
              "finding, personal emails and follow-ups, reply detection, and laptop and phone dashboards with reply templates."),
-            ("Outcome", "Lead research to a personalised email in under a minute per clinic, running on its own every weekday."),
+            ("Outcome", "Lead research to a personalised email in under a minute per client, running on its own every weekday."),
         ],
         "tools": ["Google Apps Script", "Google Sheets", "Gmail", "PageSpeed Insights API", "OpenStreetMap", "Netlify"],
     },
@@ -374,7 +374,7 @@ PROJECT_SEO = {
     "astra-nexora-website": ("Digital Marketing Agency Website – Astra Nexora Case Study",
                              "How S. Saktheeswaran planned and launched the Astra Nexora agency website: service pages, an SEO blog, structured data and a WhatsApp enquiry form."),
     "astra-lead-outreach-automation": ("Automated Lead Generation & Outreach System – Case Study",
-                                       "How S. Saktheeswaran built a system that finds clinics, audits their websites with Google PageSpeed, sends personal emails and follow-ups, and tracks replies on a dashboard, at zero running cost."),
+                                       "How S. Saktheeswaran built a system that finds potential clients, analyses their websites with Google PageSpeed, sends personal emails and follow-ups, and answers replies from templates, at zero running cost."),
     "ankhor-case-booking-automation": ("Dental Lab Case Portal & Automation – Ankhor Case Study",
                                        "An online case portal, scan booking platform, dashboards, email and WhatsApp alerts and a mobile app for Ankhor Dental Lab."),
     "ankhor-dental-lab": ("Dental Lab Website & SEO – Ankhor Dental Lab Case Study",
@@ -1114,53 +1114,53 @@ STORIES = {
         "insight": "dental-lab-website-seo",
     },
     "astra-lead-outreach-automation": {
-        "glance": ("Finding clinics, checking each website and writing every email by hand took 15 to 20 minutes per clinic.",
-                   "An automated pipeline that finds clinics, audits their websites with Google PageSpeed, finds the right "
-                   "email and sends a personal pitch, with a dashboard to answer replies.",
-                   "Lead research to a personalised email in under a minute per clinic, every weekday, at zero running cost."),
-        "challenge": ["Outreach is how a small agency finds new clients, but doing it properly is slow. For every clinic I had "
-                      "to find it, open its website on my phone, run a speed test, look for an email address, and then "
-                      "write an email that mentions what I actually found. That is 15 to 20 minutes per clinic, and it "
-                      "always lost out to client work.",
-                      "Mass emails were not an option either. A doctor ignores a generic \"we do websites\" email, and "
-                      "sending lots of them gets a Gmail account flagged as spam."],
-        "approach": ["Automate the slow research, not the relationship. The system does the searching, testing and first "
-                     "draft for every clinic, and each email is built around that clinic's own website: its real load "
-                     "time, its real score and the fixes Google suggests. Clinics without a website get a different "
-                     "pitch: an offer to build one.",
-                     "Sending is deliberately slow and polite: at most 10 emails a day, one every 10 minutes during "
-                     "working hours, one follow-up, and an easy way to say no. Every reply comes back to me, and I "
-                     "answer it myself."],
+        "glance": ("Finding potential clients, checking each website and writing every email by hand took 15 to 20 minutes per client.",
+                   "A system that analyses each client's website, checks its speed and sends a personal email. Clients "
+                   "without a website get a different message, and every reply gets a ready template answer.",
+                   "Lead research to a personalised email in under a minute per client, every weekday, at zero running cost."),
+        "challenge": ["Outreach is how an agency finds new clients, but doing it properly is slow. For every potential "
+                      "client I had to find the business, open its website on my phone, run a speed test, look for an "
+                      "email address, and then write an email about what I actually found. That is 15 to 20 minutes per "
+                      "client, and it always lost out to client work.",
+                      "Mass emails were not an option either. A business owner ignores a generic \"we do websites\" "
+                      "email, and sending lots of them gets a Gmail account flagged as spam."],
+        "approach": ["Automate the slow research, not the relationship. For every client, the system analyses the "
+                     "website, checks its mobile speed and writes an email built around what it found: the real load "
+                     "time, the score and the fixes Google suggests. Clients without a website get a different message: "
+                     "an offer to build one.",
+                     "When a client replies, the right template reply is ready to send. Sending stays slow and polite: "
+                     "at most 10 emails a day, one every 10 minutes during working hours, one follow-up, and an easy "
+                     "way to say no. The system works for any industry; only the search and the wording change."],
         "features": [
-            ("Clinics found automatically", "Every weekday morning the system searches the next city on its list and "
-             "adds new clinics to a Google Sheet with their website, phone and address. Duplicates are skipped, and it "
-             "only searches again once the current list is used up.", ["work/leadauto-3"]),
-            ("A real speed audit for every website", "Each website goes through Google PageSpeed Insights on mobile. "
+            ("Potential clients found automatically", "Every weekday morning the system searches the next city for the "
+             "target industry and adds new businesses to a Google Sheet with their website, phone and address. "
+             "Duplicates are skipped, and it only searches again once the current list is used up.", ["work/leadauto-3"]),
+            ("Website analysis and speed check", "Each client's website goes through Google PageSpeed Insights on mobile. "
              "The sheet records the load time, the performance score and the two fixes that would save the most time. "
-             "Sites that are already fast are skipped, so nobody gets an email about a problem they don't have.", []),
-            ("The right email address", "The system reads the clinic's own home, contact and about pages, decodes "
+             "Fast websites are skipped, so nobody gets an email about a problem they don't have.", []),
+            ("The right email address", "The system reads the client's own home, contact and about pages, decodes "
              "hidden addresses, and ignores the web designer's email in the footer.", []),
-            ("A personal email, not a template blast", "Each clinic gets an email about its own website: how long it "
-             "takes to load, what that costs in patients, a link to the public Google report, and my projects. "
-             "Clinics without a website get a short pitch to build one. Every email asks for a one-word reply.",
-             ["work/leadauto-5"]),
+            ("A personal email for every client", "Clients with a slow website get an email about their own site: how "
+             "long it takes to load, what that costs in customers, a link to the public Google report, and my "
+             "projects. Clients without a website get a message offering to build one. Every email asks for a "
+             "one-word reply.", ["work/leadauto-5"]),
             ("Follow-ups and replies handled", "If there is no reply after three days, one short follow-up goes out. "
              "Replies are detected every 10 minutes, starred in Gmail and moved to the top of the dashboard. Bounces "
              "are marked so those addresses are never emailed again.", []),
             ("A dashboard for laptop and phone", "Today's activity, emails per day, the funnel from lead to client, "
-             "reply rate by pitch, leads by city and the full list of leads with every detail, all from the same "
-             "Google Sheet. It opens in any browser, and on the phone as a home-screen app.",
+             "reply rate by message type, leads by city and every lead with its details, all from the same Google "
+             "Sheet. It opens in any browser, and on the phone as a home-screen app.",
              ["work/leadauto-2", "work/leadauto-m"]),
-            ("Replies in one click", "Open a lead and the reply is already drafted from the right template: send the "
-             "fixes in plain words, answer a price question, book a call, or close politely. Edit it and send. It goes "
-             "out in the same Gmail thread.", ["work/leadauto-4"]),
+            ("A template reply for every answer", "When a client replies, the answer is already drafted from the right "
+             "template: send the fixes in plain words, answer a price question, book a call, or close politely. Edit "
+             "it and send. It goes out in the same Gmail thread.", ["work/leadauto-4"]),
         ],
-        "results": ["Lead research to a personalised email in under a minute per clinic",
-                    "Every email is about the clinic's own website, not a mass mailer",
+        "results": ["Lead research to a personalised email in under a minute per client",
+                    "Every email is about the client's own website, not a mass mailer",
+                    "Clients without a website get their own message",
+                    "Every reply detected and answered from a ready template, on laptop or phone",
                     "Runs every weekday on its own, within a safe daily sending limit",
-                    "Every reply detected and answered from laptop or phone",
-                    "Zero running cost: Google Apps Script, Gmail and free APIs",
-                    "First two days live: 205 clinics found across three cities, 8 websites audited, 5 emails sent"],
+                    "Zero running cost: Google Apps Script, Gmail and free APIs"],
         "services": ["Workflow design", "Google Apps Script automation", "Website audits with the PageSpeed API",
                      "Email outreach & follow-ups", "Laptop & phone dashboards"],
         "insight": "",
