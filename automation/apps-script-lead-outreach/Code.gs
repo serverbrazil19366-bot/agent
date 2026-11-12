@@ -21,7 +21,22 @@ const CONFIG = {
   LEAD_SOURCE: 'osm',
 
   // OpenStreetMap: what to look for, and where. bbox = south,west,north,east.
-  OSM_TAGS: ['amenity=dentist', 'healthcare=dentist'],
+  // What kinds of business to look for. Each search only keeps businesses that list a website,
+  // so every lead can be audited and emailed. `one`/`many`/`who` fill in the email wording.
+  // Remove a line to stop targeting that industry. Big chains (OSM "brand" tag) are skipped.
+  TARGETS: [
+    { key: 'dental', tags: ['amenity=dentist', 'healthcare=dentist'], one: 'dental clinic', many: 'dental clinics', who: 'patients', greeting: 'Hi Doctor' },
+    { key: 'clinic', tags: ['amenity=clinic', 'amenity=doctors', 'healthcare=clinic'], one: 'clinic', many: 'clinics', who: 'patients', greeting: 'Hi Doctor' },
+    { key: 'hotel', tags: ['tourism=hotel', 'tourism=guest_house'], one: 'hotel', many: 'hotels', who: 'guests', greeting: 'Hello' },
+    { key: 'restaurant', tags: ['amenity=restaurant', 'amenity=cafe'], one: 'restaurant', many: 'restaurants', who: 'customers', greeting: 'Hello' },
+    { key: 'school', tags: ['amenity=school', 'amenity=college', 'amenity=kindergarten'], one: 'school', many: 'schools', who: 'parents', greeting: 'Hello' },
+    { key: 'gym', tags: ['leisure=fitness_centre', 'leisure=sports_centre'], one: 'gym', many: 'gyms', who: 'members', greeting: 'Hello' },
+    { key: 'salon', tags: ['shop=beauty', 'shop=hairdresser'], one: 'salon', many: 'salons', who: 'customers', greeting: 'Hello' },
+    { key: 'shop', tags: ['shop'], one: 'store', many: 'stores', who: 'customers', greeting: 'Hello' },
+    { key: 'office', tags: ['office'], one: 'business', many: 'businesses', who: 'customers', greeting: 'Hello' },
+  ],
+  DEFAULT_CATEGORY: 'dental',  // used for leads that have no category (older rows, pasted rows)
+  OSM_WEBSITE_ONLY: true,      // true = skip businesses without a website (they can't be emailed)
   OSM_CITIES: [
     { name: 'Chennai', bbox: '12.80,80.05,13.25,80.35' },
     { name: 'Coimbatore', bbox: '10.90,76.85,11.15,77.10' },
@@ -33,6 +48,9 @@ const CONFIG = {
     { name: 'Tirunelveli', bbox: '8.66,77.65,8.78,77.78' },
     { name: 'Erode', bbox: '11.30,77.66,11.39,77.77' },
     { name: 'Thanjavur', bbox: '10.74,79.08,10.83,79.18' },
+    { name: 'Bengaluru', bbox: '12.85,77.48,13.08,77.75' },
+    { name: 'Hyderabad', bbox: '17.30,78.35,17.50,78.60' },
+    { name: 'Kochi', bbox: '9.90,76.22,10.07,76.36' },
   ],
 
   // Google Places only: one area is searched per day, in rotation.
@@ -73,7 +91,7 @@ const SHEET = 'Leads';
 const COLS = ['added_on', 'status', 'business_name', 'website', 'domain', 'phone', 'address',
   'rating', 'place_id', 'speed_index', 'perf_score', 'lcp', 'email', 'email_found_on',
   'contacted_on', 'note', 'city', 'top_fixes', 'thread_ids', 'followup_on', 'pitch', 'whatsapp', 'wa_sent_on',
-  'sent_text', 'reply_text', 'replied_on', 'answered_on'];
+  'sent_text', 'reply_text', 'replied_on', 'answered_on', 'category'];
 // pitch: 'speed' (has a slow website) | 'website' (no website: offer to build one)
 // whatsapp: one-click wa.me link with the message already typed, for you to send by hand
 // status: (empty = just pasted) | new | duplicate | no_website | fast | audit_failed | no_email | drafted | sent |
@@ -145,26 +163,36 @@ function findLeads(manual) {
   }
   const props = PropertiesService.getScriptProperties();
   const idx = Number(props.getProperty('areaIndex') || 0);
-  props.setProperty('areaIndex', String(idx + 1));
 
-  let found, label;
+  const want = CONFIG.EMAILS_PER_DAY * 2;
+  const started = Date.now();
+  let added = 0, found = 0, tried = 0, i = idx;
+  const labels = [];
   if (CONFIG.LEAD_SOURCE === 'places') {
     const area = CONFIG.AREAS[idx % CONFIG.AREAS.length];
-    label = area;
-    found = searchPlaces_(CONFIG.BUSINESS_TYPE + ' in ' + area)
+    const res = searchPlaces_(CONFIG.BUSINESS_TYPE + ' in ' + area)
       .filter(p => !p.businessStatus || p.businessStatus === 'OPERATIONAL')
       .map(p => ({ id: p.id, name: (p.displayName && p.displayName.text) || '', website: p.websiteUri || '',
         phone: p.nationalPhoneNumber || '', address: p.formattedAddress || '', rating: p.rating || '',
-        email: '', city: area.split(',').pop().trim() }));
+        email: '', city: area.split(',').pop().trim(), category: CONFIG.DEFAULT_CATEGORY }));
+    found = res.length; added = addLeads_(res, 'source: ' + area); labels.push(area); i = idx + 1;
   } else {
-    const city = CONFIG.OSM_CITIES[idx % CONFIG.OSM_CITIES.length];
-    label = city.name + ' (OpenStreetMap)';
-    found = osmToLeads(searchOsm_(city.bbox).elements || [], city.name);
+    // keep going through the city list until there are enough new leads, the list is done, or ~4 min pass
+    while (added < want && tried < CONFIG.OSM_CITIES.length && Date.now() - started < 4 * 60 * 1000) {
+      const city = CONFIG.OSM_CITIES[i % CONFIG.OSM_CITIES.length];
+      let res = [];
+      try { res = osmToLeads(searchOsm_(city.bbox).elements || [], city.name, CONFIG.TARGETS); }
+      catch (e) { log_('Search failed for ' + city.name + ': ' + e.message); }
+      if (CONFIG.OSM_WEBSITE_ONLY) res = res.filter(l => l.website);
+      const n = addLeads_(res, 'source: ' + city.name + ' (OpenStreetMap)');
+      found += res.length; added += n; tried++; i++;
+      labels.push(city.name + ' ' + n);
+    }
   }
-
-  const added = addLeads_(found, 'source: ' + label);
-  const msg = 'Find leads: ' + label + ' → ' + found.length + ' found, ' + added + ' new';
-  props.setProperty('lastFind', Utilities.formatDate(new Date(), 'Asia/Kolkata', 'yyyy-MM-dd HH:mm') + ' · ' + label + ': ' + added + ' new');
+  props.setProperty('areaIndex', String(i));
+  const label = labels.join(', ');
+  const msg = 'Find leads: ' + label + ' → ' + found + ' found, ' + added + ' new';
+  props.setProperty('lastFind', Utilities.formatDate(new Date(), 'Asia/Kolkata', 'yyyy-MM-dd HH:mm') + ' · ' + label + ' (' + added + ' new)');
   log_(msg);
   if (manual) { try { SpreadsheetApp.getActive().toast(msg, 'Astra Outreach', 10); } catch (e) {} }
 }
@@ -173,8 +201,9 @@ function findLeads(manual) {
 function addLeads_(leads, note) {
   const sh = sheet_();
   const rows = readRows_(sh);
-  const seenPlaces = new Set(rows.map(r => r.place_id).filter(String));
-  const seenDomains = new Set(rows.map(r => r.domain).filter(String));
+  const arch = archivedKeys_();
+  const seenPlaces = new Set(rows.map(r => r.place_id).filter(String).concat(arch.places));
+  const seenDomains = new Set(rows.map(r => r.domain).filter(String).concat(arch.domains));
   const now = today_();
   const add = [];
   leads.forEach(p => {
@@ -189,7 +218,7 @@ function addLeads_(leads, note) {
     add.push(rowFrom_({
       added_on: now, status: domain ? 'new' : 'no_website', business_name: p.name,
       website, domain, phone: p.phone, address: p.address, rating: p.rating, place_id: p.id,
-      email: p.email, email_found_on: p.email ? 'OpenStreetMap' : '', note: n, city: p.city,
+      email: p.email, email_found_on: p.email ? 'OpenStreetMap' : '', note: n, city: p.city, category: p.category || '',
     }));
   });
   if (add.length) sh.getRange(sh.getLastRow() + 1, 1, add.length, COLS.length).setValues(add);
@@ -197,8 +226,14 @@ function addLeads_(leads, note) {
 }
 
 function searchOsm_(bbox) {
-  const parts = CONFIG.OSM_TAGS.map(t => { const kv = t.split('='); return 'nwr["' + kv[0] + '"="' + kv[1] + '"](' + bbox + ');'; });
-  const query = '[out:json][timeout:90];(' + parts.join('') + ');out tags center;';
+  const parts = [];
+  CONFIG.TARGETS.forEach(t => t.tags.forEach(tag => {
+    const kv = tag.split('=');
+    const sel = kv.length > 1 ? '["' + kv[0] + '"="' + kv[1] + '"]' : '["' + kv[0] + '"]';
+    const sites = CONFIG.OSM_WEBSITE_ONLY ? ['["website"]', '["contact:website"]'] : [''];
+    sites.forEach(w => parts.push('nwr' + sel + w + '["name"](' + bbox + ');'));
+  }));
+  const query = '[out:json][timeout:50];(' + parts.join('') + ');out tags center;';
   const mirrors = ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter',
     'https://overpass.private.coffee/api/interpreter'];
   const errors = [];
@@ -347,6 +382,35 @@ function deliver_(r, mail, contacted) {
   contacted.add(String(r.email).toLowerCase());
 }
 
+/** One-off: move leads nobody can be emailed about (no website and no email) to an "Archive" tab.
+ *  Nothing is deleted. Archived businesses are never added again by later searches. */
+function archiveUncontactable() {
+  const ss = SpreadsheetApp.getActive();
+  const sh = sheet_();
+  const rows = readRows_(sh);
+  const dead = r => r.status === 'no_website' && !/@/.test(r.email || '');
+  const go = rows.filter(dead), keep = rows.filter(r => !dead(r));
+  if (!go.length) { log_('Nothing to archive.'); return 0; }
+  let ar = ss.getSheetByName('Archive');
+  if (!ar) { ar = ss.insertSheet('Archive'); ar.getRange(1, 1, 1, COLS.length).setValues([COLS]).setFontWeight('bold'); ar.setFrozenRows(1); }
+  ar.getRange(ar.getLastRow() + 1, 1, go.length, COLS.length).setValues(go.map(rowFrom_));
+  sh.getRange(2, 1, Math.max(sh.getLastRow() - 1, 1), COLS.length).clearContent();
+  if (keep.length) sh.getRange(2, 1, keep.length, COLS.length).setValues(keep.map(rowFrom_));
+  const msg = 'Archived ' + go.length + ' leads with no website and no email. ' + keep.length + ' leads kept.';
+  log_(msg);
+  try { ss.toast(msg, 'Astra Outreach', 10); } catch (e) {}
+  return go.length;
+}
+
+/** place_ids and domains already in the Archive tab, so searches don't add them again. */
+function archivedKeys_() {
+  const ar = SpreadsheetApp.getActive().getSheetByName('Archive');
+  if (!ar || ar.getLastRow() < 2) return { places: [], domains: [] };
+  const v = ar.getRange(2, 1, ar.getLastRow() - 1, COLS.length).getValues();
+  const pi = COLS.indexOf('place_id'), di = COLS.indexOf('domain');
+  return { places: v.map(x => String(x[pi])).filter(Boolean), domains: v.map(x => String(x[di])).filter(Boolean) };
+}
+
 /** One-off: add WhatsApp links to rows that have a phone number but no link yet. */
 function fillWhatsAppLinks() {
   const sh = sheet_();
@@ -405,13 +469,14 @@ function emailCopy(r, cfg) {
   const report = 'https://pagespeed.web.dev/analysis?url=' + encodeURIComponent(r.website) + '&form_factor=mobile';
   const fixes = String(r.top_fixes || '').split(' | ').filter(Boolean).length;
   const subject = 'Question about ' + name + "'s website";
+  const T = targetOf(r, cfg);
   const html =
-    '<p>' + esc_(cfg.GREETING) + ',</p>' +
+    '<p>' + esc_(T.greeting) + ',</p>' +
     "<p>I ran " + esc_(name) + "'s website through Google's mobile speed test today. On a typical phone connection, " +
     'it takes about <b>' + esc_(secs) + ' seconds</b> before the page shows up.</p>' +
-    '<p>Most patients search "dentist near me" on their phone and tap the first two or three clinics. ' +
+    '<p>Most ' + esc_(T.who) + ' search for a ' + esc_(T.one) + ' near them on their phone and tap the first two or three results. ' +
     "Google's own research found that more than half of mobile visitors leave if a page takes over 3 seconds, " +
-    'so some of those patients go straight back and pick the next clinic.</p>' +
+    'so some of those ' + esc_(T.who) + ' go straight back and pick the next ' + esc_(T.one) + '.</p>' +
     '<p>You can see the result yourself here: <a href="' + report + '">Google PageSpeed report for ' + esc_(r.domain) + '</a></p>' +
     (cfg.CASE_STUDY_URL ? '<p>I built the website and SEO for <a href="' + cfg.CASE_STUDY_URL + '">' + esc_(cfg.CASE_STUDY_NAME) +
       '</a>, a dental clinic in Chennai' + (cfg.PORTFOLIO_URL ? ', and you can see my other projects <a href="' +
@@ -429,9 +494,10 @@ function emailCopy(r, cfg) {
 
 function followupCopy(r, cfg) {
   const name = r.business_name || r.domain;
+  const greet = targetOf(r, cfg).greeting;
   if (r.pitch === 'website') {
     return { subject: 'Re: A website for ' + name, html:
-      '<p>' + esc_(cfg.GREETING) + ',</p>' +
+      '<p>' + esc_(greet) + ',</p>' +
       '<p>Just checking you saw my note about a website for ' + esc_(name) + '. I\'m happy to put together a free ' +
       'sample design so you can see how it would look. Reply "yes" and I\'ll send it.</p>' +
       '<p>' + esc_(cfg.SENDER_NAME) + '<br>Astra Nexora' +
@@ -440,7 +506,7 @@ function followupCopy(r, cfg) {
   }
   const subject = 'Re: Question about ' + name + "'s website";
   const html =
-    '<p>' + esc_(cfg.GREETING) + ',</p>' +
+    '<p>' + esc_(greet) + ',</p>' +
     "<p>Just checking you saw my note about " + esc_(name) + "'s website taking about " +
     esc_(String(r.speed_index || '').replace(/\s*s$/, '')) + ' seconds to show up on mobile.</p>' +
     '<p>The fixes are quick and I\'m happy to share them free. Reply "yes" and I\'ll send them today.</p>' +
@@ -455,14 +521,15 @@ function websitePitchCopy(r, cfg) {
   const name = r.business_name;
   const city = r.city || cfg.CITY_FOR_EMAIL;
   const subject = 'A website for ' + name;
+  const T = targetOf(r, cfg);
   const html =
-    '<p>' + esc_(cfg.GREETING) + ',</p>' +
-    '<p>I came across ' + esc_(name) + ' while looking at dental clinics in ' + esc_(city) +
+    '<p>' + esc_(T.greeting) + ',</p>' +
+    '<p>I came across ' + esc_(name) + ' while looking at ' + esc_(T.many) + ' in ' + esc_(city) +
     ", and noticed it doesn't have a website yet.</p>" +
-    '<p>Most patients now check a clinic online before they call. Without a website they only see a name and a ' +
-    'phone number, and many choose a clinic they can learn more about: the doctor, the treatments, photos and reviews.</p>' +
-    '<p>I build simple, fast websites for clinics, with WhatsApp booking, Google Maps directions and treatment pages, ' +
-    'so new patients can find and trust you before they call.</p>' +
+    '<p>Most ' + esc_(T.who) + ' now check a ' + esc_(T.one) + ' online before they call or visit. Without a website they only see a name and a ' +
+    'phone number, and many choose one they can learn more about: what you offer, photos and reviews.</p>' +
+    '<p>I build simple, fast websites for local businesses, with WhatsApp enquiries, Google Maps directions and service pages, ' +
+    'so new ' + esc_(T.who) + ' can find and trust you before they call.</p>' +
     (cfg.PORTFOLIO_URL ? '<p>You can see my projects <a href="' + cfg.PORTFOLIO_URL + '">here</a>' +
       (cfg.PERSONAL_SITE ? ', and my full profile on <a href="' + cfg.PERSONAL_SITE + '">my portfolio</a>' : '') + '.</p>' : '') +
     '<p>Shall I put together a free sample design for ' + esc_(name) + '? Just reply "yes".</p>' +
@@ -476,15 +543,15 @@ function websitePitchCopy(r, cfg) {
 /** The WhatsApp message for this lead (you send it yourself from the link). */
 function whatsappText(r, cfg) {
   const name = r.business_name || r.domain;
-  const who = 'Hello Doctor, I\'m ' + cfg.SENDER_NAME.replace(/^S\.\s*/, '') + ' from Astra Nexora, ' + cfg.AGENCY_LOCATION + '. ';
+  const who = targetOf(r, cfg).greeting.replace(/^Hi /, 'Hello ') + ', I\'m ' + cfg.SENDER_NAME.replace(/^S\.\s*/, '') + ' from Astra Nexora, ' + cfg.AGENCY_LOCATION + '. ';
   const work = cfg.PORTFOLIO_URL ? ' You can see my work here: ' + cfg.PORTFOLIO_URL : '';
   if (r.pitch === 'website' || !r.website) {
     return who + 'I noticed ' + name + " doesn't have a website yet. I build simple clinic websites with WhatsApp " +
-      'booking and Google Maps, so new patients can find and trust you before they call. ' +
+      'booking and Google Maps, so new customers can find and trust you before they call. ' +
       'Shall I share a free sample design for ' + name + '?' + work;
   }
   return who + 'I emailed you about ' + name + "'s website taking about " +
-    String(r.speed_index || '').replace(/\s*s$/, '') + ' seconds to load on mobile, which loses patients who search on ' +
+    String(r.speed_index || '').replace(/\s*s$/, '') + ' seconds to load on mobile, which loses customers who search on ' +
     'their phone. I\'ve noted 2 quick fixes. Shall I share them here? It\'s free.' + work;
 }
 
@@ -670,9 +737,20 @@ function stripQuoted(text) {
   return out.join('\n').replace(/\n{3,}/g, '\n\n').trim();
 }
 
-/** Overpass (OpenStreetMap) elements → lead objects. */
-function osmToLeads(elements, city) {
-  return elements.filter(e => e.tags && e.tags.name).map(e => {
+/** Which target (industry) an OpenStreetMap element belongs to; null if none. */
+function osmCategory(tags, targets) {
+  for (const t of targets || []) {
+    for (const tag of t.tags) {
+      const kv = tag.split('=');
+      if (kv.length > 1 ? tags[kv[0]] === kv[1] : (tags[kv[0]] && tags[kv[0]] !== 'no')) return t.key;
+    }
+  }
+  return null;
+}
+
+/** Overpass (OpenStreetMap) elements → lead objects. Skips big chains (brand tags). */
+function osmToLeads(elements, city, targets) {
+  return elements.filter(e => e.tags && e.tags.name && !e.tags['brand:wikidata'] && !e.tags.brand).map(e => {
     const t = e.tags;
     const addr = [t['addr:housenumber'], t['addr:street'], t['addr:suburb'] || t['addr:district'],
       t['addr:city'] || city, t['addr:postcode']].filter(Boolean).join(', ');
@@ -685,8 +763,16 @@ function osmToLeads(elements, city) {
       rating: '',
       email: (t.email || t['contact:email'] || '').split(';')[0].trim(),
       city: t['addr:city'] || city,
+      category: targets ? (osmCategory(t, targets) || '') : '',
     };
   });
+}
+
+/** The industry wording for a lead (falls back to DEFAULT_CATEGORY, then to plain "business"). */
+function targetOf(r, cfg) {
+  const ts = cfg.TARGETS || [];
+  return ts.filter(t => t.key === r.category)[0] || ts.filter(t => t.key === cfg.DEFAULT_CATEGORY)[0] ||
+    { key: '', one: 'business', many: 'businesses', who: 'customers', greeting: cfg.GREETING || 'Hello' };
 }
 
 function toDomain(url) {
@@ -760,7 +846,7 @@ var FIX_WORDS = {
   'Serve images in next-gen formats': 'Saving the photos in a modern format (WebP) makes them about a third of the size, with the same quality.',
   'Efficiently encode images': 'Compressing the photos properly cuts their size without any visible change.',
   'Defer offscreen images': 'Photos further down the page can load only when the visitor scrolls to them, so the top of the page appears first.',
-  'Eliminate render-blocking resources': 'Some style and script files have to download before anything shows on screen. Loading them later lets patients see the page straight away.',
+  'Eliminate render-blocking resources': 'Some style and script files have to download before anything shows on screen. Loading them later lets visitors see the page straight away.',
   'Reduce unused JavaScript': 'The site loads code it never uses on this page. Removing it means less to download on a phone connection.',
   'Reduce unused CSS': 'The site loads styling for features it does not use. Trimming it speeds up the first view.',
   'Reduce initial server response time': 'The hosting server is slow to answer. Better hosting or page caching fixes this.',
@@ -776,33 +862,34 @@ function astraFix(f) {
   return (FIX_WORDS[title] || title + '.') + (save ? ' (Google estimates this saves about ' + save + ' seconds.)' : '');
 }
 function astraTemplates(l, S) {
-  var name = l.name || 'your clinic';
+  var name = l.name || 'your business';
+  var hi = (l.greeting || 'Hello') + ',\n\n';
   var d1 = (S.days && S.days[0]) || 'Monday', d2 = (S.days && S.days[1]) || 'Tuesday';
   var sig = '\n\nBest regards,\n' + S.sender + '\nAstra Nexora, ' + S.location + (S.phone ? '\n' + S.phone : '') + (S.projects ? '\nMy work: ' + S.projects : '');
   var fixes = String(l.fixes || '').split(' | ').filter(Boolean);
   var site = l.pitch ? l.pitch === 'website' : !l.domain;
   var list = [];
   if (!site) list.push({ id: 'fixes', label: 'Send the fixes', body:
-    'Hi Doctor,\n\nThank you for getting back to me. Here ' + (fixes.length > 1 ? 'are the ' + fixes.length + ' fixes' : 'is the fix') + ' for ' + name + "'s website:\n\n" +
+    hi + 'Thank you for getting back to me. Here ' + (fixes.length > 1 ? 'are the ' + fixes.length + ' fixes' : 'is the fix') + ' for ' + name + "'s website:\n\n" +
     (fixes.length ? fixes.map(function (f, i) { return (i + 1) + '. ' + astraFix(f); }).join('\n\n') : '1. [describe the fix]') +
     '\n\nTogether these should bring the mobile load time down noticeably. Your web developer can make these changes, or my team can do it for you in 2 to 3 days.' +
     '\n\nWould a quick 10-minute call on ' + d1 + ' or ' + d2 + ' work to go through it?' + sig });
   if (site) list.push({ id: 'sample', label: 'Yes to a sample design', body:
-    'Hi Doctor,\n\nThank you! I will put together a sample homepage design for ' + name + ' and send it to you within 2 days.' +
+    hi + 'Thank you! I will put together a sample homepage design for ' + name + ' and send it to you within 2 days.' +
     '\n\nSo it looks like your clinic, could you share:\n- your clinic logo, if you have one\n- the main treatments you offer\n- 2 or 3 photos of the clinic or the team' +
     '\n\nYou can simply reply to this email with them.' + sig });
   list.push({ id: 'price', label: 'Answer a price question', body:
-    'Hi Doctor,\n\nThank you for asking.\n\n' +
+    hi + 'Thank you for asking.\n\n' +
     (site ? 'A complete website for ' + name + ', with treatment pages, WhatsApp booking, Google Maps directions and basic Google SEO, costs [your price], one time. Hosting and domain for the first year are [included / extra].'
           : 'Fixing the speed issues on ' + name + "'s website costs [your price], one time. That includes the fixes above, testing on mobile, and a before-and-after Google report.") +
     '\n\nShall we do a quick 10-minute call on ' + d1 + ' or ' + d2 + ' so I can understand exactly what you need?' + sig });
   list.push({ id: 'call', label: 'Book a call', body:
-    'Hi Doctor,\n\nThank you. Shall we do a quick 10-minute call so I can understand what you need? I am free on ' + d1 + ' or ' + d2 +
+    hi + 'Thank you. Shall we do a quick 10-minute call so I can understand what you need? I am free on ' + d1 + ' or ' + d2 +
     ', anytime between 11 am and 6 pm.\n\nPlease let me know a time that works for you, or share the best number to reach you.' + sig });
   list.push({ id: 'close', label: 'Polite close (not interested)', body:
-    'Hi Doctor,\n\nThank you for letting me know. No problem at all, and I will not send any more emails.\n\nIf you ever want help with ' + name +
+    hi + 'Thank you for letting me know. No problem at all, and I will not send any more emails.\n\nIf you ever want help with ' + name +
     "'s website later, just reply to this email. Wishing you and the team all the best." + sig });
-  list.push({ id: 'blank', label: 'Write my own', body: 'Hi Doctor,\n\n' + sig });
+  list.push({ id: 'blank', label: 'Write my own', body: hi + sig });
   return list;
 }
 function astraPick(l, list) {
@@ -954,7 +1041,8 @@ function summarize(rows, today, me, perDay) {
   };
   const card = r => ({ row: r._row, name: r.business_name || r.domain, city: r.city, email: r.email, phone: r.phone,
     pitch: r.pitch, status: r.status, when: r.contacted_on, gmail: gmail(r), fixes: r.top_fixes, website: r.website,
-    sent: r.sent_text, reply: r.reply_text, replied_on: r.replied_on, answered_on: r.answered_on, domain: r.domain });
+    sent: r.sent_text, reply: r.reply_text, replied_on: r.replied_on, answered_on: r.answered_on, domain: r.domain,
+    greeting: targetOf(r, CONFIG).greeting, category: r.category });
   const waitingAnswer = r => !r.answered_on || (!!r.replied_on && r.answered_on < r.replied_on);
   const byReply = (a, b) => String(b.replied_on || b.contacted_on).localeCompare(String(a.replied_on || a.contacted_on));
   return {
@@ -1172,6 +1260,7 @@ function desktopSummary(rows, today, me, cfg) {
     speed: r.speed_index, score: r.perf_score, lcp: r.lcp, fixes: r.top_fixes,
     added: r.added_on, emailed: r.contacted_on, followup: r.followup_on, replied: r.replied_on,
     reply: r.reply_text, sent: r.sent_text, note: r.note, gmail: gmail(r), answered: r.answered_on,
+    greeting: targetOf(r, cfg).greeting, category: r.category,
     report: r.website ? 'https://pagespeed.web.dev/analysis?url=' + encodeURIComponent(r.website) + '&form_factor=mobile' : '' }));
   const fmtT = v => String(v || '').slice(11, 16);
   const events = [];
