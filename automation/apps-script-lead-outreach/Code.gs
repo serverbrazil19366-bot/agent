@@ -234,8 +234,8 @@ function searchOsm_(bbox) {
     sites.forEach(w => parts.push('nwr' + sel + w + '["name"](' + bbox + ');'));
   }));
   const query = '[out:json][timeout:50];(' + parts.join('') + ');out tags center;';
-  const mirrors = ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter',
-    'https://overpass.private.coffee/api/interpreter'];
+  const mirrors = ['https://overpass-api.de/api/interpreter', 'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+    'https://overpass.kumi.systems/api/interpreter', 'https://overpass.private.coffee/api/interpreter'];
   const errors = [];
   for (const url of mirrors) {
     try {
