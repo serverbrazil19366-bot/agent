@@ -107,6 +107,7 @@ SERVICES = [
     ("Social Media & Content", "Content planning, posters, reels and videos that keep brands consistent.", "social"),
     ("Analytics & Reporting", "GA4 and Search Console set-up, conversion tracking and clear monthly reports.", "content"),
     ("Lead Generation Automation", "A system that finds your ideal clients, sends each one a personal email, follows up once and tracks every reply on a dashboard, at zero running cost.", "lead"),
+    ("WhatsApp Business API Campaigns", "Personalised campaigns on the official Meta Cloud API from your own platform: approved templates, safe sending and reply tracking, with no monthly subscription.", "social"),
 ]
 
 # Projects. tag drives the filter: web, seo, auto, social.

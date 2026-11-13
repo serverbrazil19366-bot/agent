@@ -41,6 +41,7 @@ SERVICE_TAGLINES = {
     "email-lead-generation": "Funnels, email and nurturing",
     "ai-automation": "Chatbots, n8n and WhatsApp",
     "lead-generation-automation": "Find and email new clients on autopilot",
+    "whatsapp-business-api-marketing": "Personalised campaigns on the official API",
 }
 SERVICE_BY_SLUG = {s["slug"]: s for s in SERVICES}
 
@@ -68,6 +69,7 @@ ICON_PATHS = {
     "branding": '<path d="M12 3 4 8.5 12 21l8-12.5z"/><path d="M4 8.5h16M9 8.5 12 21l3-12.5"/>',
     "email-lead-generation": '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.5 7 8.5 6 8.5-6"/>',
     "ai-automation": '<path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><rect x="7" y="7" width="10" height="10" rx="2.5"/><path d="M10 12h4M12 10v4"/>',
+    "whatsapp-business-api-marketing": '<path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12z"/><path d="M9 10.5h6M9 13.5h4"/>',
     "lead-generation-automation": '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/><path d="m15.5 8.5 4-4M17 4.5h2.5V7"/>',
 }
 
@@ -652,7 +654,7 @@ def home_page(posts=()):
 <div aria-hidden="true" class="floaters"><i class="f1"></i><i class="f2"></i><i class="f3"></i><i class="f4"></i></div>
 <div aria-hidden="true" class="svc-bg img-wrap">{img("pexels-577210", "", "40vw", p)}</div>
 <div class="wrap">
-{heading("Services", 'Expand your digital <span class="hl">presence with us.</span>', "Nine services, planned together by one team. Pick one, or let us run the whole system.", center=True, title_id="servicesTitle")}
+{heading("Services", 'Expand your digital <span class="hl">presence with us.</span>', "Ten services, planned together by one team. Pick one, or let us run the whole system.", center=True, title_id="servicesTitle")}
 <div class="svc-grid">
 {cards}
 </div>

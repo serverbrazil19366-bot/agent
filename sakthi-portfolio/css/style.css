@@ -786,3 +786,9 @@ main { overflow-x: clip; }
 @media (max-width: 1100px) { .work-card.full { grid-column: span 6; grid-template-columns: 1fr; } }
 @media (min-width: 1101px) { .svc-grid > .svc:last-child:nth-child(3n+1) { grid-column: 1 / -1; } }
 @media (min-width: 701px) and (max-width: 1100px) { .svc-grid > .svc:last-child:nth-child(odd) { grid-column: 1 / -1; } }
+@media (min-width: 1101px) {
+    .svc-grid { grid-template-columns: repeat(6, 1fr); }
+    .svc-grid > .svc { grid-column: span 2; }
+    .svc-grid > .svc:last-child:nth-child(3n+1) { grid-column: 1 / -1; }
+    .svc-grid > .svc:nth-last-child(2):nth-child(3n+1), .svc-grid > .svc:last-child:nth-child(3n+2) { grid-column: span 3; }
+}

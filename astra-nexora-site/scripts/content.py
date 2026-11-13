@@ -383,6 +383,51 @@ SERVICES = [
         ],
         "related": ["ai-automation", "email-lead-generation", "website-development"],
     },
+
+    {
+        "slug": "whatsapp-business-api-marketing",
+        "seo_title": "WhatsApp Business API Marketing & Bulk Campaigns | Astra Nexora",
+        "seo_desc": "Personalised WhatsApp campaigns on the official Meta Cloud API, on your own platform: approved templates, safe sending, delivery and reply tracking, no monthly subscription.",
+        "nav": "WhatsApp Business API Marketing",
+        "title": "WhatsApp Business API Marketing",
+        "h1": "WhatsApp campaigns that <em>reach real people.</em>",
+        "lead": "Personalised, Meta-approved WhatsApp campaigns sent from your own platform on the official WhatsApp Cloud API, with safe sending, delivery and reply tracking, and no monthly subscription.",
+        "hero": "pexels-8824105",
+        "hero_alt": "A person reading a business message on a smartphone",
+        "side": "propedo-wa-dash",
+        "side_alt": "Campaign dashboard with sent, remaining, failed, read and reply counts",
+        "facts": [("Best for", "Brands messaging a known list of customers or partners"), ("Built with", "Meta WhatsApp Cloud API"), ("Running cost", "Only Meta's per-message fee")],
+        "overview": [
+            "WhatsApp is where your customers and partners actually read messages, but most businesses either send broadcasts from a phone (which only reach people who saved your number) or pay a third-party platform every month plus a markup on every message.",
+            "We set up your WhatsApp Business API account on the official Meta Cloud API and build a campaign platform you own: personalised approved templates, clean contact lists, safe sending that protects your number, and a dashboard that tracks delivery, reads and replies. You pay Meta's message fees, not a monthly subscription.",
+        ],
+        "includes": [
+            ("Meta Business Verification", "We guide you through business verification, sender number registration and display name approval."),
+            ("Approved message templates", "Marketing and utility templates written and submitted for approval, with personalised fields like the customer's name."),
+            ("Your own campaign platform", "A password-protected dashboard on your server to import contacts, create campaigns and send them."),
+            ("Contact cleaning", "Lists from Excel, PDF or exports are cleaned: numbers normalised, duplicates removed, wrong contacts filtered out."),
+            ("Safe sending", "Batched sending with delays and daily limits that protect your number's quality rating."),
+            ("Delivery and read tracking", "A webhook records delivered, read and failed messages for every campaign."),
+            ("Replies to a real person", "Buttons and replies routed to your team's staffed WhatsApp number, not a bot inbox."),
+            ("Campaign reporting", "Sent, remaining, failed, read and replies on one dashboard, with campaign history."),
+        ],
+        "process": [
+            ("Verify", "Meta Business Verification, sender number and display name."),
+            ("Prepare", "Clean your contact list and write and approve your templates."),
+            ("Build", "Set up the platform and webhook on your server and test with a small group."),
+            ("Launch", "Send in safe batches, track results and scale up gradually."),
+        ],
+        "deliverables": ["WhatsApp Business API account on Meta Cloud API", "Approved message templates", "Self-hosted campaign dashboard", "Cleaned and tagged contact list", "Webhook for delivery, read and reply tracking", "Launch campaign and handover"],
+        "ideal": ["Healthcare and dental brands", "Clinics and labs", "Distributors and suppliers", "Education and coaching", "Retail and D2C brands", "Real estate"],
+        "faqs": [
+            ("Is this the official WhatsApp API?", "Yes. We use Meta's own WhatsApp Cloud API with a verified business account and approved templates."),
+            ("How much does it cost to send messages?", "You pay Meta's per-message fees directly. There's no monthly platform subscription; you pay us once for the setup."),
+            ("Will my number get banned?", "We use approved templates, clean contact lists, small batches and gradual warm-up to protect your number, and only message relevant contacts."),
+            ("Can customers reply?", "Yes. Replies and button clicks are routed to your team's WhatsApp number so a person answers."),
+            ("Can I see an example?", "Yes. We built this for ProPedoZR, which messaged 150 dentists on day one with zero failures. The case study is on our founder's portfolio."),
+        ],
+        "related": ["ai-automation", "lead-generation-automation", "email-lead-generation"],
+    },
 ]
 
 PROJECTS = [
@@ -560,7 +605,7 @@ HOME = {
     },
     "faqs": [
         ("What services does Astra Nexora offer?",
-         "Nine service areas: SEO (including local and AI search), social media marketing, performance marketing and paid ads, content marketing and creative, website design and development, branding and personal branding, email and lead generation, AI solutions and marketing automation, and automated lead generation and outreach."),
+         "Ten service areas: SEO (including local and AI search), social media marketing, performance marketing and paid ads, content marketing and creative, website design and development, branding and personal branding, email and lead generation, AI solutions and marketing automation, automated lead generation and outreach, and WhatsApp Business API marketing."),
         ("How long does a typical project take?",
          "It depends on scope. A website usually takes 4–8 weeks and a brand identity 3–4 weeks. SEO typically starts showing results in 3–6 months. You get a detailed timeline at kickoff and regular updates throughout."),
         ("Do you work with businesses of all sizes?",
