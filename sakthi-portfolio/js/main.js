@@ -325,7 +325,7 @@ if (animate) {
             scrollTrigger: { trigger: box, start: "top 85%", once: true }
         });
         const im = box.querySelector("img");
-        if (im) gsap.fromTo(im, { yPercent: -6, scale: 1.16 }, { yPercent: 6, scale: 1.16, ease: "none", scrollTrigger: { trigger: box, start: "top bottom", end: "bottom top", scrub: true } });
+        if (im) gsap.fromTo(im, { yPercent: -3, scale: 1.07 }, { yPercent: 3, scale: 1.07, ease: "none", scrollTrigger: { trigger: box, start: "top bottom", end: "bottom top", scrub: true } });
     });
 
     // Cards arrive in batches

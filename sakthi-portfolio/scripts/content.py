@@ -112,6 +112,24 @@ SERVICES = [
 # Projects. tag drives the filter: web, seo, auto, social.
 PROJECTS = [
     {
+        "slug": "propedozr-whatsapp-doctor-outreach",
+        "title": "ProPedoZR – WhatsApp Doctor-Outreach Platform",
+        "tag": "auto",
+        "category": "WhatsApp API Automation",
+        "summary": "A self-hosted WhatsApp Business API campaign platform that sends personalised, Meta-approved messages to 280+ pediatric dentists, with no monthly subscription.",
+        "cover": "work/propedo-wa-cover",
+        "gallery": [],
+        "live": "",
+        "meta": [("Year", "2026"), ("Industry", "Pediatric dental products"), ("Client", "ProPedoZR"), ("Role", "Sole builder: API, backend, dashboard")],
+        "sections": [
+            ("The challenge", "ProPedoZR needed to send personalised offers to 280+ partner dentists and run ongoing campaigns without paying a third-party WhatsApp platform every month."),
+            ("Strategy", "Build an in-house platform on the official Meta WhatsApp Cloud API, on the company's own server, with safe batching and replies routed to a human."),
+            ("What I did", "Meta onboarding, PHP and MySQL backend, campaign runner, webhook, password-protected dashboard and the contact-cleaning pipeline."),
+            ("Outcome", "Live: 150 doctors messaged on day 1 with 0 failures, at about ₹1 per message and no subscription."),
+        ],
+        "tools": ["WhatsApp Cloud API", "PHP 8.3", "MySQL", "Nginx", "Webhooks", "Python"],
+    },
+    {
         "slug": "astra-nexora-lead-outreach-system",
         "title": "Astra Nexora – Automated Lead Outreach System",
         "tag": "auto",
@@ -366,6 +384,8 @@ TESTIMONIALS = [
 
 # Search titles and descriptions for the case studies (the on-page title stays as above)
 PROJECT_SEO = {
+    "propedozr-whatsapp-doctor-outreach": ("WhatsApp Business API Campaign Platform – ProPedoZR Case Study",
+                                           "How S. Saktheeswaran built an in-house WhatsApp Cloud API platform that sends personalised campaigns to 280+ dentists with no monthly subscription."),
     "astra-nexora-lead-outreach-system": ("Automated Lead Outreach System – Astra Nexora Case Study",
                                           "How S. Saktheeswaran built an automated lead outreach system: lead search, website speed audits, personal emails, follow-ups, reply tracking and dashboards at zero cost."),
     "astra-nexora-website": ("Digital Marketing Agency Website – Astra Nexora Case Study",
@@ -1388,5 +1408,109 @@ ARTICLES.insert(0, {
         6: [("work/outreach-dashboard", "The laptop dashboard: today's numbers, what's coming up, system health and the funnel."),
             ("work/outreach-m", "The phone view, added to the home screen like an app.")],
         7: [("work/outreach-flow", "The full pipeline: steps 1 to 6 run on their own; replies and the pipeline are where I take over.")],
+    },
+})
+
+STORIES["propedozr-whatsapp-doctor-outreach"] = {
+    "glance": ("ProPedoZR needed to send personalised offers to 280+ pediatric dentists, but third-party WhatsApp tools cost ₹1,500–2,800 a month plus a markup on every message.",
+               "An in-house campaign platform on the official Meta WhatsApp Cloud API, self-hosted on the company's own server, with personalised templates, safe batching, tracking and a dashboard.",
+               "Live: 150 doctors messaged on day 1 with 0 failures. A full 280-doctor campaign costs about ₹250–300 in Meta fees, with no subscription."),
+    "challenge": ["ProPedoZR makes premium pediatric zirconia crowns and works with 280+ partner dentists. Every doctor needed a "
+                  "personal message: generic broadcasts get ignored, and they only reach people who have already saved the number.",
+                  "Third-party WhatsApp platforms meant a monthly fee, a markup on every message and a dashboard full of features we'd "
+                  "never use. Replies had to reach a number the team actually reads, not a bot inbox. And a brand-new sender number is "
+                  "fragile: send too much too fast and it gets flagged within hours."],
+    "approach": ["Build a self-owned, low-cost, compliant system on the official Meta WhatsApp Cloud API, hosted on the company's "
+                 "own server. Every message uses a Meta-approved template personalised with the doctor's name, sending happens in "
+                 "small batches to protect the number, and every reply goes to a person.",
+                 "The only running cost is Meta's per-message fee, about ₹1 a message, with no subscription."],
+    "features": [
+        ("Personalisation at scale", "Every message opens with Hello Dr. and the doctor's name, filled into the approved template's "
+         "variable, so no two doctors get an identical-looking blast. The template carries the crown offer (personalised clinic "
+         "poster, clinic education kit and easy size exchange) and a Chat on WhatsApp button.", ["work/propedo-wa-cover"]),
+        ("End-to-end pipeline", "Contacts are imported and cleaned into MySQL, a campaign runner sends through the Meta Cloud API, "
+         "and a webhook brings delivery receipts, read receipts and replies back into the database.", ["work/propedo-wa-flow"]),
+        ("Password-protected dashboard", "Import contacts, create a campaign and send it in batches with a live progress bar, "
+         "per-message results and tiles for sent, remaining, failed, read and replies, plus campaign history.", ["work/propedo-wa-dash"]),
+        ("Anti-ban batching and warm-up", "Messages go out 20 at a time with a 300 ms gap, and day 1 was capped at 150, under the "
+         "new-number limit, to protect the sender's quality rating before scaling.", []),
+        ("Replies reach a human", "Meta doesn't allow direct wa.me links in template buttons, so the button points to a redirect "
+         "page on the company's own domain that forwards to the team's staffed WhatsApp number.", []),
+        ("Contact hygiene", "A cleaning pipeline parses PDF, DOCX and raw contact dumps, normalises numbers, removes duplicates and "
+         "strips non-doctor contacts (own numbers, other-brand contacts, patients, vendors, labs, landlines) that could trigger "
+         "spam reports.", []),
+        ("Meta verification and security", "Completed Meta Business Verification, registered the sender number and got the display "
+         "name approved. Secrets live in a config file that isn't web-readable, credentials were entered directly on the server, "
+         "and the dashboard is password-protected and not indexed.", []),
+        ("Built for less, not more", "Compared with a third-party platform, the in-house build removes the subscription entirely: "
+         "a full campaign costs only Meta's message fees.", ["work/propedo-wa-cost"]),
+    ],
+    "results": ["Live on company-owned infrastructure with a Meta-verified business and approved template",
+                "150 doctors messaged on day 1, each personalised, with 0 failures",
+                "280 doctors loaded; the remaining 130 scheduled the next day within safe limits",
+                "About ₹250–300 per 280-doctor campaign, versus ₹1,500–2,800 a month for a third-party platform"],
+    "services": ["Meta WhatsApp Cloud API onboarding", "PHP & MySQL backend", "Campaign runner & webhook", "Admin dashboard", "Contact data pipeline"],
+    "insight": "whatsapp-business-api-campaign-platform",
+}
+
+ARTICLES.insert(1, {
+    "slug": "whatsapp-business-api-campaign-platform",
+    "seo_title": "WhatsApp Business API Campaigns Without a Monthly Fee: Case Study",
+    "desc": ("How I built an in-house WhatsApp Cloud API campaign platform for ProPedoZR: personalised templates, safe batching, "
+             "webhooks and a dashboard, at about ₹1 per message."),
+    "h1": "WhatsApp Business API campaigns for <em>ProPedoZR</em>",
+    "kicker": "WhatsApp API · ProPedoZR",
+    "date": "2026-11-13",
+    "read": "6 min read",
+    "intro": ("Most businesses that want to send WhatsApp campaigns sign up for a third-party platform and pay every month, plus a "
+              "markup on every message. For ProPedoZR, a pediatric zirconia crown brand reaching 280+ dentists, I built the platform "
+              "in-house instead, on the official Meta WhatsApp Cloud API. Here's how it works and what I learned."),
+    "sections": [
+        ("Why build instead of buy",
+         ["Third-party WhatsApp tools cost ₹1,500–2,800 a month plus a per-message markup, and lock you into a dashboard you mostly "
+          "don't use. ProPedoZR needed one thing done well: personalised offers to a known list of dentists, with replies going to "
+          "a person. That's a small, focused system, and building it removed the subscription completely."]),
+        ("Getting onto the Meta Cloud API",
+         ["The first step was Meta Business Verification with the company's registration details, then registering a dedicated "
+          "sender number, adding billing and getting the display name approved. An early policy error turned out to be a trust "
+          "gate for new accounts, and full business verification solved it."]),
+        ("Personalised, approved templates",
+         ["Business-initiated WhatsApp messages must use a Meta-approved template. The template opens with Hello Dr. and a "
+          "variable that the system fills with each doctor's name, then the crown offer and a Chat on WhatsApp button. Every "
+          "doctor gets a message addressed to them, not a generic blast."]),
+        ("Sending safely from a new number",
+         ["New numbers are fragile. The campaign runner sends in batches of 20 with a 300 ms gap, and the first day was capped at "
+          "150 messages, under the new-number daily limit, to build the sender's quality rating before scaling."]),
+        ("Cleaning the contact list first",
+         ["The doctor list came from PDFs, Word files and raw exports. A pipeline parsed them, normalised every number, removed "
+          "duplicates and stripped non-doctor contacts like the team's own numbers, patients, vendors and landlines. Sending to the "
+          "wrong people is the fastest way to get reported and banned."]),
+        ("Replies that reach a person",
+         ["Meta doesn't allow direct wa.me links in template buttons, so the button points to a redirect page on the company's own "
+          "domain, which forwards to the team's staffed WhatsApp number. A webhook also records delivery receipts, read receipts "
+          "and replies in the dashboard."]),
+        ("Results and what's next",
+         ["On day 1, 150 doctors received a personalised message with 0 failures; the remaining 130 were scheduled for the next "
+          "day. A full 280-doctor campaign costs roughly ₹250–300 in Meta fees. Next: automatic referral codes on reply, a reply "
+          "inbox inside the dashboard, automatic throttling based on quality rating, and campaigns segmented by region."]),
+    ],
+    "checklist": ["Complete Meta Business Verification first", "Use an approved template with a name variable",
+                  "Clean and de-duplicate contacts before sending", "Send in small batches on a new number",
+                  "Route replies to a human-staffed number", "Track delivery, reads and replies with a webhook",
+                  "Keep secrets off the web server's public paths"],
+    "projects": ["propedozr-whatsapp-doctor-outreach"],
+    "faqs": [
+        ("Do I need a third-party provider to use the WhatsApp Business API?",
+         "No. Meta's WhatsApp Cloud API can be used directly once your business is verified; you pay Meta's per-message fees."),
+        ("How much does a WhatsApp campaign cost this way?",
+         "Only Meta's message fees, about ₹1 per marketing message in this case, so a 280-contact campaign cost roughly ₹250–300."),
+        ("How do you avoid getting the number banned?",
+         "Use approved templates, message only relevant contacts, start with small daily volumes and batches, and make it easy to opt out."),
+    ],
+    "cover": ("work/propedo-wa-cover", "ProPedoZR WhatsApp outreach platform"),
+    "figs": {
+        2: [("work/propedo-wa-cover", "The approved template, personalised with each doctor's name (illustration).")],
+        5: [("work/propedo-wa-flow", "The pipeline from contact list to WhatsApp and back through the webhook.")],
+        6: [("work/propedo-wa-dash", "Dashboard sections and day-1 numbers (diagram)."),],
     },
 })

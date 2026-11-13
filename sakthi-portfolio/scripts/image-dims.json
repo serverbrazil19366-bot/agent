@@ -334,5 +334,21 @@
  "blog/cover-lead-outreach": [
   1600,
   900
+ ],
+ "work/propedo-wa-cover": [
+  1600,
+  1000
+ ],
+ "work/propedo-wa-flow": [
+  1600,
+  1000
+ ],
+ "work/propedo-wa-dash": [
+  1600,
+  1000
+ ],
+ "work/propedo-wa-cost": [
+  1600,
+  1000
  ]
 }
