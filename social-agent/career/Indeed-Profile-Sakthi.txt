@@ -1,32 +1,43 @@
-INDEED PROFILE · SAKTHEESWARAN S (job-seeker version, no "Founder")
+INDEED PROFILE · SAKTHEESWARAN S
 Copy each section into the matching field on Indeed (profile.indeed.com → Edit).
-Your client work is shown as freelance work, which is true and is what employers are comfortable with.
-Add the dates for each job from your own records (Indeed asks month and year).
+Order of strengths everywhere: 1) AI & marketing automation  2) Digital marketing  3) Canva design  4) Web development.
+
+
+------------------------------------------------------------
+PRIVACY (do this first)
+------------------------------------------------------------
+
+You currently work at Ankhor Group. On profile.indeed.com → Settings → Privacy, set your resume to Private (or hide it from your current employer), so only companies you apply to can see it.
 
 
 ------------------------------------------------------------
 1. HEADLINE
 ------------------------------------------------------------
 
-Digital Marketing Specialist | Graphic Designer | SEO & Social Media | Canva, Photoshop, WordPress | AI Automation
+Digital Marketing Executive | AI & Marketing Automation (n8n, WhatsApp) | SEO, Google Business Profile & Social Media | Canva Designer
 
 
 ------------------------------------------------------------
 2. SUMMARY
 ------------------------------------------------------------
 
-Digital Marketing Executive at Ankhor Group, Chennai, with 2 years of hands-on digital marketing and design experience. I've delivered 20+ projects for 12+ clients, mainly in healthcare (dental clinics, a dental lab, a pediatric dental brand) and retail.
+Digital Marketing Executive at Ankhor Group, Chennai, with 2 years of hands-on digital marketing experience and 20+ projects for 12+ clients, mainly in healthcare and retail.
 
-What I do:
-• Design social media posts, posters, flyers, product ads and brochures (Canva, Photoshop)
-• Plan and schedule content for Instagram, Facebook, LinkedIn and X
-• Build and improve websites (WordPress) for speed, mobile and enquiries
-• SEO and Google Business Profile optimisation
-• Automate repetitive work with n8n, WhatsApp and email workflows
+What sets me apart is automation. I build systems that save teams hours every week and make sure no enquiry is missed:
+• n8n workflows connecting forms, WhatsApp, email and Google Sheets
+• WhatsApp booking and confirmation flows for a clinic and a dental lab
+• A referral system for a healthcare brand
+• A lead research tool (Google Apps Script) that tested 205 business websites for speed
+• AI tools (ChatGPT, Claude) for faster content and research
 
-Before digital marketing, I worked in administration, training and team coordination, so I'm comfortable with deadlines, documentation and working with different teams.
+Alongside automation, I handle the full digital marketing work:
+• SEO, local SEO and Google Business Profile optimisation
+• Social media strategy, content calendars and scheduling (Instagram, Facebook, LinkedIn, X)
+• Meta and Google Ads basics, with a focus on enquiries, not just likes
+• Social media posts, posters, flyers and brochures in Canva
+• Website updates and landing pages on WordPress
 
-I'm looking for a full-time role where I can bring practical, results-focused marketing and design to a growing team.
+I'm looking for a role where marketing and automation work together to bring measurable results.
 
 
 ------------------------------------------------------------
@@ -38,24 +49,24 @@ Company: Ankhor Group
 Location: Chennai, Tamil Nadu, India
 Dates: March 2026 – Present
 Description:
-• Manage digital marketing for the group: social media, website, SEO and Google Business Profile.
-• Plan and design social media posts, posters and promotional creatives.
-• Improved the website and local SEO to bring more enquiries.
-• Built a case booking system for the dental lab: online booking, WhatsApp and email confirmations, and one team dashboard (n8n).
-• Track results and report on enquiries and engagement.
+• Built a case booking system for the dental lab with n8n: online booking, automatic WhatsApp and email confirmations, and one team dashboard.
+• Manage the group's digital marketing: social media, SEO and Google Business Profile.
+• Plan content calendars and design social media posts and promotional creatives in Canva.
+• Improved local SEO and the website to bring more enquiries.
+• Track and report on enquiries and engagement.
 
-Job title: Freelance Digital Marketing Specialist & Graphic Designer
+Job title: Freelance Digital Marketing & Automation Specialist
 Company: Self-employed
 Location: Tamil Nadu, India (Remote)
 Dates: [month & year you started freelancing] – Present
 Description:
-• Delivered 20+ projects for 12+ clients across healthcare, retail and services.
-• Designed social media posts, posters, product ads, flyers and a trifold brochure for healthcare brands.
-• Planned and scheduled monthly content calendars across Instagram, Facebook, LinkedIn and X.
-• Built and redesigned business websites, focusing on mobile speed, clear service pages and WhatsApp enquiries.
+• Built marketing automations with n8n, WhatsApp and email: a clinic booking flow and a referral system for a healthcare brand.
+• Built a lead research tool in Google Apps Script that finds businesses, tests their website speed with Google PageSpeed and sends personalised outreach.
+• Delivered 20+ digital marketing projects for 12+ clients across healthcare, retail and services.
 • Optimised Google Business Profiles and set up review collection and replies.
-• Built automations with n8n, WhatsApp and email: a clinic booking flow and a referral system.
-• Built a lead research tool in Google Apps Script that tested 205 business websites for mobile speed.
+• Planned and scheduled monthly content across Instagram, Facebook, LinkedIn and X.
+• Designed social media posts, posters, product ads, flyers and a brochure in Canva.
+• Updated and built websites with a focus on mobile speed and WhatsApp enquiries.
 
 Job title: Assistant Manager
 Company: Dream Emphasis
@@ -95,68 +106,79 @@ Einstein College of Arts & Science
 
 
 ------------------------------------------------------------
-5. SKILLS  (keep your existing ones, add these)
+5. SKILLS  (add them in this order; remove "Photoshop" from your existing skills)
 ------------------------------------------------------------
 
-Graphic Design
-Canva
-Adobe Photoshop
-Poster, Flyer & Brochure Design
-Social Media Marketing
-Social Media Content Creation
-Content Planning & Scheduling
-Copywriting
-Branding & Visual Consistency
-Video Editing (CapCut)
+AI & automation
+n8n
+Marketing Automation
+WhatsApp Business Automation
+Workflow Automation
+Google Apps Script
+AI Tools (ChatGPT, Claude)
+Google Sheets
+
+Digital marketing
 Digital Marketing
 Search Engine Optimization (SEO)
 Local SEO
 Google Business Profile
 Google Search Console
 Google Analytics 4
-WordPress
-Website Development
+Social Media Marketing
+Social Media Strategy
+Content Planning & Scheduling
 Meta Ads
 Google Ads
-n8n
-Marketing Automation
-WhatsApp Business
-AI Tools (ChatGPT, Claude)
+Copywriting
+Lead Generation
+
+Design
+Canva
+Social Media Design
+Poster, Flyer & Brochure Design
+Branding & Visual Consistency
+Video Editing (CapCut)
+
+Web
+WordPress
+Landing Pages
+Website Speed Optimisation
+
+Other
 MS Excel, Word, PowerPoint
 Team Coordination
 
 
 ------------------------------------------------------------
-6. CERTIFICATIONS
+6. CERTIFICATIONS  (show these first)
 ------------------------------------------------------------
 
-Keep all the ones already on your profile. The most relevant to show first:
-Social Media Marketing · Graphic Design with Photoshop · AI for Business Professionals · Video Editing Basics · Critical Thinking in the AI Era
+AI for Business Professionals
+Social Media Marketing
+Critical Thinking in the AI Era
+Data Science & Analytics
+Video Editing Basics
+
+About "Graphic Design with Photoshop": keep it only if you completed that course. Don't list Photoshop as a skill.
 
 
 ------------------------------------------------------------
 7. JOB PREFERENCES
 ------------------------------------------------------------
 
-Job titles (replace the HR ones, so Indeed shows you design and marketing jobs):
+Job titles:
 • Digital Marketing Executive
 • Digital Marketing Specialist
-• Graphic Designer
+• Marketing Automation Specialist
 • Social Media Executive
-• Social Media Manager
 • SEO Executive
+• Social Media Designer (Canva)
 
 Job types: Full-time
 Work setting: Remote / Hybrid / On-site
 Locations: Chennai, Remote
 Minimum salary: ₹35,000 a month (what you have now) or your new number
-
-
-------------------------------------------------------------
-PRIVACY (do this first)
-------------------------------------------------------------
-
-You currently work at Ankhor Group. On profile.indeed.com → Settings → Privacy, set your resume to Private (or hide it from your current employer), so only companies you apply to can see it.
 
 
 ------------------------------------------------------------
@@ -169,8 +191,11 @@ You currently work at Ankhor Group. On profile.indeed.com → Settings → Priva
 "Current employer and role?"
 Digital Marketing Executive, Ankhor Group, Chennai (since March 2026)
 
+"What's your strongest skill?"
+Marketing automation. I build n8n and WhatsApp workflows that save teams time and make sure every enquiry gets a fast reply, alongside SEO and social media.
+
 "Why are you looking for a change?"
-I've built a strong base in digital marketing and design over 2 years. I'm looking for a role with bigger brands and a larger team, where I can take on more responsibility and keep growing.
+I've built a strong base in digital marketing and automation over 2 years. I'm looking for a role with bigger brands and a larger team, where I can take on more responsibility and keep growing.
 
 "Notice period?"
 [your notice period at Ankhor]
