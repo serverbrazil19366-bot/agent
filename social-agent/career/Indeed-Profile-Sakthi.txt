@@ -1,0 +1,132 @@
+INDEED PROFILE · SAKTHEESWARAN S
+Copy each section into the matching field on Indeed (Profile → Edit).
+Fill the 3 things marked [FILL] before saving. Everything else is ready.
+
+
+------------------------------------------------------------
+1. HEADLINE  (Indeed: "Headline" field)
+------------------------------------------------------------
+
+Digital Marketing Specialist | SEO & Local SEO | Social Media & Graphic Design | AI Automation (n8n) | Web Development
+
+
+------------------------------------------------------------
+2. SUMMARY  (Indeed: "Summary" field)
+------------------------------------------------------------
+
+Digital marketing specialist and founder of Astra Nexora, a digital marketing agency in Tamil Nadu. Over the past 2 years I have delivered 20+ projects for 12+ clients, mainly in healthcare (dental clinics, a dental lab, a pediatric dental brand) and retail.
+
+I work across the full digital journey: websites that bring enquiries, SEO and Google Business Profile, social media content and posters, and automation that removes repetitive work (n8n, WhatsApp and email workflows, Google Apps Script).
+
+Recent work includes a WhatsApp booking system for a dental clinic, a case booking dashboard for a dental lab, a referral system for a healthcare brand, and a lead research system that tested 205 business websites for mobile speed.
+
+I focus on results a business can measure: more calls, more enquiries and less manual work.
+
+
+------------------------------------------------------------
+3. WORK EXPERIENCE  (Indeed: "Work experience" → Add)
+------------------------------------------------------------
+
+Job title: Founder & Digital Marketing Specialist
+Company: Astra Nexora
+Location: Tamil Nadu, India (Remote)
+Dates: [FILL: month & year you started] – Present
+Description:
+• Run a digital marketing agency end to end: strategy, design, development, SEO and client communication.
+• Delivered 20+ projects for 12+ clients across healthcare, retail and services.
+• Built websites optimised for mobile speed, enquiries and local SEO.
+• Set up and optimised Google Business Profiles; improved review collection and replies.
+• Designed social media posters, product ads, flyers and a trifold brochure for healthcare brands.
+• Planned and scheduled social media content across Instagram, Facebook, LinkedIn and X (Buffer, Typefully).
+• Built automations with n8n, WhatsApp and email: clinic booking, lab case booking dashboard, referral system.
+• Built a lead research system in Google Apps Script that finds businesses, tests website speed with Google PageSpeed and sends personalised outreach.
+
+Job title: Freelance Digital Marketer & Designer
+Company: Self-employed
+Location: Tamil Nadu, India (Remote)
+Dates: [FILL: month & year of your first client] – [month & year you started Astra Nexora]
+Description:
+• Delivered websites, social media creatives and SEO work for small businesses and clinics.
+• Managed client communication, revisions and delivery independently.
+(If you started Astra Nexora right from your first client, delete this entry.)
+
+
+------------------------------------------------------------
+4. EDUCATION  (Indeed: "Education" → Add)
+------------------------------------------------------------
+
+[FILL: your degree / course, college name, years]
+
+
+------------------------------------------------------------
+5. SKILLS  (Indeed: "Skills" → add one by one)
+------------------------------------------------------------
+
+Digital Marketing
+Search Engine Optimization (SEO)
+Local SEO
+Google Business Profile
+Technical SEO
+Google Search Console
+Google Analytics 4
+Google PageSpeed Insights
+Social Media Marketing
+Content Planning
+Graphic Design
+Canva
+Poster & Brochure Design
+Brand Identity
+Copywriting
+WordPress
+Website Development
+Landing Pages
+Meta Ads
+Google Ads
+n8n
+Marketing Automation
+WhatsApp Business Automation
+Google Apps Script
+AI Tools (ChatGPT, Claude)
+Client Communication
+Project Management
+
+
+------------------------------------------------------------
+6. LINKS  (Indeed: "Links" / "Portfolio")
+------------------------------------------------------------
+
+Portfolio: [your portfolio link]
+Website: https://astranexora.netlify.app/
+LinkedIn: https://www.linkedin.com/in/saktheeswaran-digital-marketing-expert/
+
+
+------------------------------------------------------------
+7. JOB PREFERENCES  (Indeed: "Job preferences")
+------------------------------------------------------------
+
+Job titles:
+• Digital Marketing Executive
+• Digital Marketing Specialist
+• SEO Specialist
+• Social Media Manager
+• Graphic Designer
+• Marketing Automation Specialist
+
+Job types: Full-time, Contract, Freelance
+Work setting: Remote / Hybrid
+Locations: Chennai, Tamil Nadu, Remote (India)
+Minimum pay: decide your own number before you save this field.
+
+
+------------------------------------------------------------
+8. READY-TO-PASTE SHORT ANSWERS (common Indeed screening questions)
+------------------------------------------------------------
+
+"How many years of digital marketing experience do you have?"
+2 years
+
+"Why are you interested in this role?"
+I've spent 2 years delivering digital marketing for real businesses, from websites and SEO to social media and automation. I'm looking to bring that hands-on experience to a team where I can work on bigger brands and keep growing.
+
+"Do you have a portfolio?"
+Yes: [your portfolio link]
