@@ -15,7 +15,7 @@ Digital Marketing Specialist | Graphic Designer | SEO & Social Media | Canva, Ph
 2. SUMMARY
 ------------------------------------------------------------
 
-Digital marketing specialist and graphic designer with 2 years of hands-on client experience. I've delivered 20+ projects for 12+ clients, mainly in healthcare (dental clinics, a dental lab, a pediatric dental brand) and retail.
+Digital Marketing Executive at Ankhor Group, Chennai, with 2 years of hands-on digital marketing and design experience. I've delivered 20+ projects for 12+ clients, mainly in healthcare (dental clinics, a dental lab, a pediatric dental brand) and retail.
 
 What I do:
 • Design social media posts, posters, flyers, product ads and brochures (Canva, Photoshop)
@@ -33,6 +33,17 @@ I'm looking for a full-time role where I can bring practical, results-focused ma
 3. WORK EXPERIENCE  (newest first)
 ------------------------------------------------------------
 
+Job title: Digital Marketing Executive
+Company: Ankhor Group
+Location: Chennai, Tamil Nadu, India
+Dates: March 2026 – Present
+Description:
+• Manage digital marketing for the group: social media, website, SEO and Google Business Profile.
+• Plan and design social media posts, posters and promotional creatives.
+• Improved the website and local SEO to bring more enquiries.
+• Built a case booking system for the dental lab: online booking, WhatsApp and email confirmations, and one team dashboard (n8n).
+• Track results and report on enquiries and engagement.
+
 Job title: Freelance Digital Marketing Specialist & Graphic Designer
 Company: Self-employed
 Location: Tamil Nadu, India (Remote)
@@ -43,7 +54,7 @@ Description:
 • Planned and scheduled monthly content calendars across Instagram, Facebook, LinkedIn and X.
 • Built and redesigned business websites, focusing on mobile speed, clear service pages and WhatsApp enquiries.
 • Optimised Google Business Profiles and set up review collection and replies.
-• Built automations with n8n, WhatsApp and email: a clinic booking flow, a lab case booking dashboard and a referral system.
+• Built automations with n8n, WhatsApp and email: a clinic booking flow and a referral system.
 • Built a lead research tool in Google Apps Script that tested 205 business websites for mobile speed.
 
 Job title: Assistant Manager
@@ -142,14 +153,27 @@ Minimum salary: ₹35,000 a month (what you have now) or your new number
 
 
 ------------------------------------------------------------
+PRIVACY (do this first)
+------------------------------------------------------------
+
+You currently work at Ankhor Group. On profile.indeed.com → Settings → Privacy, set your resume to Private (or hide it from your current employer), so only companies you apply to can see it.
+
+
+------------------------------------------------------------
 8. SHORT ANSWERS FOR SCREENING QUESTIONS
 ------------------------------------------------------------
 
 "Years of digital marketing experience?"
 2 years
 
-"Why are you looking for a full-time role?"
-I've spent 2 years doing freelance digital marketing and design for different clients. I want to work full-time with one team, on bigger brands, and keep growing with them.
+"Current employer and role?"
+Digital Marketing Executive, Ankhor Group, Chennai (since March 2026)
+
+"Why are you looking for a change?"
+I've built a strong base in digital marketing and design over 2 years. I'm looking for a role with bigger brands and a larger team, where I can take on more responsibility and keep growing.
+
+"Notice period?"
+[your notice period at Ankhor]
 
 "Do you have a portfolio?"
 Yes: [your portfolio link]
