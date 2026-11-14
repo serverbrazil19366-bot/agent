@@ -1,21 +1,43 @@
 # LinkedIn December 2026 (personal profile)
 
 Profile: Saktheeswaran S. Dec 1 (1-hour plan) and Dec 2 (Automation) are already scheduled.
-9 new posts, Tue and Fri, 9:30 AM IST. Fits Typefully's free quota (10 a month, resets 1 Dec).
+**Daily posts, Dec 3 – Dec 31 (29 posts), 9:30 AM IST.** Typefully's free plan publishes only 10 a month, so Claude schedules 10 there and Sakthi posts the rest from the LinkedIn app.
 
 Built on what worked in November: interactive A/B and "spot it" posts, copy-paste templates, AI topics, comparisons, real systems Sakthi built, and personal posts. No generic tip lists.
 
-| # | Date | Type | Post |
-|---|------|------|------|
-| 1 | Fri 4 Dec | Interactive | Spot the 5 mistakes on this homepage |
-| 2 | Tue 8 Dec | Template | 5 WhatsApp replies every business should save |
-| 3 | Fri 11 Dec | Real test (AI) | I asked ChatGPT to recommend a [service] in [city] |
-| 4 | Tue 15 Dec | Comparison | ₹5,000 website vs ₹50,000 website |
-| 5 | Fri 18 Dec | Myth vs fact | "SEO is dead because of AI" |
-| 6 | Tue 22 Dec | Behind the scenes | 4 systems I built this year |
-| 7 | Fri 25 Dec | Christmas | The best gift for a small business costs ₹0 |
-| 8 | Tue 29 Dec | Personal | My 2026: what worked, what didn't |
-| 9 | Thu 31 Dec | Opinion | 5 marketing shifts small businesses can't ignore in 2027 |
+| Date | Type | Post | Section |
+|------|------|------|---------|
+| Thu 3 | Interactive | Rate this review reply out of 10 | A |
+| Fri 4 | Interactive | Spot the 5 mistakes on this homepage | 1 |
+| Sat 5 | Humour | What clients say vs what they mean | B |
+| Sun 6 | Interactive | Caption A or B: which one makes you buy? | C |
+| Mon 7 | Opinion | It's not a marketing problem. It's a follow-up problem. | D |
+| Tue 8 | Template | 5 WhatsApp replies every business should save | 2 |
+| Wed 9 | Score yourself | The ₹0 marketing checklist: how many of 10? | E |
+| Thu 10 | Comparison | Boost button vs Ads Manager | F |
+| Fri 11 | Real AI test | I asked ChatGPT to recommend a [service] in [city] | 3 |
+| Sat 12 | Story | You lost this customer in 60 seconds | G |
+| Sun 13 | Personal | 5 things I stopped doing this year | H |
+| Mon 14 | Interactive | Fill in the blank: my biggest marketing mistake was ___ | I |
+| Tue 15 | Comparison | ₹5,000 website vs ₹50,000 website | 4 |
+| Wed 16 | Test | The 3-second website test | J |
+| Thu 17 | Nostalgia | Marketing: then vs now | K |
+| Fri 18 | Myth vs fact | "SEO is dead because of AI" | 5 |
+| Sat 19 | How-to | Happy customers don't leave reviews. Unless you do this. | L |
+| Sun 20 | Interactive | This or that: marketing edition | M |
+| Mon 21 | Explainer | The only number that matters: cost per enquiry | N |
+| Tue 22 | Behind the scenes | 4 systems I built this year | 6 |
+| Wed 23 | Seasonal | Christmas offers that don't need a discount | O |
+| Thu 24 | Checklist | 7 things to do online before 1 January | P |
+| Fri 25 | Christmas | The best gift for a small business costs ₹0 | 7 |
+| Sat 26 | How-to | Google yourself like a customer | Q |
+| Sun 27 | Relatable | What your local tea shop knows about marketing | R |
+| Mon 28 | Warning | 7 agency red flags | S |
+| Tue 29 | Personal | My 2026: what worked, what didn't | 8 |
+| Wed 30 | Humour | Marketing phrases I never want to hear again | T |
+| Thu 31 | Opinion | 5 marketing shifts small businesses can't ignore in 2027 | 9 |
+
+Every post: a hook in the first 2 lines, one idea, a question or action at the end, and a poster that makes sense in 3 seconds on a phone.
 
 Rules: anything in [brackets] must be real. No client brand names. Post, then stay 30–60 minutes and reply to every comment.
 
@@ -346,4 +368,739 @@ Which one is your business ready for? 👇
 Happy New Year in advance 🎉
 
 #Marketing2027 #SmallBusiness #DigitalMarketing
+```
+
+
+---
+
+# More December posts
+
+## A · Thu 3 Dec: Rate this review reply
+
+Poster text (a Google review card and an owner reply):
+- RATE THIS REPLY OUT OF 10
+- Review ★☆☆☆☆: "Waited 40 minutes even with an appointment. Very disappointed."
+- Owner's reply: "We are very busy. Everyone has to wait. Thank you."
+- **Would this reply make you visit?**
+- Comment your score 👇
+- Sakthi · Founder, Astra Nexora
+
+```
+A customer leaves a 1-star review.
+The owner replies like this.
+
+Rate the reply out of 10. 👇
+
+Here's the thing most businesses forget:
+your reply isn't for the angry customer.
+It's for the next 100 people reading it before they decide to visit.
+
+A better reply:
+"We're really sorry about the wait, [Name]. That's not the experience we want for you. We're changing how we schedule appointments. Please call us on [number] so we can make it right."
+
+Calm. Specific. One fix. One next step.
+
+What score did you give the original? And how would you rewrite it?
+
+#GoogleReviews #CustomerExperience #SmallBusiness
+```
+
+## B · Sat 5 Dec: What clients say vs what they mean
+
+Poster text (two-column table):
+- WHAT CLIENTS SAY vs WHAT THEY MEAN
+- "Just a small change" → Redo the whole page
+- "Can you make it pop?" → I'm not sure what I want, but not this
+- "It's urgent" → I'll reply to your question in 4 days
+- "Quick call?" → 45 minutes
+- "Our budget is small" → Our budget is smaller than that
+- "My nephew can do it cheaper" → I'll be back in 3 months
+- Sakthi · Founder, Astra Nexora
+
+```
+What clients say vs what they actually mean:
+
+"Just a small change"
+→ Redo the whole page
+
+"Can you make it pop?"
+→ I'm not sure what I want, but it's not this
+
+"It's urgent"
+→ I'll reply to your question in 4 days
+
+"Can we jump on a quick call?"
+→ 45 minutes
+
+"Our budget is small"
+→ Our budget is smaller than that
+
+"My nephew can do it cheaper"
+→ I'll be back in 3 months
+
+To be fair, I've said at least three of these to my own vendors. 😅
+
+Freelancers and agency folks: add yours below 👇
+
+#Freelancing #AgencyLife #DigitalMarketing
+```
+
+## C · Sun 6 Dec: Caption A or B
+
+Poster text (the same cake photo twice, two different captions):
+- SAME PHOTO. TWO CAPTIONS.
+- **Which one makes you order?**
+- A: "Delicious cakes available. Order now!"
+- B: "Your birthday cake, ready in 3 hours. Eggless options too. WhatsApp us your date."
+- Comment A or B 👇
+- Sakthi · Founder, Astra Nexora
+
+```
+Same photo. Same bakery. Two captions.
+
+A: "Delicious cakes available. Order now!"
+B: "Your birthday cake, ready in 3 hours. Eggless options too. WhatsApp us your date."
+
+Which one makes you order?
+
+Most business posts sound like A.
+They describe the product. They don't answer the customer's real questions:
+→ Will it be ready in time?
+→ Does it work for me?
+→ How do I order, right now?
+
+Write for the person reading, not for the product.
+
+A or B? 👇
+
+#Copywriting #SocialMediaMarketing #SmallBusiness
+```
+
+## D · Mon 7 Dec: It's a follow-up problem
+
+Poster text:
+- UNPOPULAR OPINION
+- Most small businesses don't have a marketing problem.
+- **They have a follow-up problem.**
+- A 9 PM WhatsApp answered the next afternoon · A missed call nobody returns · A quote sent, then silence · "I'll think about it", and nobody asks again
+- Fix the follow-up first. Then buy more traffic.
+- Sakthi · Founder, Astra Nexora
+
+```
+Unpopular opinion:
+
+Most small businesses don't have a marketing problem.
+They have a follow-up problem.
+
+The enquiries are already coming in.
+
+→ A WhatsApp message at 9 PM that gets a reply the next afternoon
+→ A missed call nobody calls back
+→ A quote sent, and then silence
+→ "I'll think about it", and nobody ever asks again
+
+By the time the business replies, the customer has already asked someone else.
+
+Before you spend another rupee on ads, check this:
+How long does it take you to reply to a new enquiry?
+
+Under 5 minutes: you're winning more than you think.
+Over an hour: you're paying for leads and handing them to your competitors.
+
+Fix the follow-up first. Then buy more traffic.
+
+Business owners, be honest: what's your average reply time? 👇
+
+#SmallBusiness #Sales #DigitalMarketing
+```
+
+## E · Wed 9 Dec: The ₹0 marketing checklist
+
+Poster text (a checklist with empty boxes):
+- THE ₹0 MARKETING CHECKLIST
+- **How many can you tick?**
+- ☐ Google Business Profile with the right category
+- ☐ 20+ Google reviews
+- ☐ Replied to every review
+- ☐ Real photos added this month
+- ☐ WhatsApp Business with quick replies
+- ☐ Website loads in under 3 seconds on mobile
+- ☐ A call or WhatsApp button on every page
+- ☐ Same name, address and phone everywhere
+- ☐ Posted on social media this week
+- ☐ Asked a happy customer for a referral this month
+- Comment your score out of 10 👇
+- Sakthi · Founder, Astra Nexora
+
+```
+10 marketing basics that cost ₹0.
+
+How many has your business done? Be honest. 👇
+
+☐ Google Business Profile with the right category
+☐ 20+ Google reviews
+☐ Replied to every review
+☐ Real photos added this month
+☐ WhatsApp Business with quick replies
+☐ Website loads in under 3 seconds on mobile
+☐ A call or WhatsApp button on every page
+☐ Same name, address and phone everywhere online
+☐ Posted on social media this week
+☐ Asked a happy customer for a referral this month
+
+8–10: you're ahead of most businesses in your area
+5–7: a few hours of work away from more enquiries
+0–4: start here before you spend anything on ads
+
+Save this and check again next month.
+
+What's your score? 👇
+
+#SmallBusiness #DigitalMarketing #LocalSEO
+```
+
+## F · Thu 10 Dec: Boost button vs Ads Manager
+
+Poster text (two columns):
+- BOOST BUTTON vs ADS MANAGER
+- **Same money. Very different results.**
+- Boost: 2 clicks · basic audience · usually optimised for likes and reach · limited tracking
+- Ads Manager: more setup · detailed audience and placements · choose leads, messages or sales · track cost per enquiry
+- Boost for visibility. Ads Manager for customers.
+- Sakthi · Founder, Astra Nexora
+
+```
+"I boosted a post for ₹2,000 and got 300 likes. Zero customers."
+
+I hear this a lot. The Boost button isn't wrong. It's just built for something else.
+
+Boost button
+→ 2 clicks and it's live
+→ Basic audience options
+→ Usually optimised for engagement and reach
+→ Limited tracking
+
+Ads Manager
+→ Takes 20 minutes to set up
+→ Detailed audience, placements and budgets
+→ You choose the goal: leads, WhatsApp messages, sales
+→ You can see what each enquiry cost
+
+Boost when you want people to see something.
+Use Ads Manager when you want them to do something.
+
+Have you ever boosted a post? Did it bring customers? 👇
+
+#MetaAds #FacebookAds #SmallBusiness
+```
+
+## G · Sat 12 Dec: You lost this customer in 60 seconds
+
+Poster text (a timeline):
+- YOU LOST THIS CUSTOMER IN 60 SECONDS
+- 0:00 · Searches "[service] near me"
+- 0:08 · Finds you on Google Maps
+- 0:15 · Sees 6 reviews. The last one is 2 years old.
+- 0:30 · Opens your website
+- 0:42 · Can't find a price or a WhatsApp button
+- 0:55 · Taps back
+- 1:00 · **Calls your competitor**
+- You never knew they were there.
+- Sakthi · Founder, Astra Nexora
+
+```
+You lost a customer today.
+You'll never know it happened.
+
+0:00 · They search "[service] near me"
+0:08 · They find you on Google Maps
+0:15 · They see 6 reviews. The last one is 2 years old.
+0:30 · They open your website
+0:42 · They can't find a price, or a WhatsApp button
+0:55 · They tap back
+1:00 · They call your competitor
+
+No missed call. No message. No trace.
+
+Every step is fixable:
+→ Ask for reviews every week
+→ Show a price, a range, or what affects the price
+→ Put a WhatsApp button where the thumb is
+
+How many of these 60 seconds would your business survive? 👇
+
+#CustomerJourney #LocalSEO #SmallBusiness
+```
+
+## H · Sun 13 Dec: 5 things I stopped doing this year
+
+Format: your real photo. Keep only the lines that are true for you, and replace any that aren't.
+
+Poster text (on your real photo):
+- 5 THINGS I STOPPED DOING IN 2026
+- 1. Saying yes to every project
+- 2. Starting work without a written scope
+- 3. Doing repetitive work by hand
+- 4. Pricing to win, not to deliver
+- 5. Ignoring my own marketing
+- Sakthi · Founder, Astra Nexora
+
+```
+5 things I stopped doing this year:
+
+1. Saying yes to every project
+Some work pays the bills and drains the month. Not every client is the right client.
+
+2. Starting work without a written scope
+"Just a small change" is how 2-day projects become 2-week projects.
+
+3. Doing repetitive work by hand
+If I do it every week, I build a system for it.
+
+4. Pricing to win the deal
+Cheap prices won me the wrong clients. Fair prices let me do the job properly.
+
+5. Ignoring my own marketing
+I grew other brands and forgot mine. Not anymore.
+
+Stopping things made more difference than starting new ones.
+
+What's one thing you stopped doing this year? 👇
+
+#Entrepreneurship #FounderLessons #Productivity
+```
+
+## I · Mon 14 Dec: Fill in the blank
+
+Poster text (big and simple):
+- FILL IN THE BLANK
+- **"The biggest marketing mistake I ever made was ________."**
+- I'll go first in the comments 👇
+- Sakthi · Founder, Astra Nexora
+
+```
+Fill in the blank:
+
+"The biggest marketing mistake I ever made was ________."
+
+I'll go first in the comments.
+
+Business owners, marketers, freelancers: no judgment here. The best lessons usually come from the worst mistakes. 👇
+
+#Marketing #SmallBusiness #Entrepreneurship
+```
+
+First comment (post it straight away, with your real answer):
+```
+Mine: [your real mistake, in one or two lines, and what it taught you].
+```
+
+## J · Wed 16 Dec: The 3-second website test
+
+Poster text (a phone with a website and a stopwatch):
+- THE 3-SECOND WEBSITE TEST
+- Open your website on your phone. In 3 seconds, can a stranger answer:
+- **1. What do you do?**
+- **2. Where?**
+- **3. How do I contact you?**
+- If not, you're losing visitors before they scroll.
+- Sakthi · Founder, Astra Nexora
+
+```
+Try this right now. It takes 3 seconds.
+
+Open your website on your phone.
+Show it to someone who doesn't know your business.
+Count to 3, then take the phone back.
+
+Can they answer:
+1. What do you do?
+2. Where are you?
+3. How do they contact you?
+
+If they can't, most visitors can't either. And they leave before they scroll.
+
+The fix is usually one line and one button:
+→ A headline that says "[service] in [area]", not "Welcome"
+→ A WhatsApp or call button at the top
+
+Did your website pass? 👇
+
+#WebDesign #UX #SmallBusiness
+```
+
+## K · Thu 17 Dec: Marketing, then vs now
+
+Poster text (two columns, old items in sepia, new in colour):
+- MARKETING: THEN vs NOW
+- Pamphlets → Instagram Reels
+- Newspaper ad → Google Ads
+- Notice board → Google Maps
+- Word of mouth → Google reviews
+- Visiting card → WhatsApp Business
+- Shop signboard → Website
+- **The tools changed. The goal didn't.**
+- Sakthi · Founder, Astra Nexora
+
+```
+Marketing then vs now:
+
+Pamphlets → Instagram Reels
+Newspaper ad → Google Ads
+Notice board → Google Maps
+Word of mouth → Google reviews
+Visiting card → WhatsApp Business
+Shop signboard → Website
+
+The tools changed completely.
+The goal didn't change at all:
+
+Be easy to find.
+Be easy to trust.
+Be easy to contact.
+
+The businesses that win today are just doing the old things in the new places.
+
+What would you add to the list? 👇
+
+#Marketing #SmallBusiness #DigitalMarketing
+```
+
+## L · Sat 19 Dec: How to get more Google reviews
+
+Poster text:
+- HAPPY CUSTOMERS DON'T LEAVE REVIEWS
+- **Unless you do these 4 things.**
+- 1. Ask on the same day, while they're happy
+- 2. Send the direct review link on WhatsApp
+- 3. Put a QR code at the counter
+- 4. Reply to every review, so people see you care
+- Never buy reviews. Never offer gifts for reviews.
+- Sakthi · Founder, Astra Nexora
+
+```
+Your happy customers won't leave a review.
+Not because they don't like you. Because nobody asked.
+
+4 things that work:
+
+1. Ask on the same day
+Right after the service, while they're still happy.
+
+2. Send the direct link on WhatsApp
+Google Business Profile → "Ask for reviews" gives you a short link. One tap and they're writing.
+
+3. Put a QR code at the counter
+For customers who pay and leave.
+
+4. Reply to every review
+People leave reviews where they see the owner reads them.
+
+And two things never to do: buy reviews, or offer gifts in exchange for reviews. Google can remove them, and customers can tell.
+
+How do you ask for reviews today? 👇
+
+#GoogleReviews #LocalSEO #SmallBusiness
+```
+
+## M · Sun 20 Dec: This or that, marketing edition
+
+Poster text (pairs with "or" between them):
+- THIS OR THAT · MARKETING EDITION
+- Reels or carousels?
+- Google Ads or Meta Ads?
+- SEO or ads?
+- WhatsApp or email?
+- Canva or a designer?
+- Post daily or post better?
+- **Comment your 6 picks 👇**
+- Sakthi · Founder, Astra Nexora
+
+```
+This or that, marketing edition. Pick one from each:
+
+Reels or carousels?
+Google Ads or Meta Ads?
+SEO or ads?
+WhatsApp or email?
+Canva or a designer?
+Post daily or post better?
+
+No wrong answers. But I'll defend mine in the comments. 👇
+
+#Marketing #DigitalMarketing #SocialMedia
+```
+
+First comment (your real picks, with one line each on why).
+
+## N · Mon 21 Dec: Cost per enquiry
+
+Poster text (simple maths, clearly marked as an example):
+- THE ONLY NUMBER THAT MATTERS
+- **Cost per enquiry**
+- Example: ₹10,000 spent ÷ 20 enquiries = ₹500 per enquiry
+- Not likes. Not reach. Not followers.
+- Know this number for every channel.
+- Sakthi · Founder, Astra Nexora
+
+```
+Likes, reach, impressions, followers.
+
+None of them pay your bills.
+
+The number that matters: cost per enquiry.
+
+How to work it out:
+Money spent ÷ number of enquiries = cost per enquiry
+
+Example: ₹10,000 on ads ÷ 20 enquiries = ₹500 per enquiry.
+
+Now compare channels:
+→ Google Ads: ₹___ per enquiry
+→ Instagram ads: ₹___ per enquiry
+→ SEO: ₹___ per enquiry
+
+Put more money where the number is lowest. Fix or stop where it's highest.
+
+Do you know your cost per enquiry? 👇
+
+#DigitalMarketing #ROI #SmallBusiness
+```
+
+## O · Wed 23 Dec: Christmas offers without a discount
+
+Poster text:
+- CHRISTMAS OFFERS
+- **that don't need a discount**
+- 🎁 A free add-on with the main service
+- 🎁 A gift card customers can buy for someone else
+- 🎁 A bonus for customers who bring a friend
+- 🎁 "Book this week, get priority in January"
+- Sakthi · Founder, Astra Nexora
+
+```
+Christmas is 2 days away.
+You don't need a 30% discount to bring customers in.
+
+4 offers that protect your price:
+
+🎁 A free add-on with the main service
+Small cost to you, big value to them.
+
+🎁 Gift cards
+Let customers buy your service for someone else. New customer, paid in advance.
+
+🎁 Bring-a-friend bonus
+Your happiest customers are your best marketing.
+
+🎁 "Book this week, get priority in January"
+A reason to decide now, without cutting the price.
+
+Running a Christmas offer this year? Tell me what it is 👇
+
+#ChristmasMarketing #SmallBusiness #MarketingIdeas
+```
+
+## P · Thu 24 Dec: 7 things to do online before 1 January
+
+Poster text (a checklist):
+- BEFORE 1 JANUARY
+- **7 things to do online for your business**
+- ☐ Add holiday hours on Google
+- ☐ Check your domain renewal date
+- ☐ Back up your website
+- ☐ Download this year's analytics
+- ☐ Ask December customers for reviews
+- ☐ Add new photos to your Google profile
+- ☐ Plan your January posts
+- Save this 📌
+- Sakthi · Founder, Astra Nexora
+
+```
+7 things to do for your business online before 1 January:
+
+☐ Add holiday hours on Google Business Profile
+Customers will check before they come.
+
+☐ Check your domain renewal date
+An expired domain takes your website and email down with it.
+
+☐ Back up your website
+Takes 10 minutes. Saves weeks if something breaks.
+
+☐ Download this year's analytics
+You'll want to compare next December.
+
+☐ Ask December customers for reviews
+Busy month, happy customers. Don't waste it.
+
+☐ Add new photos to your Google profile
+New year, fresh look.
+
+☐ Plan your January posts
+January is when people decide what to fix. Be visible.
+
+Save this, and tick them off this week 📌
+
+#SmallBusiness #NewYear #DigitalMarketing
+```
+
+## Q · Sat 26 Dec: Google yourself like a customer
+
+Poster text:
+- GOOGLE YOURSELF LIKE A CUSTOMER
+- 1. Search "[your service] near me" from your phone
+- 2. Do you show up on Maps?
+- 3. Read your last 5 reviews
+- 4. Open your website. Find the WhatsApp button.
+- 5. Message yourself. How long until someone replies?
+- **Would you choose you?**
+- Sakthi · Founder, Astra Nexora
+
+```
+Do this once before the year ends.
+It takes 10 minutes, and it's the most honest marketing audit you'll ever get.
+
+Pretend you're a customer:
+
+1. Search "[your service] near me" on your phone
+Do you show up? Where?
+
+2. Look at your Google Maps listing
+Photos, hours, reviews. Would you trust it?
+
+3. Read your last 5 reviews
+And your replies to them.
+
+4. Open your website
+How long until you find the price and the WhatsApp button?
+
+5. Message your own business
+How long until someone replies?
+
+Then ask yourself one question:
+Would you choose you?
+
+Try it and tell me what surprised you 👇
+
+#SmallBusiness #LocalSEO #CustomerExperience
+```
+
+## R · Sun 27 Dec: What your local tea shop knows about marketing
+
+Poster text (a warm photo of a roadside tea shop):
+- WHAT YOUR LOCAL TEA SHOP KNOWS ABOUT MARKETING
+- ☕ Knows your name and your order
+- ☕ Open at the same time every single day
+- ☕ Same taste, every cup
+- ☕ Never runs an ad. Always busy.
+- **Consistency is the marketing.**
+- Sakthi · Founder, Astra Nexora
+
+```
+The tea shop near your office has never run an ad.
+It's busy every single day.
+
+What it knows about marketing:
+
+☕ It knows your name and your order
+Customers come back to people who remember them.
+
+☕ It opens at the same time every day
+Reliability builds habits.
+
+☕ The tea tastes the same every time
+Consistency builds trust faster than any campaign.
+
+☕ Everyone talks about it
+Word of mouth is still the best marketing there is. Today it's called Google reviews.
+
+Most businesses look for a new marketing trick.
+The tea shop just does the basics, every day, without fail.
+
+What's the best-run small business near you? 👇
+
+#Marketing #SmallBusiness #CustomerExperience
+```
+
+## S · Mon 28 Dec: 7 agency red flags
+
+Poster text:
+- 7 AGENCY RED FLAGS 🚩
+- 🚩 "Guaranteed first page on Google"
+- 🚩 They won't say who does the work
+- 🚩 Reports full of likes, no enquiries
+- 🚩 The ad account is in their name
+- 🚩 Long lock-in contract from day one
+- 🚩 No examples of similar work
+- 🚩 They never ask about your business
+- Sakthi · Founder, Astra Nexora
+
+```
+Hiring a marketing agency in 2027? Walk away if you see these:
+
+🚩 "Guaranteed first page on Google"
+Nobody can guarantee Google rankings.
+
+🚩 They won't say who will actually do the work
+The person who sold it to you isn't always the person doing it.
+
+🚩 Reports full of likes and reach, no enquiries
+Ask for enquiries and cost per enquiry.
+
+🚩 Your ad account or domain is in their name
+You should own your accounts. Always.
+
+🚩 A long lock-in contract from day one
+Good work keeps clients. Contracts shouldn't have to.
+
+🚩 No examples of similar work
+Ask to see it.
+
+🚩 They never ask about your business
+If they don't ask who your customers are, they can't market to them.
+
+(Yes, I run an agency. Hold me to these too.)
+
+Which red flag have you seen? 👇
+
+#MarketingAgency #SmallBusiness #DigitalMarketing
+```
+
+## T · Wed 30 Dec: Marketing phrases I never want to hear again
+
+Poster text:
+- MARKETING PHRASES I NEVER WANT TO HEAR IN 2027
+- ❌ "Make it go viral"
+- ❌ "Just a small change"
+- ❌ "Can you make it pop?"
+- ❌ "We don't need a website, we have Instagram"
+- ❌ "Let's boost it and see"
+- ❌ "Our customers don't use Google"
+- Sakthi · Founder, Astra Nexora
+
+```
+Marketing phrases I never want to hear again in 2027:
+
+❌ "Make it go viral"
+Viral isn't a strategy. Useful and consistent is.
+
+❌ "Just a small change"
+It's never small.
+
+❌ "Can you make it pop?"
+Pop how? Bigger? Brighter? Different?
+
+❌ "We don't need a website, we have Instagram"
+Until the account gets hacked.
+
+❌ "Let's boost it and see"
+See what, exactly?
+
+❌ "Our customers don't use Google"
+They do. They just found your competitor there.
+
+Which one would you add? 👇
+
+#Marketing #AgencyLife #DigitalMarketing
 ```
