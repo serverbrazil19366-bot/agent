@@ -1,132 +1,155 @@
-INDEED PROFILE · SAKTHEESWARAN S
-Copy each section into the matching field on Indeed (Profile → Edit).
-Fill the 3 things marked [FILL] before saving. Everything else is ready.
+INDEED PROFILE · SAKTHEESWARAN S (job-seeker version, no "Founder")
+Copy each section into the matching field on Indeed (profile.indeed.com → Edit).
+Your client work is shown as freelance work, which is true and is what employers are comfortable with.
+Add the dates for each job from your own records (Indeed asks month and year).
 
 
 ------------------------------------------------------------
-1. HEADLINE  (Indeed: "Headline" field)
+1. HEADLINE
 ------------------------------------------------------------
 
-Digital Marketing Specialist | SEO & Local SEO | Social Media & Graphic Design | AI Automation (n8n) | Web Development
-
-
-------------------------------------------------------------
-2. SUMMARY  (Indeed: "Summary" field)
-------------------------------------------------------------
-
-Digital marketing specialist and founder of Astra Nexora, a digital marketing agency in Tamil Nadu. Over the past 2 years I have delivered 20+ projects for 12+ clients, mainly in healthcare (dental clinics, a dental lab, a pediatric dental brand) and retail.
-
-I work across the full digital journey: websites that bring enquiries, SEO and Google Business Profile, social media content and posters, and automation that removes repetitive work (n8n, WhatsApp and email workflows, Google Apps Script).
-
-Recent work includes a WhatsApp booking system for a dental clinic, a case booking dashboard for a dental lab, a referral system for a healthcare brand, and a lead research system that tested 205 business websites for mobile speed.
-
-I focus on results a business can measure: more calls, more enquiries and less manual work.
+Digital Marketing Specialist | Graphic Designer | SEO & Social Media | Canva, Photoshop, WordPress | AI Automation
 
 
 ------------------------------------------------------------
-3. WORK EXPERIENCE  (Indeed: "Work experience" → Add)
+2. SUMMARY
 ------------------------------------------------------------
 
-Job title: Founder & Digital Marketing Specialist
-Company: Astra Nexora
-Location: Tamil Nadu, India (Remote)
-Dates: [FILL: month & year you started] – Present
-Description:
-• Run a digital marketing agency end to end: strategy, design, development, SEO and client communication.
-• Delivered 20+ projects for 12+ clients across healthcare, retail and services.
-• Built websites optimised for mobile speed, enquiries and local SEO.
-• Set up and optimised Google Business Profiles; improved review collection and replies.
-• Designed social media posters, product ads, flyers and a trifold brochure for healthcare brands.
-• Planned and scheduled social media content across Instagram, Facebook, LinkedIn and X (Buffer, Typefully).
-• Built automations with n8n, WhatsApp and email: clinic booking, lab case booking dashboard, referral system.
-• Built a lead research system in Google Apps Script that finds businesses, tests website speed with Google PageSpeed and sends personalised outreach.
+Digital marketing specialist and graphic designer with 2 years of hands-on client experience. I've delivered 20+ projects for 12+ clients, mainly in healthcare (dental clinics, a dental lab, a pediatric dental brand) and retail.
 
-Job title: Freelance Digital Marketer & Designer
+What I do:
+• Design social media posts, posters, flyers, product ads and brochures (Canva, Photoshop)
+• Plan and schedule content for Instagram, Facebook, LinkedIn and X
+• Build and improve websites (WordPress) for speed, mobile and enquiries
+• SEO and Google Business Profile optimisation
+• Automate repetitive work with n8n, WhatsApp and email workflows
+
+Before digital marketing, I worked in administration, training and team coordination, so I'm comfortable with deadlines, documentation and working with different teams.
+
+I'm looking for a full-time role where I can bring practical, results-focused marketing and design to a growing team.
+
+
+------------------------------------------------------------
+3. WORK EXPERIENCE  (newest first)
+------------------------------------------------------------
+
+Job title: Freelance Digital Marketing Specialist & Graphic Designer
 Company: Self-employed
 Location: Tamil Nadu, India (Remote)
-Dates: [FILL: month & year of your first client] – [month & year you started Astra Nexora]
+Dates: [month & year you started freelancing] – Present
 Description:
-• Delivered websites, social media creatives and SEO work for small businesses and clinics.
-• Managed client communication, revisions and delivery independently.
-(If you started Astra Nexora right from your first client, delete this entry.)
+• Delivered 20+ projects for 12+ clients across healthcare, retail and services.
+• Designed social media posts, posters, product ads, flyers and a trifold brochure for healthcare brands.
+• Planned and scheduled monthly content calendars across Instagram, Facebook, LinkedIn and X.
+• Built and redesigned business websites, focusing on mobile speed, clear service pages and WhatsApp enquiries.
+• Optimised Google Business Profiles and set up review collection and replies.
+• Built automations with n8n, WhatsApp and email: a clinic booking flow, a lab case booking dashboard and a referral system.
+• Built a lead research tool in Google Apps Script that tested 205 business websites for mobile speed.
+
+Job title: Assistant Manager
+Company: Dream Emphasis
+Dates: [from your records]
+Description:
+• Supported day-to-day operations and coordinated with the team to meet targets and deadlines.
+(Add 1–2 lines on what you actually did here.)
+
+Job title: Training Manager
+Company: Skyline Technology
+Dates: [from your records]
+Description:
+• Planned and delivered training sessions and supported new team members.
+(Add 1–2 lines on what you actually did here.)
+
+Job title: Digital Marketing Intern
+Company: ASSR Emporium
+Dates: [from your records]
+Description:
+• Created social media posts and promotional creatives for Instagram and Facebook.
+• Supported content planning and scheduling.
+
+Job title: Admin Executive
+Company: Positive Growth Properties
+Dates: [from your records]
+Description:
+• Handled office administration, documentation and coordination using MS Office.
 
 
 ------------------------------------------------------------
-4. EDUCATION  (Indeed: "Education" → Add)
+4. EDUCATION
 ------------------------------------------------------------
 
-[FILL: your degree / course, college name, years]
+Bachelor of Business Administration (BBA)
+Einstein College of Arts & Science
+[years]
 
 
 ------------------------------------------------------------
-5. SKILLS  (Indeed: "Skills" → add one by one)
+5. SKILLS  (keep your existing ones, add these)
 ------------------------------------------------------------
 
+Graphic Design
+Canva
+Adobe Photoshop
+Poster, Flyer & Brochure Design
+Social Media Marketing
+Social Media Content Creation
+Content Planning & Scheduling
+Copywriting
+Branding & Visual Consistency
+Video Editing (CapCut)
 Digital Marketing
 Search Engine Optimization (SEO)
 Local SEO
 Google Business Profile
-Technical SEO
 Google Search Console
 Google Analytics 4
-Google PageSpeed Insights
-Social Media Marketing
-Content Planning
-Graphic Design
-Canva
-Poster & Brochure Design
-Brand Identity
-Copywriting
 WordPress
 Website Development
-Landing Pages
 Meta Ads
 Google Ads
 n8n
 Marketing Automation
-WhatsApp Business Automation
-Google Apps Script
+WhatsApp Business
 AI Tools (ChatGPT, Claude)
-Client Communication
-Project Management
+MS Excel, Word, PowerPoint
+Team Coordination
 
 
 ------------------------------------------------------------
-6. LINKS  (Indeed: "Links" / "Portfolio")
+6. CERTIFICATIONS
 ------------------------------------------------------------
 
-Portfolio: [your portfolio link]
-Website: https://astranexora.netlify.app/
-LinkedIn: https://www.linkedin.com/in/saktheeswaran-digital-marketing-expert/
+Keep all the ones already on your profile. The most relevant to show first:
+Social Media Marketing · Graphic Design with Photoshop · AI for Business Professionals · Video Editing Basics · Critical Thinking in the AI Era
 
 
 ------------------------------------------------------------
-7. JOB PREFERENCES  (Indeed: "Job preferences")
+7. JOB PREFERENCES
 ------------------------------------------------------------
 
-Job titles:
+Job titles (replace the HR ones, so Indeed shows you design and marketing jobs):
 • Digital Marketing Executive
 • Digital Marketing Specialist
-• SEO Specialist
-• Social Media Manager
 • Graphic Designer
-• Marketing Automation Specialist
+• Social Media Executive
+• Social Media Manager
+• SEO Executive
 
-Job types: Full-time, Contract, Freelance
-Work setting: Remote / Hybrid
-Locations: Chennai, Tamil Nadu, Remote (India)
-Minimum pay: decide your own number before you save this field.
+Job types: Full-time
+Work setting: Remote / Hybrid / On-site
+Locations: Chennai, Remote
+Minimum salary: ₹35,000 a month (what you have now) or your new number
 
 
 ------------------------------------------------------------
-8. READY-TO-PASTE SHORT ANSWERS (common Indeed screening questions)
+8. SHORT ANSWERS FOR SCREENING QUESTIONS
 ------------------------------------------------------------
 
-"How many years of digital marketing experience do you have?"
+"Years of digital marketing experience?"
 2 years
 
-"Why are you interested in this role?"
-I've spent 2 years delivering digital marketing for real businesses, from websites and SEO to social media and automation. I'm looking to bring that hands-on experience to a team where I can work on bigger brands and keep growing.
+"Why are you looking for a full-time role?"
+I've spent 2 years doing freelance digital marketing and design for different clients. I want to work full-time with one team, on bigger brands, and keep growing with them.
 
 "Do you have a portfolio?"
 Yes: [your portfolio link]
