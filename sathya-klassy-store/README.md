@@ -13,6 +13,7 @@ There is no database, paid plan or payment gateway.
 | Admin | `public/admin/` | Phone-friendly dashboard: sales, profit, best sellers, low stock; orders; products; settings; bank payments; CSV export |
 | Backend | `lib/handler.mjs`, `netlify/functions/api.mjs` | `/api/*` routes |
 | Payment check | `lib/payments.mjs` | Reads a bank "credited" SMS: amount + UPI reference |
+| Courier tracking | `lib/courier.mjs` | Optional Ship24 auto-tracking (free 10 parcels/month) |
 | Admin app | `public/admin/manifest.webmanifest`, `public/admin/sw.js`, `lib/push.mjs` | Installable SK Admin app with phone notifications (Web Push) |
 | Storage | `lib/store.mjs` | Netlify Blobs online; `.data/` when running locally |
 
@@ -93,7 +94,15 @@ backend: `preview/demo-api.js` answers the API in the browser (admin password
    **Turn on alerts**. Every paid order now shows a phone notification. Free,
    no Play Store, no third-party app. Notifications carry only order ID, amount,
    first name, city and items.
-6. Test: pay ₹1 to the UPI ID and check **Settings → Last bank SMS**. Use the
+6. Optional, free: automatic courier tracking. Create a free Ship24 account
+   (10 new parcels a month), save its API key on Netlify as `SHIP24_API_KEY`.
+   When Sathya ships with a tracking number, the site detects the courier and
+   updates the customer's tracking page by itself (hub updates, out for
+   delivery, delivered), checking at most every 2 hours when the customer looks.
+   For instant updates add the webhook `https://<site>.netlify.app/api/courier/ship24`
+   in Ship24 and save its secret as `SHIP24_WEBHOOK_SECRET`. After the month's
+   free parcels, orders fall back to the "Track parcel" button.
+7. Test: pay ₹1 to the UPI ID and check **Settings → Last bank SMS**. Use the
    "Test with a bank SMS" box to check your bank's SMS format first.
 
 ## Next phases

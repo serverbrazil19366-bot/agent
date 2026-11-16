@@ -235,6 +235,11 @@
           <label class="f">Expected delivery <small>customers see "Arriving by"</small><input id="eta" type="date" value="${esc(o.expectedDelivery || '')}"></label>
           <label class="f">Courier's tracking link <small>optional, shown small</small><input id="turl" value="${esc(o.trackingUrl)}" placeholder="https://"></label>
         </div><button class="btn btn-line btn-sm" id="save-ship" style="margin-top:10px">Save shipping details</button></div>
+        ${o.awb && ['shipped', 'out_for_delivery', 'delivered'].includes(o.status) ? `<div class="auto-line">${
+          !o.auto ? '🔕 Auto tracking is off (no Ship24 key). Customers use the Track parcel button.'
+          : o.auto.off === 'limit' ? '🔕 Free auto tracking used up this month. Customers use the Track parcel button.'
+          : `🛰️ Auto tracking on${o.auto.milestone ? ` · courier says <b>${esc(o.auto.milestone.replace(/_/g, ' '))}</b>` : ''}${o.auto.checkedAt ? ` · checked ${when(new Date(o.auto.checkedAt).toISOString())}` : ''}${o.auto.error ? ` · <span style="color:var(--warn)">last check failed</span>` : ''} <button class="linkish" id="auto-refresh">Refresh now</button>`
+        }</div>` : ''}
         <div class="box"><h3>Courier updates <small style="text-transform:none;letter-spacing:0;font-weight:400">shown on the customer's tracking page</small></h3>
           <div class="update-chips">${['Picked up by courier', 'In transit', `Reached ${o.customer.city}`, 'Delivery attempted, will retry'].map((t) => `<button class="chip" data-quick="${esc(t)}">${esc(t)}</button>`).join('')}</div>
           <div style="display:flex;gap:8px;margin-top:8px"><input class="search" id="upd" maxlength="140" placeholder="Or write: Reached Madurai hub" aria-label="Courier update" style="flex:1"><button class="btn btn-line btn-sm" id="upd-add">Add</button></div>
@@ -264,6 +269,7 @@
     const shipFields = () => $('#courier') ? { courier: $('#courier').value, awb: $('#awb').value, trackingUrl: $('#turl').value, expectedDelivery: $('#eta').value } : {};
     const addUpdate = (text) => text.trim() && save({ addUpdate: text.trim() }, 'Update added. Customers see it on Track order');
     $$('[data-quick]').forEach((b) => (b.onclick = () => addUpdate(b.dataset.quick)));
+    if ($('#auto-refresh')) $('#auto-refresh').onclick = () => save({ refreshTracking: true }, 'Checked with the courier');
     if ($('#upd-add')) $('#upd-add').onclick = () => addUpdate($('#upd').value);
     $$('[data-delupd]').forEach((b) => (b.onclick = () => save({ removeUpdate: b.dataset.delupd }, 'Removed')));
     if ($('#save-ship')) $('#save-ship').onclick = () => save(shipFields(), 'Saved');
@@ -431,8 +437,22 @@
         <p class="err" id="serr" role="alert" style="margin-top:12px"></p>
         <button class="btn btn-pink" type="submit" style="margin-top:6px">Save settings</button>
       </form>
+      <section class="card" id="autotrack" style="max-width:760px;margin-top:16px"><div class="skeleton" style="height:80px"></div></section>
       <section class="card" id="paycheck" style="max-width:760px;margin-top:16px"><div class="skeleton" style="height:120px"></div></section>`;
     paymentsCard();
+    api('admin/tracking-usage').then((u) => {
+      $('#autotrack').innerHTML = `
+        <h2>Automatic courier tracking <span class="pill ${u.ready ? 's-delivered' : 's-payment_check'}">${u.ready ? `On · ${u.used} of ${u.limit} used this month` : 'Not set up'}</span></h2>
+        <p class="sub" style="margin:0 0 10px">Paste the tracking number when you ship. The site finds the courier, follows the parcel and updates the customer's tracking page by itself: "Reached Madurai", out for delivery, delivered. You get a phone alert if delivery fails.</p>
+        <div class="box"><h3>Setup (free, one time)</h3>
+          <ol style="margin:0;padding-left:20px;font-size:13.5px;display:flex;flex-direction:column;gap:4px">
+            <li>Create a free account at <b>ship24.com</b> (free plan: ${u.limit} new parcels a month).</li>
+            <li>Copy the API key from the Ship24 dashboard and save it on Netlify as <code>SHIP24_API_KEY</code>. Redeploy.</li>
+            <li>Optional, for instant updates: in Ship24 add the webhook <code class="hook">${esc(location.origin)}/api/courier/ship24</code> and save its secret on Netlify as <code>SHIP24_WEBHOOK_SECRET</code>.</li>
+          </ol>
+          <p style="margin:8px 0 0;font-size:13px;color:var(--muted)">After the free parcels for the month are used, new orders still get the "Track parcel" button and your own updates. Nothing breaks.</p>
+        </div>`;
+    }).catch(() => { $('#autotrack').hidden = true; });
     appCard();
     $('#sform').onsubmit = async (e) => {
       e.preventDefault();

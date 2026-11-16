@@ -47,6 +47,7 @@
               return `<li class="${i <= idx ? 'done' : ''} ${i === idx ? 'current' : ''}"><span class="dot">${ic}</span><div><b>${t}</b><small>${h ? when(h.at) + ' · ' : ''}${d}</small>
                 ${shippedHere && o.awb ? `<div class="ship-meta">${o.courier ? `<span>${esc(o.courier)}</span>` : ''}<span>Tracking no. <b>${esc(o.awb)}</b> <button type="button" class="remove" data-copy="${esc(o.awb)}">Copy</button></span></div>` : ''}
                 ${shippedHere && o.trackingUrl ? `<a class="btn btn-gold track-btn" data-copy="${esc(o.awb || '')}" href="${esc(o.trackingUrl)}" target="_blank" rel="noopener">${icons.truck} Track parcel${o.courier ? ` on ${esc(o.courier)}` : ''}</a><small class="track-hint">Opens the courier's site. Your tracking number is copied, paste it there if asked.</small>` : ''}
+                ${shippedHere && o.autoTracked ? '<small class="live-tag"><span aria-hidden="true">●</span> Live updates from the courier</small>' : ''}
                 ${shippedHere && updates.length ? `<ul class="ship-log">${updates.map((u) => `<li><b>${esc(u.text)}</b><small>${when(u.at)}</small></li>`).join('')}</ul>` : ''}
               </div></li>`;
             }).join('')}

@@ -232,6 +232,7 @@
       return ok({ order: o });
     }
     if (section === 'push') return id === 'devices' ? ok({ devices: [] }) : no(503, 'Phone alerts work in the real SK Admin app, not in this demo.');
+    if (section === 'tracking-usage') return ok({ used: 0, limit: 10, ready: false });
     if (section === 'upload') return ok({ url: body.dataUrl }, 201); // demo: keep the photo inline
     return no(404, 'Not found');
   }

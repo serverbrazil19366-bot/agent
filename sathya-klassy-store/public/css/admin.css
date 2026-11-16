@@ -189,3 +189,5 @@ table.t td.n, table.t th.n { text-align: right; font-variant-numeric: tabular-nu
 .courier-row { display: grid; grid-template-columns: 1fr 2fr; gap: 8px; margin-top: 8px; }
 .courier-row .search { width: 100%; }
 @media (max-width: 560px) { .courier-row { grid-template-columns: 1fr; } }
+.auto-line { font-size: 13px; padding: 10px 14px; border-radius: 12px; background: #eef4fb; color: #1f3a5f; }
+.auto-line .linkish { color: var(--pink-d); margin-left: 6px; }

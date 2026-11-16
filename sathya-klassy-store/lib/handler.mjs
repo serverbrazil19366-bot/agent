@@ -14,6 +14,7 @@ import { getStore } from './store.mjs';
 import { CATEGORIES, DEFAULT_SETTINGS, SAMPLE_PRODUCTS } from './seed.mjs';
 import { parseBankSms, rupees } from './payments.mjs';
 import { publicKey, validSubscription, addDevice, listDevices, removeDevice, pushAll } from './push.mjs';
+import { autoTrackingReady, usage as trackingUsage, startTracking, refreshTracking, readTracking } from './courier.mjs';
 
 const STATUSES = ['awaiting_payment', 'payment_check', 'confirmed', 'packed', 'shipped', 'out_for_delivery', 'delivered', 'cancelled', 'expired'];
 const UNPAID = new Set(['awaiting_payment', 'expired']);
@@ -198,7 +199,9 @@ const DAY = 86400000;
 const dayRange = (s) => { const n = String(s ?? '').match(/\d+/g)?.map(Number) || []; return n.length ? [Math.min(...n), Math.max(...n)] : [0, 0]; };
 const addDays = (iso, d) => istDay(new Date(Date.parse(iso) + d * DAY).toISOString());
 function deliveryEstimate(o, settings) {
-  if (o.expectedDelivery) return { by: o.expectedDelivery };
+  const courierEta = o.auto && !o.auto.off && o.auto.eta && ['shipped', 'out_for_delivery'].includes(o.status) ? o.auto.eta : null;
+  if (o.expectedDelivery && (o.etaManual || !courierEta || o.status === 'out_for_delivery')) return { by: o.expectedDelivery };
+  if (courierEta) return { by: courierEta };
   if (!o.payment.verified || ['delivered', 'cancelled', 'expired'].includes(o.status)) return null;
   const [, dMax] = dayRange(settings.dispatchDays), [lMin, lMax] = dayRange(settings.deliveryDays);
   const start = o.payment.paidAt || o.createdAt;
@@ -210,7 +213,11 @@ function customerView(o, settings) {
   return {
     estimate: settings ? deliveryEstimate(o, settings) : null,
     deliveredOn: delivered ? istDay(delivered.at) : null,
-    updates: (o.updates || []).slice(-30),
+    updates: [
+      ...(o.updates || []).map((u) => ({ at: u.at, text: u.text })),
+      ...((o.auto && !o.auto.off && o.auto.events) || []).map((e) => ({ at: e.at, text: e.place ? `${e.text} · ${e.place}` : e.text, courier: true })),
+    ].sort((a, b) => String(a.at).localeCompare(String(b.at))).slice(-40),
+    autoTracked: Boolean(o.auto && !o.auto.off && o.auto.awb === o.awb),
     id: o.id, createdAt: o.createdAt, status: o.status, history: o.history,
     items: o.items.map(({ cost, ...i }) => i), subtotal: o.subtotal, shipping: o.shipping, total: o.total,
     payable: o.payment.payable, expiresAt: o.payment.expiresAt,
@@ -330,7 +337,30 @@ async function track(req, url, store) {
   if (!/^SK\d{10}$/.test(id) || ph.length !== 10) return fail(400, 'Enter your order ID (like SK2611161234) and mobile number');
   const o = await store.getJSON('orders/' + id);
   if (!o || o.customer.phone !== ph) return fail(404, 'No order found with that ID and mobile number');
+  if (['shipped', 'out_for_delivery'].includes(o.status) && (await refreshTracking(o))) {
+    await applyAuto(store, o);
+    await store.setJSON('orders/' + id, o);
+  }
   return json({ order: customerView(o, await getSettings(store)) });
+}
+
+// Ship24 pushes courier updates here (optional; set SHIP24_WEBHOOK_SECRET)
+async function courierWebhook(req, store) {
+  const secret = process.env.SHIP24_WEBHOOK_SECRET || '';
+  if (secret.length < 16) return fail(503, 'Courier webhook is not set up');
+  const auth = req.headers.get('authorization') || '';
+  if (!sameSecret(auth, 'Bearer ' + secret)) { await limit(store, req, 'courierbad', 10, 3600); return fail(401, 'Unauthorized'); }
+  const body = await readBody(req, 500_000);
+  for (const t of (Array.isArray(body.trackings) ? body.trackings : []).slice(0, 50)) {
+    const id = String(t?.tracker?.clientTrackerId || '');
+    if (!/^SK\d{10}$/.test(id)) continue;
+    const o = await store.getJSON('orders/' + id);
+    if (!o || !o.auto || o.auto.off || o.auto.awb !== o.awb) continue;
+    o.auto = { ...o.auto, ...readTracking(t), checkedAt: Date.now() };
+    await applyAuto(store, o);
+    await store.setJSON('orders/' + id, o);
+  }
+  return json({ ok: true });
 }
 
 // ---------- payments: bank SMS webhook ----------
@@ -389,6 +419,28 @@ async function smsWebhook(req, url, store) {
   return json({ matched: Boolean(record.orderId) });
 }
 
+// courier says out for delivery / delivered → move the order along by itself
+async function applyAuto(store, o) {
+  const m = o.auto?.milestone;
+  if (!m || !['shipped', 'out_for_delivery'].includes(o.status)) return;
+  const first = o.customer.name.split(' ')[0];
+  if (m === 'out_for_delivery' && o.status === 'shipped') {
+    o.status = 'out_for_delivery';
+    o.expectedDelivery = istDay(nowIso());
+    o.history.push({ status: 'out_for_delivery', at: nowIso(), note: 'From courier tracking' });
+  }
+  if (m === 'delivered') {
+    o.status = 'delivered';
+    o.history.push({ status: 'delivered', at: nowIso(), note: 'From courier tracking' });
+    await notify(store, `✅ Delivered · ${o.id}`, `${first}, ${o.customer.city} received the parcel.`, `/admin/#order-${o.id}`, o.id);
+  }
+  if (['failed_attempt', 'exception', 'available_for_pickup'].includes(m) && o.auto.alerted !== m) {
+    o.auto.alerted = m;
+    const what = { failed_attempt: 'Delivery attempt failed', exception: 'Courier reported a problem', available_for_pickup: 'Waiting at the courier office for pickup' }[m];
+    await notify(store, `⚠️ ${what} · ${o.id}`, `${first}, ${o.customer.city}. Check with the courier or the customer.`, `/admin/#order-${o.id}`, o.id);
+  }
+}
+
 // ---------- admin ----------
 async function updateOrder(req, store, id) {
   const body = await readBody(req, 20_000);
@@ -404,6 +456,7 @@ async function updateOrder(req, store, id) {
   if (body.expectedDelivery !== undefined) {
     const d = String(body.expectedDelivery);
     if (d && (!/^\d{4}-\d{2}-\d{2}$/.test(d) || Number.isNaN(Date.parse(d)))) return fail(400, 'Pick a valid delivery date');
+    if (d !== (o.expectedDelivery || '')) o.etaManual = Boolean(d); // Sathya changed the date herself
     o.expectedDelivery = d;
   }
   if (body.addUpdate !== undefined) {
@@ -431,6 +484,13 @@ async function updateOrder(req, store, id) {
       o.expectedDelivery = addDays(nowIso(), lMax || 5); // Sathya can change it
     }
     if (body.status === 'out_for_delivery') o.expectedDelivery = istDay(nowIso());
+  }
+  if (['shipped', 'out_for_delivery'].includes(o.status) && o.awb && o.auto?.awb !== o.awb) {
+    await startTracking(store, o);
+    await applyAuto(store, o);
+  } else if (body.refreshTracking) {
+    await refreshTracking(o, true);
+    await applyAuto(store, o);
   }
   o.updatedAt = nowIso();
   await store.setJSON('orders/' + id, o);
@@ -571,6 +631,7 @@ export async function handle(req) {
     }
     if (parts[0] === 'track' && method === 'GET') return await track(req, url, store);
     if (parts[0] === 'payments' && parts[1] === 'sms' && method === 'POST') return await smsWebhook(req, url, store);
+    if (parts[0] === 'courier' && parts[1] === 'ship24' && method === 'POST') return await courierWebhook(req, store);
     if (parts[0] === 'img' && parts[1] && method === 'GET') {
       if (!/^[a-f0-9]{16}$/.test(parts[1])) return fail(404, 'Not found');
       const img = await store.getBinary('img/' + parts[1]);
@@ -676,6 +737,7 @@ export async function handle(req) {
         }
         if (method === 'DELETE' && parts[3]) { await removeDevice(store, parts[3]); return json({ ok: true }); }
       }
+      if (section === 'tracking-usage' && method === 'GET') return json(await trackingUsage(store));
       if (section === 'upload' && method === 'POST') return await upload(req, store);
     }
     return fail(404, 'Not found');
