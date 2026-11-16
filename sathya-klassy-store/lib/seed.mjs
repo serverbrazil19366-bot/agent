@@ -24,6 +24,7 @@ export const DEFAULT_SETTINGS = {
   lowStockAt: 3,
   dispatchDays: '1–2',
   deliveryDays: '3–7',
+  couriers: [], // [{ name: 'DTDC', url: 'https://…{id}…' }] saved by Sathya in Settings
 };
 
 const p = (img, name, category, price, mrp, cost, stock, tag, description, featured = false) => ({

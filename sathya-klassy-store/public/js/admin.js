@@ -11,6 +11,7 @@
     shipped: 'Shipped', out_for_delivery: 'Out for delivery', delivered: 'Delivered', cancelled: 'Cancelled',
   };
   const FLOW = ['payment_check', 'confirmed', 'packed', 'shipped', 'out_for_delivery', 'delivered'];
+  const lastCourier = () => { try { return localStorage.getItem('sk-last-courier') || state.settings?.couriers?.[0]?.name || ''; } catch { return ''; } };
   const niceDay = (ymd) => (ymd ? new Date(ymd + 'T12:00:00+05:30').toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' }) : '');
   const pill = (s) => `<span class="pill s-${s}">${STATUS[s] || s}</span>`;
   const ICON = {
@@ -192,7 +193,7 @@
       payment_check: `Hi ${first}! 💗 Thank you for ordering from Sathya Klassy Fashion. We got your order ${o.id} (${inr(o.total)}) and are checking your payment. We'll confirm soon!`,
       confirmed: `Hi ${first}! 💗 Your Sathya Klassy order ${o.id} is confirmed. We received your payment of ₹${o.payment.payable || o.total}. We'll pack it with love and ship it soon.\nTrack: ${track}`,
       packed: `Hi ${first}! 🎀 Your order ${o.id} is packed and will be shipped soon.\nTrack: ${track}`,
-      shipped: `Hi ${first}! 🚚 Your order ${o.id} is shipped!${o.courier ? `\nCourier: ${o.courier}` : ''}${o.awb ? `\nTracking no: ${o.awb}` : ''}${o.expectedDelivery ? `\nArriving by ${niceDay(o.expectedDelivery)}` : ''}\nTrack: ${track}`,
+      shipped: `Hi ${first}! 🚚 Your order ${o.id} is shipped!${o.courier ? `\nCourier: ${o.courier}` : ''}${o.awb ? `\nTracking no: ${o.awb}` : ''}${o.trackingUrl ? `\nTrack parcel: ${o.trackingUrl}` : ''}${o.expectedDelivery ? `\nArriving by ${niceDay(o.expectedDelivery)}` : ''}\nTrack: ${track}`,
       out_for_delivery: `Hi ${first}! 🛵 Your order ${o.id} is out for delivery and will reach you today. Please keep your phone close 💗\nTrack: ${track}`,
       delivered: `Hi ${first}! 💗 Your order ${o.id} is delivered. Hope you love it! Please share a photo or review and tag us on Instagram @${state.settings?.instagram || 'sathya_klassy_fashion'} ✨`,
       cancelled: `Hi ${first}, your order ${o.id} has been cancelled. If you paid, the refund of ${inr(o.total)} will reach the same UPI account within 3 working days. Sorry for the trouble!`,
@@ -229,7 +230,7 @@
         <p style="margin:8px 0 0;font-size:13px">Amount to receive: <b>₹${esc(o.payment.payable)}</b>${o.payment.utr ? ` · UPI ref <b>${esc(o.payment.utr)}</b>` : ''} · ${o.payment.verified ? `<span style="color:var(--ok);font-weight:600">Paid ✓ ${o.payment.source === 'bank-sms' ? '(bank SMS)' : '(checked by you)'}</span>` : '<span style="color:var(--warn);font-weight:600">Not paid yet</span>'}</p></div>
         ${o.status !== 'cancelled' ? `
         <div class="box"><h3>Shipping details</h3><div class="fields">
-          <label class="f">Courier<input id="courier" value="${esc(o.courier)}" placeholder="Eg. DTDC, India Post"></label>
+          <label class="f">Courier<input id="courier" list="courier-list" value="${esc(o.courier || lastCourier())}" placeholder="Eg. DTDC, India Post"><datalist id="courier-list">${(state.settings?.couriers || []).map((c) => `<option value="${esc(c.name)}"></option>`).join('')}</datalist></label>
           <label class="f">Tracking number<input id="awb" value="${esc(o.awb)}"></label>
           <label class="f">Expected delivery <small>customers see "Arriving by"</small><input id="eta" type="date" value="${esc(o.expectedDelivery || '')}"></label>
           <label class="f">Courier's tracking link <small>optional, shown small</small><input id="turl" value="${esc(o.trackingUrl)}" placeholder="https://"></label>
@@ -259,6 +260,7 @@
         if (state.tab === 'orders') { list(); badge(orderCache.filter(match('payment_check')).length); }
       } catch (e) { $('#oerr').textContent = e.message; }
     };
+    if ($('#courier')) $('#courier').addEventListener('change', (e) => { try { localStorage.setItem('sk-last-courier', e.target.value.trim()); } catch {} });
     const shipFields = () => $('#courier') ? { courier: $('#courier').value, awb: $('#awb').value, trackingUrl: $('#turl').value, expectedDelivery: $('#eta').value } : {};
     const addUpdate = (text) => text.trim() && save({ addUpdate: text.trim() }, 'Update added. Customers see it on Track order');
     $$('[data-quick]').forEach((b) => (b.onclick = () => addUpdate(b.dataset.quick)));
@@ -419,6 +421,10 @@
           <label class="f">Dispatch time (days)<input name="dispatchDays" value="${esc(s.dispatchDays)}"></label>
           <label class="f">Delivery time (days)<input name="deliveryDays" value="${esc(s.deliveryDays)}"></label>
           <label class="f">Low stock alert at<input name="lowStockAt" type="number" min="0" value="${s.lowStockAt}"></label>
+          <fieldset class="full couriers"><legend>Couriers you use <small>(set once)</small></legend>
+            <p class="sub" style="margin:0 0 8px;font-size:12.5px">Paste each courier's parcel-tracking page. If the link has the tracking number in it, put <code>{id}</code> where the number goes. Customers then get a "Track parcel" button with the right link, for free.</p>
+            ${[0, 1, 2, 3].map((i) => { const c = (s.couriers || [])[i] || {}; return `<div class="courier-row"><input class="search" data-cname="${i}" value="${esc(c.name || '')}" placeholder="Courier name" aria-label="Courier ${i + 1} name"><input class="search" data-curl="${i}" value="${esc(c.url || '')}" placeholder="https://… tracking page" aria-label="Courier ${i + 1} tracking page"></div>`; }).join('')}
+          </fieldset>
           <label class="f">Email <small>optional</small><input name="email" type="email" value="${esc(s.email)}"></label>
           <label class="f full">Top banner text<input name="announcement" value="${esc(s.announcement)}" maxlength="160"></label>
         </div>
@@ -432,7 +438,9 @@
       e.preventDefault();
       $('#serr').textContent = '';
       try {
-        const { settings: saved } = await api('admin/settings', { method: 'PUT', body: JSON.stringify(Object.fromEntries(new FormData(e.target))) });
+        const data = Object.fromEntries(new FormData(e.target));
+        data.couriers = [0, 1, 2, 3].map((i) => ({ name: $(`[data-cname="${i}"]`).value.trim(), url: $(`[data-curl="${i}"]`).value.trim() }));
+        const { settings: saved } = await api('admin/settings', { method: 'PUT', body: JSON.stringify(data) });
         state.settings = saved; toast('Settings saved 💗');
       } catch (ex) { $('#serr').textContent = ex.message; }
     };

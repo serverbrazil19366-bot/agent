@@ -45,9 +45,9 @@
               const h = reached(s);
               const shippedHere = s === 'shipped' && i <= idx;
               return `<li class="${i <= idx ? 'done' : ''} ${i === idx ? 'current' : ''}"><span class="dot">${ic}</span><div><b>${t}</b><small>${h ? when(h.at) + ' · ' : ''}${d}</small>
-                ${shippedHere && o.awb ? `<div class="ship-meta">${o.courier ? `<span>${esc(o.courier)}</span>` : ''}<span>Tracking no. <b>${esc(o.awb)}</b></span></div>` : ''}
+                ${shippedHere && o.awb ? `<div class="ship-meta">${o.courier ? `<span>${esc(o.courier)}</span>` : ''}<span>Tracking no. <b>${esc(o.awb)}</b> <button type="button" class="remove" data-copy="${esc(o.awb)}">Copy</button></span></div>` : ''}
+                ${shippedHere && o.trackingUrl ? `<a class="btn btn-gold track-btn" data-copy="${esc(o.awb || '')}" href="${esc(o.trackingUrl)}" target="_blank" rel="noopener">${icons.truck} Track parcel${o.courier ? ` on ${esc(o.courier)}` : ''}</a><small class="track-hint">Opens the courier's site. Your tracking number is copied, paste it there if asked.</small>` : ''}
                 ${shippedHere && updates.length ? `<ul class="ship-log">${updates.map((u) => `<li><b>${esc(u.text)}</b><small>${when(u.at)}</small></li>`).join('')}</ul>` : ''}
-                ${shippedHere && o.trackingUrl ? `<a class="ship-more" href="${esc(o.trackingUrl)}" target="_blank" rel="noopener">More details from the courier</a>` : ''}
               </div></li>`;
             }).join('')}
           </ol>`}
@@ -57,6 +57,11 @@
           </div>
           ${settings.whatsapp ? `<a class="btn btn-wa" style="margin-top:16px" target="_blank" rel="noopener" href="${waLink(settings.whatsapp, `Hi! Question about my order ${o.id}`)}">${icons.wa} Ask on WhatsApp</a>` : ''}
         </div>`;
+      document.querySelectorAll('#result [data-copy]').forEach((el) => el.addEventListener('click', () => {
+        const v = el.dataset.copy;
+        if (!v) return;
+        navigator.clipboard?.writeText(v).then(() => SK.toast('Tracking number copied')).catch(() => {});
+      }));
     } catch (e) {
       $('#result').innerHTML = '';
       $('#err').textContent = e.message;

@@ -213,6 +213,11 @@
       const o = db.orders.find((x) => x.id === id);
       if (!o) return no(404, 'Order not found');
       for (const k of ['courier', 'awb', 'trackingUrl', 'expectedDelivery']) if (body[k] !== undefined) o[k] = body[k];
+      if (o.trackingUrl && !/^https:\/\//i.test(o.trackingUrl)) return no(400, 'Tracking link must start with https://');
+      if (!o.trackingUrl && o.courier && o.awb) {
+        const c = (db.settings.couriers || []).find((x) => x.name.toLowerCase() === o.courier.toLowerCase());
+        if (c) { o.courier = c.name; o.trackingUrl = c.url.includes('{id}') ? c.url.replace('{id}', encodeURIComponent(o.awb)) : c.url; }
+      }
       if (body.addUpdate) o.updates = [...(o.updates || []), { at: now(), text: String(body.addUpdate).slice(0, 140) }].slice(-30);
       if (body.removeUpdate) o.updates = (o.updates || []).filter((u) => u.at !== body.removeUpdate);
       if (body.status && body.status !== o.status) {

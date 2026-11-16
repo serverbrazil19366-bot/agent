@@ -183,3 +183,9 @@ table.t td.n, table.t th.n { text-align: right; font-variant-numeric: tabular-nu
 .s-out_for_delivery { background: #fff0e0; color: #8a4b14; }
 .update-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .update-chips .chip { min-height: 34px; font-size: 12.5px; }
+
+.couriers { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin: 0; }
+.couriers legend { font-size: 13px; font-weight: 600; padding: 0 6px; }
+.courier-row { display: grid; grid-template-columns: 1fr 2fr; gap: 8px; margin-top: 8px; }
+.courier-row .search { width: 100%; }
+@media (max-width: 560px) { .courier-row { grid-template-columns: 1fr; } }

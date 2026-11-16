@@ -166,6 +166,7 @@ const publicSettings = (s) => ({
   upiId: s.upiId, upiName: s.upiName, whatsapp: s.whatsapp, instagram: s.instagram, email: s.email,
   shippingFee: s.shippingFee, freeShippingAbove: s.freeShippingAbove,
   dispatchDays: s.dispatchDays, deliveryDays: s.deliveryDays,
+  couriers: (s.couriers || []).map((c) => c.name),
 });
 
 function productFromInput(input, existing = {}) {
@@ -395,6 +396,11 @@ async function updateOrder(req, store, id) {
   if (!o) return fail(404, 'Order not found');
   for (const k of ['courier', 'awb', 'trackingUrl', 'adminNote']) if (body[k] !== undefined) o[k] = clean(body[k], 300);
   if (o.trackingUrl && !/^https:\/\//i.test(o.trackingUrl)) return fail(400, 'Tracking link must start with https://');
+  // no link typed → build it from the courier's saved tracking page (free, no API)
+  if (!o.trackingUrl && o.courier && o.awb) {
+    const c = ((await getSettings(store)).couriers || []).find((x) => x.name.toLowerCase() === o.courier.toLowerCase());
+    if (c) { o.courier = c.name; o.trackingUrl = c.url.includes('{id}') ? c.url.replace('{id}', encodeURIComponent(o.awb)) : c.url; }
+  }
   if (body.expectedDelivery !== undefined) {
     const d = String(body.expectedDelivery);
     if (d && (!/^\d{4}-\d{2}-\d{2}$/.test(d) || Number.isNaN(Date.parse(d)))) return fail(400, 'Pick a valid delivery date');
@@ -598,6 +604,18 @@ export async function handle(req) {
             const u = clean(b.upiId, 80);
             if (u && !/^[\w.\-]{2,}@[a-zA-Z]{2,}$/.test(u)) return fail(400, 'UPI ID looks wrong (example: name@okaxis)');
             next.upiId = u;
+          }
+          if (b.couriers !== undefined) {
+            if (!Array.isArray(b.couriers)) return fail(400, 'Courier list is not valid');
+            const list = [];
+            for (const c of b.couriers.slice(0, 8)) {
+              const name = clean(c?.name, 40), link = clean(c?.url, 300);
+              if (!name && !link) continue;
+              if (!name) return fail(400, 'Give each courier a name');
+              if (!/^https:\/\/[^\s<>"']+$/i.test(link)) return fail(400, `Tracking page for ${name} must be a link starting with https://`);
+              list.push({ name, url: link });
+            }
+            next.couriers = list;
           }
           if (b.whatsapp !== undefined) {
             const w = String(b.whatsapp).replace(/\D/g, '');
