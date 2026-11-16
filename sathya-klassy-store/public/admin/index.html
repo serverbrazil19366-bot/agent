@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin · Sathya Klassy Fashion</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#2b1520">
+<link rel="icon" href="/assets/favicon.png">
+<link rel="apple-touch-icon" href="/assets/favicon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=Great+Vibes&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+<div id="login" class="login" hidden>
+  <form class="login-card" id="login-form">
+    <img src="/assets/logo.webp" alt="Sathya Klassy Fashion" width="140" height="140">
+    <h1>Shop admin</h1>
+    <label class="f">Password<input type="password" name="password" autocomplete="current-password" required></label>
+    <p class="err" id="login-err" role="alert"></p>
+    <button class="btn btn-pink" type="submit">Log in</button>
+  </form>
+</div>
+
+<div id="app" class="app" hidden>
+  <aside class="side">
+    <div class="side-brand"><img src="/assets/favicon-192.png" alt="" width="40" height="40"><span><b>Sathya Klassy</b><small>Admin</small></span></div>
+    <nav class="tabs" aria-label="Admin sections">
+      <button data-tab="dash" aria-current="page"><svg viewBox="0 0 24 24"><path d="M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-4H4zM14 4v4h6V4z"/></svg><span>Dashboard</span></button>
+      <button data-tab="orders"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1.3 12H6.3zM9 8V6.5a3 3 0 0 1 6 0V8"/></svg><span>Orders</span><i class="dot-badge" id="badge-orders" hidden></i></button>
+      <button data-tab="products"><svg viewBox="0 0 24 24"><path d="m3 7 9-4 9 4-9 4zM3 7v10l9 4 9-4V7M12 11v10"/></svg><span>Products</span></button>
+      <button data-tab="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Settings</span></button>
+    </nav>
+    <div class="side-foot"><a href="/" target="_blank" rel="noopener">View website ↗</a><button id="logout" class="linkish">Log out</button></div>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+
+<dialog id="dlg" class="dlg"><div id="dlg-body"></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="/js/admin.js"></script>
+</body>
+</html>

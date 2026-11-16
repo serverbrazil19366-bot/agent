@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shipping, Replacement &amp; Privacy · Sathya Klassy Fashion</title>
+<meta name="description" content="Shipping times, replacement policy and privacy policy for Sathya Klassy Fashion.">
+<meta name="theme-color" content="#fff7fa">
+<link rel="icon" href="/assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Great+Vibes&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  .policy { max-width: 760px; }
+  .policy section { background: #fff; border: 1px solid var(--line); border-radius: 22px; padding: 26px; margin: 18px 0; scroll-margin-top: 96px; }
+  .policy h2 { font-family: var(--serif); font-size: 30px; margin: 0 0 10px; }
+  .policy li { margin: 6px 0; }
+</style>
+</head>
+<body>
+<main class="wrap policy">
+  <div class="page-head">
+    <div class="crumbs"><a href="/">Home</a> / Policies</div>
+    <h1>Our <span class="script" style="color:var(--pink-600)">promises</span></h1>
+    <p>Simple and honest. Questions? Message us on WhatsApp.</p>
+  </div>
+  <section id="shipping">
+    <h2>Shipping</h2>
+    <ul>
+      <li>We ship all over India.</li>
+      <li>Orders are packed and dispatched in <b data-s="dispatchDays">1–2</b> working days after we confirm your payment.</li>
+      <li>Delivery usually takes <b data-s="deliveryDays">3–7</b> days depending on your city.</li>
+      <li>Shipping is <b>free above <span data-s="freeShippingAbove">₹499</span></b>; below that a flat <span data-s="shippingFee">₹60</span> is added.</li>
+      <li>Once shipped, you get the courier name and tracking number on WhatsApp and on the <a href="/track">Track order</a> page.</li>
+      <li>For festival and birthday gifts, please order at least 7 days before the date.</li>
+    </ul>
+  </section>
+  <section id="returns">
+    <h2>Replacements &amp; cancellations</h2>
+    <ul>
+      <li>If an item arrives damaged or wrong, message us on WhatsApp within 48 hours with an <b>unboxing video</b>, and we will send a replacement.</li>
+      <li>Hampers, chocolate bouquets and personalised items cannot be returned, because they are made to order.</li>
+      <li>You can cancel an order before it is shipped. If you have paid, we refund the full amount to the same UPI account within 3 working days.</li>
+      <li>Hair accessories and jewellery cannot be returned once used, for hygiene reasons.</li>
+    </ul>
+  </section>
+  <section id="payments">
+    <h2>Payments</h2>
+    <ul>
+      <li>We accept UPI (GPay, PhonePe, Paytm and others). Pay to the UPI ID shown at checkout only.</li>
+      <li>We never ask for your UPI PIN, OTP or card details. Never share them with anyone.</li>
+      <li>Every payment is checked by hand before we confirm your order.</li>
+    </ul>
+  </section>
+  <section id="privacy">
+    <h2>Privacy</h2>
+    <ul>
+      <li>We collect your name, mobile number and address only to deliver your order and send order updates.</li>
+      <li>Your details are shared only with the courier company that delivers your parcel.</li>
+      <li>We never sell your details. To delete your details, message us on WhatsApp.</li>
+      <li>Your cart and saved address are stored only in your own browser.</li>
+    </ul>
+  </section>
+</main>
+<script src="/js/common.js"></script>
+<script>
+SK.shop().then(({ settings: s }) => {
+  document.querySelectorAll('[data-s]').forEach((el) => {
+    const k = el.dataset.s, v = s[k];
+    if (v === undefined || v === '') return;
+    el.textContent = typeof v === 'number' ? SK.inr(v) : v;
+  });
+}).catch(() => {});
+</script>
+</body>
+</html>

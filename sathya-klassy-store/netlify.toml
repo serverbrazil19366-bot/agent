@@ -1,0 +1,23 @@
+# Sathya Klassy Fashion online store.
+# public/ is the website; netlify/functions/api.mjs is the backend (/api/*).
+# Data (products, orders, photos) lives in Netlify Blobs: free, no database.
+# Set ADMIN_PASSWORD in Netlify > Site configuration > Environment variables.
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+  command = "echo 'no build step'"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
+
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
