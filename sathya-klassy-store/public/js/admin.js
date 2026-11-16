@@ -207,7 +207,7 @@
       <div class="dlg-body">
         ${o.status === 'awaiting_payment' ? `<div class="notice warn">Waiting for the customer to pay <b>₹${esc(o.payment.payable)}</b>. It confirms by itself when your bank SMS arrives. Only press <b>Payment received</b> if you can see this exact amount in your bank.</div>` : ''}
         ${o.status === 'payment_check' ? `<div class="notice warn">The customer says they paid but no bank SMS matched yet. Check your bank for <b>₹${esc(o.payment.payable)}</b> with UPI reference <b>${esc(o.payment.claimedUtr || '-')}</b>. Press <b>Payment received</b> only if you see it.</div>` : ''}
-        ${o.status === 'expired' ? `<div class="notice warn">Not paid in 15 minutes, so this order was not placed and stock was released. If ₹${esc(o.payment.payable)} later shows in your bank, you can still confirm it.</div>` : ''}
+        ${o.status === 'expired' ? `<div class="notice warn">Not paid in 10 minutes, so this order was not placed and stock was released. If ₹${esc(o.payment.payable)} later shows in your bank, you can still confirm it.</div>` : ''}
         <div class="box"><h3>Customer</h3>
           <div style="white-space:pre-line">${esc(address)}</div>
           ${o.note ? `<p style="margin:8px 0 0"><b>Note:</b> ${esc(o.note)}</p>` : ''}
@@ -443,6 +443,15 @@
         </ol>
         <p style="margin:10px 0 0;font-size:13px;color:var(--muted)">${last}</p>
       </div>
+      <div class="box" style="margin-top:12px"><h3>New order alerts on your phone <span class="pill ${d.notifyReady ? 's-delivered' : 's-payment_check'}">${d.notifyReady ? 'On' : 'Not set up'}</span></h3>
+        <p style="margin:0 0 8px;font-size:13.5px">A Telegram message for every paid order, every "check payment" request and every payment that matches no order. Free.</p>
+        <ol style="margin:0 0 10px;padding-left:20px;font-size:13px;display:flex;flex-direction:column;gap:4px">
+          <li>In Telegram, open <b>@BotFather</b> → <code>/newbot</code> → copy the bot token.</li>
+          <li>Send any message to your new bot, then get your chat ID from <b>@userinfobot</b>.</li>
+          <li>Save them on Netlify as <code>TELEGRAM_BOT_TOKEN</code> and <code>TELEGRAM_CHAT_ID</code>, then redeploy.</li>
+        </ol>
+        <button class="btn btn-line btn-sm" id="notify-test">Send a test message</button>
+      </div>
       <div class="box" style="margin-top:12px"><h3>Test with a bank SMS</h3>
         <p style="margin:0 0 8px;font-size:13px;color:var(--muted)">Paste a "credited" SMS (hide your account number). Nothing is saved: this only shows what we read from it.</p>
         <label class="f"><span class="sr-only">Bank SMS</span><textarea id="smstest" placeholder="Eg. Rs.307.14 credited to A/c XX1234 ... UPI Ref 412345678901"></textarea></label>
@@ -456,6 +465,10 @@
           : '<p class="sub" style="margin:0">No payments yet.</p>'}
         ${unmatched.length ? `<p style="margin:8px 0 0;font-size:13px;color:var(--warn)">${unmatched.length} payment(s) did not match any order (wrong amount, or paid after 24 hours). Link them to an order, or refund them.</p>` : ''}
       </div>`;
+    $('#notify-test').onclick = async () => {
+      try { await api('admin/notify-test', { method: 'POST', body: '{}' }); toast('Test message sent. Check Telegram 💬'); }
+      catch (e) { toast(e.message); }
+    };
     $('#smstest-btn').onclick = async () => {
       try {
         const { result: r } = await api('admin/payments/test', { method: 'POST', body: JSON.stringify({ message: $('#smstest').value }) });

@@ -3,7 +3,7 @@
 //
 // Payment flow (no gateway, no fees):
 // 1. Customer places an order → status "awaiting_payment" with a unique
-//    amount (₹307.14: the paise identify the order) and 15 minutes to pay.
+//    amount (₹307.14: the paise identify the order) and 10 minutes to pay.
 // 2. Sathya's bank sends her a "credited" SMS. A forwarder app on her phone
 //    posts only that SMS to /api/payments/sms with a secret key.
 // 3. We match the exact amount (+ UTR) to the waiting order and only then
@@ -16,7 +16,7 @@ import { parseBankSms, rupees } from './payments.mjs';
 
 const STATUSES = ['awaiting_payment', 'payment_check', 'confirmed', 'packed', 'shipped', 'delivered', 'cancelled', 'expired'];
 const UNPAID = new Set(['awaiting_payment', 'expired']);
-const PAY_WINDOW_MS = 15 * 60 * 1000;
+const PAY_WINDOW_MS = 10 * 60 * 1000;
 const LATE_WINDOW_MS = 24 * 3600 * 1000; // a late payment can still revive an expired order
 const IST_OFFSET = 330 * 60 * 1000;
 
@@ -69,6 +69,24 @@ async function limit(store, req, bucket, max, windowSec) {
   await store.setJSON(key, { n, until: (slot + 1) * windowSec * 1000 });
   if (n > max) throw Object.assign(new Error('Too many tries. Please wait a few minutes and try again.'), { status: 429 });
 }
+
+// ---------- Telegram notification to Sathya (free, optional) ----------
+// Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID on Netlify. Only a short summary
+// is sent (no phone number, no address); full details stay in the admin.
+async function notify(text) {
+  const token = process.env.TELEGRAM_BOT_TOKEN, chat = process.env.TELEGRAM_CHAT_ID;
+  if (!token || !chat) return false;
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ chat_id: chat, text, disable_web_page_preview: true }),
+      signal: AbortSignal.timeout(4000),
+    });
+    return res.ok;
+  } catch { return false; }
+}
+const orderLine = (o) => o.items.map((i) => `• ${i.name} × ${i.qty}`).join('\n');
 
 // ---------- admin auth ----------
 const MIN_PASSWORD = 10;
@@ -128,7 +146,7 @@ async function changeStock(store, items, sign) {
 }
 
 // Orders waiting for money are indexed under pending/<id> (and late/<id> after
-// the 15 minutes run out) so matching a payment never scans every order.
+// the 10 minutes run out) so matching a payment never scans every order.
 async function sweep(store) {
   const now = Date.now();
   for (const key of await store.list('pending/')) {
@@ -139,7 +157,7 @@ async function sweep(store) {
     await store.delete(key);
     if (o && o.status === 'awaiting_payment') {
       o.status = 'expired';
-      o.history.push({ status: 'expired', at: nowIso(), note: 'No payment in 15 minutes' });
+      o.history.push({ status: 'expired', at: nowIso(), note: 'No payment in 10 minutes' });
       await store.setJSON('orders/' + id, o);
       await changeStock(store, o.items, +1);
       await store.setJSON('late/' + id, { payablePaise: p.payablePaise, until: now + LATE_WINDOW_MS });
@@ -255,7 +273,7 @@ async function createOrder(req, store) {
   };
   await store.setJSON('orders/' + id, order);
   await store.setJSON('pending/' + id, { payablePaise, expiresAt });
-  await changeStock(store, items, -1); // held for 15 minutes
+  await changeStock(store, items, -1); // held for 10 minutes
   return json({ order: customerView(order), key: accessKey, upi: { id: settings.upiId, name: settings.upiName || settings.shopName } }, 201);
 }
 
@@ -289,6 +307,7 @@ async function claimPaid(req, store, id) {
     o.payment.claimedUtr = utr;
     o.history.push({ status: 'payment_check', at: nowIso(), note: 'Customer says paid' });
     await store.setJSON('orders/' + id, o);
+    await notify(`⚠️ Check payment: order ${o.id}\nCustomer says they paid ₹${o.payment.payable} (UPI ref ${utr}) but no bank SMS matched.\nCheck your bank, then confirm in admin.`);
     // keep it matchable for the late SMS
     await store.delete('pending/' + id);
     await store.setJSON('late/' + id, { payablePaise: o.payment.payablePaise, until: Date.now() + LATE_WINDOW_MS });
@@ -320,6 +339,7 @@ async function confirmPaid(store, o, utr, source) {
   await store.setJSON('orders/' + o.id, o);
   await store.delete('pending/' + o.id);
   await store.delete('late/' + o.id);
+  await notify(`🛍️ New paid order ${o.id}\n₹${o.payment.payable} received${source === 'bank-sms' ? ' (bank SMS)' : ''}\n${o.customer.name.split(' ')[0]}, ${o.customer.city}\n${orderLine(o)}\nOpen admin to pack it.`);
 }
 
 async function smsWebhook(req, url, store) {
@@ -357,6 +377,7 @@ async function smsWebhook(req, url, store) {
     if (o && !o.payment.verified) { await confirmPaid(store, o, p.utr, 'bank-sms'); record.orderId = o.id; }
   }
   await store.setJSON(payKey, record);
+  if (!record.orderId) await notify(`💰 ₹${record.amount} received but it matches no order${p.utr ? ` (UPI ref ${p.utr})` : ''}.\nOpen admin → Settings → Bank payments to link or refund it.`);
   return json({ matched: Boolean(record.orderId) });
 }
 
@@ -389,7 +410,7 @@ async function updateOrder(req, store, id) {
 async function listPayments(store) {
   const keys = await store.list('payments/');
   const list = (await mapLimit(keys, 10, (k) => store.getJSON(k))).filter(Boolean).sort((a, b) => b.at.localeCompare(a.at)).slice(0, 100);
-  return json({ payments: list, lastSms: await store.getJSON('meta/last-sms'), webhookReady: (process.env.PAYMENT_WEBHOOK_KEY || '').length >= 24 });
+  return json({ payments: list, lastSms: await store.getJSON('meta/last-sms'), webhookReady: (process.env.PAYMENT_WEBHOOK_KEY || '').length >= 24, notifyReady: Boolean(process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID) });
 }
 
 async function attachPayment(req, store, ref) {
@@ -595,6 +616,11 @@ export async function handle(req) {
           return json({ result: parseBankSms(b.message) });
         }
         if (method === 'PUT' && id && /^[a-z0-9-]{6,40}$/.test(id)) return await attachPayment(req, store, id);
+      }
+      if (section === 'notify-test' && method === 'POST') {
+        await limit(store, req, 'notifytest', 5, 600);
+        return (await notify('✅ Sathya Klassy: notifications are working. You will get a message for every paid order.'))
+          ? json({ ok: true }) : fail(502, 'Could not send. Check TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID on Netlify.');
       }
       if (section === 'upload' && method === 'POST') return await upload(req, store);
     }

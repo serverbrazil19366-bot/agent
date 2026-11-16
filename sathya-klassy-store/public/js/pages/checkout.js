@@ -119,14 +119,21 @@
               </div>
             </div>
             ${mobile ? `<a class="btn btn-gold btn-block" style="margin-top:16px" href="${link}">${icons.upi} Pay ₹${esc(o.payable)} with UPI app</a>` : ''}
+            ${claimed ? '' : `
+            <ol class="pay-steps">
+              <li><span><b>${mobile ? 'Tap the button above' : 'Scan the QR'}</b> with GPay, PhonePe or Paytm</span></li>
+              <li><span><b>Pay ₹${esc(o.payable)}</b>. The amount is already filled in</span></li>
+              <li><span><b>Come back here.</b> We confirm by ourselves, usually in under 30 seconds</span></li>
+            </ol>`}
             <div class="wait" role="status" aria-live="polite">
               <span class="pulse" aria-hidden="true"></span>
-              <div><b>${claimed ? 'We are checking your payment' : 'Waiting for your payment…'}</b>
-                <small>${claimed ? 'We will confirm on WhatsApp soon. This page also updates by itself.' : 'This page updates by itself as soon as the money reaches us.'}</small></div>
-              ${claimed ? '' : '<span class="countdown" id="cd"></span>'}
+              <div><b>${claimed ? 'We are checking your payment' : 'Ready when you are'}</b>
+                <small>${claimed ? 'We will confirm on WhatsApp soon. This page also updates by itself.' : 'This page updates the moment your payment reaches us.'}</small></div>
             </div>
+            ${claimed ? '' : '<p class="time-left">Time left to pay: <span id="cd"></span></p>'}
             <div id="claim"></div>
           </div>
+          <p class="time-left">Your order ID is <b>${esc(o.id)}</b>. You can close this page and check it later in <a href="/track">Track order</a>.</p>
           <p class="secure-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Your order is placed only after your payment is received. Never share your UPI PIN or OTP with anyone.</p>
           <button type="button" class="remove" id="cancel-pay" style="align-self:center">Change my cart</button>
         </div>`;
@@ -163,7 +170,7 @@
       app.innerHTML = `
         <div class="success">
           <h1>Payment not received</h1>
-          <p>We did not receive ₹${esc(o.payable)} within 15 minutes, so the order was not placed and nothing was booked.</p>
+          <p>We did not receive ₹${esc(o.payable)} within 10 minutes, so the order was not placed and nothing was booked.</p>
           <p style="color:var(--muted);font-size:14px">If money already left your account, don't worry: it updates here by itself when the bank confirms, or message us with order ID <b>${esc(o.id)}</b>.</p>
           <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:16px">
             <button class="btn btn-pink" id="again">Try again</button>
@@ -207,5 +214,10 @@
     }
     draw(order);
     if (!order.paid) poll = setTimeout(check, 4000);
+    // back from the UPI app → check straight away instead of waiting
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden || !store.get(PENDING)) return;
+      clearTimeout(poll); check();
+    });
   }
 })();

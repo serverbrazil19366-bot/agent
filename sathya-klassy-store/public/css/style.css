@@ -691,6 +691,12 @@ main { animation: pageIn .7s cubic-bezier(.2,.8,.2,1) both; }
 .pulse { width: 14px; height: 14px; border-radius: 50%; background: var(--pink-500); box-shadow: 0 0 0 0 rgba(216, 85, 138, .6); animation: pulse 1.6s infinite; }
 @keyframes pulse { 70% { box-shadow: 0 0 0 14px rgba(216, 85, 138, 0); } 100% { box-shadow: 0 0 0 0 rgba(216, 85, 138, 0); } }
 .countdown { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 18px; color: var(--pink-700); }
+.pay-steps { margin: 0; padding: 0; list-style: none; counter-reset: ps; display: flex; flex-direction: column; gap: 10px; }
+.pay-steps li { counter-increment: ps; display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: start; font-size: 14px; color: var(--muted); }
+.pay-steps li::before { content: counter(ps); width: 28px; height: 28px; border-radius: 50%; background: var(--pink-grad); color: #fff; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+.pay-steps b { color: var(--ink); }
+.time-left { margin: 0; font-size: 12.5px; color: var(--muted); text-align: center; }
+.time-left span { font-variant-numeric: tabular-nums; font-weight: 600; }
 .claim { border-top: 1px solid var(--line); padding-top: 12px; font-size: 14px; }
 .claim summary { cursor: pointer; font-weight: 600; color: var(--pink-700); min-height: 32px; }
 .claim p { color: var(--muted); }

@@ -19,14 +19,14 @@ There is no database, paid plan or payment gateway.
 
 1. Customer fills the address and taps **Continue to pay**. The order is created
    as **Waiting for payment** with a unique amount, for example ₹307.14 for a
-   ₹307 order. The paise identify the order. Stock is held for 15 minutes.
+   ₹307 order. The paise identify the order. Stock is held for 10 minutes.
 2. Customer pays that exact amount by UPI (QR, or the UPI-app button on phones).
 3. Sathya's bank sends her a "credited" SMS. A free SMS-forwarder app on her
    Android phone posts **only that SMS** to `/api/payments/sms` with a secret key.
 4. The server reads the amount and UPI reference, finds the waiting order with
    that exact amount, and only then marks it **Paid · to pack**. The customer's
    page switches to **Order placed** by itself.
-5. No payment in 15 minutes → the order is **Not paid**, stock is released, and
+5. No payment in 10 minutes → the order is **Not paid**, stock is released, and
    the customer is told no order was placed. A payment that arrives late (within
    24 hours) still confirms it.
 6. If the bank SMS never arrives, the customer can submit their UPI reference.
@@ -86,12 +86,15 @@ backend: `preview/demo-api.js` answers the API in the browser (admin password
    app, add a rule for the bank's sender name + the word "credited", and send it
    as JSON (`{"message": "<sms text>"}`) to `https://<site>.netlify.app/api/payments/sms`
    with header `x-sk-key: <PAYMENT_WEBHOOK_KEY>`.
-5. Test: pay ₹1 to the UPI ID and check **Settings → Last bank SMS**. Use the
+5. Optional, free: Telegram alerts for each paid order. Create a bot with
+   @BotFather, get your chat ID from @userinfobot, save `TELEGRAM_BOT_TOKEN` and
+   `TELEGRAM_CHAT_ID` on Netlify, then use **Settings → Send a test message**.
+   Messages carry only order ID, amount, first name, city and items.
+6. Test: pay ₹1 to the UPI ID and check **Settings → Last bank SMS**. Use the
    "Test with a bank SMS" box to check your bank's SMS format first.
 
 ## Next phases
 
 - Payment gateway (Razorpay / PhonePe PG / Cashfree) for fully automatic payments when orders grow
-- Telegram or WhatsApp notification to Sathya for each new paid order
 - Shiprocket for shipping labels and live tracking
 - Customer reviews with photos, coupon codes, reseller price list

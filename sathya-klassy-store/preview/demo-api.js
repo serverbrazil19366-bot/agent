@@ -130,7 +130,7 @@
       const id = 'SK' + istDay(now()).slice(2).replace(/-/g, '') + String(1000 + Math.floor(Math.random() * 9000));
       const o = {
         id, createdAt: now(), customer: { ...c, phone: String(c.phone).slice(-10) }, items, subtotal, shipping, total, note: body.note || '',
-        payment: { method: 'upi', payable: rupees(payablePaise), payablePaise, expiresAt: Date.now() + 15 * 60000, utr: '', verified: false, source: '' },
+        payment: { method: 'upi', payable: rupees(payablePaise), payablePaise, expiresAt: Date.now() + 10 * 60000, utr: '', verified: false, source: '' },
         accessKey: hex(24), status: 'awaiting_payment', history: [{ status: 'awaiting_payment', at: now() }], courier: '', awb: '', trackingUrl: '',
       };
       db.orders.unshift(o); stock(items, -1); save();
@@ -171,7 +171,7 @@
       return ok({ settings: db.settings });
     }
     if (section === 'payments') {
-      if (method === 'GET') return ok({ payments: db.payments.slice(0, 100), lastSms: db.payments[0] ? { at: db.payments[0].at, ok: true } : null, webhookReady: true });
+      if (method === 'GET') return ok({ payments: db.payments.slice(0, 100), lastSms: db.payments[0] ? { at: db.payments[0].at, ok: true } : null, webhookReady: true, notifyReady: true });
       if (id === 'test') return ok({ result: parseBankSms(body.message) });
       const pay = db.payments.find((p) => p.utr === id);
       const o = db.orders.find((x) => x.id === String(body.orderId || '').toUpperCase());
@@ -208,6 +208,7 @@
       save();
       return ok({ order: o });
     }
+    if (section === 'notify-test') return ok({ ok: true });
     if (section === 'upload') return ok({ url: body.dataUrl }, 201); // demo: keep the photo inline
     return no(404, 'Not found');
   }
