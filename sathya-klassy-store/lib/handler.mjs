@@ -13,6 +13,7 @@ import crypto from 'node:crypto';
 import { getStore } from './store.mjs';
 import { CATEGORIES, DEFAULT_SETTINGS, SAMPLE_PRODUCTS } from './seed.mjs';
 import { parseBankSms, rupees } from './payments.mjs';
+import { publicKey, validSubscription, addDevice, listDevices, removeDevice, pushAll } from './push.mjs';
 
 const STATUSES = ['awaiting_payment', 'payment_check', 'confirmed', 'packed', 'shipped', 'delivered', 'cancelled', 'expired'];
 const UNPAID = new Set(['awaiting_payment', 'expired']);
@@ -70,23 +71,13 @@ async function limit(store, req, bucket, max, windowSec) {
   if (n > max) throw Object.assign(new Error('Too many tries. Please wait a few minutes and try again.'), { status: 429 });
 }
 
-// ---------- Telegram notification to Sathya (free, optional) ----------
-// Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID on Netlify. Only a short summary
-// is sent (no phone number, no address); full details stay in the admin.
-async function notify(text) {
-  const token = process.env.TELEGRAM_BOT_TOKEN, chat = process.env.TELEGRAM_CHAT_ID;
-  if (!token || !chat) return false;
-  try {
-    const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ chat_id: chat, text, disable_web_page_preview: true }),
-      signal: AbortSignal.timeout(4000),
-    });
-    return res.ok;
-  } catch { return false; }
+// ---------- phone notifications for the admin app (Web Push) ----------
+// Only a short summary goes in the notification (no phone number, no address);
+// full details stay inside the password-protected admin.
+async function notify(store, title, body, url = '/admin/#orders', tag) {
+  try { return await pushAll(store, { title, body, url, tag }); } catch (e) { console.error(e); return 0; }
 }
-const orderLine = (o) => o.items.map((i) => `• ${i.name} × ${i.qty}`).join('\n');
+const orderLine = (o) => o.items.map((i) => `${i.name} × ${i.qty}`).join(', ');
 
 // ---------- admin auth ----------
 const MIN_PASSWORD = 10;
@@ -307,7 +298,7 @@ async function claimPaid(req, store, id) {
     o.payment.claimedUtr = utr;
     o.history.push({ status: 'payment_check', at: nowIso(), note: 'Customer says paid' });
     await store.setJSON('orders/' + id, o);
-    await notify(`⚠️ Check payment: order ${o.id}\nCustomer says they paid ₹${o.payment.payable} (UPI ref ${utr}) but no bank SMS matched.\nCheck your bank, then confirm in admin.`);
+    await notify(store, `⚠️ Check payment · ₹${o.payment.payable}`, `${o.id}: customer says paid (UPI ref ${utr}) but no bank SMS matched. Check your bank.`, `/admin/#order-${o.id}`, o.id);
     // keep it matchable for the late SMS
     await store.delete('pending/' + id);
     await store.setJSON('late/' + id, { payablePaise: o.payment.payablePaise, until: Date.now() + LATE_WINDOW_MS });
@@ -339,7 +330,7 @@ async function confirmPaid(store, o, utr, source) {
   await store.setJSON('orders/' + o.id, o);
   await store.delete('pending/' + o.id);
   await store.delete('late/' + o.id);
-  await notify(`🛍️ New paid order ${o.id}\n₹${o.payment.payable} received${source === 'bank-sms' ? ' (bank SMS)' : ''}\n${o.customer.name.split(' ')[0]}, ${o.customer.city}\n${orderLine(o)}\nOpen admin to pack it.`);
+  await notify(store, `🛍️ New order · ₹${o.payment.payable} paid`, `${o.id} · ${o.customer.name.split(' ')[0]}, ${o.customer.city}\n${orderLine(o)}`, `/admin/#order-${o.id}`, o.id);
 }
 
 async function smsWebhook(req, url, store) {
@@ -377,7 +368,7 @@ async function smsWebhook(req, url, store) {
     if (o && !o.payment.verified) { await confirmPaid(store, o, p.utr, 'bank-sms'); record.orderId = o.id; }
   }
   await store.setJSON(payKey, record);
-  if (!record.orderId) await notify(`💰 ₹${record.amount} received but it matches no order${p.utr ? ` (UPI ref ${p.utr})` : ''}.\nOpen admin → Settings → Bank payments to link or refund it.`);
+  if (!record.orderId) await notify(store, `💰 ₹${record.amount} received, no matching order`, `${p.utr ? `UPI ref ${p.utr}. ` : ''}Open Settings → Bank payments to link or refund it.`, '/admin/#settings');
   return json({ matched: Boolean(record.orderId) });
 }
 
@@ -410,7 +401,7 @@ async function updateOrder(req, store, id) {
 async function listPayments(store) {
   const keys = await store.list('payments/');
   const list = (await mapLimit(keys, 10, (k) => store.getJSON(k))).filter(Boolean).sort((a, b) => b.at.localeCompare(a.at)).slice(0, 100);
-  return json({ payments: list, lastSms: await store.getJSON('meta/last-sms'), webhookReady: (process.env.PAYMENT_WEBHOOK_KEY || '').length >= 24, notifyReady: Boolean(process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID) });
+  return json({ payments: list, lastSms: await store.getJSON('meta/last-sms'), webhookReady: (process.env.PAYMENT_WEBHOOK_KEY || '').length >= 24 });
 }
 
 async function attachPayment(req, store, ref) {
@@ -617,10 +608,21 @@ export async function handle(req) {
         }
         if (method === 'PUT' && id && /^[a-z0-9-]{6,40}$/.test(id)) return await attachPayment(req, store, id);
       }
-      if (section === 'notify-test' && method === 'POST') {
-        await limit(store, req, 'notifytest', 5, 600);
-        return (await notify('✅ Sathya Klassy: notifications are working. You will get a message for every paid order.'))
-          ? json({ ok: true }) : fail(502, 'Could not send. Check TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID on Netlify.');
+      if (section === 'push') {
+        if (method === 'GET' && id === 'key') return json({ key: await publicKey(store) });
+        if (method === 'GET' && id === 'devices') return json({ devices: await listDevices(store) });
+        if (method === 'POST' && id === 'subscribe') {
+          const b = await readBody(req, 5000);
+          if (!validSubscription(b.subscription)) return fail(400, 'This phone could not turn on alerts');
+          if ((await listDevices(store)).length >= 10) return fail(409, 'Up to 10 phones can get alerts. Remove one first.');
+          return json({ id: await addDevice(store, b.subscription, clean(b.label, 60)) });
+        }
+        if (method === 'POST' && id === 'test') {
+          await limit(store, req, 'pushtest', 6, 600);
+          const n = await notify(store, '✅ Alerts are on', 'You will get a notification for every paid order.', '/admin/', 'test');
+          return n ? json({ sent: n }) : fail(409, 'No phone has alerts turned on yet');
+        }
+        if (method === 'DELETE' && parts[3]) { await removeDevice(store, parts[3]); return json({ ok: true }); }
       }
       if (section === 'upload' && method === 'POST') return await upload(req, store);
     }

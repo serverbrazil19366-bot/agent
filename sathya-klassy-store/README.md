@@ -13,6 +13,7 @@ There is no database, paid plan or payment gateway.
 | Admin | `public/admin/` | Phone-friendly dashboard: sales, profit, best sellers, low stock; orders; products; settings; bank payments; CSV export |
 | Backend | `lib/handler.mjs`, `netlify/functions/api.mjs` | `/api/*` routes |
 | Payment check | `lib/payments.mjs` | Reads a bank "credited" SMS: amount + UPI reference |
+| Admin app | `public/admin/manifest.webmanifest`, `public/admin/sw.js`, `lib/push.mjs` | Installable SK Admin app with phone notifications (Web Push) |
 | Storage | `lib/store.mjs` | Netlify Blobs online; `.data/` when running locally |
 
 ## How payment works (free, no gateway)
@@ -86,10 +87,12 @@ backend: `preview/demo-api.js` answers the API in the browser (admin password
    app, add a rule for the bank's sender name + the word "credited", and send it
    as JSON (`{"message": "<sms text>"}`) to `https://<site>.netlify.app/api/payments/sms`
    with header `x-sk-key: <PAYMENT_WEBHOOK_KEY>`.
-5. Optional, free: Telegram alerts for each paid order. Create a bot with
-   @BotFather, get your chat ID from @userinfobot, save `TELEGRAM_BOT_TOKEN` and
-   `TELEGRAM_CHAT_ID` on Netlify, then use **Settings → Send a test message**.
-   Messages carry only order ID, amount, first name, city and items.
+5. Sathya's phone: open `https://<site>.netlify.app/admin/` in Chrome (Android)
+   or Safari (iPhone) → log in → **Settings → SK Admin app on your phone** →
+   **Install** (iPhone: Share → Add to Home Screen) → open the app →
+   **Turn on alerts**. Every paid order now shows a phone notification. Free,
+   no Play Store, no third-party app. Notifications carry only order ID, amount,
+   first name, city and items.
 6. Test: pay ₹1 to the UPI ID and check **Settings → Last bank SMS**. Use the
    "Test with a bank SMS" box to check your bank's SMS format first.
 

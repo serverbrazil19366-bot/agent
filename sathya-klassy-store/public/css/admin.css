@@ -168,3 +168,14 @@ table.t td.n, table.t th.n { text-align: right; font-variant-numeric: tabular-nu
 .toast.show { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
 .skeleton { background: linear-gradient(90deg, #f6ebf0, #fff, #f6ebf0); background-size: 200% 100%; animation: sk 1.2s infinite; border-radius: 16px; }
 @keyframes sk { to { background-position: -200% 0; } }
+
+/* phone app + alerts */
+.app-nudge { display: flex; flex-direction: column; gap: 2px; width: 100%; text-align: left; border: 0; cursor: pointer; margin: 0 0 16px; background: linear-gradient(135deg, #fde4ee, #fff1d9); color: var(--ink); font: inherit; }
+.app-nudge span { color: var(--pink-d); font-weight: 600; font-size: 13px; }
+.app-steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 560px) { .app-steps { grid-template-columns: 1fr; } }
+.app-step { background: #fbf6f8; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; font-size: 13.5px; }
+.app-step > span { color: var(--muted); }
+.app-step.done { background: var(--ok-l); }
+.app-step.done > span { color: var(--ok); }
+.app-step .btn { margin-top: 4px; }

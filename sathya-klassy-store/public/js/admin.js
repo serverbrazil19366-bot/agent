@@ -81,6 +81,7 @@
         <div><h1 class="page">${hello}, Sathya 💗</h1><p class="sub">Here's how the shop is doing.</p></div>
         <button class="btn btn-line" id="csv">${ICON.down} Download orders (Excel)</button>
       </div>
+      ${!alertsOn() ? `<button class="notice app-nudge" id="nudge"><b>📲 Get a phone notification for every new order</b><span>Install the SK Admin app and turn on alerts →</span></button>` : ''}
       ${s.sampleCount ? `<p class="notice warn" style="margin:0 0 16px">${s.sampleCount} sample products are showing on the website. Open <b>Products</b> to add your real photos, prices and cost prices.</p>` : ''}
       ${!state.settings?.upiId ? '<p class="notice warn" style="margin:0 0 16px">Add your <b>UPI ID</b> and <b>WhatsApp number</b> in <b>Settings</b> so customers can pay and order.</p>' : ''}
       <div class="kpis">
@@ -114,6 +115,7 @@
         </div>
       </div>`;
     $('#csv').onclick = downloadCsv;
+    if ($('#nudge')) $('#nudge').onclick = () => go('settings');
     $$('.todo button').forEach((b) => (b.onclick = () => { if (b.dataset.goto) return go('settings'); state.orderFilter = b.dataset.f; go('orders'); }));
   }
   function barChart(days) {
@@ -392,7 +394,8 @@
     let s;
     try { s = (await api('admin/settings')).settings; state.settings = s; } catch (e) { main().innerHTML = `<p class="notice warn">${esc(e.message)}</p>`; return; }
     main().innerHTML = `
-      <div class="page-top"><div><h1 class="page">Settings</h1><p class="sub">Payment, WhatsApp and shipping details shown to customers.</p></div></div>
+      <div class="page-top"><div><h1 class="page">Settings</h1><p class="sub">Phone app, payment, WhatsApp and shipping details.</p></div></div>
+      <section class="card" id="appcard" style="max-width:760px;margin-bottom:16px"><div class="skeleton" style="height:100px"></div></section>
       <form class="card" id="sform" style="max-width:760px" novalidate>
         <div class="fields">
           <label class="f">UPI ID <small>customers pay to this</small><input name="upiId" value="${esc(s.upiId)}" placeholder="yourname@okaxis"></label>
@@ -412,6 +415,7 @@
       </form>
       <section class="card" id="paycheck" style="max-width:760px;margin-top:16px"><div class="skeleton" style="height:120px"></div></section>`;
     paymentsCard();
+    appCard();
     $('#sform').onsubmit = async (e) => {
       e.preventDefault();
       $('#serr').textContent = '';
@@ -420,6 +424,93 @@
         state.settings = saved; toast('Settings saved 💗');
       } catch (ex) { $('#serr').textContent = ex.message; }
     };
+  }
+
+  // ---------- phone app + order alerts (PWA + Web Push) ----------
+  const standalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const pushSupported = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+  const alertsOn = () => pushSupported() && Notification.permission === 'granted' && localStorageGet('sk-alerts') === 'on';
+  function localStorageGet(k) { try { return localStorage.getItem(k); } catch { return null; } }
+  function localStorageSet(k, v) { try { v === null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} }
+  let installEvent = null;
+  window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); installEvent = e; if ($('#appcard')) appCard(); });
+  window.addEventListener('appinstalled', () => { installEvent = null; toast('SK Admin installed 💗'); if ($('#appcard')) appCard(); });
+  let swReg = null;
+  if ('serviceWorker' in navigator && !window.SK_DEMO) navigator.serviceWorker.register('/admin/sw.js', { scope: '/admin/' }).then((r) => (swReg = r)).catch(() => {});
+  const b64ToBytes = (b64) => {
+    const s = atob((b64 + '='.repeat((4 - (b64.length % 4)) % 4)).replace(/-/g, '+').replace(/_/g, '/'));
+    return Uint8Array.from(s, (c) => c.charCodeAt(0));
+  };
+  const deviceName = () => {
+    const ua = navigator.userAgent;
+    const os = /android/i.test(ua) ? 'Android' : isIOS() ? 'iPhone' : /windows/i.test(ua) ? 'Windows' : /mac/i.test(ua) ? 'Mac' : 'Device';
+    return `${os} · added ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}`;
+  };
+
+  async function turnOnAlerts() {
+    if (!pushSupported()) throw new Error(isIOS() ? 'On iPhone, first add SK Admin to your Home Screen, open it from there, then turn on alerts.' : 'This browser cannot show notifications. Use Chrome.');
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') throw new Error('Notifications are blocked. Allow them for this app in your phone settings, then try again.');
+    const reg = swReg || (await navigator.serviceWorker.ready);
+    const { key } = await api('admin/push/key');
+    let sub = await reg.pushManager.getSubscription();
+    if (sub && sub.options && sub.options.applicationServerKey) {
+      const cur = btoa(String.fromCharCode(...new Uint8Array(sub.options.applicationServerKey))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      if (cur !== key) { await sub.unsubscribe(); sub = null; }
+    }
+    sub = sub || (await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToBytes(key) }));
+    await api('admin/push/subscribe', { method: 'POST', body: JSON.stringify({ subscription: sub.toJSON(), label: deviceName() }) });
+    localStorageSet('sk-alerts', 'on');
+  }
+
+  async function appCard() {
+    const box = $('#appcard');
+    if (!box) return;
+    let devices = [];
+    try { devices = (await api('admin/push/devices')).devices; } catch {}
+    const installed = standalone();
+    const on = alertsOn();
+    box.innerHTML = `
+      <h2>SK Admin app on your phone <span class="pill ${on ? 's-delivered' : 's-payment_check'}">${on ? 'Alerts on' : 'Alerts off'}</span></h2>
+      <div class="app-steps">
+        <div class="app-step ${installed ? 'done' : ''}">
+          <b>1. Install the app</b>
+          ${installed ? '<span>Installed ✓ You are using the app.</span>'
+            : installEvent ? '<span>Adds an SK Admin icon to your home screen, like any app.</span><button class="btn btn-pink btn-sm" id="install">Install SK Admin</button>'
+            : isIOS() ? '<span>In Safari tap <b>Share</b> <span aria-hidden="true">⬆️</span> → <b>Add to Home Screen</b>. Then open SK Admin from the home screen.</span>'
+            : '<span>In Chrome tap the <b>⋮ menu</b> → <b>Install app</b> (or <b>Add to Home screen</b>).</span>'}
+        </div>
+        <div class="app-step ${on ? 'done' : ''}">
+          <b>2. Turn on order alerts</b>
+          ${on ? '<span>This phone gets a notification for every paid order ✓</span><button class="btn btn-line btn-sm" id="push-test">Send a test alert</button>'
+            : '<span>A notification for every paid order, every "check payment" and every unmatched payment.</span><button class="btn btn-pink btn-sm" id="push-on">Turn on alerts</button>'}
+        </div>
+      </div>
+      <p class="err" id="push-err" role="alert"></p>
+      ${devices.length ? `<div class="box" style="margin-top:8px"><h3>Phones getting alerts</h3><div class="rows">${devices.map((d) => `<div><span>${esc(d.label)}</span><button class="linkish" style="color:var(--bad)" data-rmdev="${esc(d.id)}">Remove</button></div>`).join('')}</div></div>` : ''}
+      <p class="sub" style="margin:10px 0 0;font-size:12.5px">Notifications show only order ID, amount, first name, city and items. Customer phone numbers and addresses stay inside this app.</p>`;
+    if ($('#install')) $('#install').onclick = async () => { installEvent.prompt(); await installEvent.userChoice; installEvent = null; appCard(); };
+    if ($('#push-on')) $('#push-on').onclick = async (e) => {
+      e.target.disabled = true; $('#push-err').textContent = '';
+      let problem = '';
+      try { await turnOnAlerts(); toast('Alerts are on 🔔'); await api('admin/push/test', { method: 'POST', body: '{}' }).catch(() => {}); }
+      catch (ex) {
+        problem = /incognito|private/i.test(ex.message) ? 'Alerts do not work in a private/incognito window. Open the SK Admin app normally.'
+          : /permission denied|denied/i.test(ex.message) ? 'Notifications are blocked. Open phone Settings → Apps → SK Admin (or Chrome) → Notifications → Allow, then try again.'
+          : ex.message;
+      }
+      await appCard();
+      if (problem && $('#push-err')) $('#push-err').textContent = problem;
+    };
+    if ($('#push-test')) $('#push-test').onclick = async () => {
+      try { const r = await api('admin/push/test', { method: 'POST', body: '{}' }); toast(`Test alert sent to ${r.sent} phone(s)`); }
+      catch (ex) { $('#push-err').textContent = ex.message; }
+    };
+    $$('[data-rmdev]', box).forEach((b) => (b.onclick = async () => {
+      await api('admin/push/devices/' + b.dataset.rmdev, { method: 'DELETE' }).catch(() => {});
+      appCard();
+    }));
   }
 
   // ---------- automatic payment check (bank SMS) ----------
@@ -443,15 +534,6 @@
         </ol>
         <p style="margin:10px 0 0;font-size:13px;color:var(--muted)">${last}</p>
       </div>
-      <div class="box" style="margin-top:12px"><h3>New order alerts on your phone <span class="pill ${d.notifyReady ? 's-delivered' : 's-payment_check'}">${d.notifyReady ? 'On' : 'Not set up'}</span></h3>
-        <p style="margin:0 0 8px;font-size:13.5px">A Telegram message for every paid order, every "check payment" request and every payment that matches no order. Free.</p>
-        <ol style="margin:0 0 10px;padding-left:20px;font-size:13px;display:flex;flex-direction:column;gap:4px">
-          <li>In Telegram, open <b>@BotFather</b> → <code>/newbot</code> → copy the bot token.</li>
-          <li>Send any message to your new bot, then get your chat ID from <b>@userinfobot</b>.</li>
-          <li>Save them on Netlify as <code>TELEGRAM_BOT_TOKEN</code> and <code>TELEGRAM_CHAT_ID</code>, then redeploy.</li>
-        </ol>
-        <button class="btn btn-line btn-sm" id="notify-test">Send a test message</button>
-      </div>
       <div class="box" style="margin-top:12px"><h3>Test with a bank SMS</h3>
         <p style="margin:0 0 8px;font-size:13px;color:var(--muted)">Paste a "credited" SMS (hide your account number). Nothing is saved: this only shows what we read from it.</p>
         <label class="f"><span class="sr-only">Bank SMS</span><textarea id="smstest" placeholder="Eg. Rs.307.14 credited to A/c XX1234 ... UPI Ref 412345678901"></textarea></label>
@@ -465,10 +547,6 @@
           : '<p class="sub" style="margin:0">No payments yet.</p>'}
         ${unmatched.length ? `<p style="margin:8px 0 0;font-size:13px;color:var(--warn)">${unmatched.length} payment(s) did not match any order (wrong amount, or paid after 24 hours). Link them to an order, or refund them.</p>` : ''}
       </div>`;
-    $('#notify-test').onclick = async () => {
-      try { await api('admin/notify-test', { method: 'POST', body: '{}' }); toast('Test message sent. Check Telegram 💬'); }
-      catch (e) { toast(e.message); }
-    };
     $('#smstest-btn').onclick = async () => {
       try {
         const { result: r } = await api('admin/payments/test', { method: 'POST', body: JSON.stringify({ message: $('#smstest').value }) });
@@ -496,13 +574,31 @@
   function closeDialog() { $('#dlg').close(); }
   $('#dlg').addEventListener('click', (e) => { if (e.target.id === 'dlg') closeDialog(); });
 
+  // ---------- links from notifications ----------
+  async function fromHash() {
+    const h = location.hash.slice(1);
+    if (!h) return false;
+    history.replaceState(null, '', location.pathname);
+    if (h === 'settings' || h === 'orders') { go(h); return true; }
+    const m = /^order-(SK\d{10})$/.exec(h);
+    if (!m) return false;
+    state.orderFilter = 'all';
+    await orders();
+    $$('.tabs button').forEach((b) => (b.dataset.tab === 'orders' ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current')));
+    state.tab = 'orders';
+    const o = orderCache.find((x) => x.id === m[1]);
+    if (o) openOrder(o);
+    return true;
+  }
+  window.addEventListener('hashchange', () => { if (!$('#app').hidden) fromHash(); });
+
   // ---------- start ----------
   async function start() {
     $('#login').hidden = true; $('#app').hidden = false;
     try { state.settings = (await api('admin/settings')).settings; } catch { return; }
     let tab = 'dash';
     try { tab = sessionStorage.getItem('sk-admin-tab') || 'dash'; } catch {}
-    go(tab);
+    if (!(await fromHash())) go(tab);
   }
   let token = null;
   try { token = localStorage.getItem(TOKEN); } catch {}

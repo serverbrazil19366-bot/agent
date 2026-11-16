@@ -9,7 +9,7 @@ process.env.ADMIN_PASSWORD ||= 'sathya-local-dev';
 process.env.PAYMENT_WEBHOOK_KEY ||= 'local-dev-webhook-key-0123456789';
 const { handle } = await import('./lib/handler.mjs');
 const root = path.resolve('public');
-const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.txt': 'text/plain', '.xml': 'application/xml' };
+const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.txt': 'text/plain', '.xml': 'application/xml', '.webmanifest': 'application/manifest+json' };
 const port = Number(process.env.PORT || 8888);
 
 // same as netlify.toml, so CSP problems show up locally too
