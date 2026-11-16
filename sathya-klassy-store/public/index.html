@@ -47,7 +47,7 @@
       <div class="section-head reveal">
         <div><h2>Shop by <span class="script">category</span></h2><p>Find your vibe: cute, classy or just a little extra.</p></div>
       </div>
-      <div class="cats reveal" id="cats"></div>
+      <div class="cat-grid" id="cats"></div>
     </div>
   </section>
 
@@ -116,8 +116,22 @@
   reveal();
   try {
     const { products: list, categories } = await products();
-    $('#cats').innerHTML = categories.map((c) => `
-      <a class="cat" href="/shop?c=${c.slug}"><span class="cat-orb">${art[c.slug] || ''}</span><b>${esc(c.name)}</b></a>`).join('');
+    $('#cats').innerHTML = categories.map((c, ci) => {
+      const items = list.filter((p) => p.category === c.slug);
+      const pics = items.filter((p) => p.images && p.images[0]).slice(0, 3);
+      const from = items.length ? Math.min(...items.map((p) => p.price)) : 0;
+      const [t1, t2] = SK.CAT_TONES[c.slug] || ['#fde4ee', '#f6bfd3'];
+      return `
+      <a class="cat-card" href="/shop?c=${c.slug}" data-tilt style="--c1:${t1};--c2:${t2};--d:${ci * 0.08}s">
+        <span class="cat-mark" aria-hidden="true">${art[c.slug] || ''}</span>
+        <span class="cat-text">
+          <span class="cat-meta">${items.length} styles${from ? ` · from ${inr(from)}` : ''}</span>
+          <b>${esc(c.name)}</b>
+          <span class="cat-go">Shop now <span aria-hidden="true">→</span></span>
+        </span>
+        <span class="fan" aria-hidden="true">${pics.map((p) => `<img src="${esc(p.images[0])}" alt="" loading="lazy">`).join('')}</span>
+      </a>`;
+    }).join('');
     const featured = [...list.filter((p) => p.featured), ...list.filter((p) => !p.featured)].slice(0, 8);
     $('#featured').innerHTML = featured.map(card).join('') || '<p>New products coming soon!</p>';
     // 3D ring of products

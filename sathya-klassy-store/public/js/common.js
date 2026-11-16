@@ -42,9 +42,9 @@ const SK = (() => {
     ['#ffe9e4', '#f8c4b8', '#b54a3a'], ['#eaf3ff', '#c9dcf6', '#3d64a3'], ['#fdeee4', '#f4cdb3', '#9a5a2c'],
   ];
   function thumb(p, size = '') {
-    if (p.images && p.images[0]) return `<div class="thumb ${size}"><img src="${esc(p.images[0])}" alt="${esc(p.name)}" loading="lazy" decoding="async"></div>`;
     const i = [...String(p.id || p.name)].reduce((s, c) => s + c.charCodeAt(0), 0) % tones.length;
     const [a, b, c] = tones[i];
+    if (p.images && p.images[0]) return `<div class="thumb arch ${size}" style="--t1:${a};--t2:${b}"><span class="arch-ring" aria-hidden="true"></span><img src="${esc(p.images[0])}" alt="${esc(p.name)}" loading="lazy" decoding="async"></div>`;
     return `<div class="thumb ${size}"><div class="ph" style="--ph1:${a};--ph2:${b};--ph3:${c}" role="img" aria-label="${esc(p.name)}">${art[p.category] || art.combos}</div></div>`;
   }
 
@@ -313,5 +313,6 @@ const SK = (() => {
 
   layout();
   if (window.FX) FX.ambient();
-  return { $, $$, esc, inr, icons, art, api, shop, products, cart, cartLines, shippingFor, card, thumb, tilt, reveal, petals, toast, openCart, waLink };
+  const CAT_TONES = { 'hair-clips': ['#fde4ee', '#f6bfd3'], jewellery: ['#fff3df', '#f0d39a'], 'bangles-earrings': ['#f8e8f7', '#e2bfe6'], 'chocolate-bouquets': ['#f6e7e0', '#e3bfae'], 'gift-hampers': ['#ffeae5', '#f6c2b6'], combos: ['#ecf2ff', '#cbd9f4'] };
+  return { CAT_TONES, $, $$, esc, inr, icons, art, api, shop, products, cart, cartLines, shippingFor, card, thumb, tilt, reveal, petals, toast, openCart, waLink };
 })();
