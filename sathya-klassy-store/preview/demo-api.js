@@ -3,7 +3,7 @@
 // Data is kept only in this browser (localStorage). Not used on the real site.
 (() => {
   const SEED = __SEED__;
-  const KEY = 'sk-demo-db-v1';
+  const KEY = 'sk-demo-db-v2';
   const now = () => new Date().toISOString();
   const rid = (n = 8) => Array.from(crypto.getRandomValues(new Uint8Array(n)), (b) => (b % 36).toString(36)).join('');
   const IST = 330 * 60000;

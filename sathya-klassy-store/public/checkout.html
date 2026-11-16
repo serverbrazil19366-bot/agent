@@ -51,6 +51,7 @@
   </form>
 </main>
 <script src="/js/vendor/qrcode.js"></script>
+<script src="/js/fx.js"></script>
 <script src="/js/common.js"></script>
 <script>
 (async () => {
@@ -133,6 +134,7 @@
     if (problems.length) { err.textContent = 'Please enter ' + problems.join(', ') + '.'; return; }
     const btn = $('#place');
     btn.disabled = true; btn.textContent = 'Placing your order…';
+    if (window.FX) { const r = btn.getBoundingClientRect(); FX.burst(r.left + r.width / 2, r.top + r.height / 2, 26, 8); }
     try {
       const { order } = await api('orders', {
         method: 'POST',
@@ -159,6 +161,7 @@
           </div>
         </div>`;
       scrollTo({ top: 0 });
+      if (window.FX) { FX.shower(); setTimeout(() => FX.shower(60), 1400); }
     } catch (ex) {
       err.textContent = ex.message;
       btn.disabled = false; btn.textContent = 'Place order';

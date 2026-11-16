@@ -80,7 +80,7 @@ async function allProducts(store) {
     await Promise.all(SAMPLE_PRODUCTS.map((p, i) => {
       const id = newId(8);
       return store.setJSON('products/' + id, {
-        id, slug: slugify(p.name) + '-' + id.slice(0, 4), images: [], active: true,
+        id, slug: slugify(p.name) + '-' + id.slice(0, 4), active: true,
         createdAt: new Date(Date.parse(now) - i * 1000).toISOString(), ...p,
       });
     }));
@@ -112,7 +112,7 @@ function productFromInput(input, existing = {}) {
   const price = money(input.price ?? existing.price);
   if (!price) throw Object.assign(new Error('Price must be more than ₹0'), { status: 400 });
   const images = Array.isArray(input.images ?? existing.images)
-    ? (input.images ?? existing.images).filter((u) => typeof u === 'string' && /^\/api\/img\/[a-z0-9]+$/.test(u)).slice(0, 8)
+    ? (input.images ?? existing.images).filter((u) => typeof u === 'string' && /^(\/api\/img\/[a-z0-9]+|\/assets\/products\/[a-z0-9-]+\.webp)$/.test(u)).slice(0, 8)
     : [];
   return {
     ...existing,

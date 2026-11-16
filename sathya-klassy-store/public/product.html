@@ -25,6 +25,7 @@
     <div class="grid" id="more"></div>
   </section>
 </main>
+<script src="/js/fx.js"></script>
 <script src="/js/common.js"></script>
 <script>
 (async () => {
@@ -77,8 +78,8 @@
   if ($('#add')) {
     $('#minus').onclick = () => { qty = Math.max(1, qty - 1); $('#qty').textContent = qty; };
     $('#plus').onclick = () => { qty = Math.min(max, qty + 1); $('#qty').textContent = qty; };
-    $('#add').onclick = () => { cart.add(p.id, qty); toast('Added to cart 💗'); openCart(); };
-    $('#buy').onclick = () => { cart.add(p.id, qty); location.href = '/checkout'; };
+    $('#add').onclick = (e) => { cart.add(p.id, qty); if (window.FX) FX.flyToCart(e.currentTarget); toast('Added to cart 💗'); setTimeout(openCart, 900); };
+    $('#buy').onclick = (e) => { cart.add(p.id, qty); if (window.FX) FX.flyToCart(e.currentTarget); setTimeout(() => (location.href = '/checkout'), window.FX && !FX.reduce ? 850 : 0); };
   }
   const more = list.filter((x) => x.id !== p.id && x.category === p.category)
     .concat(list.filter((x) => x.id !== p.id && x.category !== p.category)).slice(0, 4);

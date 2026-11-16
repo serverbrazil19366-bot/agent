@@ -34,7 +34,7 @@ for (const dir of ['assets', 'css', 'js']) await copyDir(path.join(pub, dir), pa
 
 const demo = (await fs.readFile('preview/demo-api.js', 'utf8')).replace('__SEED__', JSON.stringify({
   CATEGORIES: seed.CATEGORIES, DEFAULT_SETTINGS: seed.DEFAULT_SETTINGS, SAMPLE_PRODUCTS: seed.SAMPLE_PRODUCTS,
-}));
+}).replace(/"\/assets\//g, '"assets/'));
 await fs.writeFile(path.join(out, 'js/demo-api.js'), demo);
 
 const htmlFiles = [['index.html', 'index.html'], ['admin/index.html', 'admin.html'], ...['404', ...pages].map((p) => [p + '.html', p + '.html'])];

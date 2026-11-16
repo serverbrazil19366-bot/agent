@@ -226,6 +226,7 @@ const SK = (() => {
     const b = e.target.closest('[data-add]');
     if (!b) return;
     cart.add(b.dataset.add, 1);
+    if (window.FX) FX.flyToCart(b);
     b.classList.add('done');
     b.innerHTML = `${icons.check} Added`;
     toast('Added to cart 💗');
@@ -311,5 +312,6 @@ const SK = (() => {
   }
 
   layout();
+  if (window.FX) FX.ambient();
   return { $, $$, esc, inr, icons, art, api, shop, products, cart, cartLines, shippingFor, card, thumb, tilt, reveal, petals, toast, openCart, waLink };
 })();
