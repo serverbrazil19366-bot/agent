@@ -4,6 +4,8 @@
 // In the demo, a "bank SMS" is simulated 10 seconds after the customer opens
 // the payment screen, so the whole pay → confirmed flow can be seen.
 (() => {
+  // private owner link: <preview link>#dashboard opens the admin (no link on the shop pages)
+  if (location.hash === '#dashboard' && !/admin\.html$/.test(location.pathname)) { location.replace('admin.html'); return; }
   const SEED = __SEED__;
   __PARSER__
   const KEY = 'sk-demo-db-v3';
