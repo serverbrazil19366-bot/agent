@@ -35,6 +35,13 @@ npm run dev
 Open http://localhost:8888 for the shop and http://localhost:8888/admin/ for
 the admin (local password `sathya123`). Data is saved in `.data/`.
 
+## Shareable demo preview
+
+`node preview/build-preview.mjs <out-dir>` makes a static copy that runs with no
+backend: `preview/demo-api.js` answers the API in the browser with the sample
+products (admin password `demo`). Use it to show the design; the real shop is
+the Netlify deploy below.
+
 ## Put it online (free)
 
 1. Netlify → **Add new site → Import an existing project → GitHub** → pick this
