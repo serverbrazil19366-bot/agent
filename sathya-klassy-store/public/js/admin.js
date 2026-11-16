@@ -235,7 +235,7 @@
           <label class="f">Courier's tracking link <small>optional, shown small</small><input id="turl" value="${esc(o.trackingUrl)}" placeholder="https://"></label>
         </div><button class="btn btn-line btn-sm" id="save-ship" style="margin-top:10px">Save shipping details</button></div>
         <div class="box"><h3>Courier updates <small style="text-transform:none;letter-spacing:0;font-weight:400">shown on the customer's tracking page</small></h3>
-          <div class="update-chips">${['Picked up by courier', 'In transit', 'Reached your city', 'Delivery attempted, will retry'].map((t) => `<button class="chip" data-quick="${t}">${t}</button>`).join('')}</div>
+          <div class="update-chips">${['Picked up by courier', 'In transit', `Reached ${o.customer.city}`, 'Delivery attempted, will retry'].map((t) => `<button class="chip" data-quick="${esc(t)}">${esc(t)}</button>`).join('')}</div>
           <div style="display:flex;gap:8px;margin-top:8px"><input class="search" id="upd" maxlength="140" placeholder="Or write: Reached Madurai hub" aria-label="Courier update" style="flex:1"><button class="btn btn-line btn-sm" id="upd-add">Add</button></div>
           ${(o.updates || []).length ? `<div class="rows" style="margin-top:8px">${o.updates.slice().reverse().map((u) => `<div><span>${esc(u.text)} <small style="color:var(--muted)">${when(u.at)}</small></span><button class="linkish" style="color:var(--bad)" data-delupd="${esc(u.at)}">Remove</button></div>`).join('')}</div>` : ''}
         </div>` : ''}
