@@ -1,14 +1,20 @@
 // Local preview: node dev-server.mjs  →  http://localhost:8888
 // Serves public/ and runs the same /api handler with data saved in .data/.
+// Local-only defaults below; on Netlify these come from environment variables.
 import http from 'node:http';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
-process.env.ADMIN_PASSWORD ||= 'sathya123';
+process.env.ADMIN_PASSWORD ||= 'sathya-local-dev';
+process.env.PAYMENT_WEBHOOK_KEY ||= 'local-dev-webhook-key-0123456789';
 const { handle } = await import('./lib/handler.mjs');
 const root = path.resolve('public');
 const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.txt': 'text/plain', '.xml': 'application/xml' };
 const port = Number(process.env.PORT || 8888);
+
+// same as netlify.toml, so CSP problems show up locally too
+const toml = await fs.readFile('netlify.toml', 'utf8');
+const SECURITY_HEADERS = { 'content-security-policy': /Content-Security-Policy = "([^"]+)"/.exec(toml)[1].replace('; upgrade-insecure-requests', ''), 'x-content-type-options': 'nosniff', 'x-frame-options': 'DENY', 'referrer-policy': 'strict-origin-when-cross-origin' };
 
 http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${port}`);
@@ -28,10 +34,10 @@ http.createServer(async (req, res) => {
   } catch { if (!path.extname(file)) file += '.html'; }
   try {
     const data = await fs.readFile(file);
-    res.writeHead(200, { 'content-type': types[path.extname(file)] || 'application/octet-stream' });
+    res.writeHead(200, { 'content-type': types[path.extname(file)] || 'application/octet-stream', ...SECURITY_HEADERS });
     res.end(data);
   } catch {
-    res.writeHead(404, { 'content-type': 'text/html' });
+    res.writeHead(404, { 'content-type': 'text/html', ...SECURITY_HEADERS });
     res.end(await fs.readFile(path.join(root, '404.html')).catch(() => 'Not found'));
   }
-}).listen(port, () => console.log(`Sathya Klassy store: http://localhost:${port}  (admin password: ${process.env.ADMIN_PASSWORD})`));
+}).listen(port, () => console.log(`Sathya Klassy store: http://localhost:${port}  (local admin password: ${process.env.ADMIN_PASSWORD})`));

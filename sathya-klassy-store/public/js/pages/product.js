@@ -1,0 +1,58 @@
+(async () => {
+  const { $, $$, esc, inr, icons, products, shop, cart, card, thumb, tilt, toast, openCart } = SK;
+  const slug = new URLSearchParams(location.search).get('p');
+  let list, settings;
+  try { [{ products: list }, { settings }] = await Promise.all([products(), shop()]); }
+  catch (e) { $('#pd').innerHTML = `<p class="notice bad">${esc(e.message)}</p>`; return; }
+  const p = list.find((x) => x.slug === slug || x.id === slug);
+  if (!p) {
+    $('#pd').innerHTML = '<div class="empty" style="grid-column:1/-1"><h1 style="font-family:var(--serif)">Product not found</h1><p>It may be sold out or removed.</p><a class="btn btn-pink" href="/shop">Back to shop</a></div>';
+    return;
+  }
+  document.title = p.name + ' · Sathya Klassy Fashion';
+  document.querySelector('meta[name=description]').content = (p.description || p.name).slice(0, 155);
+  const off = p.mrp && p.mrp > p.price ? p.mrp - p.price : 0;
+  const imgs = p.images || [];
+  const hasStock = p.stock !== null && p.stock !== undefined;
+  let qty = 1;
+  $('#pd').innerHTML = `
+    <div class="gallery">
+      <div class="main" id="main" data-tilt>${thumb(p)}</div>
+      ${imgs.length > 1 ? `<div class="thumbs">${imgs.map((src, i) => `<button data-i="${i}" aria-current="${i === 0}" aria-label="Photo ${i + 1}"><img src="${esc(src)}" alt=""></button>`).join('')}</div>` : ''}
+    </div>
+    <div class="pd-info">
+      <div class="crumbs"><a href="/">Home</a> / <a href="/shop?c=${esc(p.category)}">Shop</a></div>
+      ${p.tag ? `<span class="eyebrow">${esc(p.tag)}</span>` : ''}
+      <h1>${esc(p.name)}</h1>
+      <div class="price"><b>${inr(p.price)}</b>${off ? `<s>${inr(p.mrp)}</s><span class="save">You save ${inr(off)}</span>` : ''}</div>
+      ${hasStock && p.stock > 0 && p.stock <= 5 ? `<p class="stock-note">Hurry, only ${p.stock} left!</p>` : ''}
+      <p class="pd-desc">${esc(p.description)}</p>
+      ${p.stock === 0 ? '<p class="notice warn">Sold out right now. Message us on WhatsApp to know when it is back.</p>' : `
+      <div class="pd-buy">
+        <span class="qty"><button id="minus" aria-label="One less">−</button><span id="qty" aria-live="polite">1</span><button id="plus" aria-label="One more">+</button></span>
+        <button class="btn btn-pink" id="add">${icons.bag} Add to cart</button>
+        <button class="btn btn-gold" id="buy">Buy now</button>
+      </div>`}
+      <div class="perks">
+        <div>${icons.truck}<span>Ships in ${esc(settings.dispatchDays)} days, delivered in ${esc(settings.deliveryDays)} days all over India</span></div>
+        <div>${icons.gift}<span>Free shipping on orders above ${inr(settings.freeShippingAbove)}</span></div>
+        <div>${icons.shield}<span>Pay safely by UPI: GPay, PhonePe, Paytm</span></div>
+        <div>${icons.heart}<span>Damaged in transit? We replace it (share an unboxing video)</span></div>
+      </div>
+    </div>`;
+  $$('.thumbs button').forEach((b) => (b.onclick = () => {
+    $('#main .thumb img').src = imgs[b.dataset.i];
+    $$('.thumbs button').forEach((x) => x.setAttribute('aria-current', x === b));
+  }));
+  const max = hasStock ? Math.min(20, p.stock) : 20;
+  if ($('#add')) {
+    $('#minus').onclick = () => { qty = Math.max(1, qty - 1); $('#qty').textContent = qty; };
+    $('#plus').onclick = () => { qty = Math.min(max, qty + 1); $('#qty').textContent = qty; };
+    $('#add').onclick = (e) => { cart.add(p.id, qty); if (window.FX) FX.flyToCart(e.currentTarget); toast('Added to cart 💗'); setTimeout(openCart, 900); };
+    $('#buy').onclick = (e) => { cart.add(p.id, qty); if (window.FX) FX.flyToCart(e.currentTarget); setTimeout(() => (location.href = '/checkout'), window.FX && !FX.reduce ? 850 : 0); };
+  }
+  const more = list.filter((x) => x.id !== p.id && x.category === p.category)
+    .concat(list.filter((x) => x.id !== p.id && x.category !== p.category)).slice(0, 4);
+  if (more.length) { $('#more').innerHTML = more.map(card).join(''); $('#more-wrap').hidden = false; }
+  tilt();
+})();

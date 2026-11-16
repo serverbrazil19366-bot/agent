@@ -1,7 +1,9 @@
 # Sathya Klassy Fashion online store.
 # public/ is the website; netlify/functions/api.mjs is the backend (/api/*).
 # Data (products, orders, photos) lives in Netlify Blobs: free, no database.
-# Set ADMIN_PASSWORD in Netlify > Site configuration > Environment variables.
+# Secrets live ONLY in Netlify > Site configuration > Environment variables:
+#   ADMIN_PASSWORD        at least 10 characters (admin login)
+#   PAYMENT_WEBHOOK_KEY   at least 24 random characters (bank SMS forwarder)
 [build]
   publish = "public"
   functions = "netlify/functions"
@@ -10,14 +12,20 @@
 [functions]
   node_bundler = "esbuild"
 
+# Security headers. Keep in sync with SECURITY_HEADERS in dev-server.mjs.
 [[headers]]
   for = "/*"
   [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
     X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    X-Frame-Options = "SAMEORIGIN"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    Cross-Origin-Opener-Policy = "same-origin"
 
 [[headers]]
   for = "/admin/*"
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"
