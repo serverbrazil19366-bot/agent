@@ -179,3 +179,7 @@ table.t td.n, table.t th.n { text-align: right; font-variant-numeric: tabular-nu
 .app-step.done { background: var(--ok-l); }
 .app-step.done > span { color: var(--ok); }
 .app-step .btn { margin-top: 4px; }
+
+.s-out_for_delivery { background: #fff0e0; color: #8a4b14; }
+.update-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.update-chips .chip { min-height: 34px; font-size: 12.5px; }

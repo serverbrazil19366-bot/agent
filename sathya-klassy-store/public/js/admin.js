@@ -8,9 +8,10 @@
   const TOKEN = 'sk-admin-token';
   const STATUS = {
     awaiting_payment: 'Waiting for payment', expired: 'Not paid', payment_check: 'Check payment', confirmed: 'Paid · to pack', packed: 'Packed',
-    shipped: 'Shipped', delivered: 'Delivered', cancelled: 'Cancelled',
+    shipped: 'Shipped', out_for_delivery: 'Out for delivery', delivered: 'Delivered', cancelled: 'Cancelled',
   };
-  const FLOW = ['payment_check', 'confirmed', 'packed', 'shipped', 'delivered'];
+  const FLOW = ['payment_check', 'confirmed', 'packed', 'shipped', 'out_for_delivery', 'delivered'];
+  const niceDay = (ymd) => (ymd ? new Date(ymd + 'T12:00:00+05:30').toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' }) : '');
   const pill = (s) => `<span class="pill s-${s}">${STATUS[s] || s}</span>`;
   const ICON = {
     wa: '<svg viewBox="0 0 24 24" style="fill:currentColor;stroke:none"><path d="M12 2.2a9.7 9.7 0 0 0-8.3 14.7L2.3 21.8l5-1.3A9.7 9.7 0 1 0 12 2.2zm4.4 11.7c-.2-.1-1.4-.7-1.7-.8-.2-.1-.4-.1-.5.1l-.8 1c-.1.2-.3.2-.5.1a6.6 6.6 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.5-.4h-.5a.9.9 0 0 0-.6.3 2.7 2.7 0 0 0-.9 2c0 1.2.9 2.3 1 2.5.1.2 1.7 2.6 4.2 3.7 1.6.7 2.2.7 3 .6.5-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1l-.5-.5z"/></svg>',
@@ -103,7 +104,7 @@
             <button data-f="payment_check"><span>Customer says paid, check by hand</span><b>${s.toVerify}</b></button>
             <button data-goto="payments"><span>Bank payments with no order</span><b>${s.unmatchedPayments}</b></button>
             <button data-f="ship"><span>Orders to pack &amp; ship</span><b>${s.toShip}</b></button>
-            <button data-f="shipped"><span>On the way</span><b>${s.statusCounts.shipped}</b></button>
+            <button data-f="shipped"><span>On the way</span><b>${s.onTheWay ?? s.statusCounts.shipped}</b></button>
             <button data-f="awaiting_payment"><span>Waiting for customer to pay</span><b>${s.waitingPayment}</b></button>
           </div></div>
           <div class="card"><h2>Best sellers this month</h2><div class="rows">
@@ -159,7 +160,7 @@
     try { orderCache = (await api('admin/orders')).orders; } catch (e) { main().innerHTML = `<p class="notice warn">${esc(e.message)}</p>`; return; }
     const count = (f) => orderCache.filter(match(f)).length;
     badge(count('payment_check'));
-    const filters = [['ship', 'Paid · to ship'], ['payment_check', 'Check payment'], ['shipped', 'Shipped'], ['delivered', 'Delivered'], ['awaiting_payment', 'Waiting for payment'], ['expired', 'Not paid'], ['cancelled', 'Cancelled'], ['all', 'All']];
+    const filters = [['ship', 'Paid · to ship'], ['payment_check', 'Check payment'], ['shipped', 'On the way'], ['delivered', 'Delivered'], ['awaiting_payment', 'Waiting for payment'], ['expired', 'Not paid'], ['cancelled', 'Cancelled'], ['all', 'All']];
     main().innerHTML = `
       <div class="page-top"><div><h1 class="page">Orders</h1><p class="sub">${orderCache.length} orders in total</p></div>
         <input class="search" id="osearch" type="search" placeholder="Search name, phone or order ID" aria-label="Search orders"></div>
@@ -169,7 +170,7 @@
     $('#osearch').oninput = list;
     list();
   }
-  const match = (f) => (o) => f === 'all' || (f === 'ship' ? ['confirmed', 'packed'].includes(o.status) : o.status === f);
+  const match = (f) => (o) => f === 'all' || (f === 'ship' ? ['confirmed', 'packed'].includes(o.status) : f === 'shipped' ? ['shipped', 'out_for_delivery'].includes(o.status) : o.status === f);
   function list() {
     const term = $('#osearch').value.trim().toLowerCase();
     const items = orderCache.filter(match(state.orderFilter)).filter((o) => !term || [o.id, o.customer.name, o.customer.phone, o.customer.city].join(' ').toLowerCase().includes(term));
@@ -191,7 +192,8 @@
       payment_check: `Hi ${first}! 💗 Thank you for ordering from Sathya Klassy Fashion. We got your order ${o.id} (${inr(o.total)}) and are checking your payment. We'll confirm soon!`,
       confirmed: `Hi ${first}! 💗 Your Sathya Klassy order ${o.id} is confirmed. We received your payment of ₹${o.payment.payable || o.total}. We'll pack it with love and ship it soon.\nTrack: ${track}`,
       packed: `Hi ${first}! 🎀 Your order ${o.id} is packed and will be shipped soon.\nTrack: ${track}`,
-      shipped: `Hi ${first}! 🚚 Your order ${o.id} is shipped!${o.courier ? `\nCourier: ${o.courier}` : ''}${o.awb ? `\nTracking no: ${o.awb}` : ''}${o.trackingUrl ? `\n${o.trackingUrl}` : ''}\nTrack: ${track}`,
+      shipped: `Hi ${first}! 🚚 Your order ${o.id} is shipped!${o.courier ? `\nCourier: ${o.courier}` : ''}${o.awb ? `\nTracking no: ${o.awb}` : ''}${o.expectedDelivery ? `\nArriving by ${niceDay(o.expectedDelivery)}` : ''}\nTrack: ${track}`,
+      out_for_delivery: `Hi ${first}! 🛵 Your order ${o.id} is out for delivery and will reach you today. Please keep your phone close 💗\nTrack: ${track}`,
       delivered: `Hi ${first}! 💗 Your order ${o.id} is delivered. Hope you love it! Please share a photo or review and tag us on Instagram @${state.settings?.instagram || 'sathya_klassy_fashion'} ✨`,
       cancelled: `Hi ${first}, your order ${o.id} has been cancelled. If you paid, the refund of ${inr(o.total)} will reach the same UPI account within 3 working days. Sorry for the trouble!`,
     };
@@ -229,8 +231,14 @@
         <div class="box"><h3>Shipping details</h3><div class="fields">
           <label class="f">Courier<input id="courier" value="${esc(o.courier)}" placeholder="Eg. DTDC, India Post"></label>
           <label class="f">Tracking number<input id="awb" value="${esc(o.awb)}"></label>
-          <label class="f full">Tracking link <small>optional</small><input id="turl" value="${esc(o.trackingUrl)}" placeholder="https://"></label>
-        </div><button class="btn btn-line btn-sm" id="save-ship" style="margin-top:10px">Save shipping details</button></div>` : ''}
+          <label class="f">Expected delivery <small>customers see "Arriving by"</small><input id="eta" type="date" value="${esc(o.expectedDelivery || '')}"></label>
+          <label class="f">Courier's tracking link <small>optional, shown small</small><input id="turl" value="${esc(o.trackingUrl)}" placeholder="https://"></label>
+        </div><button class="btn btn-line btn-sm" id="save-ship" style="margin-top:10px">Save shipping details</button></div>
+        <div class="box"><h3>Courier updates <small style="text-transform:none;letter-spacing:0;font-weight:400">shown on the customer's tracking page</small></h3>
+          <div class="update-chips">${['Picked up by courier', 'In transit', 'Reached your city', 'Delivery attempted, will retry'].map((t) => `<button class="chip" data-quick="${t}">${t}</button>`).join('')}</div>
+          <div style="display:flex;gap:8px;margin-top:8px"><input class="search" id="upd" maxlength="140" placeholder="Or write: Reached Madurai hub" aria-label="Courier update" style="flex:1"><button class="btn btn-line btn-sm" id="upd-add">Add</button></div>
+          ${(o.updates || []).length ? `<div class="rows" style="margin-top:8px">${o.updates.slice().reverse().map((u) => `<div><span>${esc(u.text)} <small style="color:var(--muted)">${when(u.at)}</small></span><button class="linkish" style="color:var(--bad)" data-delupd="${esc(u.at)}">Remove</button></div>`).join('')}</div>` : ''}
+        </div>` : ''}
         <div class="box"><h3>History</h3><div class="rows">${o.history.map((h) => `<div><span>${STATUS[h.status]}</span><small style="color:var(--muted)">${when(h.at)}</small></div>`).join('')}</div></div>
         <p class="err" id="oerr" role="alert"></p>
       </div>
@@ -251,7 +259,11 @@
         if (state.tab === 'orders') { list(); badge(orderCache.filter(match('payment_check')).length); }
       } catch (e) { $('#oerr').textContent = e.message; }
     };
-    const shipFields = () => $('#courier') ? { courier: $('#courier').value, awb: $('#awb').value, trackingUrl: $('#turl').value } : {};
+    const shipFields = () => $('#courier') ? { courier: $('#courier').value, awb: $('#awb').value, trackingUrl: $('#turl').value, expectedDelivery: $('#eta').value } : {};
+    const addUpdate = (text) => text.trim() && save({ addUpdate: text.trim() }, 'Update added. Customers see it on Track order');
+    $$('[data-quick]').forEach((b) => (b.onclick = () => addUpdate(b.dataset.quick)));
+    if ($('#upd-add')) $('#upd-add').onclick = () => addUpdate($('#upd').value);
+    $$('[data-delupd]').forEach((b) => (b.onclick = () => save({ removeUpdate: b.dataset.delupd }, 'Removed')));
     if ($('#save-ship')) $('#save-ship').onclick = () => save(shipFields(), 'Saved');
     if ($('#next')) $('#next').onclick = () => {
       if (unpaid && !confirm(`Do you see exactly ₹${o.payment.payable} from this customer in your bank? Only confirm if yes.`)) return;

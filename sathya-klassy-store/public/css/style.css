@@ -697,6 +697,26 @@ main { animation: pageIn .7s cubic-bezier(.2,.8,.2,1) both; }
 .pay-steps b { color: var(--ink); }
 .time-left { margin: 0; font-size: 12.5px; color: var(--muted); text-align: center; }
 .time-left span { font-variant-numeric: tabular-nums; font-weight: 600; }
+
+/* ---------- tracking: delivery date + courier log (v5) ---------- */
+.eta { display: flex; gap: 14px; align-items: center; margin: 16px 0 4px; padding: 16px 18px; border-radius: 18px; background: linear-gradient(135deg, var(--pink-50), #fff4e2); border: 1px solid var(--line); }
+.eta b { display: block; font-family: var(--serif); font-size: 26px; line-height: 1.1; }
+.eta small { color: var(--muted); }
+.eta-ic { width: 46px; height: 46px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; background: var(--pink-grad); color: #fff; }
+.eta-ic svg { width: 24px; height: 24px; }
+.eta.hot { background: linear-gradient(135deg, #ffe3ee, #ffd7e6); border-color: var(--pink-300); }
+.eta.hot .eta-ic { animation: pulse 1.6s infinite; }
+.eta.ok { background: #e8f6ee; border-color: #bfe3cd; }
+.eta.ok .eta-ic { background: var(--ok); }
+.ship-meta { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 6px; font-size: 13px; }
+.ship-meta span { background: var(--pink-50); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; }
+.ship-log { list-style: none; margin: 10px 0 0; padding: 0 0 0 14px; border-left: 2px dotted var(--pink-300); display: flex; flex-direction: column; gap: 8px; }
+.timeline .ship-log li { display: block; position: relative; font-size: 13.5px; padding: 0; }
+.timeline .ship-log li::before { content: ''; position: absolute; left: -20px; top: 6px; bottom: auto; width: 10px; height: 10px; border-radius: 50%; background: #fff; border: 2px solid var(--pink-500); box-sizing: border-box; }
+.timeline .ship-log li:first-child::before { background: var(--pink-500); }
+.ship-log b { display: block; font-weight: 600; }
+.ship-log small { color: var(--muted); }
+.ship-more { display: inline-block; margin-top: 8px; font-size: 12.5px; color: var(--muted); }
 .claim { border-top: 1px solid var(--line); padding-top: 12px; font-size: 14px; }
 .claim summary { cursor: pointer; font-weight: 600; color: var(--pink-700); min-height: 32px; }
 .claim p { color: var(--muted); }

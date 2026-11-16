@@ -15,7 +15,7 @@ import { CATEGORIES, DEFAULT_SETTINGS, SAMPLE_PRODUCTS } from './seed.mjs';
 import { parseBankSms, rupees } from './payments.mjs';
 import { publicKey, validSubscription, addDevice, listDevices, removeDevice, pushAll } from './push.mjs';
 
-const STATUSES = ['awaiting_payment', 'payment_check', 'confirmed', 'packed', 'shipped', 'delivered', 'cancelled', 'expired'];
+const STATUSES = ['awaiting_payment', 'payment_check', 'confirmed', 'packed', 'shipped', 'out_for_delivery', 'delivered', 'cancelled', 'expired'];
 const UNPAID = new Set(['awaiting_payment', 'expired']);
 const PAY_WINDOW_MS = 10 * 60 * 1000;
 const LATE_WINDOW_MS = 24 * 3600 * 1000; // a late payment can still revive an expired order
@@ -192,8 +192,24 @@ function productFromInput(input, existing = {}) {
   };
 }
 
-function customerView(o) {
+// delivery dates, all in IST calendar days
+const DAY = 86400000;
+const dayRange = (s) => { const n = String(s ?? '').match(/\d+/g)?.map(Number) || []; return n.length ? [Math.min(...n), Math.max(...n)] : [0, 0]; };
+const addDays = (iso, d) => istDay(new Date(Date.parse(iso) + d * DAY).toISOString());
+function deliveryEstimate(o, settings) {
+  if (o.expectedDelivery) return { by: o.expectedDelivery };
+  if (!o.payment.verified || ['delivered', 'cancelled', 'expired'].includes(o.status)) return null;
+  const [, dMax] = dayRange(settings.dispatchDays), [lMin, lMax] = dayRange(settings.deliveryDays);
+  const start = o.payment.paidAt || o.createdAt;
+  return { from: addDays(start, lMin + 1), to: addDays(start, dMax + lMax) };
+}
+
+function customerView(o, settings) {
+  const delivered = o.history.find((h) => h.status === 'delivered');
   return {
+    estimate: settings ? deliveryEstimate(o, settings) : null,
+    deliveredOn: delivered ? istDay(delivered.at) : null,
+    updates: (o.updates || []).slice(-30),
     id: o.id, createdAt: o.createdAt, status: o.status, history: o.history,
     items: o.items.map(({ cost, ...i }) => i), subtotal: o.subtotal, shipping: o.shipping, total: o.total,
     payable: o.payment.payable, expiresAt: o.payment.expiresAt,
@@ -281,7 +297,7 @@ async function orderStatus(req, url, store, id) {
   if (!o) return fail(404, 'Order not found');
   if (o.status === 'awaiting_payment' && o.payment.expiresAt < Date.now()) await sweep(store);
   const fresh = await store.getJSON('orders/' + id);
-  return json({ order: customerView(fresh) });
+  return json({ order: customerView(fresh, await getSettings(store)) });
 }
 
 // customer says "I have paid" but no SMS matched yet → Sathya checks by hand
@@ -313,7 +329,7 @@ async function track(req, url, store) {
   if (!/^SK\d{10}$/.test(id) || ph.length !== 10) return fail(400, 'Enter your order ID (like SK2611161234) and mobile number');
   const o = await store.getJSON('orders/' + id);
   if (!o || o.customer.phone !== ph) return fail(404, 'No order found with that ID and mobile number');
-  return json({ order: customerView(o) });
+  return json({ order: customerView(o, await getSettings(store)) });
 }
 
 // ---------- payments: bank SMS webhook ----------
@@ -378,6 +394,18 @@ async function updateOrder(req, store, id) {
   const o = await store.getJSON('orders/' + id);
   if (!o) return fail(404, 'Order not found');
   for (const k of ['courier', 'awb', 'trackingUrl', 'adminNote']) if (body[k] !== undefined) o[k] = clean(body[k], 300);
+  if (o.trackingUrl && !/^https:\/\//i.test(o.trackingUrl)) return fail(400, 'Tracking link must start with https://');
+  if (body.expectedDelivery !== undefined) {
+    const d = String(body.expectedDelivery);
+    if (d && (!/^\d{4}-\d{2}-\d{2}$/.test(d) || Number.isNaN(Date.parse(d)))) return fail(400, 'Pick a valid delivery date');
+    o.expectedDelivery = d;
+  }
+  if (body.addUpdate !== undefined) {
+    const text = clean(body.addUpdate, 140);
+    if (!text) return fail(400, 'Write the courier update first');
+    o.updates = [...(o.updates || []), { at: nowIso(), text }].slice(-30);
+  }
+  if (body.removeUpdate !== undefined) o.updates = (o.updates || []).filter((u) => u.at !== body.removeUpdate);
   if (body.status && body.status !== o.status) {
     if (!STATUSES.includes(body.status) || body.status === 'awaiting_payment' || body.status === 'expired') return fail(400, 'Unknown status');
     if (o.status === 'cancelled') return fail(409, 'A cancelled order cannot be reopened.');
@@ -392,6 +420,11 @@ async function updateOrder(req, store, id) {
     }
     o.status = body.status;
     o.history.push({ status: body.status, at: nowIso(), note: clean(body.note, 200) });
+    if (body.status === 'shipped' && !o.expectedDelivery) {
+      const [, lMax] = dayRange((await getSettings(store)).deliveryDays);
+      o.expectedDelivery = addDays(nowIso(), lMax || 5); // Sathya can change it
+    }
+    if (body.status === 'out_for_delivery') o.expectedDelivery = istDay(nowIso());
   }
   o.updatedAt = nowIso();
   await store.setJSON('orders/' + id, o);
@@ -460,6 +493,7 @@ async function stats(store) {
     profitComplete: thisMonth.every((o) => o.items.every((i) => i.cost !== null && i.cost !== undefined)),
     toVerify: statusCounts.payment_check,
     toShip: statusCounts.confirmed + statusCounts.packed,
+    onTheWay: statusCounts.shipped + statusCounts.out_for_delivery,
     waitingPayment: statusCounts.awaiting_payment,
     unmatchedPayments: payments.filter((p) => !p.orderId).length,
     statusCounts, daily, monthly,

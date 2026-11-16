@@ -35,7 +35,19 @@
   const ok = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json' } });
   const no = (status, error) => ok({ error }, status);
   const pub = ({ cost, ...p }) => p;
+  const DAY = 864e5;
+  const dayRange = (v) => { const n = String(v ?? '').match(/\d+/g)?.map(Number) || []; return n.length ? [Math.min(...n), Math.max(...n)] : [0, 0]; };
+  const addDays = (iso, d) => istDay(new Date(Date.parse(iso) + d * DAY).toISOString());
+  const estimate = (o) => {
+    if (o.expectedDelivery) return { by: o.expectedDelivery };
+    if (!o.payment.verified || ['delivered', 'cancelled', 'expired'].includes(o.status)) return null;
+    const [, dMax] = dayRange(db.settings.dispatchDays), [lMin, lMax] = dayRange(db.settings.deliveryDays);
+    const start = o.payment.paidAt || o.createdAt;
+    return { from: addDays(start, lMin + 1), to: addDays(start, dMax + lMax) };
+  };
   const view = (o) => ({
+    estimate: estimate(o), updates: (o.updates || []).slice(-30),
+    deliveredOn: (o.history.find((h) => h.status === 'delivered') || {}).at?.slice(0, 10) || null,
     id: o.id, createdAt: o.createdAt, status: o.status, history: o.history,
     items: o.items.map(({ cost, ...i }) => i), subtotal: o.subtotal, shipping: o.shipping, total: o.total,
     payable: o.payment.payable, expiresAt: o.payment.expiresAt,
@@ -90,13 +102,13 @@
       const b = best.get(i.productId) || { productId: i.productId, name: i.name, qty: 0, revenue: 0 };
       b.qty += i.qty; b.revenue += i.qty * i.price; best.set(i.productId, b);
     }
-    const sc = Object.fromEntries(['awaiting_payment', 'payment_check', 'confirmed', 'packed', 'shipped', 'delivered', 'cancelled', 'expired'].map((s) => [s, db.orders.filter((o) => o.status === s).length]));
+    const sc = Object.fromEntries(['awaiting_payment', 'payment_check', 'confirmed', 'packed', 'shipped', 'out_for_delivery', 'delivered', 'cancelled', 'expired'].map((s) => [s, db.orders.filter((o) => o.status === s).length]));
     const tdy = live.filter((o) => istDay(o.createdAt) === today);
     return {
       today, ordersToday: tdy.length, revenueToday: tdy.reduce((s, o) => s + o.total, 0),
       revenueMonth: tm.reduce((s, o) => s + o.total, 0), revenueLastMonth: inM(lmKey).reduce((s, o) => s + o.total, 0),
       ordersMonth: tm.length, profitMonth: tm.reduce((s, o) => s + o.subtotal - cost(o), 0), profitComplete: true,
-      toVerify: sc.payment_check, toShip: sc.confirmed + sc.packed, waitingPayment: sc.awaiting_payment,
+      toVerify: sc.payment_check, toShip: sc.confirmed + sc.packed, onTheWay: sc.shipped + sc.out_for_delivery, waitingPayment: sc.awaiting_payment,
       unmatchedPayments: db.payments.filter((p) => !p.orderId).length, statusCounts: sc, daily, monthly,
       bestSellers: [...best.values()].sort((a, b) => b.qty - a.qty).slice(0, 6),
       lowStock: db.products.filter((p) => p.active && p.stock !== null && p.stock <= db.settings.lowStockAt).map((p) => ({ id: p.id, name: p.name, stock: p.stock })),
@@ -198,12 +210,16 @@
       if (method === 'GET') return ok({ orders: db.orders.map(({ accessKey, ...o }) => o) });
       const o = db.orders.find((x) => x.id === id);
       if (!o) return no(404, 'Order not found');
-      for (const k of ['courier', 'awb', 'trackingUrl']) if (body[k] !== undefined) o[k] = body[k];
+      for (const k of ['courier', 'awb', 'trackingUrl', 'expectedDelivery']) if (body[k] !== undefined) o[k] = body[k];
+      if (body.addUpdate) o.updates = [...(o.updates || []), { at: now(), text: String(body.addUpdate).slice(0, 140) }].slice(-30);
+      if (body.removeUpdate) o.updates = (o.updates || []).filter((u) => u.at !== body.removeUpdate);
       if (body.status && body.status !== o.status) {
         if (o.status === 'cancelled') return no(409, 'A cancelled order cannot be reopened.');
         if (body.status === 'confirmed' && !o.payment.verified) { confirmPaid(o, o.payment.claimedUtr || '', 'manual'); save(); return ok({ order: o }); }
         if (body.status === 'cancelled' && o.status !== 'expired') stock(o.items, +1);
         o.status = body.status; o.history.push({ status: body.status, at: now() });
+        if (body.status === 'shipped' && !o.expectedDelivery) o.expectedDelivery = addDays(now(), dayRange(db.settings.deliveryDays)[1] || 5);
+        if (body.status === 'out_for_delivery') o.expectedDelivery = istDay(now());
       }
       save();
       return ok({ order: o });
