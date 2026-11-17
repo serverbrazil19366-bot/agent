@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Find a ProPedoZR Dentist Near You</title>
+<meta name="description" content="Find a dentist near you who uses ProPedoZR pediatric zirconia crowns.">
+<style>
+  :root {
+    --brand: #0e7c86;        /* change to ProPedoZR brand colour */
+    --brand-dark: #095a61;
+    --ink: #1c2430;
+    --muted: #5b6676;
+    --line: #e3e7ec;
+    --bg: #f6f8fa;
+    --card: #ffffff;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink); background: var(--bg); }
+  .pz-locator { max-width: 1200px; margin: 0 auto; padding: 24px 16px 40px; }
+  .pz-head h1 { margin: 0 0 6px; font-size: clamp(1.5rem, 3vw, 2.1rem); }
+  .pz-head p { margin: 0 0 18px; color: var(--muted); }
+
+  .pz-search { display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch; margin-bottom: 16px; }
+  .pz-search .pz-ac { flex: 1 1 320px; min-width: 0; }
+  .pz-search gmp-place-autocomplete { width: 100%; }
+  .pz-btn { border: 0; border-radius: 10px; padding: 12px 16px; font-weight: 600; cursor: pointer; background: var(--brand); color: #fff; font-size: 0.95rem; }
+  .pz-btn:hover { background: var(--brand-dark); }
+  .pz-btn.ghost { background: #fff; color: var(--brand); border: 1px solid var(--brand); }
+
+  .pz-body { display: grid; grid-template-columns: 380px 1fr; gap: 16px; height: 620px; }
+  .pz-list { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); overflow-y: auto; }
+  .pz-map { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); min-height: 320px; }
+
+  .pz-status { padding: 12px 16px; color: var(--muted); font-size: 0.9rem; border-bottom: 1px solid var(--line); }
+  .pz-item { padding: 14px 16px; border-bottom: 1px solid var(--line); cursor: pointer; }
+  .pz-item:hover, .pz-item.active { background: #eef7f8; }
+  .pz-item h3 { margin: 0 0 4px; font-size: 1rem; }
+  .pz-item .pz-doc { color: var(--muted); font-size: 0.88rem; margin-bottom: 4px; }
+  .pz-item .pz-addr { font-size: 0.88rem; margin-bottom: 4px; }
+  .pz-item .pz-hours { font-size: 0.82rem; color: var(--muted); }
+  .pz-dist { float: right; font-size: 0.8rem; font-weight: 700; color: var(--brand); background: #e4f3f4; padding: 2px 8px; border-radius: 99px; }
+  .pz-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .pz-actions a { text-decoration: none; font-size: 0.82rem; font-weight: 600; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--line); color: var(--ink); background: #fff; }
+  .pz-actions a.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .pz-empty { padding: 20px 16px; color: var(--muted); }
+
+  .pz-info h4 { margin: 0 0 4px; font-size: 0.95rem; }
+  .pz-info p { margin: 0 0 6px; font-size: 0.85rem; }
+  .pz-info a { color: var(--brand); font-weight: 600; font-size: 0.85rem; }
+
+  @media (max-width: 860px) {
+    .pz-body { grid-template-columns: 1fr; height: auto; }
+    .pz-map { height: 360px; order: -1; }
+    .pz-list { max-height: 520px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="pz-locator">
+  <div class="pz-head">
+    <h1>Find a ProPedoZR Dentist Near You</h1>
+    <p>Enter your area or pincode, or use your location, to see clinics near you that use ProPedoZR pediatric zirconia crowns.</p>
+  </div>
+
+  <div class="pz-search">
+    <div class="pz-ac" id="pz-ac"></div>
+    <button class="pz-btn" id="pz-near">📍 Near me</button>
+    <button class="pz-btn ghost" id="pz-all">Show all</button>
+  </div>
+
+  <div class="pz-body">
+    <div class="pz-list" id="pz-list">
+      <div class="pz-status" id="pz-status">Loading map…</div>
+      <div id="pz-items"></div>
+    </div>
+    <div class="pz-map" id="pz-map"></div>
+  </div>
+</section>
+
+<script>
+/* =========================================================
+   1) SETTINGS: change these
+   ========================================================= */
+const PZ_CONFIG = {
+  apiKey: "PASTE_YOUR_API_KEY_HERE",
+  defaultCenter: { lat: 13.0827, lng: 80.2707 }, // Chennai
+  defaultZoom: 10,
+  nearbyKm: 25,          // clinics within this distance are shown as "near you"
+  country: "in"          // limits address search to India
+};
+
+/* =========================================================
+   2) PARTNER CLINICS: replace the sample entries
+   lat / lng: open the clinic in Google Maps, right-click the pin,
+   click the numbers at the top of the menu to copy them.
+   If you leave lat/lng empty, the page finds them from the address.
+   phone / whatsapp: digits with country code, e.g. "919876543210"
+   ========================================================= */
+const PZ_CLINICS = [
+  {
+    name: "SAMPLE Clinic 1 (delete me)",
+    doctor: "Dr. Sample Name, BDS, MDS (Pedodontics)",
+    address: "Anna Nagar, Chennai, Tamil Nadu 600040",
+    lat: 13.0850, lng: 80.2101,
+    phone: "", whatsapp: "",
+    hours: "Mon–Sat · 10 AM – 8 PM"
+  },
+  {
+    name: "SAMPLE Clinic 2 (delete me)",
+    doctor: "Dr. Sample Name, BDS",
+    address: "Velachery, Chennai, Tamil Nadu 600042",
+    lat: 12.9815, lng: 80.2180,
+    phone: "", whatsapp: "",
+    hours: "Mon–Sat · 9 AM – 7 PM"
+  }
+];
+
+/* =========================================================
+   3) LOCATOR CODE: no need to edit below
+   ========================================================= */
+(g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({ key: PZ_CONFIG.apiKey, v: "weekly" });
+
+(async function () {
+  const statusEl = document.getElementById("pz-status");
+  const itemsEl = document.getElementById("pz-items");
+  const setStatus = (t) => { statusEl.textContent = t; };
+  const esc = (s) => String(s || "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  let Map, InfoWindow, AdvancedMarkerElement, PinElement, PlaceAutocompleteElement, Geocoder;
+  try {
+    ({ Map, InfoWindow } = await google.maps.importLibrary("maps"));
+    ({ AdvancedMarkerElement, PinElement } = await google.maps.importLibrary("marker"));
+    ({ PlaceAutocompleteElement } = await google.maps.importLibrary("places"));
+    ({ Geocoder } = await google.maps.importLibrary("geocoding"));
+  } catch (e) {
+    setStatus("The map could not load. Check the API key and its website restrictions.");
+    console.error(e);
+    return;
+  }
+
+  const map = new Map(document.getElementById("pz-map"), {
+    center: PZ_CONFIG.defaultCenter,
+    zoom: PZ_CONFIG.defaultZoom,
+    mapId: "DEMO_MAP_ID",
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: true
+  });
+  const info = new InfoWindow();
+  let userMarker = null;
+  let origin = null;
+
+  // Fill in missing coordinates from the address (cached in the browser)
+  const geocoder = new Geocoder();
+  const cacheKey = (c) => "pz-geo:" + c.address;
+  for (const c of PZ_CLINICS) {
+    if (typeof c.lat === "number" && typeof c.lng === "number") continue;
+    try {
+      const cached = localStorage.getItem(cacheKey(c));
+      if (cached) { Object.assign(c, JSON.parse(cached)); continue; }
+    } catch (_) {}
+    try {
+      const { results } = await geocoder.geocode({ address: c.address, region: PZ_CONFIG.country });
+      if (results && results[0]) {
+        const loc = results[0].geometry.location;
+        c.lat = loc.lat(); c.lng = loc.lng();
+        try { localStorage.setItem(cacheKey(c), JSON.stringify({ lat: c.lat, lng: c.lng })); } catch (_) {}
+      }
+    } catch (e) { console.warn("Could not find address:", c.address); }
+  }
+  const clinics = PZ_CLINICS.filter(c => typeof c.lat === "number" && typeof c.lng === "number");
+
+  const km = (a, b) => {
+    const R = 6371, rad = Math.PI / 180;
+    const dLat = (b.lat - a.lat) * rad, dLng = (b.lng - a.lng) * rad;
+    const x = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLng / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(x));
+  };
+  const dirUrl = (c) => {
+    const dest = encodeURIComponent(`${c.lat},${c.lng}`);
+    const from = origin ? `&origin=${origin.lat},${origin.lng}` : "";
+    return `https://www.google.com/maps/dir/?api=1&destination=${dest}${from}`;
+  };
+
+  const infoHtml = (c) => `
+    <div class="pz-info">
+      <h4>${esc(c.name)}</h4>
+      ${c.doctor ? `<p>${esc(c.doctor)}</p>` : ""}
+      <p>${esc(c.address)}</p>
+      <a href="${dirUrl(c)}" target="_blank" rel="noopener">Get directions →</a>
+    </div>`;
+
+  // Markers
+  clinics.forEach((c, i) => {
+    const pin = new PinElement({ background: getComputedStyle(document.documentElement).getPropertyValue("--brand").trim() || "#0e7c86", borderColor: "#ffffff", glyphColor: "#ffffff" });
+    c._marker = new AdvancedMarkerElement({ map, position: { lat: c.lat, lng: c.lng }, title: c.name, content: pin.element });
+    c._marker.addListener("click", () => selectClinic(i, false));
+  });
+
+  function selectClinic(i, pan = true) {
+    const c = clinics[i];
+    document.querySelectorAll(".pz-item").forEach(el => el.classList.toggle("active", Number(el.dataset.i) === i));
+    const el = document.querySelector(`.pz-item[data-i="${i}"]`);
+    if (el) el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    if (pan) { map.panTo({ lat: c.lat, lng: c.lng }); if (map.getZoom() < 13) map.setZoom(13); }
+    info.setContent(infoHtml(c));
+    info.open({ map, anchor: c._marker });
+  }
+
+  function render() {
+    const rows = clinics.map((c, i) => ({ c, i, d: origin ? km(origin, c) : null }));
+    if (origin) rows.sort((a, b) => a.d - b.d);
+
+    if (!clinics.length) {
+      setStatus("No clinics added yet.");
+      itemsEl.innerHTML = "";
+      return;
+    }
+    if (origin) {
+      const near = rows.filter(r => r.d <= PZ_CONFIG.nearbyKm).length;
+      setStatus(near
+        ? `${near} clinic${near > 1 ? "s" : ""} within ${PZ_CONFIG.nearbyKm} km of you`
+        : `No clinic within ${PZ_CONFIG.nearbyKm} km. Showing the nearest ones.`);
+    } else {
+      setStatus(`${clinics.length} partner clinic${clinics.length > 1 ? "s" : ""}. Search your area to sort by distance.`);
+    }
+
+    itemsEl.innerHTML = rows.map(({ c, i, d }) => {
+      const tel = c.phone ? `<a href="tel:+${esc(c.phone)}">📞 Call</a>` : "";
+      const wa = c.whatsapp ? `<a href="https://wa.me/${esc(c.whatsapp)}?text=${encodeURIComponent("Hi, I found your clinic on the ProPedoZR website and would like to book an appointment for my child.")}" target="_blank" rel="noopener">💬 WhatsApp</a>` : "";
+      return `
+        <div class="pz-item" data-i="${i}">
+          ${d !== null ? `<span class="pz-dist">${d < 1 ? (d * 1000).toFixed(0) + " m" : d.toFixed(1) + " km"}</span>` : ""}
+          <h3>${esc(c.name)}</h3>
+          ${c.doctor ? `<div class="pz-doc">${esc(c.doctor)}</div>` : ""}
+          <div class="pz-addr">${esc(c.address)}</div>
+          ${c.hours ? `<div class="pz-hours">🕒 ${esc(c.hours)}</div>` : ""}
+          <div class="pz-actions">
+            <a class="primary" href="${dirUrl(c)}" target="_blank" rel="noopener">🧭 Directions</a>
+            ${tel}${wa}
+          </div>
+        </div>`;
+    }).join("");
+
+    itemsEl.querySelectorAll(".pz-item").forEach(el => {
+      el.addEventListener("click", (e) => {
+        if (e.target.closest("a")) return;
+        selectClinic(Number(el.dataset.i));
+      });
+    });
+  }
+
+  function fitAll() {
+    if (!clinics.length) return;
+    const b = new google.maps.LatLngBounds();
+    clinics.forEach(c => b.extend({ lat: c.lat, lng: c.lng }));
+    if (origin) b.extend(origin);
+    if (clinics.length === 1 && !origin) { map.setCenter({ lat: clinics[0].lat, lng: clinics[0].lng }); map.setZoom(13); }
+    else map.fitBounds(b, 60);
+  }
+
+  function setOrigin(loc, label) {
+    origin = loc;
+    if (userMarker) userMarker.map = null;
+    const dot = document.createElement("div");
+    dot.style.cssText = "width:16px;height:16px;border-radius:50%;background:#1a73e8;border:3px solid #fff;box-shadow:0 0 0 2px rgba(26,115,232,.35)";
+    userMarker = new AdvancedMarkerElement({ map, position: loc, title: label || "You", content: dot });
+    render();
+    // Zoom to the user + the 3 nearest clinics
+    const nearest = clinics.map(c => ({ c, d: km(loc, c) })).sort((a, b) => a.d - b.d).slice(0, 3);
+    const b = new google.maps.LatLngBounds();
+    b.extend(loc);
+    nearest.forEach(n => b.extend({ lat: n.c.lat, lng: n.c.lng }));
+    map.fitBounds(b, 60);
+  }
+
+  // Address / pincode search (Places Autocomplete, new)
+  const ac = new PlaceAutocompleteElement({ includedRegionCodes: [PZ_CONFIG.country] });
+  ac.setAttribute("placeholder", "Enter your area or pincode");
+  document.getElementById("pz-ac").appendChild(ac);
+  const onPlace = async (place) => {
+    await place.fetchFields({ fields: ["location", "displayName", "formattedAddress"] });
+    if (place.location) setOrigin({ lat: place.location.lat(), lng: place.location.lng() }, place.displayName);
+  };
+  ac.addEventListener("gmp-select", (e) => { if (e.placePrediction) onPlace(e.placePrediction.toPlace()); });
+  ac.addEventListener("gmp-placeselect", (e) => { if (e.place) onPlace(e.place); }); // older API versions
+
+  // Near me
+  document.getElementById("pz-near").addEventListener("click", () => {
+    if (!navigator.geolocation) { setStatus("Your browser can't share location. Type your area instead."); return; }
+    setStatus("Finding your location…");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => setOrigin({ lat: pos.coords.latitude, lng: pos.coords.longitude }, "You are here"),
+      () => setStatus("Location permission was blocked. Type your area or pincode instead."),
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  });
+
+  // Show all
+  document.getElementById("pz-all").addEventListener("click", () => {
+    origin = null;
+    if (userMarker) { userMarker.map = null; userMarker = null; }
+    info.close();
+    render();
+    fitAll();
+  });
+
+  render();
+  fitAll();
+})();
+</script>
+</body>
+</html>
