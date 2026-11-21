@@ -350,5 +350,25 @@
  "work/propedo-wa-cost": [
   1600,
   1000
+ ],
+ "work/leadreach-cover": [
+  1600,
+  1000
+ ],
+ "work/leadreach-how": [
+  1600,
+  1058
+ ],
+ "work/leadreach-why": [
+  1600,
+  549
+ ],
+ "work/leadreach-pricing": [
+  1600,
+  761
+ ],
+ "work/leadreach-m": [
+  780,
+  1688
  ]
 }

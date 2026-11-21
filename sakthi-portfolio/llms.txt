@@ -23,6 +23,9 @@
 - [Intraoral Scan Booking Platform & Dashboard: Ankhor Case Study](https://saktheeswaran.netlify.app/insights/dental-scan-booking-platform.html): How I built Ankhor Dental Lab's scan booking platform: clinics pick a free slot online, taken slots show as booked instantly, and the team manages every booking from a dashboard.
 - [Diwali Referral Program Page, Dashboard & App: Ankhor Case Study](https://saktheeswaran.netlify.app/insights/dental-lab-referral-program.html): How I built a Diwali Refer & Earn program for Ankhor Dental Lab: a campaign page, a referral dashboard and app, with personal referral links shared on WhatsApp.
 
+## Products (SaaS tools built by S. Saktheeswaran)
+- [LeadReach](https://saktheeswaran.netlify.app/products/leadreach.html): A multi-tenant SaaS I built solo that finds local businesses on Google Maps, reaches them on WhatsApp and email from each client's own number, and drops every reply into one inbox. Live: https://leadreach-46-202-164-123.sslip.io/
+
 ## Case studies
 - [ProPedoZR – WhatsApp Doctor-Outreach Platform](https://saktheeswaran.netlify.app/work/propedozr-whatsapp-doctor-outreach.html): A self-hosted WhatsApp Business API campaign platform that sends personalised, Meta-approved messages to 280+ pediatric dentists, with no monthly subscription.
 - [Astra Nexora – Automated Lead Outreach System](https://saktheeswaran.netlify.app/work/astra-nexora-lead-outreach-system.html): A system that finds potential clients, checks each website's speed, sends a personal email, follows up once and catches every reply, every weekday, at zero running cost.

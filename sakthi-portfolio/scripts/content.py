@@ -110,6 +110,34 @@ SERVICES = [
     ("WhatsApp Business API Campaigns", "Personalised campaigns on the official Meta Cloud API from your own platform: approved templates, safe sending and reply tracking, with no monthly subscription.", "social"),
 ]
 
+# Products: SaaS tools I build and run myself. Each gets products/<slug>.html.
+PRODUCTS = [
+    {
+        "slug": "leadreach",
+        "name": "LeadReach",
+        "status": "Live",
+        "pitch": "New clients, on autopilot. LeadReach finds high-rated local businesses, reaches them on WhatsApp and email from your own number, and drops every reply into one inbox.",
+        "points": ["Fresh local leads from Google Maps, ranked by quality", "WhatsApp + email outreach from your own number", "One inbox for every reply, with a New → Contacted → Converted pipeline", "Multi-tenant, encrypted, with pay-first UPI signup"],
+        "price": "From ₹3,499 / month",
+        "try": "https://leadreach-46-202-164-123.sslip.io/",
+        "title": "LeadReach – Lead Generation SaaS",
+        "tag": "auto",
+        "category": "SaaS Product · Lead Generation",
+        "summary": "A multi-tenant SaaS I built solo that finds local businesses on Google Maps, reaches them on WhatsApp and email from each client's own number, and drops every reply into one inbox.",
+        "cover": "work/leadreach-cover",
+        "gallery": ["work/leadreach-m"],
+        "live": "https://leadreach-46-202-164-123.sslip.io/",
+        "meta": [("Year", "2026"), ("Type", "SaaS product (self-built)"), ("Client", "LeadReach, my own product"), ("Role", "Founder & sole developer")],
+        "sections": [
+            ("The challenge", "Local businesses want new customers but don't have the time to search for prospects, message each one and track who replied. Most outreach tools are built for big sales teams, not a clinic or a small agency."),
+            ("Strategy", "A done-for-you SaaS: the client shares their WhatsApp number and target area, and LeadReach finds the leads, sends the messages from the client's own number and brand, and collects every reply in one inbox."),
+            ("What I did", "Designed and built the whole product end to end: lead-finding engine, WhatsApp and email outreach, reply inbox and pipeline, multi-tenant data isolation, pay-first UPI signup, plan-based limits, admin and billing dashboards, and a hardened server with SSL."),
+            ("Outcome", "Live with a public landing page, three monthly plans (₹3,499, ₹6,999 and ₹13,999), pay-first signup and private client dashboards."),
+        ],
+        "tools": ["Laravel (PHP)", "SQLite", "Blade", "WhatsApp Cloud API", "Google Maps Places API", "Linux VPS + SSL"],
+    },
+]
+
 # Projects. tag drives the filter: web, seo, auto, social.
 PROJECTS = [
     {
@@ -385,6 +413,8 @@ TESTIMONIALS = [
 
 # Search titles and descriptions for the case studies (the on-page title stays as above)
 PROJECT_SEO = {
+    "leadreach": ("LeadReach – Lead Generation SaaS Built by S. Saktheeswaran",
+                                       "LeadReach is a multi-tenant lead generation SaaS built solo by S. Saktheeswaran: Google Maps lead finding, WhatsApp and email outreach, a unified reply inbox and pay-first billing."),
     "propedozr-whatsapp-doctor-outreach": ("WhatsApp Business API Campaign Platform – ProPedoZR Case Study",
                                            "How S. Saktheeswaran built an in-house WhatsApp Cloud API platform that sends personalised campaigns to 280+ dentists with no monthly subscription."),
     "astra-nexora-lead-outreach-system": ("Automated Lead Outreach System – Astra Nexora Case Study",
@@ -1515,3 +1545,46 @@ ARTICLES.insert(1, {
         6: [("work/propedo-wa-dash", "Dashboard sections and day-1 numbers (diagram)."),],
     },
 })
+
+
+STORIES["leadreach"] = {
+    "glance": ("Local businesses need a steady flow of new customers, but searching for prospects, messaging each one and tracking replies takes hours they don't have.",
+               "LeadReach, a multi-tenant SaaS that finds high-rated local businesses on Google Maps, reaches them on WhatsApp and email from the client's own number, and drops every reply into one inbox.",
+               "A complete product I architected and shipped solo: lead engine, multi-channel outreach, client dashboards, pay-first billing and plan-based limits, live with three monthly plans."),
+    "challenge": ["Finding new customers is the hardest job for a small business. Doing outreach properly means finding the right "
+                  "businesses in the right area, checking which ones are worth contacting, sending each a personal message, following "
+                  "up and keeping track of who replied. Most owners never get to it.",
+                  "The tools that exist are either built for large sales teams, need a lot of setup, or send messages from someone "
+                  "else's number, so replies don't come back to the business. I wanted something a clinic owner could start by simply "
+                  "sharing their WhatsApp number."],
+    "approach": ["Build it as a done-for-you SaaS, not a do-it-yourself tool. The client tells us the industry and cities; LeadReach "
+                 "finds the leads every day, sends personalised messages from the client's own WhatsApp number and brand, and puts "
+                 "every reply in one inbox. The client only replies and closes.",
+                 "Because many clients share one platform, every account is fully separated: its own data, its own WhatsApp and email "
+                 "credentials (encrypted), and limits that follow the plan it pays for."],
+    "features": [
+        ("Smart lead finding", "LeadReach pulls fresh, high-rated local businesses from Google Maps through the Places API for the "
+         "client's industry and cities, ranks them by quality and adds new ones every day, so outreach always starts with "
+         "relevant businesses, not an old bought list.", ["work/leadreach-how"]),
+        ("WhatsApp outreach from the client's own number", "Personalised template messages go out through the WhatsApp Cloud API "
+         "from each client's own verified number and templates, so the brand is theirs and replies go straight to them.", []),
+        ("Email fallback", "Leads without WhatsApp are reached by email automatically, using each client's own SMTP settings.", []),
+        ("Unified reply inbox and pipeline", "Every reply lands in one inbox with delivery and read tracking. Each lead moves from "
+         "New to Contacted to Converted, and the dashboard shows the whole pipeline.", []),
+        ("Multi-tenant and secure", "Every query is scoped to the client's account, so no client can see another's data. API keys "
+         "and credentials are encrypted, and the platform runs on a hardened Linux server with SSL.", []),
+        ("Daily send scheduler with plan caps", "A scheduler sends each day's outreach automatically and stops at the plan's daily "
+         "limit, which keeps volumes safe for the client's number.", []),
+        ("A landing page that sells", "The public site explains the product in three steps, shows a live preview of the workflow, "
+         "answers common questions and lists what's included in every plan.", ["work/leadreach-why"]),
+        ("Pay-first signup and billing", "Three monthly plans (Starter ₹3,499, Growth ₹6,999 and Pro ₹13,999) with features and "
+         "daily lead limits unlocked by plan. New clients pay by UPI first, then the account is set up and the login sent. Admin "
+         "and billing dashboards manage every account.", ["work/leadreach-pricing"]),
+    ],
+    "results": ["Built end to end by one person, from the lead-finding engine to billing and client dashboards",
+                "Live with a public landing page, pay-first UPI signup and three monthly plans",
+                "Two outreach channels (WhatsApp and email) with replies, delivery and read status in one inbox",
+                "Multi-tenant from day one: separate, encrypted data and credentials for every client"],
+    "services": ["Product design", "Laravel development", "WhatsApp Cloud API", "Google Maps Places API", "Billing & dashboards", "Server & security"],
+    "insight": None,
+}

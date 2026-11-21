@@ -16,7 +16,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "scripts"))
-from content import (ABOUT, ARTICLES, STORIES, BRING, DESIGNS, FAQS, KEYWORD_PAGES, PRINT, PROJECT_SEO, EDUCATION, EXPERIENCE, PROFILE, PROJECTS, RESULTS, SERVICES,  # noqa: E402
+from content import (ABOUT, ARTICLES, STORIES, BRING, DESIGNS, FAQS, KEYWORD_PAGES, PRINT, PRODUCTS, PROJECT_SEO, EDUCATION, EXPERIENCE, PROFILE, PROJECTS, RESULTS, SERVICES,  # noqa: E402
                      SKILL_TABS, SOFT_SKILLS, STATS, TESTIMONIALS, TICKER, TOOLS, VIDEOS)
 
 SITE = os.environ.get("PORTFOLIO_URL", "https://saktheeswaran.netlify.app/")
@@ -149,7 +149,7 @@ def head(title, desc, path, prefix, schema, preload=""):
 
 
 def header(prefix, home):
-    links = [("About", "about"), ("Skills", "skills"), ("Experience", "experience"), ("Work", "work"),
+    links = [("About", "about"), ("Skills", "skills"), ("Experience", "experience"), ("Products", "products"), ("Work", "work"),
              ("Services", "services"), ("Videos", "videos"), ("Design", "design"), ("Contact", "contact")]
     nav = "".join(f'<a href="{home}#{a}">{n}</a>' for n, a in links)
     return f'''<header class="site-header" id="header">
@@ -217,6 +217,22 @@ def work_card(p, prefix, i, n=None):
 </a>'''
 
 
+def product_card(x, prefix):
+    pts = "".join(f"<li>{CHECK}<span>{esc(t)}</span></li>" for t in x["points"])
+    return f'''<article class="prod-card" data-reveal="">
+<a class="pc-media" href="{prefix}products/{x["slug"]}.html">{img(x["cover"], x["name"] + " SaaS product screenshot", "(min-width: 1001px) 680px, 92vw", prefix)}</a>
+<div class="pc-body">
+<div class="pc-top"><span class="pc-badge"><i></i>{esc(x["status"])}</span><span class="wc-cat">{esc(x["category"])}</span></div>
+<h3>{esc(x["name"])}</h3>
+<p>{esc(x["pitch"])}</p>
+<ul class="pc-points">{pts}</ul>
+<p class="pc-price">{esc(x["price"])}</p>
+<div class="actions">{btn("View product", f"{prefix}products/{x['slug']}.html", "btn-dark")}{btn(f"Try {x['name']}", x["try"], "btn-accent", ARROW_UR, target=True)}</div>
+<ul class="chips">{"".join(f"<li>{esc(t)}</li>" for t in x["tools"][:4])}</ul>
+</div>
+</article>'''
+
+
 def home():
     p, h = "", ""
     title = "S Saktheeswaran – Founder of Astra Nexora | Digital Marketing & SEO Expert, Tamil Nadu"
@@ -267,6 +283,7 @@ def home():
     filters = "".join(f'<button aria-pressed="{"true" if k == "all" else "false"}" class="filter" data-filter="{k}" type="button">{n}</button>'
                       for k, n in [("all", "All"), ("web", "Websites"), ("seo", "SEO"), ("auto", "Automation"), ("social", "Social")])
     works = "\n".join(work_card(x, p, i) for i, x in enumerate(PROJECTS))
+    products = "\n".join(product_card(x, p) for x in PRODUCTS)
     services = "".join(
         f'<li class="svc" data-reveal=""><span class="svc-ic">{svg(I[ic])}</span><h3>{esc(t)}</h3><p>{esc(d)}</p><span aria-hidden="true" class="svc-n">{k:02d}</span></li>'
         for k, (t, d, ic) in enumerate(SERVICES, 1))
@@ -393,6 +410,18 @@ def home():
 </div>
 </section>
 
+<section aria-labelledby="prodTitle" class="sec products" id="products">
+<div class="wrap">
+<div class="work-head">
+{sec_head("", "Products", 'Tools I <em>build</em>', "SaaS products I design, build and run myself. Try them live.", tid="prodTitle")}
+</div>
+<div class="prod-list">
+{products}
+<div class="prod-soon" data-reveal=""><span class="pc-badge soon">In the works</span><p>More tools are on the way. Want one built for your business? <a href="#contact">Tell me what you need {ARROW_UR}</a></p></div>
+</div>
+</div>
+</section>
+
 <section aria-labelledby="workTitle" class="sec work" id="work">
 <div class="wrap">
 <div class="work-head">
@@ -505,15 +534,20 @@ def home():
     return head(title, desc, "", p, schema, preload="img/s-saktheeswaran-founder-astra-nexora-w629.webp") + body
 
 
-def work_page(pr, i):
+def work_page(pr, i, items=PROJECTS, folder="work"):
     p, h = "../", "../index.html"
-    path = f"work/{pr['slug']}.html"
+    product = folder == "products"
+    path = f"{folder}/{pr['slug']}.html"
     schema = {"@context": "https://schema.org", "@graph": [
-        {"@type": "CreativeWork", "name": pr["title"], "description": pr["summary"], "url": SITE + path,
-         "creator": {"@type": "Person", "name": PROFILE["name"], "url": SITE}},
+        ({"@type": "SoftwareApplication", "name": pr["name"], "description": pr["summary"], "url": SITE + path,
+          "applicationCategory": "BusinessApplication", "operatingSystem": "Web", "sameAs": pr["try"],
+          "offers": {"@type": "Offer", "price": "3499", "priceCurrency": "INR"},
+          "creator": {"@type": "Person", "name": PROFILE["name"], "url": SITE}} if product else
+         {"@type": "CreativeWork", "name": pr["title"], "description": pr["summary"], "url": SITE + path,
+          "creator": {"@type": "Person", "name": PROFILE["name"], "url": SITE}}),
         {"@type": "BreadcrumbList", "itemListElement": [
             {"@type": "ListItem", "position": 1, "name": "Home", "item": SITE},
-            {"@type": "ListItem", "position": 2, "name": "Work", "item": SITE + "#work"},
+            {"@type": "ListItem", "position": 2, "name": "Products" if product else "Work", "item": SITE + ("#products" if product else "#work")},
             {"@type": "ListItem", "position": 3, "name": pr["title"], "item": SITE + path}]},
     ]}
     meta = "".join(f'<li><small>{esc(k)}</small><b>{esc(v)}</b></li>' for k, v in pr["meta"])
@@ -590,19 +624,19 @@ def work_page(pr, i):
 '''
         gallery = gallery.split("</section>", 1)[1] if gallery.startswith('<section class="sec cs-gallery">') else gallery
         gallery = story + gallery + insight
-    nxt = PROJECTS[(i + 1) % len(PROJECTS)]
-    live = btn("Visit live site", pr["live"], "btn-accent", ARROW_UR, target=True) if pr["live"] else ""
+    nxt = items[(i + 1) % len(items)]
+    live = btn(f"Try {pr['name']}" if product else "Visit live site", pr["live"], "btn-accent", ARROW_UR, target=True) if pr["live"] else ""
     body = f'''{header(p, h)}
 
 <main id="main">
 <section class="cs-hero" id="top">
 <div class="wrap">
-<a class="back" href="{h}#work">← All projects</a>
+<a class="back" href="{h}#{"products" if product else "work"}">← All {"products" if product else "projects"}</a>
 <span class="kicker">{esc(pr["category"])}</span>
 <h1>{esc(pr["title"])}</h1>
 <p class="sec-lead">{esc(pr["summary"])}</p>
 <ul class="cs-meta">{meta}</ul>
-<div class="actions">{live}{btn("Start a project", h + "#contact", "btn-dark")}</div>
+<div class="actions">{live}{btn("Talk to me about it" if product else "Start a project", h + "#contact", "btn-dark")}</div>
 </div>
 <div class="wrap"><figure class="cs-cover">{img(pr["cover"], pr["title"] + " screenshot", "(min-width: 1001px) 1200px, 94vw", p, eager=True)}</figure></div>
 </section>
@@ -617,15 +651,15 @@ def work_page(pr, i):
 
 {gallery}
 
-<section class="sec next-sec">
+{"" if product and len(items) < 2 else f'''<section class="sec next-sec">
 <div class="wrap">
 <a class="next-card" href="{nxt["slug"]}.html">
-<span class="kicker">Next project</span>
+<span class="kicker">Next {"product" if product else "project"}</span>
 <h2>{esc(nxt["title"])}</h2>
 <span class="next-go">{ARROW_UR}</span>
 </a>
 </div>
-</section>
+</section>'''}
 </main>
 {IMG_MODAL if pr.get("creatives") else ""}
 
@@ -846,6 +880,8 @@ LLMS = f"""# {PROFILE["name"]} (Sakthi)
 """ + "".join(f"- [{k['seo_title'].split(' | ')[0]}]({SITE}{k['slug']}.html): {k['desc']}\n" for k in KEYWORD_PAGES) + """
 ## Insights
 """ + "".join(f"- [{a['seo_title']}]({SITE}insights/{a['slug']}.html): {a['desc']}\n" for a in ARTICLES) + """
+## Products (SaaS tools built by S. Saktheeswaran)
+""" + "".join(f"- [{x['name']}]({SITE}products/{x['slug']}.html): {x['summary']} Live: {x['try']}\n" for x in PRODUCTS) + """
 ## Case studies
 """ + "".join(f"- [{x['title']}]({SITE}work/{x['slug']}.html): {x['summary']}\n" for x in PROJECTS)
 
@@ -857,6 +893,10 @@ def main():
     for i, pr in enumerate(PROJECTS):
         with open(os.path.join(ROOT, "work", f"{pr['slug']}.html"), "w") as f:
             f.write(work_page(pr, i))
+    os.makedirs(os.path.join(ROOT, "products"), exist_ok=True)
+    for i, pr in enumerate(PRODUCTS):
+        with open(os.path.join(ROOT, "products", f"{pr['slug']}.html"), "w") as f:
+            f.write(work_page(pr, i, PRODUCTS, "products"))
     for k in KEYWORD_PAGES:
         with open(os.path.join(ROOT, f"{k['slug']}.html"), "w") as f:
             f.write(keyword_page(k))
@@ -867,7 +907,7 @@ def main():
     with open(os.path.join(ROOT, "404.html"), "w") as f:
         f.write(not_found())
     urls = ([""] + [f"{k['slug']}.html" for k in KEYWORD_PAGES] + [f"insights/{a['slug']}.html" for a in ARTICLES]
-            + [f"work/{x['slug']}.html" for x in PROJECTS])
+            + [f"products/{x['slug']}.html" for x in PRODUCTS] + [f"work/{x['slug']}.html" for x in PROJECTS])
     today = datetime.date.today().isoformat()
     with open(os.path.join(ROOT, "sitemap.xml"), "w") as f:
         imgs = [("s-saktheeswaran-founder-astra-nexora-w629", "S. Saktheeswaran, Founder and CEO of Astra Nexora"),

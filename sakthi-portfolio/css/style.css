@@ -792,3 +792,27 @@ main { overflow-x: clip; }
     .svc-grid > .svc:last-child:nth-child(3n+1) { grid-column: 1 / -1; }
     .svc-grid > .svc:nth-last-child(2):nth-child(3n+1), .svc-grid > .svc:last-child:nth-child(3n+2) { grid-column: span 3; }
 }
+
+/* Products */
+.prod-list { display: grid; gap: 24px; }
+.prod-card { display: grid; grid-template-columns: 1.15fr 1fr; border-radius: var(--radius); overflow: hidden; background: var(--card); border: 1px solid var(--line); transition: box-shadow .45s var(--ease); }
+.prod-card:hover { box-shadow: var(--shadow); }
+.pc-media { display: block; overflow: hidden; background: #f3f4f8; }
+.pc-media img { width: 100%; height: 100%; object-fit: cover; object-position: left top; transition: transform .6s var(--ease); }
+.prod-card:hover .pc-media img { transform: scale(1.04); }
+.pc-body { padding: clamp(24px, 3vw, 44px); display: flex; flex-direction: column; gap: 14px; }
+.pc-top { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.pc-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 99px; background: #e6f7ec; color: #17803d; font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.pc-badge i { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 4px rgba(34,197,94,.2); }
+.pc-badge.soon { background: var(--bg-2, #f1ede6); color: var(--muted, #666); }
+.pc-body h3 { font-family: var(--font-display); font-size: clamp(30px, 3.4vw, 46px); line-height: 1; text-transform: uppercase; }
+.pc-body > p { color: var(--muted, #555); }
+.pc-points { list-style: none; display: grid; gap: 8px; padding: 0; margin: 0; }
+.pc-points li { display: flex; gap: 10px; align-items: flex-start; font-weight: 500; }
+.pc-points .check { flex: none; width: 20px; height: 20px; color: var(--accent); margin-top: 2px; }
+.pc-price { font-weight: 800; font-size: 18px; color: var(--ink, inherit); }
+.prod-soon { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; padding: 22px 28px; border: 2px dashed var(--line); border-radius: var(--radius); }
+.prod-soon p { margin: 0; }
+.prod-soon a { font-weight: 700; color: var(--accent); display: inline-flex; align-items: center; gap: 4px; }
+.prod-soon a .arrow { width: 16px; height: 16px; }
+@media (max-width: 900px) { .prod-card { grid-template-columns: 1fr; } }
